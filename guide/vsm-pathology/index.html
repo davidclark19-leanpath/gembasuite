@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#181c1c">
+<title>Seeing Past the Chaos — Pathology &amp; Diagnostics Edition — Gemba Suite</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+      --ink: #181c1c; --ink-secondary: #3e484c; --ink-tertiary: #6e797c;
+      --paper: #f7faf9; --card: #ffffff; --surface-low: #f1f4f3;
+      --surface-high: #e6e9e8; --grid: #bec8cc; --grid-subtle: #e0e3e2;
+      --primary: #006172; --primary-container: #007c91; --primary-tint: #c4e5ef;
+      --primary-tint-strong: #79d3ea; --on-primary: #ffffff; --on-primary-tint: #004e5c;
+      --accent-warm: #854a10; --accent-warm-container: #a26227; --accent-warm-bg: #ffdcc3; --on-accent-warm: #ffffff;
+      --status-error: #ba1a1a; --status-error-bg: #ffdad6;
+      --shadow-sm: 0 1px 3px rgba(24,28,28,0.06); --shadow-md: 0 2px 8px rgba(24,28,28,0.08);
+      --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px; --radius-full: 9999px;
+      --font-display: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+      --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); font-size: 15px; line-height: 1.7; color: var(--ink); background: var(--paper); min-height: 100vh; display: flex; flex-direction: column; }
+    /* Header */
+    header { background: var(--ink); position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow-sm); }
+    .header-inner { max-width: 860px; margin: 0 auto; padding: 0 var(--space-5); height: 56px; display: flex; align-items: center; gap: var(--space-4); }
+    .back-link { color: var(--primary-tint); text-decoration: none; font-size: 13px; font-weight: 600; opacity: 0.85; transition: opacity 0.15s; }
+    .back-link:hover { opacity: 1; }
+    .header-divider { width: 1px; height: 20px; background: rgba(255,255,255,0.2); }
+    .site-name { color: var(--on-primary); font-family: var(--font-display); font-size: 16px; font-weight: 700; letter-spacing: 0.18em; flex: 1; }
+    /* Hero */
+    .page-hero { background: var(--primary); color: var(--on-primary); padding: var(--space-10) var(--space-5) var(--space-8); }
+    .page-hero .container { max-width: 860px; margin: 0 auto; }
+    .hero-label { font-size: 11px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: var(--primary-tint); margin-bottom: var(--space-3); }
+    .page-hero h1 { font-family: var(--font-display); font-size: clamp(24px, 5vw, 34px); font-weight: 800; letter-spacing: -0.3px; line-height: 1.15; color: var(--on-primary); margin-bottom: var(--space-3); }
+    .hero-meta { font-size: 14px; color: rgba(255,255,255,0.75); margin-bottom: var(--space-3); }
+    .page-hero p.hero-desc { font-size: 15px; line-height: 1.6; color: rgba(255,255,255,0.85); max-width: 580px; }
+    /* Layout */
+    .page-layout { max-width: 860px; margin: 0 auto; padding: var(--space-8) var(--space-5); display: flex; gap: var(--space-8); align-items: flex-start; flex: 1; width: 100%; }
+    /* TOC */
+    .toc { position: sticky; top: 72px; width: 185px; flex-shrink: 0; background: var(--card); border: 1px solid var(--grid-subtle); border-radius: var(--radius-md); padding: var(--space-4); box-shadow: var(--shadow-sm); }
+    .toc-title { font-size: 10px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: var(--ink-tertiary); margin-bottom: var(--space-3); display: block; }
+    .toc ol { list-style: none; }
+    .toc li { margin-bottom: 2px; display: flex; align-items: baseline; gap: 6px; }
+    .toc-num { font-size: 11px; font-weight: 700; color: var(--primary-container); min-width: 16px; }
+    .toc a { display: block; font-size: 12px; line-height: 1.4; color: var(--ink-secondary); text-decoration: none; padding: 3px 6px 3px 0; border-radius: var(--radius-sm); transition: color 0.12s; flex: 1; }
+    .toc a:hover { color: var(--primary); }
+    /* Main */
+    main { flex: 1; min-width: 0; }
+    /* Sections */
+    .guide-section { margin-bottom: var(--space-8); scroll-margin-top: 72px; }
+    .section-header { display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-5); border-bottom: 2px solid var(--primary-tint); padding-bottom: var(--space-3); }
+    .section-num-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px; border-radius: var(--radius-full); flex-shrink: 0;
+      background: var(--primary-container); color: var(--on-primary);
+      font-family: var(--font-display); font-size: 14px; font-weight: 700;
+    }
+    .section-header h2 { font-family: var(--font-display); font-size: 20px; font-weight: 700; letter-spacing: -0.1px; color: var(--primary); }
+    h3 { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--ink); margin: var(--space-6) 0 var(--space-3); }
+    h4 { font-family: var(--font-body); font-size: 14px; font-weight: 600; color: var(--ink); margin: var(--space-4) 0 var(--space-2); }
+    p { color: var(--ink-secondary); margin-bottom: var(--space-4); line-height: 1.7; }
+    p:last-child { margin-bottom: 0; }
+    strong { color: var(--ink); font-weight: 600; }
+    ul, ol { padding-left: var(--space-6); margin-bottom: var(--space-4); color: var(--ink-secondary); }
+    li { margin-bottom: var(--space-2); line-height: 1.6; }
+    /* Callouts */
+    .callout { border-left: 4px solid; border-radius: var(--radius-md); padding: var(--space-4) var(--space-5); margin: var(--space-5) 0; }
+    .callout-label { font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: var(--space-2); display: block; }
+    .callout p { font-size: 14px; line-height: 1.65; margin-bottom: 0; }
+    .callout-tip { background: var(--primary-tint); border-color: var(--primary); }
+    .callout-tip .callout-label { color: var(--on-primary-tint); }
+    .callout-tip p { color: var(--on-primary-tint); }
+    .callout-remember { background: var(--accent-warm-bg); border-color: var(--accent-warm); }
+    .callout-remember .callout-label { color: var(--accent-warm); }
+    .callout-remember p { color: #5a2c00; }
+    .callout-important { background: var(--status-error-bg); border-color: var(--status-error); }
+    .callout-important .callout-label { color: var(--status-error); }
+    .callout-important p { color: #6b0000; }
+    .callout-offline { background: var(--surface-low); border-color: var(--ink-secondary); }
+    .callout-offline .callout-label { color: var(--ink-secondary); }
+    .callout-offline p { color: var(--ink-secondary); }
+    /* Tables */
+    .data-table { width: 100%; border-collapse: collapse; margin: var(--space-4) 0; font-size: 13px; }
+    .data-table th { background: var(--surface-high); color: var(--ink-secondary); font-size: 11px; font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; padding: 8px 10px; text-align: left; border-bottom: 2px solid var(--grid); }
+    .data-table td { padding: 8px 10px; border-bottom: 1px solid var(--grid-subtle); vertical-align: top; line-height: 1.55; }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table td:first-child { font-weight: 600; color: var(--ink); }
+    .data-table tr:nth-child(even) td { background: var(--surface-low); }
+    /* Download link */
+    .download-link { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--primary); text-decoration: none; font-size: 14px; font-weight: 600; padding: var(--space-2) var(--space-4); border: 1px solid var(--primary); border-radius: var(--radius-sm); transition: background 0.12s, color 0.12s; margin-bottom: var(--space-6); }
+    .download-link:hover { background: var(--primary); color: var(--on-primary); }
+    /* Install blocks */
+    .install-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin: var(--space-4) 0; }
+    .install-block { background: var(--surface-low); border: 1px solid var(--grid-subtle); border-radius: var(--radius-md); padding: var(--space-4); }
+    .install-block h4 { font-size: 13px; font-weight: 700; color: var(--ink); margin: 0 0 var(--space-3); }
+    .install-block ol { margin: 0; padding-left: var(--space-5); font-size: 13px; line-height: 1.6; }
+    .install-block li { margin-bottom: var(--space-2); }
+    /* Closing callout */
+    .closing-callout { background: var(--surface-low); border: 1px solid var(--grid-subtle); border-radius: var(--radius-md); padding: var(--space-5); text-align: center; margin-top: var(--space-8); }
+    .closing-callout .closing-motto { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--primary); margin-bottom: var(--space-3); font-style: italic; }
+    .closing-callout p { font-size: 14px; color: var(--ink-secondary); font-style: italic; }
+    /* Footer */
+    footer { background: var(--ink); color: rgba(255,255,255,0.55); padding: var(--space-6) var(--space-5); font-size: 13px; margin-top: auto; }
+    .footer-inner { max-width: 860px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3); }
+    .footer-inner a { color: var(--primary-tint); text-decoration: none; }
+    .footer-licence { font-size: 12px; opacity: 0.7; }
+    @media (max-width: 680px) {
+      .page-layout { flex-direction: column; }
+      .toc { position: static; width: 100%; }
+      .install-grid { grid-template-columns: 1fr; }
+      .section-header h2 { font-size: 17px; }
+    }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="/guide/" class="back-link">← Guides</a>
+    <div class="header-divider"></div>
+    <span class="site-name">GEMBA SUITE</span>
+  </div>
+</header>
+
+<div class="page-hero">
+  <div class="container">
+    <p class="hero-label">Full Guide · VSM for Pathology &amp; Diagnostics</p>
+    <h1>Seeing Past the Chaos<br>Pathology &amp; Diagnostics Edition</h1>
+    <p class="hero-meta">v6.3 · April 2026 · David Clark</p>
+    <p class="hero-desc">A practical guide to capturing facts and data in your laboratory to create professional Value Stream Maps of diagnostic pathways. Covers VSM methodology tailored to histopathology, haematology, and diagnostic laboratories, gemba observation skills, and a complete walkthrough of Gemba-VSM v6.3.</p>
+  </div>
+</div>
+
+<div class="page-layout">
+
+  <nav class="toc" aria-label="Contents">
+    <span class="toc-title">Contents</span>
+    <ol>
+      <li><span class="toc-num">1</span><a href="#s1">Overview</a></li>
+      <li><span class="toc-num">2</span><a href="#s2">VSM for Pathology &amp; Diagnostics</a></li>
+      <li><span class="toc-num">3</span><a href="#s3">The 8 Wastes in the Laboratory</a></li>
+      <li><span class="toc-num">4</span><a href="#s4">How to Map a Laboratory Process</a></li>
+      <li><span class="toc-num">5</span><a href="#s5">Developing Your Gemba Skills</a></li>
+      <li><span class="toc-num">6</span><a href="#s6">Installing Gemba-VSM</a></li>
+      <li><span class="toc-num">7</span><a href="#s7">Using Gemba-VSM</a></li>
+      <li><span class="toc-num">8</span><a href="#s8">Parallel Paths</a></li>
+      <li><span class="toc-num">9</span><a href="#s9">Variation Capture</a></li>
+      <li><span class="toc-num">10</span><a href="#s10">AI Coaching Export</a></li>
+      <li><span class="toc-num">11</span><a href="#s11">Saving, Exporting &amp; Importing</a></li>
+      <li><span class="toc-num">12</span><a href="#s12">References &amp; Further Reading</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+    <a href="Seeing_Past_the_Chaos_Guide_Pathology_v6_0.docx" class="download-link" download>↓ Download as Word document</a>
+
+    <!-- Section 1 -->
+    <div class="guide-section" id="s1">
+      <div class="section-header">
+        <span class="section-num-badge">1</span>
+        <h2>Overview</h2>
+      </div>
+<p>This guide introduces value stream mapping (VSM) for pathology and diagnostic laboratory teams. It walks you through using Gemba-VSM v6.3 to capture data in your laboratory, build professional current and future state maps of diagnostic pathways, and export your work for printing, AI coaching, and further analysis.</p>
+<p>Value stream mapping makes visible what patients and clinicians experience but laboratory staff rarely see as a whole — the delays between receipt and result, the batching that turns a 20-minute stain into a 2-day turnaround, the handoffs between sections, the waits for equipment, reagents, and authorisation that stretch a diagnostic pathway far beyond its touch time.</p>
+<h3>Who is this guide for?</h3>
+<p>Biomedical scientists, medical laboratory assistants, pathologists, laboratory managers, and anyone involved in improving pathology and diagnostic laboratory processes. No prior lean experience is required.</p>
+<h3>What you will learn</h3>
+<ul>
+<li>How to map a diagnostic pathway from specimen receipt to report authorisation</li>
+<li>How to identify the 8 wastes in the laboratory using DOWNTIME</li>
+<li>How to walk the laboratory and collect accurate process data</li>
+<li>How to develop the observation skills that make a good map possible</li>
+<li>How to build current state and future state maps</li>
+<li>How to map parallel paths such as IHC staining or send-away referrals</li>
+<li>How to measure cycle time variation across staff and shifts</li>
+<li>How to record WIP range data showing specimen flow patterns through the day</li>
+<li>How to use the AI Lean Sensei Coaching Export for guided reflection</li>
+<li>How to install and use Gemba-VSM on your phone or computer</li>
+<li>How to save, export and share your value stream maps</li>
+</ul>
+<div class="callout callout-tip"><span class="callout-label">Tip</span><p>When you first open the tool, it loads an example value stream (Brew &amp; Go Tea Shop) so you can explore the features before mapping your own laboratory process.</p></div>
+    </div>
+    <!-- Section 2 -->
+    <div class="guide-section" id="s2">
+      <div class="section-header">
+        <span class="section-num-badge">2</span>
+        <h2>Value Stream Mapping for Pathology &amp; Diagnostics</h2>
+      </div>
+<h3>What is a value stream in pathology?</h3>
+<p>A value stream is the complete sequence of steps a specimen follows from the point of receipt in the laboratory to the point where an authorised report reaches the requesting clinician. Every processing step, every stain, every quality check, every wait for a pathologist, every batch hold is part of the value stream.</p>
+<p>In pathology, the customer is the clinician (and ultimately the patient) who needs an accurate, timely diagnostic result. Value is any activity that directly contributes to producing that result. Everything else is waste.</p>
+<h3>Why VSM matters in the laboratory</h3>
+<p>Laboratory processes are deceptive. They appear orderly and scientific, but when you map them you discover that the actual hands-on work — the cutting, the staining, the microscopy, the reporting — accounts for a tiny fraction of the total turnaround time. The rest is waiting: waiting for batches to fill, waiting in queues, waiting for equipment, waiting for reagents, waiting for pathologist availability.</p>
+<p>A value stream map makes this visible. It shows you the ratio of touch time to total time, and that ratio is usually shocking. Process efficiencies of 1–5% are common in histopathology. This is not a criticism of laboratory staff — it is a property of the system they work within. The map reveals the system, and the system is what needs to change.</p>
+<h3>Key VSM Concepts</h3>
+<p><strong>Cycle Time (C/T) —</strong> The time it takes to complete one unit of work at a process step. In the laboratory, this means timing one specimen or one slide through the step — not the batch. Measured by direct observation at the bench, not from LIMS timestamps.</p>
+<p><strong>Lead Time —</strong> The total elapsed time from when a specimen arrives at a step (enters the queue) to when it leaves. Lead time = cycle time + all waiting. In a batch processor like a tissue processor, lead time includes the queue time before the batch starts.</p>
+<p><strong>Takt Time —</strong> The rate at which you need to complete specimens to meet demand. Calculated as: Available working time per day ÷ Specimen demand per day.</p>
+<p><strong>Batch Size —</strong> The number of specimens processed together. Large batches create delays downstream. A tissue processor running 100 cassettes overnight creates a 100-specimen batch that must queue through embedding and microtomy the next morning.</p>
+<p><strong>Process Efficiency —</strong> The ratio of value-added (touch) time to total lead time. In histopathology, this is typically 1–5%. The gap between touch time and lead time is where improvement lives.</p>
+<h3>Current State vs Future State</h3>
+<p>You always start by mapping the current state — what actually happens today, based on direct observation. This is not what the SOP says should happen, or what the quality manual describes. It is what you see when you walk the laboratory yourself.</p>
+<p>Once you understand the current state, you design the future state — what the process should look like with waste removed. Use the ECSS technique:</p>
+<ul>
+<li><strong>Eliminate</strong> — can any steps be removed entirely?</li>
+<li><strong>Combine</strong> — can steps be merged together?</li>
+<li><strong>Simplify</strong> — can remaining steps be made simpler?</li>
+<li><strong>Sequence</strong> — is the order of steps optimal for flow?</li>
+</ul>
+<div class="callout callout-remember"><span class="callout-label">Remember</span><p>The future state map is a blueprint for improvement, not a wish list. Every change should be implemented through PDCA cycles and tested before being standardised.</p></div>
+<h3>Going to the Gemba</h3>
+<p>Gemba (現場) is a Japanese word meaning “the actual place” — where the work happens. In pathology, the gemba is the bench, the cut-up room, the staining area, the microscope. Value stream mapping must be based on direct observation, not on LIMS data or turnaround time reports. Walk the specimen journey yourself.</p>
+<ul>
+<li>Keep your value stream map high level — don’t get lost in sub-steps within embedding or microtomy</li>
+<li>Focus on the main pathway — what happens to a routine specimen 80% of the time</li>
+<li>Collect true and accurate information by walking through the laboratory yourself</li>
+</ul>
+    </div>
+    <!-- Section 3 -->
+    <div class="guide-section" id="s3">
+      <div class="section-header">
+        <span class="section-num-badge">3</span>
+        <h2>The 8 Wastes in the Laboratory — DOWNTIME</h2>
+      </div>
+<p>Waste (muda) is any activity that does not add value from the customer’s perspective. The acronym DOWNTIME captures all eight wastes. Here is how they appear in the pathology laboratory:</p>
+<table class="data-table"><thead><tr><th></th><th>Waste</th><th>Laboratory Example</th></tr></thead><tbody><tr><td><strong>D</strong></td><td><strong>Defects</strong></td><td>Labelling errors, section quality issues requiring re-cuts, discrepant results requiring repeat testing</td></tr><tr><td><strong>O</strong></td><td><strong>Overproduction</strong></td><td>Cutting more levels than requested, running panels not indicated, producing reports before they can be reviewed</td></tr><tr><td><strong>W</strong></td><td><strong>Waiting</strong></td><td>Specimens queuing for processing, slides waiting for staining, cases waiting for pathologist availability</td></tr><tr><td><strong>N</strong></td><td><strong>Non-utilized Talent</strong></td><td>Qualified scientists performing tasks that could be done by support staff, pathologists doing clerical work</td></tr><tr><td><strong>T</strong></td><td><strong>Transportation</strong></td><td>Specimens moved between reception, processing, cut-up, microtomy, staining, and reporting areas</td></tr><tr><td><strong>I</strong></td><td><strong>Inventory</strong></td><td>Cassettes accumulating before the processor, slides banking before staining, cases building in the reporting queue</td></tr><tr><td><strong>M</strong></td><td><strong>Motion</strong></td><td>Scientists walking to distant printers, searching for reagents, retrieving blocks from remote storage</td></tr><tr><td><strong>E</strong></td><td><strong>Extra Processing</strong></td><td>Unnecessary quality checks duplicating earlier checks, re-entering data already in the LIMS, manual workarounds for system limitations</td></tr></tbody></table>
+<div class="callout callout-tip"><span class="callout-label">Tip</span><p>When walking the laboratory, actively look for each of these 8 wastes at every process step. Gemba-VSM lets you tick the DOWNTIME wastes you observe directly in the data capture form.</p></div>
+    </div>
+    <!-- Section 4 -->
+    <div class="guide-section" id="s4">
+      <div class="section-header">
+        <span class="section-num-badge">4</span>
+        <h2>How to Map a Laboratory Process</h2>
+      </div>
+<p>This section describes the methodology. Section 7 shows how to do each step using Gemba-VSM v6.3.</p>
+<h3>Step 1: Define the Scope</h3>
+<p>Establish the start and stop points of the value stream. A typical histopathology scope runs from specimen receipt (supplier) to authorised report reaching the clinician (customer). Define the specimen type: all specimens, or a specific family such as GI biopsies or skin excisions? Agree the scope with the team before you start walking.</p>
+<h3>Step 2: Walk the Specimen Journey</h3>
+<p>Go to the laboratory and walk the entire process from reception to report authorisation. Follow the specimen, not the person. Observe what actually happens at each bench and workstation. Do not rely on SOPs, LIMS data, or what people tell you in the office. Take your phone with Gemba-VSM v6.3 installed — it is your data collection tool, your stopwatch, and your camera in one. You enter the facts you observe, and the tool draws the map and calculates the metrics for you.</p>
+<h3>Step 3: Document the Process Steps</h3>
+<p>Record each major process step in sequence: reception, grossing/cut-up, processing, embedding, microtomy, staining, coverslipping, quality check, distribution, reporting, authorisation. For each step, enter the data into Gemba-VSM v6.3: cycle time (timed by direct observation at the bench), batch size, defect rate, uptime, number of operators, and the trigger that starts the step. The tool stores each step and builds the process box and data box on the map automatically.</p>
+<h3>Step 4: Record Inventory, Delays and Variation</h3>
+<p>Between each process step, count the work-in-progress and measure the delay time. Count the cassettes waiting for the processor, the blocks waiting for microtomy, the slides accumulating before staining, the cases in the reporting queue. Enter the WIP count and delay for each step in Gemba-VSM v6.3 — the tool renders inventory triangles and delay segments on the timeline for you. This is where most of the turnaround time hides.</p>
+<p>Capture the variation you observe. If WIP fluctuates through the day (e.g. 5 blocks at 8am, 80 at 2pm after the processor run), record the range and peak timing. If cycle time differs between operators, log multiple observations.</p>
+<h3>Step 5: Map Information Flows</h3>
+<p>Document how information moves through the laboratory. Which LIMS screens drive each step? Are there paper request forms alongside electronic orders? Are results communicated by LIMS, by phone, by email? Select the flow types for each step in Gemba-VSM v6.3, and the tool renders them on the map. Information flow problems — missing clinical details, unclear requests, delayed authorisations — are a major source of waste.</p>
+<h3>Step 6: Identify Waste</h3>
+<p>At each step, identify the DOWNTIME wastes you observe. Tick the wastes you see in Gemba-VSM v6.3’s data capture form and flag improvement opportunities — the tool marks them as kaizen bursts on the map.</p>
+<h3>Step 7: Identify Parallel Paths</h3>
+<p>Look for work that leaves the main specimen pathway at one step and returns later. In histopathology, the most common parallel paths are immunohistochemistry (IHC), special stains, molecular testing, and send-away referrals. Each of these has its own lead time and often determines when the final report can be authorised. Add these as parallel paths in Gemba-VSM v6.3 and the tool renders them below the timeline on your map (see Section 8).</p>
+<h3>Step 8: Review the Timeline</h3>
+<p>Gemba-VSM v6.3 calculates the timeline automatically from the data you have entered. It adds up all the cycle times to give you the total value-added time, adds up all the delays to give you the total non-value-added time, and calculates process efficiency. In histopathology, expect the result to be low — this is the improvement opportunity, not a problem to defend.</p>
+<h3>Step 9: Design the Future State</h3>
+<p>Using ECSS (Eliminate, Combine, Simplify, Sequence), design a future state map with waste removed. Copy your current state to future state in Gemba-VSM v6.3, then edit the steps to reflect improvements. The tool recalculates the projected metrics so you can see the impact of your proposed changes. Create an action plan of PDCA cycles to implement them.</p>
+<div class="callout callout-remember"><span class="callout-label">Remember</span><p>Always map the current state first. Resist the temptation to jump straight to solutions before you truly understand what is happening today.</p></div>
+    </div>
+    <!-- Section 5 -->
+    <div class="guide-section" id="s5">
+      <div class="section-header">
+        <span class="section-num-badge">5</span>
+        <h2>Developing Your Gemba Skills</h2>
+      </div>
+<p>Value stream mapping is a skill, and like any skill it develops through practice. Your first map will be incomplete. Your second will be better. Your tenth will reveal things you could not have seen on your first visit. This is normal and expected — developing the ability to observe a laboratory process clearly, without preconception or judgement, takes time and deliberate effort.</p>
+<h3>Facts, Not Just Data</h3>
+<p>Taiichi Ohno drew a sharp distinction between data and facts. Data is what arrives on a report, in a LIMS extract, or on a dashboard. It tells you what the system recorded. Facts are what you see when you stand at the bench and watch the work happen with your own eyes.</p>
+<p>The two are not always the same. Your LIMS may record that a specimen was “in processing” for 14 hours. But when you stand in the laboratory and watch, you see that the tissue processor ran for 12 hours overnight, the cassettes sat in the processor for 90 minutes after the run finished because no one was available to unload, and the specimens then waited another 40 minutes in a tray before embedding started. The LIMS says 14 hours. The facts say 12 hours of processing and 2 hours of waste with specific, observable causes.</p>
+<p>This is why going to the gemba is non-negotiable. You cannot map a laboratory value stream from a LIMS report. You have to go and see.</p>
+<h3>Learning to Observe Without Judgement</h3>
+<p>The hardest skill in gemba observation is seeing what is actually happening without immediately judging it. When you see a scientist using a workaround — perhaps handwriting case numbers on slides because the printer is unreliable, or batching cases in a way that differs from the SOP — it is natural to think “that’s wrong.” Resist that impulse. Instead, ask yourself: why does this workaround exist? What is the person compensating for?</p>
+<p>Workarounds are intelligent responses to broken systems. They tell you where the standard process has failed the person doing the work. Record them as facts, not as problems with individuals.</p>
+<h3>What to Observe</h3>
+<p>Beyond the cycle times and batch sizes, look for these things at each bench and workstation:</p>
+<ul>
+<li><strong>Workarounds</strong> — any place where people have developed their own method because the standard process does not work. Handwritten labels, unofficial tracking sheets, verbal agreements about case priority.</li>
+<li><strong>Equipment and materials</strong> — is everything needed for the step available, in the right place, at the right time? Watch for searching for reagents, waiting for instruments to become free, using backup equipment because the primary is down.</li>
+<li><strong>Layout and motion</strong> — how far do scientists walk between the microtome and the water bath, between cut-up and the specimen fridge, between the microscope and the nearest printer? Draw a spaghetti diagram if the motion is significant.</li>
+<li><strong>Information flow</strong> — how does the scientist know what to do next? Is the LIMS worklist clear? Are request forms complete? Watch for phone calls chasing missing clinical details, manual lookups to find previous results, and delays caused by unclear or incomplete requests.</li>
+<li><strong>Interruptions</strong> — how often is the person pulled away from the task? Urgent add-ons, phone queries, equipment alarms. Interruptions destroy flow and increase error risk.</li>
+<li><strong>Variation between people</strong> — observe the same step performed by different scientists. Do they embed in the same orientation? Do they cut at the same speed? The differences tell you whether a standard exists and whether it is followed.</li>
+</ul>
+<h3>A Worked Example: Breast Core Biopsy with IHC</h3>
+<p>Consider mapping the pathway for a breast core biopsy. The main value stream runs from specimen receipt through grossing, processing, embedding, microtomy, H&amp;E staining, and initial reporting. But if the pathologist identifies invasive carcinoma on the H&amp;E, the case needs immunohistochemistry for oestrogen receptor (ER), progesterone receptor (PR), and HER2 status before the report can be finalised and the case discussed at the breast MDT.</p>
+<p>This IHC work is a parallel path. It departs the main stream at the point where the pathologist requests additional stains (typically after initial microscopy) and returns when the IHC slides are ready for the pathologist to review alongside the H&amp;E. The main stream waits — the report cannot be authorised without the receptor status. In Gemba-VSM, you would record this as a parallel path with the departure step at “Initial Reporting / Microscopy” and the return step at “Final Reporting.”</p>
+<p>If the IHC process is complex enough to warrant its own map — with its own cut-up for controls, section cutting, antigen retrieval, staining runs, and quality assessment — create it as a full VSM child project. If you simply want to record that IHC takes two working days, use a quick label with the lead time entered manually. Either way, the parallel path is now visible on the map and its lead time is reflected in the timeline.</p>
+<p>When you walk this pathway at the gemba, you will discover the facts that no LIMS report contains: whether the IHC request is raised electronically or verbally, how long the cut sections wait before staining begins, whether the staining run is batched with other cases or run on demand, how the results are communicated back to the reporting pathologist, and where the real delays hide within what the system records as a single “IHC” step.</p>
+<h3>Building Trust</h3>
+<p>The people doing the work need to trust you. They need to understand that your intention is to help them and empower them, not to judge or blame them. If scientists feel they are being assessed, they will perform the work differently — often more carefully and slowly than normal — and you will record a process that does not exist outside of your observation.</p>
+<p>Be transparent about what you are doing and why. Explain that you are mapping the process, not measuring individuals. Make clear that the purpose is to find problems in the system so they can be fixed — problems belong to the process, not to people. Share what you are recording. Invite the team to correct you when you have misunderstood something, because you will.</p>
+<p>The best value stream maps are created with the laboratory team, not about them. When the people who do the work contribute to the map, they see the waste for themselves. They understand why turnaround times are what they are. They generate the improvement ideas. This is the foundation of sustainable change — the people who own the process own the improvement.</p>
+<div class="callout callout-remember"><span class="callout-label">Remember</span><p>Your first gemba walk is never your last. Expect to return multiple times, at different times of day, with different workloads, observing different staff. A single observation is a snapshot. The truth emerges over repeated visits.</p>
+<p>If you are unsure whether to record something, record it. You can always discard an observation later. You cannot go back and re-observe a moment that has passed.</p></div>
+    </div>
+    <!-- Section 6 -->
+    <div class="guide-section" id="s6">
+      <div class="section-header">
+        <span class="section-num-badge">6</span>
+        <h2>Installing Gemba-VSM on Your Device</h2>
+      </div>
+<p>Gemba-VSM is a Progressive Web App (PWA). It runs in your browser and can be installed on your phone or tablet for full-screen, offline use at the gemba. No app store required.</p>
+<p><strong>What you need to get started:</strong> A phone or computer with a modern browser and internet access. Open https://gembasuite.org/vsm in your browser.</p>
+<h3>Install on Android</h3>
+<ol type="1">
+<li><strong>Open Chrome.</strong> Navigate to the Gemba-VSM URL in Chrome on your Android phone.</li>
+<li><strong>Install the app.</strong> You will see an install banner at the bottom. Tap Install. If no banner appears, tap the three-dot menu (⋮) and select “Install app” or “Add to Home screen”.</li>
+<li><strong>Launch.</strong> The Gemba-VSM icon will appear on your home screen. It opens full-screen with no browser chrome.</li>
+</ol>
+<h3>Install on iPhone / iPad</h3>
+<ol type="1">
+<li><strong>Open Safari.</strong> This only works in Safari, not Chrome on iOS. Navigate to the Gemba-VSM URL.</li>
+<li><strong>Add to Home Screen.</strong> Tap the Share button (square with arrow), scroll down and tap “Add to Home Screen”, then tap Add.</li>
+<li><strong>Launch.</strong> The app icon appears on your home screen and launches full-screen.</li>
+</ol>
+<table class="data-table"><thead><tr><th>OFFLINE USE</th></tr></thead><tbody><tr><td>After installing, the app works offline. Load it once with internet access to cache the files, then use it at the gemba even without signal. Always export your data as JSON after a gemba walk — browser storage can be cleared if the phone runs low on space.</td></tr></tbody></table>
+    </div>
+    <!-- Section 7 -->
+    <div class="guide-section" id="s7">
+      <div class="section-header">
+        <span class="section-num-badge">7</span>
+        <h2>Using Gemba-VSM to Map Your Laboratory Process</h2>
+      </div>
+<p>Gemba-VSM has six main tabs: Gemba Capture, Process Steps, Current State Map, Future Steps, Future State Map, and Compare. Work through them in order.</p>
+<h3>Example Data</h3>
+<p>When you first open Gemba-VSM, it loads an example value stream — the Brew &amp; Go Tea Shop — with five current state steps and four future state steps already populated. This lets you explore the mapping, comparison, and export features before creating your own project. Create a new blank project when you are ready to map your own laboratory process.</p>
+<h3>Gemba Capture Tab</h3>
+<p>This is where you enter all your data. It has two sections:</p>
+<h3>Value Stream Information</h3>
+<p>Fill this in once for each map. Enter the name of the value stream (e.g. “Histopathology Biopsy Pathway”), the specimen type, who mapped it, the date, supplier (specimen source), customer (requesting clinician/MDT), specimen demand per day, and available working time per day in seconds.</p>
+<h3>IT Systems Registry</h3>
+<p>Register the IT systems used across your laboratory (e.g. LIMS, EPR, Order Comms, PACS, digital pathology platform). Quick-add buttons are provided for common healthcare systems. Registered systems appear as checkboxes when you select “Electronic” information flow for a step.</p>
+<h3>Add Process Step</h3>
+<p>For each step in the specimen pathway, capture the data using the fields described in the data table below. Key fields include process step name, cycle time (timed at the bench), batch size, defect/error rate, WIP/inventory count, delay before step, information flow type, DOWNTIME wastes observed, and gemba notes and photos.</p>
+<div class="callout callout-tip"><span class="callout-label">Tip</span><p>After entering each step, click “+ Add Step”. The form clears ready for the next step. The stats bar at the bottom updates automatically as you add steps.</p></div>
+<h3>Process Steps Tab</h3>
+<p>This tab shows all your current state process steps in a list. You can drag and drop to reorder steps, edit any step using the pencil button, or delete a step. Each step displays its cycle time, batch size, defect rate, WIP, delay, waste badges, information flow badges, IT system badges, kaizen burst flags, and variation badges.</p>
+<h3>Current State Map Tab</h3>
+<p>This tab renders your data as a professional SVG value stream map showing process boxes, data boxes, inventory triangles, push/pull/FIFO connectors, information flow rails, kaizen bursts, parallel path boxes below the timeline, and the sawtooth timeline with summary metrics.</p>
+<p>The toolbar provides buttons to Print the map, download as SVG, and add parallel paths.</p>
+<h3>Future State Map Tab</h3>
+<p>Click “Copy Current → Future” to duplicate your current state data, including any parallel paths. Then modify the future state to reflect improvements.</p>
+<h3>Compare Tab</h3>
+<p>This tab shows current and future state maps side by side for comparison.</p>
+    </div>
+    <!-- Section 8 -->
+    <div class="guide-section" id="s8">
+      <div class="section-header">
+        <span class="section-num-badge">8</span>
+        <h2>Parallel Paths — Mapping Concurrent Processes</h2>
+      </div>
+<p>In many value streams, work does not follow a single linear path. At certain steps, an item leaves the main process flow, undergoes a separate process in parallel, and returns at a later step. The main stream may wait for this parallel process to complete, or it may continue independently.</p>
+<p>In the pathology laboratory, parallel paths are extremely common:</p>
+<ul>
+<li>Immunohistochemistry (IHC) — additional stains requested after initial H&amp;E reporting, results needed before final authorisation</li>
+<li>Special stains — PAS, reticulin, or other histochemical stains requested to support diagnosis</li>
+<li>Molecular testing — specimens sent for FISH, PCR, or NGS with results returning days or weeks later</li>
+<li>Send-away referrals — cases referred to specialist centres for expert opinion</li>
+<li>Decalcification — bone specimens requiring acid treatment before processing can continue</li>
+</ul>
+<p>Without parallel paths on the map, these concurrent processes are invisible. The delay they introduce appears as an unexplained gap on the timeline. Making them visible is the first step to managing them.</p>
+<h3>Two Ways to Record a Parallel Path</h3>
+<p><strong>Quick Label</strong> — a named box on the map with a manually entered lead time. Use this when you know the parallel process exists and roughly how long it takes, but you do not need to map it in detail.</p>
+<p><strong>Full VSM (Child Project)</strong> — a new, linked VSM project is created automatically. You map the parallel path as a complete value stream in its own right. Use this when the parallel process is complex enough to warrant its own map, such as a full IHC workflow.</p>
+<h3>Creating a Parallel Path</h3>
+<p>Click the “Add Parallel Path” button in the map toolbar. A modal opens where you enter the label, select departure and return steps, indicate whether the main stream waits, and choose quick label or full VSM.</p>
+<h3>How Parallel Paths Appear on the Map</h3>
+<p>Each parallel path renders as a labelled box below the timeline, positioned between the departure and return steps, connected by dashed arrows. Multiple parallel paths stack vertically.</p>
+<h3>Wait Time and Its Effect on Metrics</h3>
+<p>If the main stream waits for the parallel path, its lead time is added to the delay between departure and return steps, affecting total lead time and process efficiency calculations.</p>
+<h3>Navigating Between Parent and Child Projects</h3>
+<p>From the parent, click the parallel path box to navigate to the child project. From the child, a back-link in the project bar returns you to the parent.</p>
+<div class="callout callout-tip"><span class="callout-label">Tip</span><p>Start with a quick label to capture the parallel path’s existence and estimated lead time during your gemba walk. You can always upgrade it to a full VSM child project later when you are ready to map the parallel process in detail.</p></div>
+    </div>
+    <!-- Section 9 -->
+    <div class="guide-section" id="s9">
+      <div class="section-header">
+        <span class="section-num-badge">9</span>
+        <h2>Variation Capture — Cycle Time Observations &amp; WIP Range</h2>
+      </div>
+<p>A single cycle time number is a snapshot. What you actually see at the gemba is a distribution — one scientist embeds in 2 minutes, another takes 5, the same person takes 3 minutes with simple cassettes and 8 minutes with complex specimens. The gap between those numbers is where the coaching conversation lives.</p>
+<h3>Cycle Time Observation Log</h3>
+<p>Below the cycle time field, a collapsible “Add observations” panel lets you record multiple timed observations, each with context (who, what time, what conditions). The app calculates min, max, mean, and range automatically.</p>
+<h3>Manual Range Fallback</h3>
+<p>If you did not capture individual observations but know the approximate range, expand “Or enter range manually” to enter min, typical, and max values with a note.</p>
+<h3>WIP Range</h3>
+<p>Below the WIP/Inventory field, record the minimum and maximum WIP observed with peak timing. “5 blocks at 8am, 80 at 2pm after the processor run” is dramatically more useful than “WIP: 40 (average).”</p>
+<h3>Where Variation Data Appears</h3>
+<ul>
+<li>Step list — variation badges alongside each step</li>
+<li>SVG data box — C/T variation range in parentheses</li>
+<li>AI coaching export — individual observations for coaching</li>
+<li>CSV/Excel export — additional columns</li>
+<li>JSON export — full observation data preserved</li>
+</ul>
+<div class="callout callout-tip"><span class="callout-label">Tip</span><p>You do not have to capture variation data — the panels start collapsed and add zero extra taps for a single value. But when you do capture variation, the coaching conversations become significantly richer.</p></div>
+    </div>
+    <!-- Section 10 -->
+    <div class="guide-section" id="s10">
+      <div class="section-header">
+        <span class="section-num-badge">10</span>
+        <h2>AI Lean Sensei Coaching Export</h2>
+      </div>
+<p>Gemba-VSM can generate a structured coaching prompt from your data. Copy it into a free AI assistant (Microsoft Copilot, Claude, or Google Gemini) for guided gemba reality validation.</p>
+<h3>How It Works</h3>
+<p>Click the “AI Coach” button in the header. Choose a coaching tier (Sensei Prep for experienced coaches, Facilitator Coaching for team leaders), select your AI platform, optionally describe your work area context and attach a photo, then preview and copy the prompt.</p>
+<div class="callout callout-important"><span class="callout-label">Important</span><p>The AI is instructed to coach, not solve. It will never suggest solutions — those must come from the people who do the work. It will never critique individuals — problems belong to the process, not people.</p></div>
+    </div>
+    <!-- Section 11 -->
+    <div class="guide-section" id="s11">
+      <div class="section-header">
+        <span class="section-num-badge">11</span>
+        <h2>Saving, Exporting &amp; Importing</h2>
+      </div>
+<h3>Project Management</h3>
+<p>The dark project bar below the header lets you manage multiple value stream maps. Each project stores its own metadata, steps, and parallel paths independently. Data auto-saves as you work.</p>
+<div class="callout callout-important"><span class="callout-label">Important</span><p>Browser storage can be cleared by your phone if storage runs low. Always export JSON after completing a gemba walk. The JSON file is your permanent backup.</p></div>
+<h3>JSON Export</h3>
+<p>Click “JSON” to download a complete backup containing all metadata, steps, variation data, parallel paths, and photos. Re-import on any device.</p>
+<p><strong>When to export:</strong> After every gemba walk. Before switching devices. Before clearing your browser. Before deleting any project.</p>
+<h3>CSV / Excel Export</h3>
+<p>Click “Excel” for a CSV file including metadata, summary statistics, full data table with variation columns, and parallel paths section.</p>
+<h3>SVG Export</h3>
+<p>Download the map as a scalable vector graphic for documents, presentations, or printing at any size.</p>
+<h3>Printing</h3>
+<p>Click “Print Map”. Set orientation to landscape and choose “fit to page”.</p>
+<h3>Importing</h3>
+<p>Click “Import” to load a JSON file. Creates a new project automatically — never overwrites existing data.</p>
+    </div>
+    <!-- Section 12 -->
+    <div class="guide-section" id="s12">
+      <div class="section-header">
+        <span class="section-num-badge">12</span>
+        <h2>References &amp; Further Reading</h2>
+      </div>
+<h3>Further Reading</h3>
+<p><em>NHS Improvement Diagnostic Team. “Bringing Lean to Life — Making Processes Flow in Healthcare.”</em> The VSM symbols and methodology used in Gemba-VSM are based on this resource.</p>
+<p><em>Rother, M. &amp; Shook, J. “Learning to See.”</em> The definitive guide to value stream mapping from the Lean Enterprise Institute.</p>
+<p><em>Womack, J. &amp; Jones, D. “Lean Thinking.”</em> The foundational text on lean principles.</p>
+<p><em>Liker, J. “The Toyota Way.”</em> Comprehensive overview of the Toyota Production System.</p>
+<p><em>Clark, D. “Quality Improvement in Basic Histotechnology: The Lean Approach.” Virchows Archiv, 2015.</em> Peer-reviewed paper documenting lean transformation in a histopathology laboratory: 45% reduction in turnaround time, 98% reduction in labelling errors.</p>
+<h3>Online Resources</h3>
+<p><strong>Lean Enterprise Institute (LEI)</strong> — www.lean.org</p>
+<p><strong>Lean Enterprise Academy</strong> — www.leanuk.org</p>
+<table class="data-table"><thead><tr><th>Go See · Ask Why · Respect People
+Gemba-VSM was created to make value stream mapping accessible to teams at the gemba. The best map is one created by the people who do the work, based on what they observe with their own eyes.</th></tr></thead><tbody></tbody></table>
+<p>© 2024–2026 David Clark. Licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0). These tools and guides are free for all healthcare improvement purposes. The NonCommercial restriction targets commercial resale, proprietary repackaging, and use as part of paid consultancy services. Full terms: gembasuite.org/licence</p>
+    </div>
+
+    <div class="closing-callout">
+      <div class="closing-motto">Go See · Ask Why · Respect People</div>
+      <p>The map is a tool. The real work happens at the gemba, with the people who do the work.</p>
+    </div>
+
+  </main>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div><strong>Gemba Suite</strong> — <a href="https://gembasuite.org/">gembasuite.org</a> — <a href="/feedback/">Feedback</a></div>
+    <div class="footer-licence">CC BY-NC-SA 4.0 · No patient data collected</div>
+  </div>
+</footer>
+
+</body>
+</html>

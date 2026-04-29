@@ -1,0 +1,2747 @@
+<!DOCTYPE html>
+<!--
+  ╔══════════════════════════════════════════════════════════════════╗
+  ║  Gemba-StandardWork v1.9 — Standard Work Analysis              ║
+  ║  Part of the Gemba Suite (gembasuite.org)                      ║
+  ║                                                                ║
+  ║  Created by David Clark                                        ║
+  ║                                                                ║
+  ║  © 2024–2026 David Clark. All rights reserved.                 ║
+  ║                                                                ║
+  ║  Licensed under Creative Commons Attribution-NonCommercial-    ║
+  ║  ShareAlike 4.0 International (CC BY-NC-SA 4.0)                ║
+  ║                                                                ║
+  ║  You are free to:                                              ║
+  ║    Share — copy and redistribute in any medium or format        ║
+  ║    Adapt — remix, transform, and build upon this work           ║
+  ║                                                                ║
+  ║  Under the following terms:                                    ║
+  ║    Attribution — You must give appropriate credit               ║
+  ║    NonCommercial — You may not use for commercial purposes      ║
+  ║    ShareAlike — Adaptations must use the same licence           ║
+  ║                                                                ║
+  ║  Full licence: https://creativecommons.org/licenses/by-nc-sa/  ║
+  ║  4.0/                                                          ║
+  ║                                                                ║
+  ║  Healthcare use clarification:                                 ║
+  ║  These tools are free for all healthcare improvement purposes,  ║
+  ║  including publicly funded quality improvement programmes.      ║
+  ║  The NonCommercial restriction targets commercial resale,       ║
+  ║  proprietary repackaging, and use as part of paid consultancy   ║
+  ║  services. The tools must remain freely available to end users. ║
+  ║                                                                ║
+  ║  No patient-identifiable data. Process improvement tool only.  ║
+  ║  For full terms: https://gembasuite.org/licence                ║
+  ╚══════════════════════════════════════════════════════════════════╝
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Gemba-StandardWork v1.9 — Standard Work Analysis</title>
+<meta name="theme-color" content="#181c1c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Gemba-SW">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════
+   DESIGN TOKENS — Gemba Suite v1.0
+   ═══════════════════════════════════════ */
+:root {
+  --ink:                #181c1c;
+  --ink-secondary:      #3e484c;
+  --ink-tertiary:       #6e797c;
+  --paper:              #f7faf9;
+  --card:               #ffffff;
+  --surface-low:        #f1f4f3;
+  --surface-high:       #e6e9e8;
+  --surface-dim:        #d7dbda;
+  --grid:               #bec8cc;
+  --grid-subtle:        #e0e3e2;
+  --primary:            #006172;
+  --primary-container:  #007c91;
+  --primary-tint:       #c4e5ef;
+  --primary-tint-strong:#79d3ea;
+  --on-primary:         #ffffff;
+  --on-primary-tint:    #004e5c;
+  --accent-warm:        #854a10;
+  --accent-warm-container: #a26227;
+  --accent-warm-bg:     #ffdcc3;
+  --on-accent-warm:     #ffffff;
+  --status-success:     #2e7d32;
+  --status-success-bg:  #d4edda;
+  --status-warning:     #856404;
+  --status-warning-bg:  #fff3cd;
+  --status-error:       #ba1a1a;
+  --status-error-bg:    #ffdad6;
+  --status-locked:      #9e9e9e;
+  --status-locked-bg:   #e9e9e9;
+  --status-draft:       #6e797c;
+  --status-draft-bg:    #f0f0f0;
+  --shadow-sm:          0 1px 3px rgba(24,28,28,0.06);
+  --shadow-md:          0 2px 8px rgba(24,28,28,0.08);
+  --shadow-lg:          0 4px 16px rgba(24,28,28,0.10);
+  --radius-sm:          4px;
+  --radius-md:          8px;
+  --radius-lg:          12px;
+  --radius-full:        9999px;
+  --font-display:       'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-body:          'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono:          ui-monospace, 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+  /* App-specific colours for time bars */
+  --time-manual:        #006172;
+  --time-auto:          #9e9e9e;
+  --time-walkwait:      #d4700a;
+  --va-color:           #2e7d32;
+  --nnva-color:         #856404;
+  --nva-color:          #ba1a1a;
+}
+
+/* ═══════════════════════════════════════
+   RESET & GLOBAL
+   ═══════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--paper);
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+}
+button, input, select, textarea {
+  font-family: inherit; font-size: inherit; color: inherit;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+button { cursor: pointer; border: none; background: none; }
+
+/* ═══════════════════════════════════════
+   APP HEADER
+   ═══════════════════════════════════════ */
+.app-header {
+  background: var(--ink);
+  color: var(--on-primary);
+  height: 56px;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-4);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+.app-header .app-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: -0.3px;
+  flex: 1;
+}
+.app-header .app-title span { font-weight: 400; font-size: 12px; opacity: 0.7; margin-left: 8px; }
+.header-btn {
+  color: var(--on-primary);
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  gap: 4px;
+}
+.header-btn:hover { background: rgba(255,255,255,0.1); }
+
+/* ═══════════════════════════════════════
+   PROJECT BAR (below header when project open)
+   ═══════════════════════════════════════ */
+.project-bar {
+  background: var(--primary);
+  color: var(--on-primary);
+  padding: 8px var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 13px;
+}
+.project-bar .proj-name {
+  flex: 1;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.project-bar select {
+  background: rgba(255,255,255,0.15);
+  color: var(--on-primary);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  font-size: 12px;
+  min-height: 36px;
+}
+.state-toggle {
+  display: flex;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+.state-toggle button {
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  min-height: 36px;
+}
+.state-toggle button.active {
+  background: rgba(255,255,255,0.2);
+  color: var(--on-primary);
+}
+.state-toggle button:hover { background: rgba(255,255,255,0.1); }
+
+/* ═══════════════════════════════════════
+   TAB BAR
+   ═══════════════════════════════════════ */
+.tab-bar {
+  background: var(--card);
+  border-bottom: 1px solid var(--grid-subtle);
+  display: flex;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tab-bar button {
+  padding: 12px 20px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--ink-tertiary);
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  min-height: 44px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.tab-bar button:hover { color: var(--ink-secondary); }
+.tab-bar button.active {
+  color: var(--ink);
+  border-bottom-color: var(--primary);
+}
+
+/* ═══════════════════════════════════════
+   PANELS
+   ═══════════════════════════════════════ */
+.panel { display: none; padding: var(--space-4); max-width: 900px; margin: 0 auto; }
+.panel.active { display: block; }
+
+/* ═══════════════════════════════════════
+   PROJECT LIST SCREEN
+   ═══════════════════════════════════════ */
+#projectListScreen { padding: var(--space-4); max-width: 600px; margin: 0 auto; }
+.project-card {
+  background: var(--card);
+  border: 1px solid var(--grid-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin-bottom: var(--space-3);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+.project-card:hover { box-shadow: var(--shadow-md); }
+.project-card h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--primary);
+  margin-bottom: 4px;
+}
+.project-card .meta {
+  font-size: 12px;
+  color: var(--ink-tertiary);
+}
+.project-card .actions {
+  margin-top: var(--space-2);
+  display: flex;
+  gap: var(--space-2);
+}
+.new-project-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-4);
+  background: var(--primary-container);
+  color: var(--on-primary);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 14px;
+  min-height: 52px;
+  margin-bottom: var(--space-4);
+}
+.new-project-btn:hover { background: var(--primary); }
+
+/* ═══════════════════════════════════════
+   BUTTONS (shared)
+   ═══════════════════════════════════════ */
+.btn-primary {
+  background: var(--primary-container);
+  color: var(--on-primary);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 13px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-primary:hover { background: var(--primary); }
+.btn-secondary {
+  background: transparent;
+  border: 1px solid var(--grid);
+  color: var(--ink-secondary);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 13px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-secondary:hover { background: var(--surface-low); }
+.btn-danger {
+  background: var(--status-error);
+  color: var(--on-primary);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 13px;
+  min-height: 44px;
+}
+.btn-danger:hover { opacity: 0.9; }
+.btn-ghost {
+  background: transparent;
+  color: var(--primary);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 13px;
+  min-height: 44px;
+}
+.btn-ghost:hover { background: var(--primary-tint); }
+.btn-sm {
+  padding: 4px 10px;
+  font-size: 12px;
+  min-height: 32px;
+}
+
+/* ═══════════════════════════════════════
+   FORM INPUTS
+   ═══════════════════════════════════════ */
+.form-group { margin-bottom: var(--space-4); }
+.form-group label {
+  display: block;
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--ink-secondary);
+  margin-bottom: var(--space-1);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--grid);
+  border-radius: var(--radius-sm);
+  background: var(--card);
+  min-height: 44px;
+  font-size: 14px;
+}
+.form-group textarea { min-height: 80px; resize: vertical; }
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-tint);
+}
+.form-row { display: flex; gap: var(--space-3); }
+.form-row .form-group { flex: 1; }
+
+/* ═══════════════════════════════════════
+   ELEMENT CARDS
+   ═══════════════════════════════════════ */
+.element-card {
+  background: var(--card);
+  border: 1px solid var(--grid-subtle);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-3);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.element-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  cursor: pointer;
+}
+.element-seq {
+  background: var(--primary-container);
+  color: var(--on-primary);
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.element-summary {
+  flex: 1;
+  min-width: 0;
+}
+.element-summary .desc {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.element-summary .time-info {
+  font-size: 12px;
+  color: var(--ink-tertiary);
+  margin-top: 2px;
+}
+.element-thumb {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.value-badge {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+.value-badge.va { background: var(--status-success-bg); color: var(--status-success); }
+.value-badge.nnva { background: var(--status-warning-bg); color: var(--status-warning); }
+.value-badge.nva { background: var(--status-error-bg); color: var(--status-error); }
+.element-chevron {
+  color: var(--ink-tertiary);
+  font-size: 18px;
+  transition: transform 0.15s;
+  flex-shrink: 0;
+}
+.element-card.expanded .element-chevron { transform: rotate(90deg); }
+.element-detail {
+  display: none;
+  padding: 0 var(--space-4) var(--space-4);
+  border-top: 1px solid var(--grid-subtle);
+}
+.element-card.expanded .element-detail { display: block; }
+.element-detail .detail-section {
+  margin-top: var(--space-3);
+}
+.element-detail .detail-section h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--ink-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: var(--space-2);
+}
+.time-bar {
+  display: flex;
+  height: 20px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--surface-low);
+  margin-top: var(--space-1);
+}
+.time-bar .seg-manual { background: #006172; }
+.time-bar .seg-auto { background: #9e9e9e; }
+.time-bar .seg-walkwait { background: #d4700a; }
+.time-legend {
+  display: flex;
+  gap: var(--space-4);
+  margin-top: var(--space-1);
+  font-size: 11px;
+  color: var(--ink-secondary);
+}
+.time-legend span::before {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+.time-legend .leg-manual::before { background: #006172; }
+.time-legend .leg-auto::before { background: #9e9e9e; }
+.time-legend .leg-walkwait::before { background: #d4700a; }
+.kp-item {
+  background: var(--surface-low);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  margin-bottom: var(--space-2);
+  font-size: 13px;
+}
+.kp-item .kp-reason-cat {
+  display: inline-block;
+  font-weight: 600;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 1px 6px;
+  border-radius: var(--radius-full);
+  background: var(--primary-tint);
+  color: var(--on-primary-tint);
+  margin-right: 6px;
+}
+.element-actions {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--grid-subtle);
+  flex-wrap: wrap;
+}
+
+/* ═══════════════════════════════════════
+   METRICS CARDS
+   ═══════════════════════════════════════ */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+.metric-card {
+  background: var(--primary-tint);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  text-align: center;
+}
+.metric-card .metric-value {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 28px;
+  color: var(--on-primary-tint);
+  line-height: 1.1;
+}
+.metric-card .metric-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--on-primary-tint);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-top: 4px;
+}
+.metric-card.highlight {
+  background: var(--primary);
+}
+.metric-card.highlight .metric-value,
+.metric-card.highlight .metric-label {
+  color: var(--on-primary);
+}
+
+/* ═══════════════════════════════════════
+   SVG CHART CONTAINER
+   ═══════════════════════════════════════ */
+.chart-container {
+  background: var(--card);
+  border: 1px solid var(--grid-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+  overflow-x: auto;
+}
+.chart-container h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--primary);
+  margin-bottom: var(--space-3);
+}
+
+/* ═══════════════════════════════════════
+   COMPARE TAB
+   ═══════════════════════════════════════ */
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+@media (max-width: 640px) {
+  .compare-grid { grid-template-columns: 1fr; }
+}
+.compare-col h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 2px solid var(--grid-subtle);
+}
+.compare-col.current h3 { color: var(--primary); border-color: var(--primary); }
+.compare-col.future h3 { color: var(--status-success); border-color: var(--status-success); }
+.delta-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--space-4);
+}
+.delta-table th, .delta-table td {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--grid-subtle);
+  font-size: 13px;
+}
+.delta-table th {
+  background: var(--surface-high);
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: var(--ink-secondary);
+}
+.delta-positive { color: var(--status-success); font-weight: 600; }
+.delta-negative { color: var(--status-error); font-weight: 600; }
+
+/* ═══════════════════════════════════════
+   EXPORT TAB
+   ═══════════════════════════════════════ */
+.export-section {
+  background: var(--card);
+  border: 1px solid var(--grid-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin-bottom: var(--space-3);
+}
+.export-section h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--primary);
+  margin-bottom: var(--space-3);
+}
+.export-section p {
+  font-size: 13px;
+  color: var(--ink-secondary);
+  margin-bottom: var(--space-3);
+}
+.export-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* ═══════════════════════════════════════
+   MODAL
+   ═══════════════════════════════════════ */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(24, 28, 28, 0.5);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+}
+.modal-overlay.show { display: flex; }
+.modal {
+  background: var(--card);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-6);
+  max-width: 520px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.modal h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--ink);
+  margin-bottom: var(--space-4);
+}
+.modal-actions {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: flex-end;
+  margin-top: var(--space-4);
+}
+
+/* ═══════════════════════════════════════
+   EMPTY STATE
+   ═══════════════════════════════════════ */
+.empty-state {
+  text-align: center;
+  padding: var(--space-10) var(--space-4);
+  color: var(--ink-tertiary);
+}
+.empty-state .icon { font-size: 48px; margin-bottom: var(--space-3); opacity: 0.4; }
+.empty-state h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--ink-secondary);
+  margin-bottom: var(--space-2);
+}
+.empty-state p { font-size: 14px; margin-bottom: var(--space-4); }
+
+/* ═══════════════════════════════════════
+   TOAST NOTIFICATION
+   ═══════════════════════════════════════ */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--ink);
+  color: var(--on-primary);
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 600;
+  z-index: 300;
+  opacity: 0;
+  transition: transform 0.3s, opacity 0.3s;
+  pointer-events: none;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ═══════════════════════════════════════
+   HIDDEN FILE INPUT
+   ═══════════════════════════════════════ */
+.hidden-input { display: none; }
+
+/* ═══════════════════════════════════════
+   ABOUT MODAL
+   ═══════════════════════════════════════ */
+.about-content { font-size: 13px; color: var(--ink-secondary); line-height: 1.6; }
+.about-content a { color: var(--primary); }
+.about-content .licence-text {
+  background: var(--surface-low);
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  margin-top: var(--space-3);
+  font-size: 12px;
+}
+
+/* ═══════════════════════════════════════
+   IMAGE VIEWER
+   ═══════════════════════════════════════ */
+.image-viewer-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 250;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.image-viewer-overlay.show { display: flex; }
+.image-viewer-overlay img {
+  max-width: 95vw;
+  max-height: 90vh;
+  border-radius: var(--radius-sm);
+}
+
+/* ═══════════════════════════════════════
+   PRINT STYLES
+   ═══════════════════════════════════════ */
+
+/* Abbreviation key */
+.abbrev-key {
+  display: none;
+  background: var(--card);
+  border-bottom: 1px solid var(--grid-subtle);
+  padding: 5px var(--space-4);
+  font-size: 11px;
+  color: var(--ink-secondary, #3e484c);
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  align-items: center;
+}
+@media print {
+  .abbrev-key { display: none !important; }
+}
+
+@media print {
+  body { background: white; }
+  .app-header, .project-bar, .tab-bar, .toast,
+  .modal-overlay, .image-viewer-overlay,
+  .element-actions, .btn-primary, .btn-secondary,
+  .btn-danger, .btn-ghost, #projectListScreen,
+  .no-print { display: none !important; }
+  .panel { display: none !important; max-width: none; padding: 0; margin: 0; }
+  .panel.print-active { display: block !important; }
+  .print-page {
+    page-break-after: always;
+    padding: 0;
+  }
+  .print-header {
+    border-bottom: 2px solid #006172;
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+  }
+  .print-header h1 {
+    font-family: Arial, sans-serif;
+    font-size: 18pt;
+    color: #006172;
+    margin: 0;
+  }
+  .print-header .print-meta {
+    font-size: 10pt;
+    color: #3e484c;
+    margin-top: 4px;
+  }
+  .print-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9pt;
+  }
+  .print-table th, .print-table td {
+    border: 1px solid #bec8cc;
+    padding: 4px 6px;
+    text-align: left;
+    vertical-align: top;
+  }
+  .print-table th {
+    background: #c4e5ef;
+    font-weight: 700;
+    color: #006172;
+  }
+  .print-table img {
+    max-width: 60px;
+    max-height: 60px;
+  }
+  .print-footer {
+    margin-top: 16px;
+    padding-top: 8px;
+    border-top: 1px solid #bec8cc;
+    font-size: 8pt;
+    color: #6e797c;
+  }
+  /* QMS print - landscape */
+  @page qms-landscape { size: landscape; }
+  .print-qms { page: qms-landscape; }
+  .print-qms .qms-header-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+  }
+  .print-qms .qms-header-table td {
+    border: 1px solid #bec8cc;
+    padding: 4px 8px;
+    font-size: 10pt;
+  }
+  .print-qms .qms-header-table .qms-label {
+    background: #c4e5ef;
+    font-weight: 700;
+    color: #006172;
+    width: 30%;
+  }
+
+  /* Job Instruction Sheet — landscape */
+  @page ji-landscape { size: landscape; }
+  .print-ji-landscape { page: ji-landscape; }
+  .image-gallery-page table td { vertical-align: top; }
+
+}
+
+/* ═══════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════ */
+@media (max-width: 640px) {
+  .form-row { flex-direction: column; gap: 0; }
+  .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     APP HEADER
+     ═══════════════════════════════════════ -->
+<header class="app-header">
+  <div class="app-title">Gemba-StandardWork <span>v1.9</span></div>
+  <button class="header-btn" onclick="showAbout()" title="About">ⓘ</button>
+</header>
+
+<!-- ═══════════════════════════════════════
+     PROJECT LIST SCREEN
+     ═══════════════════════════════════════ -->
+<div id="projectListScreen">
+  <button class="new-project-btn" onclick="createProject()">+ New Standard Work Project</button>
+  <div id="projectList"></div>
+  <div style="text-align:center; margin-top: var(--space-4);">
+    <button class="btn-ghost btn-sm" onclick="loadDemo()">Load Demo Project</button>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════
+     ACTIVE PROJECT SCREEN
+     ═══════════════════════════════════════ -->
+<div id="projectScreen" style="display:none;">
+  <div class="project-bar">
+    <button class="header-btn" onclick="closeProject()" title="Back to list">&#9664;</button>
+    <div class="proj-name" id="projNameDisplay"></div>
+    <div class="state-toggle" id="stateToggle">
+      <button class="active" onclick="switchState('current')">Current</button>
+      <button onclick="switchState('future')">Future</button>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <button class="active" onclick="switchTab('elements')">Elements</button>
+    <button onclick="switchTab('analysis')">Analysis</button>
+    <button id="compareTab" onclick="switchTab('compare')" style="display:none;">Compare</button>
+    <button onclick="switchTab('export')">Export</button>
+    <button onclick="switchTab('settings')">Settings</button>
+  </div>
+
+  <div id="abbrevKey" class="abbrev-key"></div>
+
+  <!-- Elements Tab -->
+  <div class="panel active" id="panel-elements">
+    <div id="elementsList"></div>
+    <button class="btn-primary" onclick="addElement()" style="width:100%; margin-top: var(--space-3); justify-content: center;">+ Add Work Element</button>
+    <div id="futureStatePrompt" style="display:none; margin-top: var(--space-4);">
+      <button class="btn-secondary" onclick="createFutureState()" style="width:100%; justify-content: center;">Create Future State</button>
+    </div>
+  </div>
+
+  <!-- Analysis Tab -->
+  <div class="panel" id="panel-analysis">
+    <div class="metrics-grid" id="metricsGrid"></div>
+    <div class="chart-container" id="combinationChart"><h3>Combination Sheet</h3><div id="comboSvg"></div></div>
+    <div class="chart-container" id="valueChart"><h3>Value Classification</h3><div id="valueSvg"></div></div>
+    <div class="chart-container" id="wasteChart"><h3>Waste Summary</h3><div id="wasteSvg"></div></div>
+    <div class="chart-container" id="kpChart"><h3>Key Points by Category</h3><div id="kpSvg"></div></div>
+  </div>
+
+  <!-- Compare Tab -->
+  <div class="panel" id="panel-compare">
+    <div class="metrics-grid" id="compareMetrics"></div>
+    <table class="delta-table" id="deltaTable"></table>
+    <div class="chart-container"><h3>Combination Sheet Comparison</h3><div id="compareComboSvg"></div></div>
+  </div>
+
+  <!-- Export Tab -->
+  <div class="panel" id="panel-export">
+    <div class="export-section">
+      <h3>Print Layouts</h3>
+      <p>Print to PDF from your browser's print dialog.</p>
+      <div class="export-btns">
+        <button class="btn-secondary" onclick="printJobInstruction()">Job Instruction Sheet</button>
+        <button class="btn-secondary" onclick="printQMS()">QMS Appendix</button>
+      </div>
+    </div>
+    <div class="export-section">
+      <h3>Document Export</h3>
+      <p>Download a Word-compatible document matching the print preview layout.</p>
+      <div class="export-btns">
+        <button class="btn-primary" onclick="exportJIDoc()">Job Instruction Sheet (.doc)</button>
+        <button class="btn-primary" onclick="exportQMSDoc()">QMS Appendix (.doc)</button>
+      </div>
+    </div>
+    <div class="export-section">
+      <h3>Project Data</h3>
+      <p style="font-size:13px;color:var(--ink-secondary);margin-bottom:8px;">Important: Backup &amp; save your project data.</p>
+      <div class="export-btns">
+        <button class="btn-secondary" onclick="exportJSON()">Export project JSON</button>
+        <button class="btn-secondary" onclick="document.getElementById('importFile').click()">Import project JSON</button>
+        <input type="file" id="importFile" class="hidden-input" accept=".json" onchange="importJSON(event)">
+      </div>
+    </div>
+    <div class="export-section">
+      <h3>VSM Import</h3>
+      <p>Import a process step from a Gemba-VSM export to set context.</p>
+      <div class="export-btns">
+        <button class="btn-secondary" onclick="document.getElementById('vsmImportFile').click()">Import from VSM</button>
+        <input type="file" id="vsmImportFile" class="hidden-input" accept=".json" onchange="importVSM(event)">
+      </div>
+      <div id="vsmContext" style="display:none; margin-top: var(--space-3);"></div>
+    </div>
+  </div>
+
+  <!-- Settings Tab -->
+  <div class="panel" id="panel-settings">
+    <div class="export-section">
+      <h3>Project Settings</h3>
+      <div id="projectSettingsForm"></div>
+    </div>
+    <div class="export-section">
+      <h3>QMS Document Metadata</h3>
+      <p>Complete these fields before generating the QMS appendix or .doc export.</p>
+      <div id="qmsForm"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PRINT CONTAINERS (hidden, populated by JS)
+     ═══════════════════════════════════════ -->
+<div class="panel" id="panel-print-ji"></div>
+<div class="panel" id="panel-print-qms"></div>
+
+<!-- ═══════════════════════════════════════
+     MODALS
+     ═══════════════════════════════════════ -->
+
+<!-- Element Editor Modal -->
+<div class="modal-overlay" id="elementModal">
+  <div class="modal" style="max-width: 560px;">
+    <h2 id="elementModalTitle">Add Work Element</h2>
+    <div id="elementForm"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('elementModal')">Cancel</button>
+      <button class="btn-primary" onclick="saveElement()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Rename Project Modal -->
+<div class="modal-overlay" id="renameModal">
+  <div class="modal">
+    <h2>Rename Project</h2>
+    <div class="form-group">
+      <label>Project Name</label>
+      <input type="text" id="renameInput">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('renameModal')">Cancel</button>
+      <button class="btn-primary" onclick="confirmRename()">Rename</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <h2>Delete Project</h2>
+    <p style="margin-bottom: var(--space-4); color: var(--ink-secondary);">This will permanently delete this standard work project and all its data. This cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('deleteModal')">Cancel</button>
+      <button class="btn-danger" onclick="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- About Modal -->
+<div class="modal-overlay" id="aboutModal">
+  <div class="modal">
+    <h2>About Gemba-StandardWork</h2>
+    <div class="about-content">
+      <p><strong>Gemba-StandardWork v1.9</strong></p>
+      <p>Standard work documentation and analysis tool for healthcare improvement. Document work elements, analyse time and waste, model improved processes, and export for your quality management system.</p>
+      <p>Part of the <a href="https://gembasuite.org" target="_blank">Gemba Suite</a> — free lean tools for NHS and healthcare teams.</p>
+      <p>Created by David Clark — <a href="https://gembasuite.org" target="_blank">gembasuite.org</a></p>
+      <div class="licence-text">
+        <strong>Licence:</strong> Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0).<br><br>
+        Free for all healthcare improvement purposes. The NonCommercial restriction targets commercial resale, proprietary repackaging, and paid consultancy. Tools must remain free to end users.<br><br>
+        <a href="https://gembasuite.org/licence" target="_blank">Full licence terms</a> | <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a>
+      </div>
+      <div class="licence-text" style="margin-top:12px;">
+        <strong>Disclaimer:</strong> These tools support process improvement and do not make clinical decisions or recommendations. They are not medical devices and are not regulated as such under MHRA or equivalent frameworks. All data is stored locally on your device. The tools are provided as-is, without warranty. You are responsible for exporting and backing up your data regularly.
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="closeModal('aboutModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Image Viewer -->
+<div class="image-viewer-overlay" id="imageViewer" onclick="closeImageViewer()">
+  <img id="imageViewerImg" src="" alt="Work element image">
+</div>
+
+<!-- VSM Step Selector Modal -->
+<div class="modal-overlay" id="vsmSelectModal">
+  <div class="modal">
+    <h2>Select Process Step</h2>
+    <p style="margin-bottom: var(--space-3); color: var(--ink-secondary);">Choose which VSM process step this standard work project documents.</p>
+    <div id="vsmStepList"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('vsmSelectModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════
+// CONSTANTS & STATE
+// ═══════════════════════════════════════
+
+const APP_VERSION = '1.6';
+const PROJECTS_KEY = 'gemba_sw_projects';
+const PROJECT_PREFIX = 'gemba_sw_p_';
+const MAX_IMAGES = 25;
+const COMPRESS_QUALITY = 0.6;
+const COMPRESS_MAX_PX = 800;
+const AUTOSAVE_DELAY = 1500;
+
+const WASTE_CATEGORIES = [
+  { code: 'D', label: 'Defects', desc: 'Errors requiring rework' },
+  { code: 'O', label: 'Overproduction', desc: 'Doing more than needed' },
+  { code: 'W', label: 'Waiting', desc: 'Idle time between actions' },
+  { code: 'N', label: 'Non-utilised talent', desc: 'Skills not used' },
+  { code: 'T', label: 'Transportation', desc: 'Moving items unnecessarily' },
+  { code: 'I', label: 'Inventory', desc: 'Excess WIP or stock' },
+  { code: 'M', label: 'Motion', desc: 'Unnecessary movement of people' },
+  { code: 'E', label: 'Extra-processing', desc: 'Work adding no value' }
+];
+
+const REASON_CATEGORIES = [
+  { code: 'S', label: 'Safety', color: '#ba1a1a' },
+  { code: 'Q', label: 'Quality', color: '#006172' },
+  { code: 'T', label: 'Technique', color: '#856404' },
+  { code: 'C', label: 'Cost', color: '#2e7d32' }
+];
+
+let currentProjectId = null;
+let projectData = null;
+let activeState = 'current'; // 'current' or 'future'
+let editingElementId = null;
+let pendingDeleteId = null;
+let pendingRenameId = null;
+let saveTimer = null;
+
+// ═══════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════
+
+function genId() {
+  if (crypto.randomUUID) return crypto.randomUUID();
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0;
+    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+  });
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  const div = document.createElement('div');
+  div.textContent = String(str);
+  return div.innerHTML;
+}
+
+function formatDate(iso) {
+  if (!iso) return '';
+  return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function formatSecs(secs) {
+  if (secs == null || isNaN(secs)) return '0s';
+  if (secs < 60) return secs + 's';
+  const m = Math.floor(secs / 60);
+  const s = secs % 60;
+  return s > 0 ? m + 'm ' + s + 's' : m + 'm';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function compressPhoto(file, cb) {
+  const img = new Image();
+  img.onload = () => {
+    const canvas = document.createElement('canvas');
+    const ratio = Math.min(COMPRESS_MAX_PX / Math.max(img.width, img.height), 1);
+    canvas.width = img.width * ratio;
+    canvas.height = img.height * ratio;
+    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+    cb(canvas.toDataURL('image/jpeg', COMPRESS_QUALITY));
+    URL.revokeObjectURL(img.src);
+  };
+  img.src = URL.createObjectURL(file);
+}
+
+// ═══════════════════════════════════════
+// MODAL SYSTEM
+// ═══════════════════════════════════════
+
+function showModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+function showAbout() { showModal('aboutModal'); }
+function showImageViewer(src) {
+  document.getElementById('imageViewerImg').src = src;
+  document.getElementById('imageViewer').classList.add('show');
+}
+function closeImageViewer() { document.getElementById('imageViewer').classList.remove('show'); }
+
+// ═══════════════════════════════════════
+// PROJECT MANAGEMENT
+// ═══════════════════════════════════════
+
+function getProjectList() {
+  try { return JSON.parse(localStorage.getItem(PROJECTS_KEY) || '[]'); } catch(e) { return []; }
+}
+function saveProjectList(list) {
+  try { localStorage.setItem(PROJECTS_KEY, JSON.stringify(list)); } catch(e) {}
+}
+function getProjectData(id) {
+  try { const r = localStorage.getItem(PROJECT_PREFIX + id); return r ? JSON.parse(r) : null; } catch(e) { return null; }
+}
+function saveProjectData(id, data) {
+  data.updatedAt = new Date().toISOString();
+  try { localStorage.setItem(PROJECT_PREFIX + id, JSON.stringify(data)); } catch(e) { showToast('Storage full — export your data'); }
+}
+function deleteProjectStorage(id) {
+  try { localStorage.removeItem(PROJECT_PREFIX + id); } catch(e) {}
+}
+
+function createEmptyProject(name) {
+  return {
+    id: genId(),
+    name: name,
+    processStepName: '',
+    operator: '',
+    workArea: '',
+    organisation: '',
+    taktTime: null,
+    taktTimeUnit: 'seconds',
+    currentState: createEmptyState(),
+    futureState: null,
+    vsmImport: null,
+    qmsMetadata: { documentRef: '', documentTitle: '', version: '1.0', author: '', reviewDate: '', approvedBy: '', effectiveDate: '', scope: '' },
+    notes: '',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    appVersion: APP_VERSION
+  };
+}
+
+function createEmptyState() {
+  return {
+    elements: [],
+    observedAt: new Date().toISOString(),
+    observedBy: ''
+  };
+}
+
+function createEmptyElement() {
+  return {
+    id: genId(),
+    sequence: 1,
+    description: '',
+    image: null,
+    imageName: null,
+    keyPoints: [],
+    manualTime: 0,
+    autoTime: 0,
+    walkWaitTime: 0,
+    valueClass: 'VA',
+    wasteCategory: null,
+    wasteNote: '',
+    notes: ''
+  };
+}
+
+// ═══════════════════════════════════════
+// PROJECT LIST SCREEN
+// ═══════════════════════════════════════
+
+function renderProjectList() {
+  const list = getProjectList();
+  const container = document.getElementById('projectList');
+  if (list.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="icon">📋</div><h3>No Projects Yet</h3><p>Create a new standard work project or load the demo to get started.</p></div>';
+    return;
+  }
+  container.innerHTML = list.map(p => `
+    <div class="project-card" onclick="openProject('${p.id}')">
+      <h3>${escHtml(p.name)}</h3>
+      <div class="meta">${escHtml(p.processStep || '')}${p.processStep ? ' · ' : ''}Updated ${formatDate(p.updated)}</div>
+      <div class="actions" onclick="event.stopPropagation()">
+        <button class="btn-ghost btn-sm" onclick="startRename('${p.id}','${escHtml(p.name)}')">Rename</button>
+        <button class="btn-ghost btn-sm" style="color:var(--status-error)" onclick="startDelete('${p.id}')">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function createProject() {
+  const p = createEmptyProject('New Standard Work');
+  const list = getProjectList();
+  list.unshift({ id: p.id, name: p.name, updated: p.updatedAt, processStep: '' });
+  saveProjectList(list);
+  saveProjectData(p.id, p);
+  openProject(p.id);
+}
+
+function openProject(id) {
+  projectData = getProjectData(id);
+  if (!projectData) return;
+  currentProjectId = id;
+  activeState = 'current';
+  document.getElementById('projectListScreen').style.display = 'none';
+  document.getElementById('projectScreen').style.display = '';
+  document.getElementById('projNameDisplay').textContent = projectData.name;
+  updateStateToggle();
+  updateCompareTabVisibility();
+  switchTab('elements');
+  renderProjectSettings();
+  renderQMSForm();
+  renderVSMContext();
+}
+
+function closeProject() {
+  scheduleSave();
+  currentProjectId = null;
+  projectData = null;
+  document.getElementById('projectScreen').style.display = 'none';
+  document.getElementById('projectListScreen').style.display = '';
+  renderProjectList();
+}
+
+function startRename(id, name) {
+  pendingRenameId = id;
+  document.getElementById('renameInput').value = name;
+  showModal('renameModal');
+  document.getElementById('renameInput').focus();
+}
+
+function confirmRename() {
+  const name = document.getElementById('renameInput').value.trim();
+  if (!name) return;
+  const list = getProjectList();
+  const p = list.find(x => x.id === pendingRenameId);
+  if (p) { p.name = name; saveProjectList(list); }
+  const data = getProjectData(pendingRenameId);
+  if (data) { data.name = name; saveProjectData(pendingRenameId, data); }
+  if (currentProjectId === pendingRenameId) {
+    projectData.name = name;
+    document.getElementById('projNameDisplay').textContent = name;
+  }
+  closeModal('renameModal');
+  renderProjectList();
+}
+
+function startDelete(id) {
+  pendingDeleteId = id;
+  showModal('deleteModal');
+}
+
+function confirmDelete() {
+  const list = getProjectList().filter(x => x.id !== pendingDeleteId);
+  saveProjectList(list);
+  deleteProjectStorage(pendingDeleteId);
+  if (currentProjectId === pendingDeleteId) closeProject();
+  closeModal('deleteModal');
+  renderProjectList();
+}
+
+// ═══════════════════════════════════════
+// STATE MANAGEMENT
+// ═══════════════════════════════════════
+
+function getActiveState() {
+  if (!projectData) return null;
+  return activeState === 'future' && projectData.futureState ? projectData.futureState : projectData.currentState;
+}
+
+function switchState(state) {
+  if (state === 'future' && !projectData.futureState) {
+    showToast('Create a future state first');
+    return;
+  }
+  activeState = state;
+  updateStateToggle();
+  renderElements();
+  if (document.getElementById('panel-analysis').classList.contains('active')) renderAnalysis();
+}
+
+function updateStateToggle() {
+  const btns = document.querySelectorAll('.state-toggle button');
+  btns[0].classList.toggle('active', activeState === 'current');
+  btns[1].classList.toggle('active', activeState === 'future');
+  // Show/hide future state prompt
+  const prompt = document.getElementById('futureStatePrompt');
+  if (prompt) {
+    prompt.style.display = (activeState === 'current' && !projectData.futureState) ? '' : 'none';
+  }
+}
+
+function updateCompareTabVisibility() {
+  document.getElementById('compareTab').style.display = projectData.futureState ? '' : 'none';
+}
+
+function createFutureState() {
+  if (projectData.futureState) return;
+  // Deep clone current state elements
+  projectData.futureState = JSON.parse(JSON.stringify(projectData.currentState));
+  projectData.futureState.observedAt = new Date().toISOString();
+  updateCompareTabVisibility();
+  activeState = 'future';
+  updateStateToggle();
+  renderElements();
+  scheduleSave();
+  showToast('Future state created — modify elements to model improvements');
+}
+
+// ═══════════════════════════════════════
+// TAB NAVIGATION
+// ═══════════════════════════════════════
+
+
+// ═══════════════════════════════════════
+// ABBREVIATION KEY
+// ═══════════════════════════════════════
+let currentTab = 'elements';
+
+function updateAbbrevKey() {
+  const key = document.getElementById('abbrevKey');
+  if (!key) return;
+  if (!['elements', 'analysis', 'compare'].includes(currentTab) || !projectData) {
+    key.style.display = 'none';
+    return;
+  }
+  const present = new Set();
+  const states = (currentTab === 'compare' && projectData.futureState)
+    ? [projectData.currentState, projectData.futureState]
+    : [getActiveState()].filter(Boolean);
+  states.forEach(state => {
+    if (!state) return;
+    state.elements.forEach(el => {
+      present.add(el.valueClass);
+      if (el.autoTime > 0) present.add('Auto');
+    });
+  });
+  const DEFS = {
+    VA: 'Value Added',
+    NNVA: 'Necessary Non-Value Added',
+    NVA: 'Non-Value Added',
+    Auto: 'Automated'
+  };
+  // VA/NNVA/NVA always shown (they are the three-way classification system)
+  // Auto shown only when at least one element has autoTime > 0
+  const alwaysShow = ['VA', 'NNVA', 'NVA'];
+  const toShow = [...alwaysShow, ...(present.has('Auto') ? ['Auto'] : [])];
+  key.innerHTML = '<span style="font-size:10px;font-weight:700;color:#006172;margin-right:4px;">Key:</span>' +
+    toShow.map(a => `<span><strong>${a}</strong> = ${DEFS[a]}</span>`).join('');
+  key.style.display = 'flex';
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-bar button').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  const tabBtns = document.querySelectorAll('.tab-bar button');
+  const tabMap = { elements: 0, analysis: 1, compare: 2, export: 3, settings: 4 };
+  if (tabBtns[tabMap[tab]]) tabBtns[tabMap[tab]].classList.add('active');
+  const panel = document.getElementById('panel-' + tab);
+  if (panel) panel.classList.add('active');
+  if (tab === 'elements') renderElements();
+  if (tab === 'analysis') renderAnalysis();
+  if (tab === 'compare') renderCompare();
+  if (tab === 'settings') { renderProjectSettings(); renderQMSForm(); }
+  updateAbbrevKey();
+}
+
+// ═══════════════════════════════════════
+// ELEMENTS RENDERING
+// ═══════════════════════════════════════
+
+function renderElements() {
+  const state = getActiveState();
+  if (!state) return;
+  const container = document.getElementById('elementsList');
+  if (state.elements.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="icon">⚙️</div><h3>No Elements</h3><p>Add work elements by observing the operator at the gemba. Each element is one discrete action in the work cycle.</p></div>';
+    return;
+  }
+  container.innerHTML = state.elements.map((el, idx) => {
+    const totalTime = el.manualTime + el.autoTime + el.walkWaitTime;
+    const pManual = totalTime > 0 ? (el.manualTime / totalTime * 100) : 0;
+    const pAuto = totalTime > 0 ? (el.autoTime / totalTime * 100) : 0;
+    const pWalk = totalTime > 0 ? (el.walkWaitTime / totalTime * 100) : 0;
+    const vcClass = el.valueClass.toLowerCase();
+    return `
+    <div class="element-card" id="el-${el.id}">
+      <div class="element-header" onclick="toggleElement('${el.id}')">
+        <div class="element-seq">${idx + 1}</div>
+        ${el.image ? `<img class="element-thumb" src="${el.image}" alt="" onclick="event.stopPropagation();showImageViewer('${el.image.replace(/'/g, "\\'")}')">` : ''}
+        <div class="element-summary">
+          <div class="desc">${escHtml(el.description) || 'Untitled element'}</div>
+          <div class="time-info">${formatSecs(totalTime)} (M:${formatSecs(el.manualTime)} A:${formatSecs(el.autoTime)} W:${formatSecs(el.walkWaitTime)})</div>
+        </div>
+        <span class="value-badge ${vcClass}">${el.valueClass}</span>
+        <span class="element-chevron">&#9656;</span>
+      </div>
+      <div class="element-detail">
+        <div class="detail-section">
+          <div class="time-bar">
+            <div class="seg-manual" style="width:${pManual}%"></div>
+            <div class="seg-auto" style="width:${pAuto}%"></div>
+            <div class="seg-walkwait" style="width:${pWalk}%"></div>
+          </div>
+          <div class="time-legend">
+            <span class="leg-manual">Manual ${formatSecs(el.manualTime)}</span>
+            <span class="leg-auto">Auto ${formatSecs(el.autoTime)}</span>
+            <span class="leg-walkwait">Walk/Wait ${formatSecs(el.walkWaitTime)}</span>
+          </div>
+        </div>
+        ${el.wasteCategory ? `<div class="detail-section"><h4>Waste</h4><p style="font-size:13px;color:var(--ink-secondary)"><strong>${escHtml(WASTE_CATEGORIES.find(w=>w.code===el.wasteCategory)?.label || el.wasteCategory)}:</strong> ${escHtml(el.wasteNote)}</p></div>` : ''}
+        ${el.keyPoints.length > 0 ? `
+        <div class="detail-section">
+          <h4>Key Points (${el.keyPoints.length})</h4>
+          ${el.keyPoints.map(kp => `
+            <div class="kp-item">
+              <span class="kp-reason-cat">${escHtml(kp.reasonCategory)}</span>
+              <strong>${escHtml(kp.description)}</strong>
+              <div style="font-size:12px;color:var(--ink-tertiary);margin-top:2px;">Reason: ${escHtml(kp.reason)}</div>
+            </div>
+          `).join('')}
+        </div>` : ''}
+        ${el.notes ? `<div class="detail-section"><h4>Notes</h4><p style="font-size:13px;color:var(--ink-secondary)">${escHtml(el.notes)}</p></div>` : ''}
+        <div class="element-actions">
+          <button class="btn-secondary btn-sm" onclick="editElement('${el.id}')">Edit</button>
+          ${idx > 0 ? `<button class="btn-ghost btn-sm" onclick="moveElement('${el.id}',-1)">&#9650; Up</button>` : ''}
+          ${idx < state.elements.length - 1 ? `<button class="btn-ghost btn-sm" onclick="moveElement('${el.id}',1)">&#9660; Down</button>` : ''}
+          <button class="btn-ghost btn-sm" style="color:var(--status-error)" onclick="deleteElement('${el.id}')">Delete</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleElement(id) {
+  document.getElementById('el-' + id)?.classList.toggle('expanded');
+}
+
+// ═══════════════════════════════════════
+// ELEMENT EDITOR
+// ═══════════════════════════════════════
+
+function addElement() {
+  editingElementId = null;
+  renderElementForm(createEmptyElement());
+  document.getElementById('elementModalTitle').textContent = 'Add Work Element';
+  showModal('elementModal');
+}
+
+function editElement(id) {
+  const state = getActiveState();
+  const el = state.elements.find(e => e.id === id);
+  if (!el) return;
+  editingElementId = id;
+  renderElementForm(el);
+  document.getElementById('elementModalTitle').textContent = 'Edit Work Element';
+  showModal('elementModal');
+}
+
+function renderElementForm(el) {
+  const wasteOptions = WASTE_CATEGORIES.map(w =>
+    `<option value="${w.code}" ${el.wasteCategory === w.code ? 'selected' : ''}>${w.label} — ${w.desc}</option>`
+  ).join('');
+  const reasonOptions = REASON_CATEGORIES.map(r =>
+    `<option value="${r.code}">${r.label}</option>`
+  ).join('');
+
+  document.getElementById('elementForm').innerHTML = `
+    <div class="form-group">
+      <label>Description (what the operator does)</label>
+      <input type="text" id="elDesc" value="${escHtml(el.description)}" placeholder="e.g. Open specimen pot and check label">
+    </div>
+    <div class="form-group">
+      <label>Image</label>
+      <div style="display:flex;gap:var(--space-2);align-items:center;">
+        ${el.image ? `<img src="${el.image}" style="width:60px;height:60px;object-fit:cover;border-radius:var(--radius-sm);cursor:pointer;" onclick="showImageViewer(this.src)">` : '<span style="color:var(--ink-tertiary);font-size:13px;">No image</span>'}
+        <button class="btn-secondary btn-sm" onclick="document.getElementById('elImageInput').click()">Choose Image</button>
+        ${el.image ? `<button class="btn-ghost btn-sm" style="color:var(--status-error)" onclick="clearElementImage()">Remove</button>` : ''}
+      </div>
+      <input type="file" id="elImageInput" class="hidden-input" accept="image/*" onchange="handleElementImage(event)">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Manual Time (seconds)</label>
+        <input type="number" id="elManual" value="${el.manualTime}" min="0" step="1">
+      </div>
+      <div class="form-group">
+        <label>Auto Time (seconds)</label>
+        <input type="number" id="elAuto" value="${el.autoTime}" min="0" step="1">
+      </div>
+      <div class="form-group">
+        <label>Walk/Wait (seconds)</label>
+        <input type="number" id="elWalk" value="${el.walkWaitTime}" min="0" step="1">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Value Classification</label>
+        <select id="elValueClass" onchange="toggleWasteFields()">
+          <option value="VA" ${el.valueClass === 'VA' ? 'selected' : ''}>VA — Value Adding</option>
+          <option value="NNVA" ${el.valueClass === 'NNVA' ? 'selected' : ''}>NNVA — Necessary Non-Value Adding</option>
+          <option value="NVA" ${el.valueClass === 'NVA' ? 'selected' : ''}>NVA — Non-Value Adding (Waste)</option>
+        </select>
+      </div>
+    </div>
+    <div id="wasteFields" style="display:${el.valueClass === 'VA' ? 'none' : 'block'}">
+      <div class="form-group">
+        <label>Waste Category (DOWNTIME)</label>
+        <select id="elWasteCat">
+          <option value="">Select...</option>
+          ${wasteOptions}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Waste Description</label>
+        <input type="text" id="elWasteNote" value="${escHtml(el.wasteNote)}" placeholder="Brief description of the waste observed">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Notes</label>
+      <textarea id="elNotes" rows="2" placeholder="Additional observations from the gemba">${escHtml(el.notes)}</textarea>
+    </div>
+    <div class="detail-section">
+      <h4 style="font-family:var(--font-display);font-weight:600;font-size:12px;color:var(--ink-secondary);text-transform:uppercase;letter-spacing:0.3px;margin-bottom:var(--space-2);">Key Points</h4>
+      <div id="kpList">${el.keyPoints.map((kp, ki) => renderKPRow(kp, ki)).join('')}</div>
+      <button class="btn-ghost btn-sm" onclick="addKPRow()" style="margin-top:var(--space-2);">+ Add Key Point</button>
+    </div>
+  `;
+  // Store temp image
+  window._tempElImage = el.image;
+  window._tempElImageName = el.imageName;
+}
+
+function renderKPRow(kp, idx) {
+  const reasonOptions = REASON_CATEGORIES.map(r =>
+    `<option value="${r.code}" ${kp.reasonCategory === r.code ? 'selected' : ''}>${r.label}</option>`
+  ).join('');
+  return `
+    <div class="kp-item" style="position:relative;">
+      <div class="form-group" style="margin-bottom:var(--space-2);">
+        <input type="text" class="kp-desc" value="${escHtml(kp.description)}" placeholder="Key point description">
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="flex:2;">
+          <input type="text" class="kp-reason" value="${escHtml(kp.reason)}" placeholder="Reason for this key point">
+        </div>
+        <div class="form-group" style="flex:1;">
+          <select class="kp-cat">${reasonOptions}</select>
+        </div>
+      </div>
+      <button class="btn-ghost btn-sm" style="color:var(--status-error);position:absolute;top:4px;right:4px;" onclick="this.closest('.kp-item').remove()">✕</button>
+    </div>
+  `;
+}
+
+function addKPRow() {
+  const list = document.getElementById('kpList');
+  const div = document.createElement('div');
+  div.innerHTML = renderKPRow({ id: genId(), description: '', reason: '', reasonCategory: 'Q' }, list.children.length);
+  list.appendChild(div.firstElementChild);
+}
+
+function toggleWasteFields() {
+  const vc = document.getElementById('elValueClass').value;
+  document.getElementById('wasteFields').style.display = vc === 'VA' ? 'none' : 'block';
+}
+
+function handleElementImage(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  // Check image count
+  const totalImages = countImages();
+  if (!editingElementId && totalImages >= MAX_IMAGES) {
+    showToast('Maximum ' + MAX_IMAGES + ' images per project');
+    return;
+  }
+  compressPhoto(file, (dataUrl) => {
+    window._tempElImage = dataUrl;
+    window._tempElImageName = file.name;
+    // Re-render form with image preview (quick update)
+    const imgArea = document.querySelector('#elementForm .form-group:nth-child(2) div');
+    if (imgArea) {
+      imgArea.innerHTML = `
+        <img src="${dataUrl}" style="width:60px;height:60px;object-fit:cover;border-radius:var(--radius-sm);cursor:pointer;" onclick="showImageViewer(this.src)">
+        <button class="btn-secondary btn-sm" onclick="document.getElementById('elImageInput').click()">Replace</button>
+        <button class="btn-ghost btn-sm" style="color:var(--status-error)" onclick="clearElementImage()">Remove</button>
+      `;
+    }
+  });
+}
+
+function clearElementImage() {
+  window._tempElImage = null;
+  window._tempElImageName = null;
+  const imgArea = document.querySelector('#elementForm .form-group:nth-child(2) div');
+  if (imgArea) {
+    imgArea.innerHTML = `
+      <span style="color:var(--ink-tertiary);font-size:13px;">No image</span>
+      <button class="btn-secondary btn-sm" onclick="document.getElementById('elImageInput').click()">Choose Image</button>
+    `;
+  }
+}
+
+function countImages() {
+  let count = 0;
+  if (projectData.currentState) count += projectData.currentState.elements.filter(e => e.image).length;
+  if (projectData.futureState) count += projectData.futureState.elements.filter(e => e.image).length;
+  return count;
+}
+
+function saveElement() {
+  const state = getActiveState();
+  if (!state) return;
+  const desc = document.getElementById('elDesc').value.trim();
+  if (!desc) { showToast('Description is required'); return; }
+
+  // Gather key points from DOM
+  const kpItems = document.querySelectorAll('#kpList .kp-item');
+  const keyPoints = [];
+  kpItems.forEach(item => {
+    const d = item.querySelector('.kp-desc')?.value.trim();
+    const r = item.querySelector('.kp-reason')?.value.trim();
+    const c = item.querySelector('.kp-cat')?.value || 'Q';
+    if (d) keyPoints.push({ id: genId(), description: d, reason: r || '', reasonCategory: c });
+  });
+
+  const vc = document.getElementById('elValueClass').value;
+  const elData = {
+    id: editingElementId || genId(),
+    sequence: 0,
+    description: desc,
+    image: window._tempElImage || null,
+    imageName: window._tempElImageName || null,
+    keyPoints: keyPoints,
+    manualTime: parseInt(document.getElementById('elManual').value) || 0,
+    autoTime: parseInt(document.getElementById('elAuto').value) || 0,
+    walkWaitTime: parseInt(document.getElementById('elWalk').value) || 0,
+    valueClass: vc,
+    wasteCategory: vc !== 'VA' ? (document.getElementById('elWasteCat').value || null) : null,
+    wasteNote: vc !== 'VA' ? (document.getElementById('elWasteNote').value.trim()) : '',
+    notes: document.getElementById('elNotes').value.trim()
+  };
+
+  if (editingElementId) {
+    const idx = state.elements.findIndex(e => e.id === editingElementId);
+    if (idx >= 0) { elData.sequence = state.elements[idx].sequence; state.elements[idx] = elData; }
+  } else {
+    elData.sequence = state.elements.length + 1;
+    state.elements.push(elData);
+  }
+
+  // Resequence
+  state.elements.forEach((e, i) => e.sequence = i + 1);
+
+  closeModal('elementModal');
+  renderElements();
+  scheduleSave();
+}
+
+function deleteElement(id) {
+  const state = getActiveState();
+  state.elements = state.elements.filter(e => e.id !== id);
+  state.elements.forEach((e, i) => e.sequence = i + 1);
+  renderElements();
+  scheduleSave();
+}
+
+function moveElement(id, dir) {
+  const state = getActiveState();
+  const idx = state.elements.findIndex(e => e.id === id);
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= state.elements.length) return;
+  [state.elements[idx], state.elements[newIdx]] = [state.elements[newIdx], state.elements[idx]];
+  state.elements.forEach((e, i) => e.sequence = i + 1);
+  renderElements();
+  scheduleSave();
+}
+
+// ═══════════════════════════════════════
+// ANALYSIS TAB
+// ═══════════════════════════════════════
+
+function computeMetrics(state) {
+  if (!state || state.elements.length === 0) return null;
+  const els = state.elements;
+  let totalManual = 0, totalAuto = 0, totalWalk = 0, vaTime = 0, nnvaTime = 0, nvaTime = 0;
+  els.forEach(e => {
+    const t = e.manualTime + e.autoTime + e.walkWaitTime;
+    totalManual += e.manualTime;
+    totalAuto += e.autoTime;
+    totalWalk += e.walkWaitTime;
+    if (e.valueClass === 'VA') vaTime += t;
+    else if (e.valueClass === 'NNVA') nnvaTime += t;
+    else nvaTime += t;
+  });
+  const totalCycle = totalManual + totalAuto + totalWalk;
+  return {
+    totalManual, totalAuto, totalWalk, totalCycle,
+    vaTime, nnvaTime, nvaTime,
+    processEfficiency: totalCycle > 0 ? (vaTime / totalCycle * 100) : 0,
+    elementCount: els.length,
+    taktRatio: projectData.taktTime ? (totalCycle / projectData.taktTime) : null
+  };
+}
+
+function renderAnalysis() {
+  const state = getActiveState();
+  const m = computeMetrics(state);
+  if (!m) {
+    document.getElementById('metricsGrid').innerHTML = '<div class="empty-state"><p>Add work elements to see analysis.</p></div>';
+    document.getElementById('comboSvg').innerHTML = '';
+    document.getElementById('valueSvg').innerHTML = '';
+    document.getElementById('wasteSvg').innerHTML = '';
+    document.getElementById('kpSvg').innerHTML = '';
+    return;
+  }
+
+  // Metrics cards
+  let metricsHtml = `
+    <div class="metric-card highlight"><div class="metric-value">${formatSecs(m.totalCycle)}</div><div class="metric-label">Total Cycle Time</div></div>
+    <div class="metric-card"><div class="metric-value">${m.processEfficiency.toFixed(1)}%</div><div class="metric-label">Process Efficiency</div></div>
+    <div class="metric-card"><div class="metric-value">${m.elementCount}</div><div class="metric-label">Elements</div></div>
+  `;
+  if (m.taktRatio !== null) {
+    const taktClass = m.taktRatio > 1 ? 'style="background:var(--status-error-bg)"' : '';
+    metricsHtml += `<div class="metric-card" ${taktClass}><div class="metric-value">${m.taktRatio.toFixed(2)}</div><div class="metric-label">Takt Ratio</div></div>`;
+  }
+  document.getElementById('metricsGrid').innerHTML = metricsHtml;
+
+  // Combination Sheet SVG
+  renderCombinationSVG(state.elements, 'comboSvg');
+
+  // Value Classification SVG
+  renderValueSVG(m, 'valueSvg');
+
+  // Waste Summary SVG
+  renderWasteSVG(state.elements, 'wasteSvg');
+
+  // Key Points SVG
+  renderKPSVG(state.elements, 'kpSvg');
+}
+
+function renderCombinationSVG(elements, containerId) {
+  if (elements.length === 0) { document.getElementById(containerId).innerHTML = ''; return; }
+  const rowH = 28, labelW = 180, padL = 10, padR = 20, padT = 30, gapY = 4;
+  const maxTime = Math.max(...elements.map(e => e.manualTime + e.autoTime + e.walkWaitTime), 1);
+  const takt = projectData.taktTime || 0;
+  const scaleMax = Math.max(maxTime, takt) * 1.15;
+  const barW = 320;
+  const svgW = labelW + barW + padL + padR + 60;
+  const svgH = padT + elements.length * (rowH + gapY) + 30;
+  const scale = barW / scaleMax;
+
+  let svg = `<svg viewBox="0 0 ${svgW} ${svgH}" width="100%" style="max-width:${svgW}px;" xmlns="http://www.w3.org/2000/svg">`;
+  // Header
+  svg += `<text x="${labelW}" y="16" font-family="Inter,sans-serif" font-size="10" fill="#6e797c" font-weight="600">TIME (seconds)</text>`;
+  // Takt line
+  if (takt > 0) {
+    const tx = labelW + takt * scale;
+    svg += `<line x1="${tx}" y1="${padT - 10}" x2="${tx}" y2="${svgH - 10}" stroke="#ba1a1a" stroke-width="1.5" stroke-dasharray="4,3"/>`;
+    svg += `<text x="${tx}" y="${padT - 14}" font-family="Inter,sans-serif" font-size="9" fill="#ba1a1a" text-anchor="middle">Takt ${takt}s</text>`;
+  }
+  elements.forEach((el, i) => {
+    const y = padT + i * (rowH + gapY);
+    // Label
+    const label = el.description.length > 22 ? el.description.substring(0, 20) + '...' : el.description;
+    svg += `<text x="${labelW - 6}" y="${y + rowH / 2 + 4}" font-family="Inter,sans-serif" font-size="11" fill="#181c1c" text-anchor="end">${escHtml(label)}</text>`;
+    // Bars
+    let x = labelW;
+    if (el.manualTime > 0) {
+      const w = el.manualTime * scale;
+      svg += `<rect x="${x}" y="${y}" width="${w}" height="${rowH}" fill="#006172" rx="2"/>`;
+      x += w;
+    }
+    if (el.autoTime > 0) {
+      const w = el.autoTime * scale;
+      svg += `<rect x="${x}" y="${y}" width="${w}" height="${rowH}" fill="#9e9e9e" rx="2"/>`;
+      x += w;
+    }
+    if (el.walkWaitTime > 0) {
+      const w = el.walkWaitTime * scale;
+      svg += `<rect x="${x}" y="${y}" width="${w}" height="${rowH}" fill="#d4700a" rx="2"/>`;
+      x += w;
+    }
+    // Total label
+    const total = el.manualTime + el.autoTime + el.walkWaitTime;
+    svg += `<text x="${x + 6}" y="${y + rowH / 2 + 4}" font-family="Inter,sans-serif" font-size="10" fill="#6e797c">${total}s</text>`;
+  });
+  // Legend
+  const ly = svgH - 14;
+  svg += `<rect x="${labelW}" y="${ly}" width="10" height="10" fill="#006172" rx="1"/><text x="${labelW + 14}" y="${ly + 9}" font-family="Inter,sans-serif" font-size="9" fill="#3e484c">Manual</text>`;
+  svg += `<rect x="${labelW + 70}" y="${ly}" width="10" height="10" fill="#9e9e9e" rx="1"/><text x="${labelW + 84}" y="${ly + 9}" font-family="Inter,sans-serif" font-size="9" fill="#3e484c">Auto</text>`;
+  svg += `<rect x="${labelW + 130}" y="${ly}" width="10" height="10" fill="#d4700a" rx="1"/><text x="${labelW + 144}" y="${ly + 9}" font-family="Inter,sans-serif" font-size="9" fill="#3e484c">Walk/Wait</text>`;
+  svg += '</svg>';
+  document.getElementById(containerId).innerHTML = svg;
+}
+
+function renderValueSVG(m, containerId) {
+  const total = m.vaTime + m.nnvaTime + m.nvaTime;
+  if (total === 0) { document.getElementById(containerId).innerHTML = '<p style="color:var(--ink-tertiary);font-size:13px;">No time data.</p>'; return; }
+  const w = 300, h = 36, r = 4;
+  const pVA = m.vaTime / total * w;
+  const pNNVA = m.nnvaTime / total * w;
+  const pNVA = m.nvaTime / total * w;
+  let svg = `<svg viewBox="0 0 ${w + 20} ${h + 40}" width="100%" style="max-width:${w + 20}px;" xmlns="http://www.w3.org/2000/svg">`;
+  let x = 10;
+  if (pVA > 0) { svg += `<rect x="${x}" y="4" width="${pVA}" height="${h}" fill="#2e7d32" rx="${r}"/>`; x += pVA; }
+  if (pNNVA > 0) { svg += `<rect x="${x}" y="4" width="${pNNVA}" height="${h}" fill="#856404" rx="${r}"/>`; x += pNNVA; }
+  if (pNVA > 0) { svg += `<rect x="${x}" y="4" width="${pNVA}" height="${h}" fill="#ba1a1a" rx="${r}"/>`; }
+  // Labels
+  const ly = h + 20;
+  svg += `<rect x="10" y="${ly}" width="10" height="10" fill="#2e7d32" rx="1"/><text x="24" y="${ly + 9}" font-family="Inter,sans-serif" font-size="10" fill="#3e484c">VA ${(m.vaTime/total*100).toFixed(0)}% (${formatSecs(m.vaTime)})</text>`;
+  svg += `<rect x="140" y="${ly}" width="10" height="10" fill="#856404" rx="1"/><text x="154" y="${ly + 9}" font-family="Inter,sans-serif" font-size="10" fill="#3e484c">NNVA ${(m.nnvaTime/total*100).toFixed(0)}%</text>`;
+  svg += `<rect x="240" y="${ly}" width="10" height="10" fill="#ba1a1a" rx="1"/><text x="254" y="${ly + 9}" font-family="Inter,sans-serif" font-size="10" fill="#3e484c">NVA ${(m.nvaTime/total*100).toFixed(0)}%</text>`;
+  svg += '</svg>';
+  document.getElementById(containerId).innerHTML = svg;
+}
+
+function renderWasteSVG(elements, containerId) {
+  const wasteCounts = {};
+  const wasteTimes = {};
+  elements.forEach(e => {
+    if (e.wasteCategory) {
+      wasteCounts[e.wasteCategory] = (wasteCounts[e.wasteCategory] || 0) + 1;
+      wasteTimes[e.wasteCategory] = (wasteTimes[e.wasteCategory] || 0) + e.manualTime + e.autoTime + e.walkWaitTime;
+    }
+  });
+  const cats = Object.keys(wasteTimes);
+  if (cats.length === 0) {
+    document.getElementById(containerId).innerHTML = '<p style="color:var(--ink-tertiary);font-size:13px;">No waste identified.</p>';
+    return;
+  }
+  cats.sort((a, b) => wasteTimes[b] - wasteTimes[a]);
+  const maxT = Math.max(...cats.map(c => wasteTimes[c]));
+  const barH = 24, gap = 6, labelW = 120, barW = 200, padR = 60;
+  const svgH = cats.length * (barH + gap) + 10;
+  const svgW = labelW + barW + padR;
+  let svg = `<svg viewBox="0 0 ${svgW} ${svgH}" width="100%" style="max-width:${svgW}px;" xmlns="http://www.w3.org/2000/svg">`;
+  cats.forEach((c, i) => {
+    const y = i * (barH + gap);
+    const wInfo = WASTE_CATEGORIES.find(w => w.code === c);
+    const label = wInfo ? wInfo.label : c;
+    const w = wasteTimes[c] / maxT * barW;
+    svg += `<text x="${labelW - 6}" y="${y + barH / 2 + 4}" font-family="Inter,sans-serif" font-size="11" fill="#181c1c" text-anchor="end">${escHtml(label)}</text>`;
+    svg += `<rect x="${labelW}" y="${y}" width="${w}" height="${barH}" fill="#d4700a" rx="3" opacity="0.8"/>`;
+    svg += `<text x="${labelW + w + 6}" y="${y + barH / 2 + 4}" font-family="Inter,sans-serif" font-size="10" fill="#6e797c">${formatSecs(wasteTimes[c])}</text>`;
+  });
+  svg += '</svg>';
+  document.getElementById(containerId).innerHTML = svg;
+}
+
+function renderKPSVG(elements, containerId) {
+  const counts = { S: 0, Q: 0, T: 0, C: 0 };
+  elements.forEach(e => e.keyPoints.forEach(kp => { if (counts[kp.reasonCategory] !== undefined) counts[kp.reasonCategory]++; }));
+  const total = counts.S + counts.Q + counts.T + counts.C;
+  if (total === 0) {
+    document.getElementById(containerId).innerHTML = '<p style="color:var(--ink-tertiary);font-size:13px;">No key points recorded.</p>';
+    return;
+  }
+  const barH = 28, gap = 8, labelW = 90, barW = 200, padR = 40;
+  const maxC = Math.max(...Object.values(counts), 1);
+  const svgH = 4 * (barH + gap);
+  let svg = `<svg viewBox="0 0 ${labelW + barW + padR} ${svgH}" width="100%" style="max-width:${labelW + barW + padR}px;" xmlns="http://www.w3.org/2000/svg">`;
+  REASON_CATEGORIES.forEach((r, i) => {
+    const y = i * (barH + gap);
+    const w = counts[r.code] / maxC * barW;
+    svg += `<text x="${labelW - 6}" y="${y + barH / 2 + 4}" font-family="Inter,sans-serif" font-size="12" fill="#181c1c" text-anchor="end" font-weight="600">${r.label}</text>`;
+    svg += `<rect x="${labelW}" y="${y}" width="${Math.max(w, 2)}" height="${barH}" fill="${r.color}" rx="3" opacity="0.7"/>`;
+    svg += `<text x="${labelW + w + 6}" y="${y + barH / 2 + 4}" font-family="Inter,sans-serif" font-size="11" fill="#6e797c">${counts[r.code]}</text>`;
+  });
+  svg += '</svg>';
+  document.getElementById(containerId).innerHTML = svg;
+}
+
+// ═══════════════════════════════════════
+// COMPARE TAB
+// ═══════════════════════════════════════
+
+function renderCompare() {
+  if (!projectData.futureState) return;
+  const mc = computeMetrics(projectData.currentState);
+  const mf = computeMetrics(projectData.futureState);
+  if (!mc || !mf) return;
+
+  // Delta metrics
+  const dCycle = mf.totalCycle - mc.totalCycle;
+  const dEff = mf.processEfficiency - mc.processEfficiency;
+  const dVA = mf.vaTime - mc.vaTime;
+  const dNVA = mf.nvaTime - mc.nvaTime;
+  const dNNVA = mf.nnvaTime - mc.nnvaTime;
+  const dCount = mf.elementCount - mc.elementCount;
+  const pctChange = mc.totalCycle > 0 ? (dCycle / mc.totalCycle * 100) : 0;
+
+  function deltaCell(val, unit, invert) {
+    const cls = invert ? (val > 0 ? 'delta-positive' : val < 0 ? 'delta-negative' : '') : (val < 0 ? 'delta-positive' : val > 0 ? 'delta-negative' : '');
+    const sign = val > 0 ? '+' : '';
+    return `<td class="${cls}">${sign}${unit === 's' ? formatSecs(Math.abs(val)) : val.toFixed(1)}${unit === 's' ? (val < 0 ? ' ↓' : val > 0 ? ' ↑' : '') : unit}</td>`;
+  }
+
+  // Metrics cards
+  document.getElementById('compareMetrics').innerHTML = `
+    <div class="metric-card"><div class="metric-value">${formatSecs(mc.totalCycle)}</div><div class="metric-label">Current Cycle</div></div>
+    <div class="metric-card highlight"><div class="metric-value">${formatSecs(mf.totalCycle)}</div><div class="metric-label">Future Cycle</div></div>
+    <div class="metric-card ${pctChange < 0 ? 'highlight' : ''}"><div class="metric-value">${pctChange > 0 ? '+' : ''}${pctChange.toFixed(1)}%</div><div class="metric-label">Time Change</div></div>
+    <div class="metric-card"><div class="metric-value">${mf.processEfficiency.toFixed(1)}%</div><div class="metric-label">Future Efficiency</div></div>
+  `;
+
+  // Delta table
+  document.getElementById('deltaTable').innerHTML = `
+    <thead><tr><th>Metric</th><th>Current</th><th>Future</th><th>Change</th></tr></thead>
+    <tbody>
+      <tr><td>Total Cycle Time</td><td>${formatSecs(mc.totalCycle)}</td><td>${formatSecs(mf.totalCycle)}</td>${deltaCell(dCycle, 's', false)}</tr>
+      <tr><td>Process Efficiency</td><td>${mc.processEfficiency.toFixed(1)}%</td><td>${mf.processEfficiency.toFixed(1)}%</td>${deltaCell(dEff, '%', true)}</tr>
+      <tr><td>VA Time</td><td>${formatSecs(mc.vaTime)}</td><td>${formatSecs(mf.vaTime)}</td>${deltaCell(dVA, 's', true)}</tr>
+      <tr><td>NNVA Time</td><td>${formatSecs(mc.nnvaTime)}</td><td>${formatSecs(mf.nnvaTime)}</td>${deltaCell(dNNVA, 's', false)}</tr>
+      <tr><td>NVA Time</td><td>${formatSecs(mc.nvaTime)}</td><td>${formatSecs(mf.nvaTime)}</td>${deltaCell(dNVA, 's', false)}</tr>
+      <tr><td>Elements</td><td>${mc.elementCount}</td><td>${mf.elementCount}</td><td>${dCount > 0 ? '+' : ''}${dCount}</td></tr>
+      <tr><td>Manual Time</td><td>${formatSecs(mc.totalManual)}</td><td>${formatSecs(mf.totalManual)}</td>${deltaCell(mf.totalManual - mc.totalManual, 's', false)}</tr>
+      <tr><td>Walk/Wait Time</td><td>${formatSecs(mc.totalWalk)}</td><td>${formatSecs(mf.totalWalk)}</td>${deltaCell(mf.totalWalk - mc.totalWalk, 's', false)}</tr>
+    </tbody>
+  `;
+
+  // Comparison combination chart — show both overlaid
+  renderComparisonCombinationSVG();
+}
+
+function renderComparisonCombinationSVG() {
+  const cEls = projectData.currentState.elements;
+  const fEls = projectData.futureState.elements;
+  const allEls = cEls.length >= fEls.length ? cEls : fEls;
+  const rowH = 22, labelW = 160, barW = 280, padT = 30, padR = 60, gapY = 6;
+  const maxRows = Math.max(cEls.length, fEls.length);
+  const maxTime = Math.max(
+    ...cEls.map(e => e.manualTime + e.autoTime + e.walkWaitTime),
+    ...fEls.map(e => e.manualTime + e.autoTime + e.walkWaitTime),
+    projectData.taktTime || 0, 1
+  ) * 1.15;
+  const scale = barW / maxTime;
+  const svgW = labelW + barW + padR;
+  const svgH = padT + maxRows * (rowH * 2 + gapY * 2) + 40;
+  let svg = `<svg viewBox="0 0 ${svgW} ${svgH}" width="100%" style="max-width:${svgW}px;" xmlns="http://www.w3.org/2000/svg">`;
+
+  // Takt line
+  if (projectData.taktTime) {
+    const tx = labelW + projectData.taktTime * scale;
+    svg += `<line x1="${tx}" y1="${padT - 10}" x2="${tx}" y2="${svgH - 30}" stroke="#ba1a1a" stroke-width="1.5" stroke-dasharray="4,3"/>`;
+  }
+
+  for (let i = 0; i < maxRows; i++) {
+    const y = padT + i * (rowH * 2 + gapY * 2);
+    const cEl = cEls[i];
+    const fEl = fEls[i];
+    const label = (cEl || fEl).description;
+    const shortLabel = label.length > 20 ? label.substring(0, 18) + '...' : label;
+    svg += `<text x="${labelW - 6}" y="${y + rowH + 2}" font-family="Inter,sans-serif" font-size="10" fill="#181c1c" text-anchor="end">${escHtml(shortLabel)}</text>`;
+    // Current bar (muted)
+    if (cEl) {
+      let x = labelW;
+      const ct = cEl.manualTime + cEl.autoTime + cEl.walkWaitTime;
+      svg += `<rect x="${x}" y="${y}" width="${ct * scale}" height="${rowH}" fill="#006172" opacity="0.25" rx="2"/>`;
+      svg += `<text x="${labelW + ct * scale + 4}" y="${y + rowH / 2 + 4}" font-family="Inter,sans-serif" font-size="9" fill="#6e797c">${ct}s</text>`;
+    }
+    // Future bar (full colour)
+    if (fEl) {
+      let x = labelW;
+      const fy2 = y + rowH + 2;
+      if (fEl.manualTime > 0) { const w = fEl.manualTime * scale; svg += `<rect x="${x}" y="${fy2}" width="${w}" height="${rowH}" fill="#006172" rx="2"/>`; x += w; }
+      if (fEl.autoTime > 0) { const w = fEl.autoTime * scale; svg += `<rect x="${x}" y="${fy2}" width="${w}" height="${rowH}" fill="#9e9e9e" rx="2"/>`; x += w; }
+      if (fEl.walkWaitTime > 0) { const w = fEl.walkWaitTime * scale; svg += `<rect x="${x}" y="${fy2}" width="${w}" height="${rowH}" fill="#d4700a" rx="2"/>`; x += w; }
+      const ft = fEl.manualTime + fEl.autoTime + fEl.walkWaitTime;
+      svg += `<text x="${labelW + ft * scale + 4}" y="${fy2 + rowH / 2 + 4}" font-family="Inter,sans-serif" font-size="9" fill="#3e484c">${ft}s</text>`;
+    }
+  }
+  // Legend
+  const ly = svgH - 18;
+  svg += `<rect x="${labelW}" y="${ly}" width="10" height="10" fill="#006172" opacity="0.25" rx="1"/><text x="${labelW + 14}" y="${ly + 9}" font-family="Inter,sans-serif" font-size="9" fill="#6e797c">Current</text>`;
+  svg += `<rect x="${labelW + 80}" y="${ly}" width="10" height="10" fill="#006172" rx="1"/><text x="${labelW + 94}" y="${ly + 9}" font-family="Inter,sans-serif" font-size="9" fill="#3e484c">Future</text>`;
+  svg += '</svg>';
+  document.getElementById('compareComboSvg').innerHTML = svg;
+}
+
+// ═══════════════════════════════════════
+// PROJECT SETTINGS & QMS FORM
+// ═══════════════════════════════════════
+
+function renderProjectSettings() {
+  if (!projectData) return;
+  document.getElementById('projectSettingsForm').innerHTML = `
+    <div class="form-group"><label>Process Step Name</label><input type="text" id="settProcessStep" value="${escHtml(projectData.processStepName)}" onchange="updateSettings()"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Operator</label><input type="text" id="settOperator" value="${escHtml(projectData.operator)}" onchange="updateSettings()"></div>
+      <div class="form-group"><label>Work Area</label><input type="text" id="settWorkArea" value="${escHtml(projectData.workArea)}" onchange="updateSettings()"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Organisation</label><input type="text" id="settOrg" value="${escHtml(projectData.organisation)}" onchange="updateSettings()"></div>
+      <div class="form-group"><label>Takt Time</label>
+        <div style="display:flex;gap:var(--space-2);">
+          <input type="number" id="settTakt" value="${projectData.taktTime || ''}" min="0" step="1" onchange="updateSettings()" style="flex:1;">
+          <select id="settTaktUnit" onchange="updateSettings()" style="width:100px;">
+            <option value="seconds" ${projectData.taktTimeUnit === 'seconds' ? 'selected' : ''}>seconds</option>
+            <option value="minutes" ${projectData.taktTimeUnit === 'minutes' ? 'selected' : ''}>minutes</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="form-group"><label>Project Notes</label><textarea id="settNotes" rows="3" onchange="updateSettings()">${escHtml(projectData.notes)}</textarea></div>
+  `;
+}
+
+function updateSettings() {
+  if (!projectData) return;
+  projectData.processStepName = document.getElementById('settProcessStep').value.trim();
+  projectData.operator = document.getElementById('settOperator').value.trim();
+  projectData.workArea = document.getElementById('settWorkArea').value.trim();
+  projectData.organisation = document.getElementById('settOrg').value.trim();
+  const taktVal = parseFloat(document.getElementById('settTakt').value);
+  const taktUnit = document.getElementById('settTaktUnit').value;
+  projectData.taktTimeUnit = taktUnit;
+  projectData.taktTime = isNaN(taktVal) ? null : (taktUnit === 'minutes' ? taktVal * 60 : taktVal);
+  projectData.notes = document.getElementById('settNotes').value.trim();
+  // Update project list
+  const list = getProjectList();
+  const p = list.find(x => x.id === currentProjectId);
+  if (p) { p.processStep = projectData.processStepName; saveProjectList(list); }
+  scheduleSave();
+}
+
+function renderQMSForm() {
+  if (!projectData) return;
+  const q = projectData.qmsMetadata;
+  document.getElementById('qmsForm').innerHTML = `
+    <div class="form-row">
+      <div class="form-group"><label>Document Reference</label><input type="text" id="qmsRef" value="${escHtml(q.documentRef)}" placeholder="e.g. SOP-PATH-042-SW" onchange="updateQMS()"></div>
+      <div class="form-group"><label>Version</label><input type="text" id="qmsVer" value="${escHtml(q.version)}" onchange="updateQMS()"></div>
+    </div>
+    <div class="form-group"><label>Document Title</label><input type="text" id="qmsTitle" value="${escHtml(q.documentTitle)}" onchange="updateQMS()"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Author</label><input type="text" id="qmsAuthor" value="${escHtml(q.author)}" onchange="updateQMS()"></div>
+      <div class="form-group"><label>Approved By</label><input type="text" id="qmsApproved" value="${escHtml(q.approvedBy)}" onchange="updateQMS()"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Effective Date</label><input type="date" id="qmsEffective" value="${q.effectiveDate}" onchange="updateQMS()"></div>
+      <div class="form-group"><label>Review Date</label><input type="date" id="qmsReview" value="${q.reviewDate}" onchange="updateQMS()"></div>
+    </div>
+    <div class="form-group"><label>Scope</label><textarea id="qmsScope" rows="2" onchange="updateQMS()">${escHtml(q.scope)}</textarea></div>
+  `;
+}
+
+function updateQMS() {
+  if (!projectData) return;
+  projectData.qmsMetadata = {
+    documentRef: document.getElementById('qmsRef').value.trim(),
+    documentTitle: document.getElementById('qmsTitle').value.trim(),
+    version: document.getElementById('qmsVer').value.trim(),
+    author: document.getElementById('qmsAuthor').value.trim(),
+    reviewDate: document.getElementById('qmsReview').value,
+    approvedBy: document.getElementById('qmsApproved').value.trim(),
+    effectiveDate: document.getElementById('qmsEffective').value,
+    scope: document.getElementById('qmsScope').value.trim()
+  };
+  scheduleSave();
+}
+
+// ═══════════════════════════════════════
+// VSM IMPORT
+// ═══════════════════════════════════════
+
+function importVSM(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (data.gembaApp !== 'vsm' && !data.steps && !data.payload?.steps) {
+        showToast('This does not appear to be a Gemba-VSM export');
+        return;
+      }
+      const steps = data.payload?.steps || data.steps || [];
+      if (steps.length === 0) { showToast('No process steps found in VSM data'); return; }
+      // Show step selector
+      renderVSMStepSelector(steps, data);
+    } catch(err) {
+      showToast('Error reading file: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function renderVSMStepSelector(steps, vsmData) {
+  document.getElementById('vsmStepList').innerHTML = steps.map((s, i) => {
+    const name = s.name || s.processName || ('Step ' + (i + 1));
+    const ct = s.cycleTime || s.ct || '';
+    const lt = s.leadTime || s.lt || '';
+    return `<div class="project-card" onclick="selectVSMStep(${i})" style="cursor:pointer;">
+      <h3>${escHtml(name)}</h3>
+      <div class="meta">${ct ? 'C/T: ' + ct + 's' : ''} ${lt ? ' L/T: ' + lt + 's' : ''}</div>
+    </div>`;
+  }).join('');
+  window._vsmSteps = steps;
+  window._vsmData = vsmData;
+  showModal('vsmSelectModal');
+}
+
+function selectVSMStep(idx) {
+  const step = window._vsmSteps[idx];
+  const ctx = window._vsmData.context || {};
+  projectData.vsmImport = {
+    stepName: step.name || step.processName || '',
+    cycleTime: step.cycleTime || step.ct || null,
+    leadTime: step.leadTime || step.lt || null,
+    operators: step.operators || step.numOperators || null,
+    defectRate: step.defectRate || null,
+    batchSize: step.batchSize || null,
+    wasteObservations: step.wasteObservations || step.waste || [],
+    importedFrom: ctx.workArea || '',
+    importedAt: new Date().toISOString()
+  };
+  projectData.processStepName = projectData.vsmImport.stepName;
+  projectData.workArea = ctx.workArea || projectData.workArea;
+  projectData.organisation = ctx.organisation || projectData.organisation;
+  closeModal('vsmSelectModal');
+  renderProjectSettings();
+  renderVSMContext();
+  scheduleSave();
+  showToast('VSM process step imported');
+}
+
+function renderVSMContext() {
+  const ctx = document.getElementById('vsmContext');
+  if (!projectData.vsmImport) { ctx.style.display = 'none'; return; }
+  ctx.style.display = '';
+  const v = projectData.vsmImport;
+  ctx.innerHTML = `
+    <div style="background:var(--primary-tint);border-radius:var(--radius-md);padding:var(--space-3);">
+      <div style="font-weight:600;color:var(--on-primary-tint);margin-bottom:4px;">VSM Context: ${escHtml(v.stepName)}</div>
+      <div style="font-size:12px;color:var(--on-primary-tint);">
+        ${v.cycleTime ? 'C/T: ' + v.cycleTime + 's' : ''} ${v.leadTime ? ' L/T: ' + v.leadTime + 's' : ''} ${v.operators ? ' Operators: ' + v.operators : ''}
+        ${v.importedFrom ? '<br>From: ' + escHtml(v.importedFrom) : ''}
+      </div>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════
+// JSON EXPORT / IMPORT
+// ═══════════════════════════════════════
+
+function exportJSON() {
+  if (!projectData) return;
+  const envelope = {
+    gembaApp: 'standardwork',
+    appVersion: APP_VERSION,
+    exportedAt: new Date().toISOString(),
+    developer: 'David Clark',
+    context: {
+      workArea: projectData.workArea,
+      author: projectData.qmsMetadata.author || projectData.operator,
+      date: new Date().toISOString().split('T')[0],
+      organisation: projectData.organisation
+    },
+    payload: projectData
+  };
+  const blob = new Blob([JSON.stringify(envelope, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'gemba-sw-' + (projectData.processStepName || projectData.name).replace(/\s+/g, '-').toLowerCase() + '.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('Project exported');
+}
+
+function importJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      let proj = data.payload || data;
+      if (!proj.currentState || !proj.id) { showToast('Invalid StandardWork project file'); return; }
+      // Generate new ID to avoid collisions
+      const newId = genId();
+      proj.id = newId;
+      proj.updatedAt = new Date().toISOString();
+      const list = getProjectList();
+      list.unshift({ id: newId, name: proj.name, updated: proj.updatedAt, processStep: proj.processStepName || '' });
+      saveProjectList(list);
+      saveProjectData(newId, proj);
+      showToast('Project imported');
+      renderProjectList();
+    } catch(err) {
+      showToast('Error importing: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+// ═══════════════════════════════════════
+// PRINT FUNCTIONS
+// ═══════════════════════════════════════
+
+function buildJIHtml(state) {
+  const stateLabel = activeState === 'future' ? 'Future State' : 'Current State';
+  const elemsWithImages = state.elements.map((el, i) => ({ el, stepNum: i + 1 })).filter(x => x.el.image);
+  let imageGalleryHtml = '';
+  if (elemsWithImages.length > 0) {
+    const pages = [];
+    for (let i = 0; i < elemsWithImages.length; i += 4) pages.push(elemsWithImages.slice(i, i + 4));
+    imageGalleryHtml = pages.map(page => {
+      const row1 = page.slice(0, 2);
+      const row2 = page.slice(2, 4);
+      const cell = ({ el, stepNum }) => `
+        <td style="width:50%;padding:8px;box-sizing:border-box;vertical-align:top;border:1px solid #bec8cc;height:50%;">
+          <div style="font-size:8pt;font-weight:bold;color:#006172;margin-bottom:4px;">Step ${stepNum} \u2014 ${escHtml(el.description)}</div>
+          <img src="${el.image}" style="width:100%;height:calc(95mm - 20px);object-fit:contain;display:block;">
+        </td>`;
+      const emptyCell = '<td style="width:50%;padding:8px;box-sizing:border-box;border:1px solid #bec8cc;height:50%;"></td>';
+      return `
+    <div style="page-break-before:always;page-break-after:avoid;height:194mm;box-sizing:border-box;margin:0;padding:0;">
+      <table style="width:100%;height:100%;border-collapse:collapse;table-layout:fixed;">
+        <tr style="height:50%;">${row1.map(cell).join('')}${row1.length < 2 ? emptyCell : ''}</tr>
+        <tr style="height:50%;">${row2.map(cell).join('')}${row2.length === 0 ? emptyCell + emptyCell : row2.length < 2 ? emptyCell : ''}</tr>
+      </table>
+    </div>`;
+    }).join('');
+  }
+  return `<style>@page{size:landscape;margin:0.5cm 1cm;}body{font-family:Arial,sans-serif;font-size:10pt;color:#2D2D2D;margin:0;}.print-header{border-bottom:2px solid #006172;padding-bottom:8px;margin-bottom:12px;}.print-header h1{font-size:16pt;color:#006172;margin:0;font-family:Arial,sans-serif;}.print-header .print-meta{font-size:9pt;color:#3e484c;margin-top:4px;}.print-table{width:100%;border-collapse:collapse;font-size:9pt;}.print-table th,.print-table td{border:1px solid #bec8cc;padding:4px 6px;text-align:left;vertical-align:top;}.print-table th{background:#c4e5ef;font-weight:700;color:#006172;}.qms-header-table{width:100%;border-collapse:collapse;margin-bottom:12px;}.qms-header-table td{border:1px solid #bec8cc;padding:4px 8px;font-size:10pt;}.qms-header-table .qms-label{background:#c4e5ef;font-weight:700;color:#006172;width:30%;}</style><div class="print-page">
+    <div class="print-header">
+      <h1>Job Instruction Sheet \u2014 ${escHtml(projectData.processStepName || projectData.name)}</h1>
+      <div class="print-meta">${stateLabel} | Operator: ${escHtml(projectData.operator)} | Work Area: ${escHtml(projectData.workArea)} | Date: ${formatDate(state.observedAt)}${projectData.taktTime ? ' | Takt: ' + formatSecs(projectData.taktTime) : ''}</div>
+    </div>
+    <table class="print-table">
+      <thead><tr><th>#</th><th>Work Element</th><th>Key Points</th><th>Reason</th><th>Time</th><th style="text-align:center;">Image Ref</th></tr></thead>
+      <tbody>
+      ${state.elements.map((el, i) => {
+        const kpHtml = el.keyPoints.map(kp => `<div style="margin-bottom:4px;"><strong>${escHtml(kp.description)}</strong><br><small>${escHtml(kp.reason)}</small></div>`).join('') || '<em>None</em>';
+        const catHtml = el.keyPoints.map(kp => `<span style="font-size:9px;font-weight:bold;">${kp.reasonCategory}</span>`).join('<br>') || '';
+        const imageRef = el.image ? `Step ${i + 1}` : 'N/A';
+        return `<tr>
+          <td style="text-align:center;font-weight:bold;">${i + 1}</td>
+          <td><strong>${escHtml(el.description)}</strong>${el.notes ? `<br><small style="color:#6e797c;">${escHtml(el.notes)}</small>` : ''}</td>
+          <td>${kpHtml}</td>
+          <td style="text-align:center;">${catHtml}</td>
+          <td style="white-space:nowrap;">M: ${el.manualTime}s<br>A: ${el.autoTime}s<br>W: ${el.walkWaitTime}s<br><strong>${el.manualTime + el.autoTime + el.walkWaitTime}s</strong></td>
+          <td style="text-align:center;color:#006172;">${imageRef}</td>
+        </tr>`;
+      }).join('')}
+      </tbody>
+    </table>
+    ${imageGalleryHtml}
+  </div>`;
+}
+
+function printJobInstruction() {
+  const state = getActiveState();
+  if (!state || state.elements.length === 0) { showToast('No elements to print'); return; }
+  document.getElementById('panel-print-ji').innerHTML = buildJIHtml(state);
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active', 'print-active'));
+  document.getElementById('panel-print-ji').classList.add('print-active');
+  setTimeout(() => { window.print(); setTimeout(() => { document.getElementById('panel-print-ji').classList.remove('print-active'); switchTab('export'); }, 500); }, 200);
+}
+function printQMS() {
+  const state = getActiveState();
+  if (!state || state.elements.length === 0) { showToast('No elements to print'); return; }
+  document.getElementById('panel-print-qms').innerHTML = buildQMSHtml(state);
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active', 'print-active'));
+  document.getElementById('panel-print-qms').classList.add('print-active');
+  setTimeout(() => { window.print(); setTimeout(() => { document.getElementById('panel-print-qms').classList.remove('print-active'); switchTab('export'); }, 500); }, 200);
+}
+
+function buildQMSHtml(state) {
+  const q = projectData.qmsMetadata;
+
+  // Image gallery: 4 images per page in 2x2 grid (identical to JI)
+  const elemsWithImages = state.elements.map((el, i) => ({ el, stepNum: i + 1 })).filter(x => x.el.image);
+  let imageGalleryHtml = '';
+  if (elemsWithImages.length > 0) {
+    const pages = [];
+    for (let i = 0; i < elemsWithImages.length; i += 4) pages.push(elemsWithImages.slice(i, i + 4));
+    imageGalleryHtml = pages.map(page => {
+      const row1 = page.slice(0, 2);
+      const row2 = page.slice(2, 4);
+      const cell = ({ el, stepNum }) => `
+        <td style="width:50%;padding:8px;box-sizing:border-box;vertical-align:top;border:1px solid #bec8cc;height:50%;">
+          <div style="font-size:9pt;font-weight:bold;color:#006172;margin-bottom:6px;">Step ${stepNum} — ${escHtml(el.description)}</div>
+          <img src="${el.image}" style="width:100%;height:calc(95mm - 20px);object-fit:contain;display:block;">
+        </td>`;
+      const emptyCell = '<td style="width:50%;padding:8px;box-sizing:border-box;border:1px solid #bec8cc;height:50%;"></td>';
+      return `
+    <div style="page-break-before:always;page-break-after:avoid;height:194mm;box-sizing:border-box;margin:0;padding:0;">
+      <table style="width:100%;height:100%;border-collapse:collapse;table-layout:fixed;">
+        <tr style="height:50%;">${row1.map(cell).join('')}${row1.length < 2 ? emptyCell : ''}</tr>
+        <tr style="height:50%;">${row2.map(cell).join('')}${row2.length === 0 ? emptyCell + emptyCell : row2.length < 2 ? emptyCell : ''}</tr>
+      </table>
+    </div>`;
+    }).join('');
+  }
+
+  return `<style>@page{size:landscape;margin:0.5cm 1cm;}body{font-family:Arial,sans-serif;font-size:10pt;color:#2D2D2D;margin:0;}.print-header{border-bottom:2px solid #006172;padding-bottom:8px;margin-bottom:12px;}.print-header h1{font-size:16pt;color:#006172;margin:0;font-family:Arial,sans-serif;}.print-header .print-meta{font-size:9pt;color:#3e484c;margin-top:4px;}.print-table{width:100%;border-collapse:collapse;font-size:9pt;}.print-table th,.print-table td{border:1px solid #bec8cc;padding:4px 6px;text-align:left;vertical-align:top;}.print-table th{background:#c4e5ef;font-weight:700;color:#006172;}.qms-header-table{width:100%;border-collapse:collapse;margin-bottom:12px;}.qms-header-table td{border:1px solid #bec8cc;padding:4px 8px;font-size:10pt;}.qms-header-table .qms-label{background:#c4e5ef;font-weight:700;color:#006172;width:30%;}</style><div class="print-page">
+    <table class="qms-header-table" style="margin-bottom:12px;">
+      <tr><td class="qms-label">Document Ref</td><td>${escHtml(q.documentRef)}</td><td class="qms-label">Version</td><td>${escHtml(q.version)}</td></tr>
+      <tr><td class="qms-label">Title</td><td colspan="3">${escHtml(q.documentTitle || projectData.processStepName || projectData.name)}</td></tr>
+      <tr><td class="qms-label">Author</td><td>${escHtml(q.author)}</td><td class="qms-label">Approved By</td><td>${escHtml(q.approvedBy)}</td></tr>
+      <tr><td class="qms-label">Effective Date</td><td>${q.effectiveDate || ''}</td><td class="qms-label">Review Date</td><td>${q.reviewDate || ''}</td></tr>
+      ${q.scope ? `<tr><td class="qms-label">Scope</td><td colspan="3">${escHtml(q.scope)}</td></tr>` : ''}
+    </table>
+    <div class="print-header">
+      <h1>Job Instruction Sheet — ${escHtml(projectData.processStepName || projectData.name)}</h1>
+      <div class="print-meta">Current State | Operator: ${escHtml(projectData.operator)} | Work Area: ${escHtml(projectData.workArea)}</div>
+    </div>
+    <table class="print-table">
+      <thead><tr><th>#</th><th>Work Element</th><th>Key Points</th><th>Reason</th><th>Time</th><th style="text-align:center;">Image Ref</th></tr></thead>
+      <tbody>
+      ${state.elements.map((el, i) => {
+        const kpHtml = el.keyPoints.map(kp => `<div style="margin-bottom:4px;"><strong>${escHtml(kp.description)}</strong><br><small>${escHtml(kp.reason)}</small></div>`).join('') || '<em>None</em>';
+        const catHtml = el.keyPoints.map(kp => `<span style="font-size:9px;font-weight:bold;">${kp.reasonCategory}</span>`).join('<br>') || '';
+        const imageRef = el.image ? `Step ${i + 1}` : 'N/A';
+        return `<tr>
+          <td style="text-align:center;font-weight:bold;">${i + 1}</td>
+          <td><strong>${escHtml(el.description)}</strong>${el.notes ? `<br><small style="color:#6e797c;">${escHtml(el.notes)}</small>` : ''}</td>
+          <td>${kpHtml}</td>
+          <td style="text-align:center;">${catHtml}</td>
+          <td style="white-space:nowrap;">M: ${el.manualTime}s<br>A: ${el.autoTime}s<br>W: ${el.walkWaitTime}s<br><strong>${el.manualTime + el.autoTime + el.walkWaitTime}s</strong></td>
+          <td style="text-align:center;color:#006172;">${imageRef}</td>
+        </tr>`;
+      }).join('')}
+      </tbody>
+    </table>
+    ${imageGalleryHtml}
+
+  </div>`;
+}
+
+// ═══════════════════════════════════════
+// DOC EXPORT// ═══════════════════════════════════════
+// DOC EXPORT (HTML-as-DOC)
+// ═══════════════════════════════════════
+
+// ── Word image gallery: uses px dimensions + HTML attributes (reliable in Word) ──
+function buildWordImageGallery(elemsWithImages) {
+  if (elemsWithImages.length === 0) return '';
+  const pages = [];
+  for (let i = 0; i < elemsWithImages.length; i += 4) pages.push(elemsWithImages.slice(i, i + 4));
+  return pages.map(page => {
+    const rows = [0, 1].map(r => {
+      const cells = [0, 1].map(c => {
+        const item = page[r * 2 + c];
+        if (!item) return '<td width="470" style="width:470px;height:320px;border:1px solid #bec8cc;padding:6px;">&nbsp;</td>';
+        return '<td width="470" style="width:470px;height:320px;border:1px solid #bec8cc;padding:6px;vertical-align:top;">' +
+          '<div style="font-size:8pt;font-weight:bold;color:#006172;margin-bottom:4px;">Step ' + item.stepNum + ' &mdash; ' + escHtml(item.el.description) + '</div>' +
+          '<img src="' + item.el.image + '" width="455" height="295" style="display:block;width:455px;height:295px;">' +
+          '</td>';
+      }).join('');
+      return '<tr>' + cells + '</tr>';
+    }).join('');
+    return '<table width="960" cellspacing="0" cellpadding="0" style="page-break-before:always;width:960px;border-collapse:collapse;table-layout:fixed;">' + rows + '</table>';
+  }).join('');
+}
+
+// ── Word-specific content builders (separate from print preview builders) ──────
+function buildJIWordBody(state) {
+  const stateLabel = activeState === 'future' ? 'Future State' : 'Current State';
+  const elemsWithImages = state.elements.map((el, i) => ({ el, stepNum: i + 1 })).filter(x => x.el.image);
+  const tableRows = state.elements.map((el, i) => {
+    const kpHtml = el.keyPoints.map(kp => '<div style="margin-bottom:4px;"><strong>' + escHtml(kp.description) + '</strong><br><small>' + escHtml(kp.reason) + '</small></div>').join('') || '<em>None</em>';
+    const catHtml = el.keyPoints.map(kp => '<span style="font-size:9px;font-weight:bold;">' + kp.reasonCategory + '</span>').join('<br>') || '';
+    const imageRef = el.image ? 'Step ' + (i + 1) : 'N/A';
+    return '<tr>' +
+      '<td style="text-align:center;font-weight:bold;border:1px solid #bec8cc;padding:4px 6px;">' + (i + 1) + '</td>' +
+      '<td style="border:1px solid #bec8cc;padding:4px 6px;"><strong>' + escHtml(el.description) + '</strong>' + (el.notes ? '<br><small style="color:#6e797c;">' + escHtml(el.notes) + '</small>' : '') + '</td>' +
+      '<td style="border:1px solid #bec8cc;padding:4px 6px;">' + kpHtml + '</td>' +
+      '<td style="text-align:center;border:1px solid #bec8cc;padding:4px 6px;">' + catHtml + '</td>' +
+      '<td style="white-space:nowrap;border:1px solid #bec8cc;padding:4px 6px;">M: ' + el.manualTime + 's<br>A: ' + el.autoTime + 's<br>W: ' + el.walkWaitTime + 's<br><strong>' + (el.manualTime + el.autoTime + el.walkWaitTime) + 's</strong></td>' +
+      '<td style="text-align:center;color:#006172;border:1px solid #bec8cc;padding:4px 6px;">' + imageRef + '</td>' +
+      '</tr>';
+  }).join('');
+  return '<div class="print-header">' +
+    '<h1>Job Instruction Sheet &mdash; ' + escHtml(projectData.processStepName || projectData.name) + '</h1>' +
+    '<div class="print-meta">' + stateLabel + ' | Operator: ' + escHtml(projectData.operator) + ' | Work Area: ' + escHtml(projectData.workArea) + ' | Date: ' + formatDate(state.observedAt) + (projectData.taktTime ? ' | Takt: ' + formatSecs(projectData.taktTime) : '') + '</div>' +
+    '</div>' +
+    '<table width="100%" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:9pt;">' +
+    '<thead><tr>' +
+    '<th style="background:#c4e5ef;font-weight:700;color:#006172;border:1px solid #bec8cc;padding:4px 6px;">#</th>' +
+    '<th style="background:#c4e5ef;font-weight:700;color:#006172;border:1px solid #bec8cc;padding:4px 6px;">Work Element</th>' +
+    '<th style="background:#c4e5ef;font-weight:700;color:#006172;border:1px solid #bec8cc;padding:4px 6px;">Key Points</th>' +
+    '<th style="background:#c4e5ef;font-weight:700;color:#006172;border:1px solid #bec8cc;padding:4px 6px;">Reason</th>' +
+    '<th style="background:#c4e5ef;font-weight:700;color:#006172;border:1px solid #bec8cc;padding:4px 6px;">Time</th>' +
+    '<th style="background:#c4e5ef;font-weight:700;color:#006172;border:1px solid #bec8cc;padding:4px 6px;text-align:center;">Image Ref</th>' +
+    '</tr></thead>' +
+    '<tbody>' + tableRows + '</tbody></table>' +
+    buildWordImageGallery(elemsWithImages);
+}
+
+function buildQMSWordBody(state) {
+  const q = projectData.qmsMetadata;
+  const elemsWithImages = state.elements.map((el, i) => ({ el, stepNum: i + 1 })).filter(x => x.el.image);
+  const tableRows = state.elements.map((el, i) => {
+    const kpHtml = el.keyPoints.map(kp => '<div style="margin-bottom:4px;"><strong>' + escHtml(kp.description) + '</strong><br><small>' + escHtml(kp.reason) + '</small></div>').join('') || '<em>None</em>';
+    const catHtml = el.keyPoints.map(kp => '<span style="font-size:9px;font-weight:bold;">' + kp.reasonCategory + '</span>').join('<br>') || '';
+    const imageRef = el.image ? 'Step ' + (i + 1) : 'N/A';
+    return '<tr>' +
+      '<td style="text-align:center;font-weight:bold;border:1px solid #bec8cc;padding:4px 6px;">' + (i + 1) + '</td>' +
+      '<td style="border:1px solid #bec8cc;padding:4px 6px;"><strong>' + escHtml(el.description) + '</strong>' + (el.notes ? '<br><small style="color:#6e797c;">' + escHtml(el.notes) + '</small>' : '') + '</td>' +
+      '<td style="border:1px solid #bec8cc;padding:4px 6px;">' + kpHtml + '</td>' +
+      '<td style="text-align:center;border:1px solid #bec8cc;padding:4px 6px;">' + catHtml + '</td>' +
+      '<td style="white-space:nowrap;border:1px solid #bec8cc;padding:4px 6px;">M: ' + el.manualTime + 's<br>A: ' + el.autoTime + 's<br>W: ' + el.walkWaitTime + 's<br><strong>' + (el.manualTime + el.autoTime + el.walkWaitTime) + 's</strong></td>' +
+      '<td style="text-align:center;color:#006172;border:1px solid #bec8cc;padding:4px 6px;">' + imageRef + '</td>' +
+      '</tr>';
+  }).join('');
+  return '<table width="100%" cellspacing="0" style="width:100%;border-collapse:collapse;margin-bottom:12px;">' +
+    '<tr><td style="background:#c4e5ef;font-weight:700;color:#006172;border:1px solid #bec8cc;padding:4px 8px;width:25%;">Document Ref</td><td style="border:1px solid #bec8cc;padding:4px 8px;">' + escHtml(q.documentRef) + '</td><td style="background:#c4e5ef;font-weight:700;color:#006172;border:1px solid #bec8cc;padding:4px 8px;width:25%;">Version</td><td style="border:1px solid #bec8cc;padding:4px 8px;">' + escHtml(q.version) + '</td></tr>' +
+    '<tr><td style="background:#c4e5ef;font-weight:700;color:#006172;border:1px solid #bec8cc;padding:4px 8px;">Title</td><td colspan="3" style="border:1px solid #bec8cc;padding:4px 8px;">' + escHtml(q.documentTitle || projectData.processStepName || projectData.name) + '</td></tr>' +
+    '<tr><td style="background:#c4e5ef;font-weight:700;color:#006172;border:1px solid #bec8cc;padding:4px 8px;">Author</td><td style="border:1px solid #bec8cc;padding:4px 8px;">' + escHtml(q.author) + '</td><td style="background:#c4e5ef;font-weight:700;color:#006172;border:1px solid #bec8cc;padding:4px 8px;">Approved By</td><td style="border:1px solid #bec8cc;padding:4px 8px;">' + escHtml(q.approvedBy) + '</td></tr>' +
+    '<tr><td style="background:#c4e5ef;font-weight:700;color:#006172;border:1px solid #bec8cc;padding:4px 8px;">Effective Date</td><td style="border:1px solid #bec8cc;padding:4px 8px;">' + (q.effectiveDate || '') + '</td><td style="background:#c4e5ef;font-weight:700;color:#006172;border:1px solid #bec8cc;padding:4px 8px;">Review Date</td><td style="border:1px solid #bec8cc;padding:4px 8px;">' + (q.reviewDate || '') + '</td></tr>' +
+    (q.scope ? '<tr><td style="background:#c4e5ef;font-weight:700;color:#006172;border:1px solid #bec8cc;padding:4px 8px;">Scope</td><td colspan="3" style="border:1px solid #bec8cc;padding:4px 8px;">' + escHtml(q.scope) + '</td></tr>' : '') +
+    '</table>' +
+    '<div class="print-header">' +
+    '<h1>Job Instruction Sheet &mdash; ' + escHtml(projectData.processStepName || projectData.name) + '</h1>' +
+    '<div class="print-meta">Current State | Operator: ' + escHtml(projectData.operator) + ' | Work Area: ' + escHtml(projectData.workArea) + '</div>' +
+    '</div>' +
+    '<table width="100%" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:9pt;">' +
+    '<thead><tr>' +
+    '<th style="background:#c4e5ef;font-weight:700;color:#006172;border:1px solid #bec8cc;padding:4px 6px;">#</th>' +
+    '<th style="background:#c4e5ef;font-weight:700;color:#006172;border:1px solid #bec8cc;padding:4px 6px;">Work Element</th>' +
+    '<th style="background:#c4e5ef;font-weight:700;color:#006172;border:1px solid #bec8cc;padding:4px 6px;">Key Points</th>' +
+    '<th style="background:#c4e5ef;font-weight:700;color:#006172;border:1px solid #bec8cc;padding:4px 6px;">Reason</th>' +
+    '<th style="background:#c4e5ef;font-weight:700;color:#006172;border:1px solid #bec8cc;padding:4px 6px;">Time</th>' +
+    '<th style="background:#c4e5ef;font-weight:700;color:#006172;border:1px solid #bec8cc;padding:4px 6px;text-align:center;">Image Ref</th>' +
+    '</tr></thead>' +
+    '<tbody>' + tableRows + '</tbody></table>' +
+    buildWordImageGallery(elemsWithImages);
+}
+
+function wrapWordDoc(bodyContent) {
+  return '<!DOCTYPE html>\n' +
+    '<html xmlns:o="urn:schemas-microsoft-com:office:office"\n' +
+    '      xmlns:w="urn:schemas-microsoft-com:office:word"\n' +
+    '      xmlns="http://www.w3.org/TR/REC-html40">\n' +
+    '<head>\n' +
+    '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">\n' +
+    '<style>\n' +
+    '@page WordSection1 { size:841.95pt 595.35pt; mso-page-orientation:landscape; margin:1cm 1.5cm; }\n' +
+    'div.WordSection1 { page:WordSection1; }\n' +
+    'body { font-family:Arial,sans-serif; font-size:10pt; color:#2D2D2D; margin:0; }\n' +
+    '.print-header { border-bottom:2px solid #006172; padding-bottom:8px; margin-bottom:12px; }\n' +
+    '.print-header h1 { font-size:16pt; color:#006172; margin:0; font-family:Arial,sans-serif; }\n' +
+    '.print-header .print-meta { font-size:9pt; color:#3e484c; margin-top:4px; }\n' +
+    '</style>\n' +
+    '</head>\n' +
+    '<body><div class="WordSection1">\n' +
+    bodyContent +
+    '\n</div></body></html>';
+}
+
+function exportJIDoc() {
+  const state = getActiveState();
+  if (!state || state.elements.length === 0) { showToast('No elements to export'); return; }
+  const q = projectData.qmsMetadata;
+  const wordDoc = wrapWordDoc(buildJIWordBody(state));
+  const blob = new Blob([wordDoc], { type: 'application/msword' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  const fname = (projectData.processStepName || 'StandardWork').replace(/\s+/g, '-');
+  a.download = fname + '-JI-v' + (q.version || '1.0') + '.doc';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('Job Instruction Sheet exported');
+}
+
+function exportQMSDoc() {
+  const state = getActiveState();
+  if (!state || state.elements.length === 0) { showToast('No elements to export'); return; }
+  const q = projectData.qmsMetadata;
+  const wordDoc = wrapWordDoc(buildQMSWordBody(state));
+  const blob = new Blob([wordDoc], { type: 'application/msword' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  const fname = (q.documentRef || projectData.processStepName || 'StandardWork').replace(/\s+/g, '-');
+  a.download = fname + '-QMS-v' + (q.version || '1.0') + '.doc';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('QMS Appendix exported');
+}
+
+function scheduleSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    if (currentProjectId && projectData) {
+      saveProjectData(currentProjectId, projectData);
+      const list = getProjectList();
+      const p = list.find(x => x.id === currentProjectId);
+      if (p) { p.updated = projectData.updatedAt; saveProjectList(list); }
+    }
+  }, AUTOSAVE_DELAY);
+}
+
+// ═══════════════════════════════════════
+// DEMO DATA
+// ═══════════════════════════════════════
+
+function loadDemo() {
+  const demo = createEmptyProject('Small Biopsy Grossing — Demo');
+  demo.processStepName = 'Specimen Grossing (Small Biopsy)';
+  demo.operator = 'BMS / Dissector';
+  demo.workArea = 'Histopathology Cut-Up Lab';
+  demo.organisation = 'Demo NHS Trust';
+  demo.taktTime = 180;
+  demo.taktTimeUnit = 'seconds';
+  demo.notes = 'Demo standard work for a small biopsy grossing cycle. Observed at a typical NHS histopathology cut-up bench.';
+
+  demo.currentState.elements = [
+    {
+      id: genId(), sequence: 1,
+      description: 'Collect specimen pot from rack',
+      image: null, imageName: null,
+      keyPoints: [
+        { id: genId(), description: 'Check pot is sealed and labelled', reason: 'Prevent spillage and misidentification', reasonCategory: 'S' }
+      ],
+      manualTime: 5, autoTime: 0, walkWaitTime: 15,
+      valueClass: 'NNVA', wasteCategory: 'T', wasteNote: 'Walking to specimen rack across the lab',
+      notes: 'Rack is 8 metres from bench'
+    },
+    {
+      id: genId(), sequence: 2,
+      description: 'Verify patient ID against request form on LIS',
+      image: null, imageName: null,
+      keyPoints: [
+        { id: genId(), description: 'Match three identifiers: name, DOB, hospital number', reason: 'Prevent specimen misidentification — patient safety critical', reasonCategory: 'S' },
+        { id: genId(), description: 'Check specimen type matches request', reason: 'Ensure correct processing protocol', reasonCategory: 'Q' }
+      ],
+      manualTime: 20, autoTime: 8, walkWaitTime: 0,
+      valueClass: 'NNVA', wasteCategory: 'E', wasteNote: 'Regulatory requirement but does not transform the specimen',
+      notes: 'LIS takes ~8 seconds to load specimen record'
+    },
+    {
+      id: genId(), sequence: 3,
+      description: 'Open pot, assess fixation, describe specimen',
+      image: null, imageName: null,
+      keyPoints: [
+        { id: genId(), description: 'Check formalin fixation is adequate', reason: 'Under-fixed tissue produces poor sections and IHC artefacts', reasonCategory: 'Q' },
+        { id: genId(), description: 'Measure specimen dimensions', reason: 'Required for pathology report and TNM staging', reasonCategory: 'Q' }
+      ],
+      manualTime: 30, autoTime: 0, walkWaitTime: 0,
+      valueClass: 'VA', wasteCategory: null, wasteNote: '',
+      notes: 'Core value-adding step'
+    },
+    {
+      id: genId(), sequence: 4,
+      description: 'Select and label cassettes',
+      image: null, imageName: null,
+      keyPoints: [
+        { id: genId(), description: 'Use pencil, not pen, on cassette labels', reason: 'Pen ink dissolves in processing chemicals', reasonCategory: 'T' },
+        { id: genId(), description: 'Write specimen number legibly', reason: 'Illegible labels cause embedding errors', reasonCategory: 'Q' }
+      ],
+      manualTime: 15, autoTime: 0, walkWaitTime: 10,
+      valueClass: 'NNVA', wasteCategory: 'M', wasteNote: 'Searching for correct cassette colour/size',
+      notes: 'Cassettes stored in drawer below bench but colours mixed'
+    },
+    {
+      id: genId(), sequence: 5,
+      description: 'Dissect and embed tissue in cassette',
+      image: null, imageName: null,
+      keyPoints: [
+        { id: genId(), description: 'Orient tissue correctly in cassette', reason: 'Incorrect orientation means section does not show diagnostic surface', reasonCategory: 'Q' },
+        { id: genId(), description: 'Include all tissue if biopsy is small', reason: 'Missing tissue means missing diagnosis', reasonCategory: 'S' }
+      ],
+      manualTime: 45, autoTime: 0, walkWaitTime: 0,
+      valueClass: 'VA', wasteCategory: null, wasteNote: '',
+      notes: 'Primary value-adding dissection step'
+    },
+    {
+      id: genId(), sequence: 6,
+      description: 'Place cassette in processor basket',
+      image: null, imageName: null,
+      keyPoints: [
+        { id: genId(), description: 'Ensure cassette lid is fully closed', reason: 'Open lids cause tissue loss in processor', reasonCategory: 'S' }
+      ],
+      manualTime: 5, autoTime: 0, walkWaitTime: 8,
+      valueClass: 'NNVA', wasteCategory: 'T', wasteNote: 'Walking to processor basket at end of bench',
+      notes: ''
+    },
+    {
+      id: genId(), sequence: 7,
+      description: 'Enter grossing data into LIS',
+      image: null, imageName: null,
+      keyPoints: [
+        { id: genId(), description: 'Record block count and tissue description', reason: 'Audit trail and downstream embedding instructions', reasonCategory: 'Q' }
+      ],
+      manualTime: 20, autoTime: 5, walkWaitTime: 0,
+      valueClass: 'NNVA', wasteCategory: 'E', wasteNote: 'Duplicate data entry — description already dictated/written',
+      notes: 'LIS interface is slow; same info entered as free text description'
+    }
+  ];
+
+  // Create a future state with improvements
+  demo.futureState = JSON.parse(JSON.stringify(demo.currentState));
+  demo.futureState.observedAt = new Date().toISOString();
+  // Improvement 1: move rack closer (reduce walk time)
+  demo.futureState.elements[0].walkWaitTime = 3;
+  demo.futureState.elements[0].wasteNote = 'Rack relocated to within 2m of bench';
+  // Improvement 2: faster LIS (already in progress)
+  demo.futureState.elements[1].autoTime = 3;
+  demo.futureState.elements[1].notes = 'LIS upgrade expected to reduce load time';
+  // Improvement 3: pre-sort cassettes
+  demo.futureState.elements[3].walkWaitTime = 2;
+  demo.futureState.elements[3].wasteNote = 'Cassettes pre-sorted by 5S into labelled compartments';
+  // Improvement 4: move processor basket closer
+  demo.futureState.elements[5].walkWaitTime = 2;
+  demo.futureState.elements[5].wasteNote = 'Basket positioned at end of bench within reach';
+  // Improvement 5: voice-to-LIS integration removes duplicate entry
+  demo.futureState.elements[6].manualTime = 5;
+  demo.futureState.elements[6].autoTime = 3;
+  demo.futureState.elements[6].wasteNote = 'Speech recognition auto-populates LIS from dictation';
+  demo.futureState.elements[6].valueClass = 'NNVA';
+
+  const list = getProjectList();
+  list.unshift({ id: demo.id, name: demo.name, updated: demo.updatedAt, processStep: demo.processStepName });
+  saveProjectList(list);
+  saveProjectData(demo.id, demo);
+  openProject(demo.id);
+  showToast('Demo project loaded');
+}
+
+// ═══════════════════════════════════════
+// INITIALISATION
+// ═══════════════════════════════════════
+
+renderProjectList();
+</script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9f2388ee5e4686b2',t:'MTc3NzE4NDk4NQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

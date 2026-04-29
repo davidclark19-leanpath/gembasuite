@@ -1,0 +1,34 @@
+{
+  "items": [
+    {
+      "app": "Gemba-VSM",
+      "version": "v6.3",
+      "date": "2026-04-29",
+      "summary": "Stability improvements and export refinements."
+    },
+    {
+      "app": "Gemba-A3",
+      "version": "v1.13",
+      "date": "2026-04-29",
+      "summary": "RCA import workflow improvements and AI coaching updates."
+    },
+    {
+      "app": "Gemba-RCA",
+      "version": "v1.2",
+      "date": "2026-04-29",
+      "summary": "Stability improvements and updated modal layout."
+    },
+    {
+      "app": "Gemba-StandardWork",
+      "version": "v1.9",
+      "date": "2026-04-29",
+      "summary": "New standard work template features and improved print layout."
+    },
+    {
+      "app": "All apps",
+      "version": "",
+      "date": "2026-04-18",
+      "summary": "Disclaimer and governance update across all apps and the licence page — clarifying medical device status, data storage, and liability."
+    }
+  ]
+}

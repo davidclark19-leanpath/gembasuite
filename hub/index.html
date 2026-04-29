@@ -1,0 +1,1861 @@
+<!DOCTYPE html>
+<!--
+  ═══════════════════════════════════════════════════════════════
+  Gemba-Hub v1.1 — Programme Dashboard
+  Part of the Gemba Suite — gembasuite.org
+
+  A read-only programme dashboard that aggregates Gemba Suite
+  JSON exports into a unified portfolio view for review meetings.
+
+  © David Clark — gembasuite.org
+  Licensed under CC BY-NC-SA 4.0
+  https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+  Single-file Progressive Web App
+  No frameworks · No external dependencies · No localStorage
+  ═══════════════════════════════════════════════════════════════
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#181c1c">
+<meta name="description" content="Gemba-Hub — Programme dashboard for Gemba Suite lean improvement tools">
+<title>Gemba-Hub — Programme Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ═══════════════════════════════════════
+   DESIGN TOKENS — Gemba Suite v1.0
+   ═══════════════════════════════════════ */
+:root {
+  --ink:                #181c1c;
+  --ink-secondary:      #3e484c;
+  --ink-tertiary:       #6e797c;
+
+  --paper:              #f7faf9;
+  --card:               #ffffff;
+  --surface-low:        #f1f4f3;
+  --surface-high:       #e6e9e8;
+  --surface-dim:        #d7dbda;
+
+  --grid:               #bec8cc;
+  --grid-subtle:        #e0e3e2;
+
+  --primary:            #006172;
+  --primary-container:  #007c91;
+  --primary-tint:       #c4e5ef;
+  --primary-tint-strong:#79d3ea;
+  --on-primary:         #ffffff;
+  --on-primary-tint:    #004e5c;
+
+  --accent-warm:        #854a10;
+  --accent-warm-container: #a26227;
+  --accent-warm-bg:     #ffdcc3;
+  --on-accent-warm:     #ffffff;
+
+  --status-success:     #2e7d32;
+  --status-success-bg:  #d4edda;
+  --status-warning:     #856404;
+  --status-warning-bg:  #fff3cd;
+  --status-error:       #ba1a1a;
+  --status-error-bg:    #ffdad6;
+  --status-locked:      #9e9e9e;
+  --status-locked-bg:   #e9e9e9;
+  --status-draft:       #6e797c;
+  --status-draft-bg:    #f0f0f0;
+
+  --shadow-sm:          0 1px 3px rgba(24,28,28,0.06);
+  --shadow-md:          0 2px 8px rgba(24,28,28,0.08);
+  --shadow-lg:          0 4px 16px rgba(24,28,28,0.10);
+
+  --radius-sm:          4px;
+  --radius-md:          8px;
+  --radius-lg:          12px;
+  --radius-full:        9999px;
+
+  --font-display:       'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-body:          'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono:          ui-monospace, 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+
+  --space-1:            4px;
+  --space-2:            8px;
+  --space-3:            12px;
+  --space-4:            16px;
+  --space-5:            20px;
+  --space-6:            24px;
+  --space-8:            32px;
+  --space-10:           40px;
+}
+
+/* ═══════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--paper);
+  min-height: 100dvh;
+}
+
+/* ═══════════════════════════════════════
+   APP HEADER
+   ═══════════════════════════════════════ */
+.app-header {
+  background: var(--ink);
+  color: var(--on-primary);
+  padding: 0 var(--space-4);
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+
+.app-header-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: -0.3px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.app-header-title .suite-badge {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  background: var(--primary-container);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  opacity: 0.9;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* ═══════════════════════════════════════
+   BUTTONS
+   ═══════════════════════════════════════ */
+.btn {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 13px;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  min-height: 44px;
+  padding: 8px 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  transition: background 0.15s, transform 0.1s;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn:active { transform: scale(0.97); }
+
+.btn-primary {
+  background: var(--primary-container);
+  color: var(--on-primary);
+}
+.btn-primary:hover { background: var(--primary); }
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid var(--grid);
+  color: var(--ink-secondary);
+}
+.btn-secondary:hover { background: var(--surface-low); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--on-primary);
+  opacity: 0.8;
+}
+.btn-ghost:hover { opacity: 1; background: rgba(255,255,255,0.1); }
+
+.btn-small {
+  min-height: 36px;
+  font-size: 12px;
+  padding: 6px 12px;
+}
+
+.btn-danger-ghost {
+  background: transparent;
+  color: var(--status-error);
+  font-size: 12px;
+  min-height: 32px;
+  padding: 4px 8px;
+}
+.btn-danger-ghost:hover { background: var(--status-error-bg); }
+
+/* ═══════════════════════════════════════
+   MAIN CONTENT
+   ═══════════════════════════════════════ */
+.main-content {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: var(--space-4);
+}
+
+/* ═══════════════════════════════════════
+   EMPTY STATE
+   ═══════════════════════════════════════ */
+.empty-state {
+  text-align: center;
+  padding: var(--space-10) var(--space-6);
+  color: var(--ink-secondary);
+}
+
+.empty-state-icon {
+  font-size: 48px;
+  margin-bottom: var(--space-4);
+  opacity: 0.4;
+}
+
+.empty-state h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--ink);
+  margin-bottom: var(--space-2);
+}
+
+.empty-state p {
+  font-size: 14px;
+  margin-bottom: var(--space-6);
+  max-width: 420px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.empty-state .hint {
+  font-size: 12px;
+  color: var(--ink-tertiary);
+  margin-top: var(--space-4);
+}
+
+/* ═══════════════════════════════════════
+   SUMMARY METRICS
+   ═══════════════════════════════════════ */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.metric-card {
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  min-height: 96px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.metric-card.tint {
+  background: var(--primary-tint);
+}
+.metric-card.tint .metric-label { color: var(--on-primary-tint); }
+.metric-card.tint .metric-value { color: var(--on-primary-tint); }
+
+.metric-card.primary {
+  background: var(--primary);
+}
+.metric-card.primary .metric-label { color: var(--on-primary); opacity: 0.85; }
+.metric-card.primary .metric-value { color: var(--on-primary); }
+
+.metric-card.error {
+  background: var(--status-error-bg);
+}
+.metric-card.error .metric-label { color: var(--status-error); }
+.metric-card.error .metric-value { color: var(--status-error); }
+
+.metric-card.warning {
+  background: var(--status-warning-bg);
+}
+.metric-card.warning .metric-label { color: var(--status-warning); }
+.metric-card.warning .metric-value { color: var(--status-warning); }
+
+.metric-label {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  line-height: 1.3;
+}
+
+.metric-value {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 28px;
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+  margin-top: var(--space-1);
+}
+
+/* ═══════════════════════════════════════
+   TAB BAR
+   ═══════════════════════════════════════ */
+.tab-bar {
+  display: flex;
+  border-bottom: 1px solid var(--grid-subtle);
+  background: var(--card);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  margin-bottom: 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tab-item {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--ink-tertiary);
+  padding: 12px 20px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color 0.15s, border-color 0.15s;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.tab-item:hover { color: var(--ink-secondary); }
+
+.tab-item.active {
+  color: var(--ink);
+  border-bottom-color: var(--primary);
+}
+
+.tab-badge {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 10px;
+  background: var(--primary-container);
+  color: var(--on-primary);
+  border-radius: var(--radius-full);
+  padding: 1px 7px;
+  min-width: 20px;
+  text-align: center;
+}
+
+.tab-badge.alert {
+  background: var(--status-error);
+}
+
+/* ═══════════════════════════════════════
+   VIEW PANELS
+   ═══════════════════════════════════════ */
+.view-panel {
+  display: none;
+}
+.view-panel.active {
+  display: block;
+}
+
+/* ═══════════════════════════════════════
+   SECTION HEADERS
+   ═══════════════════════════════════════ */
+.section-header {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: var(--ink-secondary);
+  margin-bottom: var(--space-3);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* ═══════════════════════════════════════
+   OVERDUE ACTIONS ALERT
+   ═══════════════════════════════════════ */
+.alert-banner {
+  background: var(--status-error-bg);
+  border: 1px solid rgba(186,26,26,0.2);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.alert-banner-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.alert-banner-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.alert-banner h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--status-error);
+  margin-bottom: var(--space-1);
+}
+
+/* ═══════════════════════════════════════
+   A3 PORTFOLIO CARDS
+   ═══════════════════════════════════════ */
+.a3-card {
+  background: var(--card);
+  border: 1px solid var(--grid-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin-bottom: var(--space-3);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.15s;
+}
+
+.a3-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.a3-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.a3-type-badge {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.a3-type-badge.a3 {
+  background: var(--primary-tint);
+  color: var(--on-primary-tint);
+}
+.a3-type-badge.fourC {
+  background: var(--accent-warm-bg);
+  color: var(--accent-warm);
+}
+
+.a3-card-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--ink);
+  flex: 1;
+  min-width: 0;
+}
+
+.a3-card-title .untitled {
+  color: var(--ink-tertiary);
+  font-style: italic;
+}
+
+.a3-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  font-size: 12px;
+  color: var(--ink-tertiary);
+  margin-bottom: var(--space-3);
+}
+
+.a3-card-meta .meta-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.a3-card-meta .meta-label {
+  font-weight: 600;
+  color: var(--ink-secondary);
+}
+
+.a3-goal-row {
+  background: var(--surface-low);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  font-size: 13px;
+  color: var(--ink-secondary);
+  margin-bottom: var(--space-3);
+  line-height: 1.4;
+}
+
+.a3-goal-row .goal-label {
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: var(--ink-tertiary);
+  display: block;
+  margin-bottom: 2px;
+}
+
+/* Progress bar for sections */
+.progress-bar-container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.progress-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--surface-high);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--primary-tint-strong);
+  transition: width 0.3s;
+}
+
+.progress-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-tertiary);
+  flex-shrink: 0;
+}
+
+/* PDCA stage indicator */
+.pdca-stage-row {
+  display: flex;
+  gap: 2px;
+  margin-bottom: var(--space-3);
+}
+
+.pdca-stage-cell {
+  flex: 1;
+  text-align: center;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  padding: 4px 0;
+  border-radius: var(--radius-sm);
+  background: var(--surface-low);
+  color: var(--ink-tertiary);
+}
+
+.pdca-stage-cell.active {
+  background: var(--primary-container);
+  color: var(--on-primary);
+}
+
+.pdca-stage-cell.done {
+  background: var(--status-success-bg);
+  color: var(--status-success);
+}
+
+/* Section status pills row */
+.section-status-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: var(--space-3);
+}
+
+.section-pill {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+/* ═══════════════════════════════════════
+   RAG STATUS INDICATORS
+   ═══════════════════════════════════════ */
+.rag-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.rag-dot.red { background: var(--status-error); }
+.rag-dot.amber { background: var(--status-warning); }
+.rag-dot.green { background: var(--status-success); }
+.rag-dot.none { background: var(--surface-dim); border: 1px solid var(--grid); }
+
+.rag-badge {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+.rag-badge.red { background: var(--status-error-bg); color: var(--status-error); }
+.rag-badge.amber { background: var(--status-warning-bg); color: var(--status-warning); }
+.rag-badge.green { background: var(--status-success-bg); color: var(--status-success); }
+.rag-badge.none { background: var(--status-draft-bg); color: var(--status-draft); }
+
+/* ═══════════════════════════════════════
+   STALE DATA WARNING
+   ═══════════════════════════════════════ */
+.stale-badge {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: var(--status-warning-bg);
+  color: var(--status-warning);
+}
+
+.fresh-badge {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: var(--status-success-bg);
+  color: var(--status-success);
+}
+
+/* ═══════════════════════════════════════
+   ACTION TABLE
+   ═══════════════════════════════════════ */
+.action-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.action-table th {
+  background: var(--surface-high);
+  color: var(--ink-secondary);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 8px 12px;
+  text-align: left;
+  position: sticky;
+  top: 0;
+}
+
+.action-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--grid-subtle);
+  vertical-align: top;
+}
+
+.action-table tr:nth-child(even) td {
+  background: var(--surface-low);
+}
+
+.action-table .overdue-row td {
+  background: var(--status-error-bg);
+}
+
+.action-table .a3-source {
+  font-size: 11px;
+  color: var(--ink-tertiary);
+}
+
+/* ═══════════════════════════════════════
+   LOADED FILES LIST
+   ═══════════════════════════════════════ */
+.loaded-file-item {
+  background: var(--card);
+  border: 1px solid var(--grid-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.loaded-file-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.loaded-file-name {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.loaded-file-meta {
+  font-size: 11px;
+  color: var(--ink-tertiary);
+  margin-top: 2px;
+}
+
+/* ═══════════════════════════════════════
+   MODAL
+   ═══════════════════════════════════════ */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(24, 28, 28, 0.5);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+}
+
+.modal-overlay.show {
+  display: flex;
+}
+
+.modal-box {
+  background: var(--card);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-6);
+  max-width: 480px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-box h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  margin-bottom: var(--space-4);
+}
+
+.modal-box p {
+  font-size: 13px;
+  color: var(--ink-secondary);
+  margin-bottom: var(--space-3);
+  line-height: 1.5;
+}
+
+.modal-box .licence {
+  font-size: 12px;
+  color: var(--ink-tertiary);
+  border-top: 1px solid var(--grid-subtle);
+  padding-top: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.modal-box a {
+  color: var(--primary);
+  text-decoration: none;
+}
+.modal-box a:hover { text-decoration: underline; }
+
+.modal-close {
+  margin-top: var(--space-4);
+  width: 100%;
+}
+
+/* ═══════════════════════════════════════
+   FILE DROP ZONE
+   ═══════════════════════════════════════ */
+.drop-zone {
+  border: 2px dashed var(--grid);
+  border-radius: var(--radius-md);
+  padding: var(--space-8) var(--space-4);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  margin-bottom: var(--space-4);
+}
+
+.drop-zone:hover,
+.drop-zone.dragover {
+  border-color: var(--primary);
+  background: var(--primary-tint);
+}
+
+.drop-zone p {
+  color: var(--ink-secondary);
+  font-size: 14px;
+  margin-bottom: var(--space-2);
+}
+
+.drop-zone .hint {
+  font-size: 12px;
+  color: var(--ink-tertiary);
+}
+
+/* ═══════════════════════════════════════
+   COACHING INSIGHT (for programme summary)
+   ═══════════════════════════════════════ */
+.coaching-callout {
+  background: var(--accent-warm-bg);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--space-4);
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+}
+
+.coaching-icon {
+  background: var(--accent-warm-container);
+  color: var(--on-accent-warm);
+  border-radius: var(--radius-md);
+  padding: 8px;
+  font-size: 16px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.coaching-body h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--accent-warm);
+  margin-bottom: var(--space-1);
+}
+
+.coaching-body p {
+  font-size: 13px;
+  color: var(--accent-warm);
+  line-height: 1.5;
+}
+
+/* ═══════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════ */
+@media (max-width: 600px) {
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .metric-value {
+    font-size: 24px;
+  }
+
+  .a3-card-meta {
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .action-table {
+    font-size: 12px;
+  }
+
+  .action-table th,
+  .action-table td {
+    padding: 6px 8px;
+  }
+
+  .tab-item {
+    padding: 10px 14px;
+    font-size: 12px;
+  }
+
+  .app-header-title {
+    font-size: 16px;
+  }
+
+  .app-header-title .suite-badge {
+    display: none;
+  }
+}
+
+/* ═══════════════════════════════════════
+   PRINT
+   ═══════════════════════════════════════ */
+@media print {
+  .app-header { position: static; }
+  .btn, .drop-zone, .header-actions { display: none !important; }
+  .a3-card { break-inside: avoid; }
+  .modal-overlay { display: none !important; }
+
+  body {
+    background: white;
+    color: black;
+    font-size: 11px;
+  }
+
+  .main-content {
+    max-width: 100%;
+    padding: 0;
+  }
+
+  .metric-card {
+    border: 1px solid #ccc;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .a3-card {
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+}
+
+/* Utility */
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); border: 0;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ═══════════════════════════════════════
+     APP HEADER
+     ═══════════════════════════════════════ -->
+<header class="app-header">
+  <div class="app-header-title">
+    ◆ Gemba-Hub <span class="suite-badge">Programme Dashboard</span>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-ghost btn-small" onclick="document.getElementById('fileInput').click()" title="Load JSON exports">
+      + Load Files
+    </button>
+    <button class="btn btn-ghost btn-small" id="btnLoadSnapshot" onclick="document.getElementById('snapshotInput').click()" title="Load a saved programme snapshot">
+      ↑ Open
+    </button>
+    <button class="btn btn-ghost btn-small" id="btnSaveSnapshot" onclick="saveProgrammeSnapshot()" title="Save programme snapshot" style="display:none;">
+      ↓ Save
+    </button>
+    <button class="btn btn-ghost btn-small" onclick="showAboutModal()" title="About Gemba-Hub">
+      ℹ
+    </button>
+  </div>
+</header>
+
+<input type="file" id="fileInput" accept=".json" multiple class="sr-only" onchange="handleFileLoad(event)">
+<input type="file" id="snapshotInput" accept=".json" class="sr-only" onchange="handleSnapshotLoad(event)">
+
+<!-- ═══════════════════════════════════════
+     MAIN CONTENT
+     ═══════════════════════════════════════ -->
+<main class="main-content">
+
+  <!-- EMPTY STATE (shown when no files loaded) -->
+  <div id="emptyState" class="empty-state">
+    <div class="empty-state-icon">◆</div>
+    <h2>Programme Dashboard</h2>
+    <p>Load Gemba Suite JSON exports to see an aggregated programme view across all your A3s.</p>
+
+    <div class="drop-zone" id="dropZone"
+         onclick="document.getElementById('fileInput').click()"
+         ondragover="event.preventDefault(); this.classList.add('dragover')"
+         ondragleave="this.classList.remove('dragover')"
+         ondrop="handleDrop(event)">
+      <p>Drop JSON files here or tap to browse</p>
+      <div class="hint">Accepts Gemba-A3 envelope exports (.json)</div>
+    </div>
+
+    <div class="hint">Stateless — nothing is stored. Save a programme snapshot to reload next session.</div>
+  </div>
+
+  <!-- DASHBOARD (shown when files are loaded) -->
+  <div id="dashboard" style="display:none;">
+
+    <!-- Top drop zone for adding more files -->
+    <div class="drop-zone" id="dropZoneTop" style="padding:var(--space-4); margin-bottom:var(--space-4);"
+         onclick="document.getElementById('fileInput').click()"
+         ondragover="event.preventDefault(); this.classList.add('dragover')"
+         ondragleave="this.classList.remove('dragover')"
+         ondrop="handleDrop(event)">
+      <p style="margin:0; font-size:13px;">+ Drop more JSON files or tap to add</p>
+    </div>
+
+    <!-- Programme summary metrics -->
+    <div id="metricsGrid" class="metrics-grid"></div>
+
+    <!-- Overdue actions alert -->
+    <div id="overdueAlert" style="display:none;"></div>
+
+    <!-- Tab bar -->
+    <div class="tab-bar" role="tablist">
+      <button class="tab-item active" role="tab" data-tab="portfolio" onclick="switchTab('portfolio')">
+        A3 Portfolio <span id="portfolioBadge" class="tab-badge">0</span>
+      </button>
+      <button class="tab-item" role="tab" data-tab="actions" onclick="switchTab('actions')">
+        All Actions <span id="actionsBadge" class="tab-badge">0</span>
+      </button>
+      <button class="tab-item" role="tab" data-tab="files" onclick="switchTab('files')">
+        Loaded Files <span id="filesBadge" class="tab-badge">0</span>
+      </button>
+    </div>
+
+    <!-- Portfolio view -->
+    <div id="viewPortfolio" class="view-panel active"></div>
+
+    <!-- Actions view -->
+    <div id="viewActions" class="view-panel"></div>
+
+    <!-- Files view -->
+    <div id="viewFiles" class="view-panel"></div>
+
+  </div>
+</main>
+
+<!-- ═══════════════════════════════════════
+     ABOUT MODAL
+     ═══════════════════════════════════════ -->
+<div class="modal-overlay" id="aboutModal" onclick="if(event.target===this)closeAboutModal()">
+  <div class="modal-box">
+    <h2>◆ Gemba-Hub v1.1</h2>
+    <p><strong>Programme Dashboard</strong> — Part of the Gemba Suite</p>
+    <p>A read-only dashboard that aggregates Gemba Suite JSON exports into a unified programme view. Load A3 exports to see portfolio status, overdue actions, and programme health at a glance.</p>
+    <p>No data is stored — this is a stateless viewer. Files are processed in-browser and discarded when you close the page. Use <strong>↓ Save</strong> to export a programme snapshot, and <strong>↑ Open</strong> to reload it next session.</p>
+    <p style="font-size:12px; color:var(--ink-tertiary); margin-top:var(--space-4);">
+      <strong>Part of the Gemba Suite:</strong> Gemba-VSM · Gemba-A3 · Gemba-Hub · Gemba-RCA · Gemba-SPC · Gemba-Strategy
+    </p>
+    <div class="licence">
+      <p>© David Clark — <a href="https://gembasuite.org" target="_blank" rel="noopener">gembasuite.org</a></p>
+      <p>Licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a></p>
+      <p style="margin-top:var(--space-2);">Free for all healthcare improvement purposes. The non-commercial restriction targets commercial resale, proprietary repackaging, and paid consultancy — not publicly funded QI programmes.</p>
+    </div>
+    <p style="font-size:12px; color:var(--ink-secondary); margin-top:var(--space-3);"><strong>Disclaimer:</strong> These tools support process improvement and do not make clinical decisions or recommendations. They are not medical devices and are not regulated as such under MHRA or equivalent frameworks. The tools are provided as-is, without warranty.</p>
+    <button class="btn btn-primary modal-close" onclick="closeAboutModal()">Close</button>
+  </div>
+</div>
+
+
+<script>
+// ═══════════════════════════════════════
+// GEMBA-HUB v1.1 — CORE APPLICATION
+// ═══════════════════════════════════════
+
+// ── Data Store (in-memory only, no persistence) ──
+const loadedFiles = [];   // { filename, envelope, a3Data, exportedAt, gembaApp, appVersion }
+const STALE_DAYS = 7;     // Days before an export is flagged as stale
+
+const SECTION_KEYS = [
+  'problemStatement', 'currentState', 'goal', 'wasteIdentified', 'rootCauseAnalysis',
+  'futureState', 'actionPlan', 'resultsMeasures', 'nextSteps'
+];
+const LEFT_SECTIONS = ['problemStatement', 'currentState', 'goal', 'wasteIdentified', 'rootCauseAnalysis'];
+const RIGHT_SECTIONS = ['futureState', 'actionPlan', 'resultsMeasures', 'nextSteps'];
+
+const SECTION_NAMES = {
+  problemStatement: 'Problem Statement',
+  currentState: 'Current State',
+  goal: 'Goal / Target',
+  wasteIdentified: 'Waste Identified',
+  rootCauseAnalysis: 'Root Cause Analysis',
+  futureState: 'Future State',
+  actionPlan: 'Action Plan',
+  resultsMeasures: 'Results & Measures',
+  nextSteps: 'Next Steps'
+};
+
+// ═══════════════════════════════════════
+// FILE LOADING
+// ═══════════════════════════════════════
+
+function handleFileLoad(event) {
+  const files = Array.from(event.target.files);
+  processFiles(files);
+  event.target.value = ''; // Reset to allow re-loading same file
+}
+
+function handleDrop(event) {
+  event.preventDefault();
+  event.currentTarget.classList.remove('dragover');
+  const files = Array.from(event.dataTransfer.files).filter(f => f.name.endsWith('.json'));
+  if (files.length === 0) return;
+  processFiles(files);
+}
+
+function processFiles(files) {
+  let loaded = 0;
+  let errors = [];
+
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const raw = JSON.parse(e.target.result);
+        const result = parseEnvelope(raw, file.name);
+        if (result.error) {
+          errors.push(file.name + ': ' + result.error);
+        } else {
+          // Deduplicate by a3Id
+          const existingIdx = loadedFiles.findIndex(f =>
+            f.a3Data && result.a3Data && f.a3Data.a3Id === result.a3Data.a3Id
+          );
+          if (existingIdx >= 0) {
+            // Replace with newer export
+            const existingDate = new Date(loadedFiles[existingIdx].exportedAt || 0);
+            const newDate = new Date(result.exportedAt || 0);
+            if (newDate >= existingDate) {
+              loadedFiles[existingIdx] = result;
+            }
+          } else {
+            loadedFiles.push(result);
+          }
+          loaded++;
+        }
+      } catch (err) {
+        errors.push(file.name + ': Invalid JSON');
+      }
+
+      // When all files processed
+      if (loaded + errors.length === files.length) {
+        renderDashboard();
+        if (errors.length > 0) {
+          console.warn('Hub: Skipped files:', errors);
+        }
+      }
+    };
+    reader.readAsText(file);
+  });
+}
+
+function parseEnvelope(raw, filename) {
+  // Envelope format: { gembaApp, appVersion, exportedAt, payload, ... }
+  if (raw.gembaApp === 'a3' && raw.payload) {
+    return {
+      filename: filename,
+      envelope: raw,
+      a3Data: raw.payload,
+      exportedAt: raw.exportedAt,
+      gembaApp: raw.gembaApp,
+      appVersion: raw.appVersion || '?',
+      context: raw.context || {}
+    };
+  }
+
+  // Direct A3 data (no envelope — legacy or from localStorage)
+  if (raw.a3Id && raw.sections) {
+    return {
+      filename: filename,
+      envelope: null,
+      a3Data: raw,
+      exportedAt: raw.lastModifiedAt || null,
+      gembaApp: 'a3',
+      appVersion: '?',
+      context: {}
+    };
+  }
+
+  // VSM or other envelope types — list as loaded file but no A3 view
+  if (raw.gembaApp) {
+    return {
+      filename: filename,
+      envelope: raw,
+      a3Data: null,
+      exportedAt: raw.exportedAt,
+      gembaApp: raw.gembaApp,
+      appVersion: raw.appVersion || '?',
+      context: raw.context || {}
+    };
+  }
+
+  return { error: 'Unrecognised format' };
+}
+
+function removeFile(index) {
+  loadedFiles.splice(index, 1);
+  renderDashboard();
+}
+
+// ═══════════════════════════════════════
+// ANALYSIS HELPERS
+// ═══════════════════════════════════════
+
+function getA3Files() {
+  return loadedFiles.filter(f => f.a3Data);
+}
+
+function isStale(exportedAt) {
+  if (!exportedAt) return true;
+  const exported = new Date(exportedAt);
+  const now = new Date();
+  const diffDays = (now - exported) / (1000 * 60 * 60 * 24);
+  return diffDays > STALE_DAYS;
+}
+
+function daysSince(isoStr) {
+  if (!isoStr) return null;
+  const d = new Date(isoStr);
+  const now = new Date();
+  return Math.floor((now - d) / (1000 * 60 * 60 * 24));
+}
+
+function formatDate(isoStr) {
+  if (!isoStr) return '—';
+  const d = new Date(isoStr);
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  const div = document.createElement('div');
+  div.textContent = String(str);
+  return div.innerHTML;
+}
+
+/** Derive the active PDCA stage from section statuses */
+function derivePDCAStage(a3Data) {
+  if (!a3Data || !a3Data.sections) return 'plan';
+
+  // 4C projects are their own thing
+  if (a3Data.projectType === '4c') return '4c';
+
+  const s = a3Data.sections;
+  const rightUnlocked = a3Data.rightSideUnlocked;
+
+  // Check if Act sections are being worked
+  if (s.nextSteps && (s.nextSteps.status === 'complete' || s.nextSteps.status === 'in-progress' || s.nextSteps.status === 'reviewed')) {
+    return 'act';
+  }
+
+  // Check sections
+  if (s.resultsMeasures && (s.resultsMeasures.status === 'complete' || s.resultsMeasures.status === 'in-progress' || s.resultsMeasures.status === 'reviewed')) {
+    return 'check';
+  }
+
+  if (rightUnlocked && (
+    (s.futureState && (s.futureState.status === 'in-progress' || s.futureState.status === 'complete' || s.futureState.status === 'reviewed')) ||
+    (s.actionPlan && (s.actionPlan.status === 'in-progress' || s.actionPlan.status === 'complete' || s.actionPlan.status === 'reviewed'))
+  )) {
+    return 'do';
+  }
+
+  return 'plan';
+}
+
+/** Count completed sections out of total */
+function sectionProgress(a3Data) {
+  if (!a3Data || !a3Data.sections) return { done: 0, total: 9 };
+  const keys = a3Data.rightSideUnlocked ? SECTION_KEYS : LEFT_SECTIONS;
+  let done = 0;
+  keys.forEach(k => {
+    const st = a3Data.sections[k]?.status;
+    if (st === 'complete' || st === 'reviewed') done++;
+  });
+  return { done, total: keys.length };
+}
+
+/** Derive overall RAG from actions and section progress */
+function deriveOverallRAG(a3Data) {
+  if (!a3Data || !a3Data.sections) return 'none';
+
+  const actions = a3Data.sections.actionPlan?.actions || [];
+  const now = new Date();
+  const today = now.toISOString().slice(0, 10);
+
+  // Red if any overdue actions
+  const hasOverdue = actions.some(a =>
+    a.dueDate && a.dueDate < today && a.ragStatus !== 'green'
+  );
+  if (hasOverdue) return 'red';
+
+  // Red if any action explicitly red
+  if (actions.some(a => a.ragStatus === 'red')) return 'red';
+
+  // Amber if any amber, or if progress is below 50% on left side with the A3 being old
+  if (actions.some(a => a.ragStatus === 'amber')) return 'amber';
+
+  // Green if all actions are green and there are actions
+  if (actions.length > 0 && actions.every(a => a.ragStatus === 'green')) return 'green';
+
+  // Default based on section progress
+  const prog = sectionProgress(a3Data);
+  if (prog.done >= prog.total) return 'green';
+  if (prog.done > 0) return 'amber';
+  return 'none';
+}
+
+/** Get all actions across all loaded A3s */
+function getAllActions() {
+  const all = [];
+  getA3Files().forEach(f => {
+    const actions = f.a3Data.sections?.actionPlan?.actions || [];
+    actions.forEach(a => {
+      all.push({
+        ...a,
+        a3Title: f.a3Data.title || 'Untitled A3',
+        a3Id: f.a3Data.a3Id,
+        exportedAt: f.exportedAt
+      });
+    });
+  });
+  return all;
+}
+
+function getOverdueActions() {
+  const today = new Date().toISOString().slice(0, 10);
+  return getAllActions().filter(a =>
+    a.dueDate && a.dueDate < today && a.ragStatus !== 'green'
+  );
+}
+
+// ═══════════════════════════════════════
+// RENDERING
+// ═══════════════════════════════════════
+
+function renderDashboard() {
+  const hasFiles = loadedFiles.length > 0;
+  document.getElementById('emptyState').style.display = hasFiles ? 'none' : '';
+  document.getElementById('dashboard').style.display = hasFiles ? '' : 'none';
+  document.getElementById('btnSaveSnapshot').style.display = hasFiles ? '' : 'none';
+
+  if (!hasFiles) return;
+
+  renderMetrics();
+  renderOverdueAlert();
+  renderPortfolio();
+  renderActions();
+  renderLoadedFiles();
+  updateBadges();
+}
+
+function renderMetrics() {
+  const a3s = getA3Files();
+  const allActions = getAllActions();
+  const overdueActions = getOverdueActions();
+  const staleCount = a3s.filter(f => isStale(f.exportedAt)).length;
+
+  const totalA3 = a3s.length;
+  const completedA3 = a3s.filter(f => {
+    const prog = sectionProgress(f.a3Data);
+    return prog.done >= prog.total && f.a3Data.rightSideUnlocked;
+  }).length;
+
+  let html = '';
+
+  html += `<div class="metric-card tint">
+    <div class="metric-label">A3s Loaded</div>
+    <div class="metric-value">${totalA3}</div>
+  </div>`;
+
+  html += `<div class="metric-card primary">
+    <div class="metric-label">Completed</div>
+    <div class="metric-value">${completedA3}</div>
+  </div>`;
+
+  if (overdueActions.length > 0) {
+    html += `<div class="metric-card error">
+      <div class="metric-label">Overdue Actions</div>
+      <div class="metric-value">${overdueActions.length}</div>
+    </div>`;
+  } else {
+    html += `<div class="metric-card tint">
+      <div class="metric-label">Overdue Actions</div>
+      <div class="metric-value">0</div>
+    </div>`;
+  }
+
+  if (staleCount > 0) {
+    html += `<div class="metric-card warning">
+      <div class="metric-label">Stale Exports</div>
+      <div class="metric-value">${staleCount}</div>
+    </div>`;
+  } else {
+    html += `<div class="metric-card tint">
+      <div class="metric-label">Stale Exports</div>
+      <div class="metric-value">0</div>
+    </div>`;
+  }
+
+  document.getElementById('metricsGrid').innerHTML = html;
+}
+
+function renderOverdueAlert() {
+  const overdue = getOverdueActions();
+  const el = document.getElementById('overdueAlert');
+
+  if (overdue.length === 0) {
+    el.style.display = 'none';
+    return;
+  }
+
+  el.style.display = '';
+  const today = new Date().toISOString().slice(0, 10);
+
+  let items = overdue.slice(0, 5).map(a => {
+    const daysOver = daysSince(a.dueDate);
+    return `<div style="font-size:13px; margin-bottom:4px;">
+      <strong>${escHtml(a.action || 'No description')}</strong>
+      <span style="color:var(--status-error); font-size:11px;">(${daysOver}d overdue)</span>
+      — <span class="a3-source">${escHtml(a.a3Title)}</span>
+      ${a.owner ? '· ' + escHtml(a.owner) : ''}
+    </div>`;
+  }).join('');
+
+  if (overdue.length > 5) {
+    items += `<div style="font-size:12px; color:var(--status-error); margin-top:4px;">+ ${overdue.length - 5} more overdue actions — see All Actions tab</div>`;
+  }
+
+  el.innerHTML = `<div class="alert-banner">
+    <div class="alert-banner-icon">⚠</div>
+    <div class="alert-banner-content">
+      <h3>${overdue.length} Overdue Action${overdue.length > 1 ? 's' : ''}</h3>
+      ${items}
+    </div>
+  </div>`;
+}
+
+function renderPortfolio() {
+  const a3s = getA3Files();
+  let html = '';
+
+  if (a3s.length === 0) {
+    html = '<div style="padding:var(--space-6); text-align:center; color:var(--ink-tertiary);">No A3 exports loaded yet.</div>';
+    document.getElementById('viewPortfolio').innerHTML = html;
+    return;
+  }
+
+  // Coaching insight for programme health
+  const overdueCount = getOverdueActions().length;
+  const staleCount = a3s.filter(f => isStale(f.exportedAt)).length;
+  if (overdueCount > 0 || staleCount > 0) {
+    let insight = '';
+    if (overdueCount > 0 && staleCount > 0) {
+      insight = `${overdueCount} overdue action${overdueCount > 1 ? 's' : ''} and ${staleCount} stale export${staleCount > 1 ? 's' : ''} need attention. Stale data means decisions may be based on outdated information — re-export from Gemba-A3 to refresh.`;
+    } else if (overdueCount > 0) {
+      insight = `${overdueCount} overdue action${overdueCount > 1 ? 's' : ''} across the programme. Surface these at the next review — overdue actions often signal blocked work or unclear ownership.`;
+    } else {
+      insight = `${staleCount} export${staleCount > 1 ? 's' : ''} older than ${STALE_DAYS} days. Re-export from Gemba-A3 to ensure this dashboard reflects current state.`;
+    }
+
+    html += `<div class="coaching-callout">
+      <div class="coaching-icon">先</div>
+      <div class="coaching-body">
+        <h4>Sensei Insight</h4>
+        <p>${insight}</p>
+      </div>
+    </div>`;
+  }
+
+  // Sort: overdue first (red), then amber, then by title
+  const sorted = [...a3s].sort((a, b) => {
+    const ragOrder = { red: 0, amber: 1, none: 2, green: 3 };
+    const ragA = ragOrder[deriveOverallRAG(a.a3Data)] ?? 2;
+    const ragB = ragOrder[deriveOverallRAG(b.a3Data)] ?? 2;
+    if (ragA !== ragB) return ragA - ragB;
+    return (a.a3Data.title || '').localeCompare(b.a3Data.title || '');
+  });
+
+  sorted.forEach(f => {
+    html += renderA3Card(f);
+  });
+
+  document.getElementById('viewPortfolio').innerHTML = html;
+}
+
+function renderA3Card(file) {
+  const d = file.a3Data;
+  const meta = d.metadata || {};
+  const is4C = d.projectType === '4c';
+  const rag = deriveOverallRAG(d);
+  const pdca = derivePDCAStage(d);
+  const prog = sectionProgress(d);
+  const stale = isStale(file.exportedAt);
+
+  // Title
+  const title = d.title
+    ? escHtml(d.title)
+    : '<span class="untitled">Untitled A3</span>';
+
+  // Type badge
+  const typeBadge = is4C
+    ? '<span class="a3-type-badge fourC">4C</span>'
+    : '<span class="a3-type-badge a3">A3</span>';
+
+  // RAG dot
+  const ragDot = `<span class="rag-dot ${rag}" title="RAG: ${rag}"></span>`;
+
+  // Meta row
+  let metaItems = '';
+  if (meta.responder) {
+    metaItems += `<span class="meta-item"><span class="meta-label">Responder:</span> ${escHtml(meta.responder)}</span>`;
+  }
+  if (meta.author) {
+    metaItems += `<span class="meta-item"><span class="meta-label">Author:</span> ${escHtml(meta.author)}</span>`;
+  }
+  if (meta.department) {
+    metaItems += `<span class="meta-item">${escHtml(meta.department)}</span>`;
+  }
+  if (meta.organisation) {
+    metaItems += `<span class="meta-item">${escHtml(meta.organisation)}</span>`;
+  }
+  if (meta.pdcaCycle && meta.pdcaCycle > 1) {
+    metaItems += `<span class="meta-item"><span class="meta-label">PDCA Cycle:</span> ${meta.pdcaCycle}</span>`;
+  }
+
+  // Export freshness
+  const exportInfo = file.exportedAt
+    ? `<span class="meta-item">${stale ? '<span class="stale-badge">Stale</span>' : '<span class="fresh-badge">Current</span>'} ${formatDate(file.exportedAt)}</span>`
+    : '<span class="meta-item"><span class="stale-badge">No export date</span></span>';
+
+  // Goal statement
+  let goalRow = '';
+  if (!is4C) {
+    const goalContent = d.sections?.goal?.content;
+    if (goalContent && goalContent.trim()) {
+      const goalText = goalContent.length > 200 ? goalContent.slice(0, 200) + '…' : goalContent;
+      goalRow = `<div class="a3-goal-row">
+        <span class="goal-label">Goal / Target</span>
+        ${escHtml(goalText)}
+      </div>`;
+    }
+  }
+
+  // PDCA stage indicator (for A3s, not 4Cs)
+  let pdcaRow = '';
+  if (!is4C) {
+    const stages = ['plan', 'do', 'check', 'act'];
+    const stageLabels = { plan: 'Plan', do: 'Do', check: 'Check', act: 'Act' };
+    const currentIdx = stages.indexOf(pdca);
+
+    pdcaRow = '<div class="pdca-stage-row">';
+    stages.forEach((st, i) => {
+      let cls = 'pdca-stage-cell';
+      if (i < currentIdx) cls += ' done';
+      else if (i === currentIdx) cls += ' active';
+      pdcaRow += `<div class="${cls}">${stageLabels[st]}</div>`;
+    });
+    pdcaRow += '</div>';
+  }
+
+  // Section progress bar (for A3s, not 4Cs)
+  let progressRow = '';
+  if (!is4C) {
+    const pct = prog.total > 0 ? Math.round((prog.done / prog.total) * 100) : 0;
+    progressRow = `<div class="progress-bar-container">
+      <div class="progress-bar"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+      <span class="progress-label">${prog.done}/${prog.total} sections</span>
+    </div>`;
+  }
+
+  // 4C progress for 4C cards
+  let fourCRow = '';
+  if (is4C && d.fourC) {
+    const steps = ['concern', 'cause', 'countermeasure', 'check'];
+    const labels = { concern: 'Concern', cause: 'Cause', countermeasure: 'CM', check: 'Check' };
+    fourCRow = '<div class="pdca-stage-row">';
+    steps.forEach(st => {
+      const filled = d.fourC[st] && d.fourC[st].text && d.fourC[st].text.trim();
+      fourCRow += `<div class="pdca-stage-cell ${filled ? 'done' : ''}">${labels[st]}</div>`;
+    });
+    fourCRow += '</div>';
+  }
+
+  // Action summary line
+  let actionLine = '';
+  if (!is4C) {
+    const actions = d.sections?.actionPlan?.actions || [];
+    if (actions.length > 0) {
+      const today = new Date().toISOString().slice(0, 10);
+      const done = actions.filter(a => a.ragStatus === 'green').length;
+      const overdue = actions.filter(a => a.dueDate && a.dueDate < today && a.ragStatus !== 'green').length;
+      actionLine = `<div style="font-size:12px; color:var(--ink-tertiary); margin-top:var(--space-2);">
+        ${actions.length} action${actions.length > 1 ? 's' : ''}:
+        <span style="color:var(--status-success);">${done} done</span>${overdue > 0 ? `, <span style="color:var(--status-error); font-weight:600;">${overdue} overdue</span>` : ''}
+      </div>`;
+    }
+  }
+
+  return `<div class="a3-card">
+    <div class="a3-card-header">
+      ${typeBadge}
+      <div class="a3-card-title">${ragDot} ${title}</div>
+    </div>
+    <div class="a3-card-meta">
+      ${metaItems}
+      ${exportInfo}
+    </div>
+    ${goalRow}
+    ${pdcaRow}
+    ${fourCRow}
+    ${progressRow}
+    ${actionLine}
+  </div>`;
+}
+
+function renderActions() {
+  const allActions = getAllActions();
+  let html = '';
+
+  if (allActions.length === 0) {
+    html = '<div style="padding:var(--space-6); text-align:center; color:var(--ink-tertiary);">No action items found in loaded A3s.</div>';
+    document.getElementById('viewActions').innerHTML = html;
+    return;
+  }
+
+  const today = new Date().toISOString().slice(0, 10);
+
+  // Sort: overdue first, then by due date, then no-date last
+  const sorted = [...allActions].sort((a, b) => {
+    const aOverdue = a.dueDate && a.dueDate < today && a.ragStatus !== 'green';
+    const bOverdue = b.dueDate && b.dueDate < today && b.ragStatus !== 'green';
+    if (aOverdue && !bOverdue) return -1;
+    if (!aOverdue && bOverdue) return 1;
+
+    // Both overdue or both not — sort by due date
+    if (a.dueDate && b.dueDate) return a.dueDate.localeCompare(b.dueDate);
+    if (a.dueDate && !b.dueDate) return -1;
+    if (!a.dueDate && b.dueDate) return 1;
+    return 0;
+  });
+
+  html += '<div style="overflow-x:auto; border:1px solid var(--grid-subtle); border-radius:var(--radius-md);">';
+  html += '<table class="action-table">';
+  html += `<thead><tr>
+    <th style="width:4%;">RAG</th>
+    <th>Action</th>
+    <th style="width:14%;">Owner</th>
+    <th style="width:14%;">Due</th>
+    <th style="width:22%;">A3</th>
+  </tr></thead><tbody>`;
+
+  sorted.forEach(a => {
+    const isOverdue = a.dueDate && a.dueDate < today && a.ragStatus !== 'green';
+    const rowCls = isOverdue ? 'overdue-row' : '';
+    const dueDisplay = a.dueDate ? formatDate(a.dueDate) : '—';
+    const overdueSuffix = isOverdue ? ` <span style="color:var(--status-error); font-size:10px; font-weight:600;">(${daysSince(a.dueDate)}d)</span>` : '';
+
+    html += `<tr class="${rowCls}">
+      <td><span class="rag-dot ${a.ragStatus || 'none'}"></span></td>
+      <td>${escHtml(a.action || 'No description')}</td>
+      <td>${escHtml(a.owner || '—')}</td>
+      <td>${dueDisplay}${overdueSuffix}</td>
+      <td class="a3-source">${escHtml(a.a3Title)}</td>
+    </tr>`;
+  });
+
+  html += '</tbody></table></div>';
+
+  document.getElementById('viewActions').innerHTML = html;
+}
+
+function renderLoadedFiles() {
+  let html = '';
+
+  loadedFiles.forEach((f, idx) => {
+    const stale = isStale(f.exportedAt);
+    const appLabel = f.gembaApp === 'a3' ? 'Gemba-A3' : f.gembaApp ? ('Gemba-' + f.gembaApp.toUpperCase()) : 'Unknown';
+    const title = f.a3Data ? (f.a3Data.title || 'Untitled') : f.filename;
+
+    html += `<div class="loaded-file-item">
+      <div class="loaded-file-info">
+        <div class="loaded-file-name">${escHtml(title)}</div>
+        <div class="loaded-file-meta">
+          ${appLabel} v${escHtml(f.appVersion)} · ${f.exportedAt ? formatDate(f.exportedAt) : 'No date'}
+          ${stale ? ' · <span class="stale-badge">Stale</span>' : ' · <span class="fresh-badge">Current</span>'}
+          · ${escHtml(f.filename)}
+        </div>
+      </div>
+      <button class="btn-danger-ghost" onclick="removeFile(${idx})" title="Remove this file">✕</button>
+    </div>`;
+  });
+
+  document.getElementById('viewFiles').innerHTML = html;
+}
+
+function updateBadges() {
+  const a3Count = getA3Files().length;
+  const actionCount = getAllActions().length;
+  const overdueCount = getOverdueActions().length;
+
+  document.getElementById('portfolioBadge').textContent = a3Count;
+
+  const actionsBadge = document.getElementById('actionsBadge');
+  actionsBadge.textContent = actionCount;
+  if (overdueCount > 0) {
+    actionsBadge.classList.add('alert');
+    actionsBadge.textContent = overdueCount + ' !';
+  } else {
+    actionsBadge.classList.remove('alert');
+  }
+
+  document.getElementById('filesBadge').textContent = loadedFiles.length;
+}
+
+// ═══════════════════════════════════════
+// TAB SWITCHING
+// ═══════════════════════════════════════
+
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+
+  document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+
+  const panelMap = {
+    portfolio: 'viewPortfolio',
+    actions: 'viewActions',
+    files: 'viewFiles'
+  };
+  document.getElementById(panelMap[tabId]).classList.add('active');
+}
+
+// ═══════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════
+
+function showAboutModal() {
+  document.getElementById('aboutModal').classList.add('show');
+}
+
+function closeAboutModal() {
+  document.getElementById('aboutModal').classList.remove('show');
+}
+
+// Close modal on Escape
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeAboutModal();
+});
+
+// ═══════════════════════════════════════
+// PROGRAMME SNAPSHOT — SAVE / LOAD
+// ═══════════════════════════════════════
+
+/**
+ * Save all loaded envelopes as a single programme snapshot JSON file.
+ * The snapshot preserves the original envelope data exactly as loaded,
+ * plus the filename for reference.
+ */
+function saveProgrammeSnapshot() {
+  if (loadedFiles.length === 0) return;
+
+  const snapshot = {
+    gembaApp: 'hub',
+    snapshotVersion: '1.1',
+    savedAt: new Date().toISOString(),
+    fileCount: loadedFiles.length,
+    files: loadedFiles.map(f => ({
+      filename: f.filename,
+      gembaApp: f.gembaApp,
+      appVersion: f.appVersion,
+      exportedAt: f.exportedAt,
+      // Include original envelope if available, otherwise wrap the a3Data
+      envelope: f.envelope || (f.a3Data ? {
+        gembaApp: f.gembaApp,
+        appVersion: f.appVersion,
+        exportedAt: f.exportedAt,
+        payload: f.a3Data
+      } : null)
+    }))
+  };
+
+  const blob = new Blob([JSON.stringify(snapshot, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Gemba-Hub-Snapshot_${new Date().toISOString().slice(0, 10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/**
+ * Load a previously saved programme snapshot, restoring all A3 envelopes
+ * into the dashboard in a single operation.
+ */
+function handleSnapshotLoad(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  event.target.value = '';
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const raw = JSON.parse(e.target.result);
+
+      // Validate it's a Hub snapshot
+      if (raw.gembaApp !== 'hub' || !raw.files || !Array.isArray(raw.files)) {
+        // Not a snapshot — treat as a regular A3 export
+        const result = parseEnvelope(raw, file.name);
+        if (!result.error) {
+          const existingIdx = loadedFiles.findIndex(f =>
+            f.a3Data && result.a3Data && f.a3Data.a3Id === result.a3Data.a3Id
+          );
+          if (existingIdx >= 0) {
+            loadedFiles[existingIdx] = result;
+          } else {
+            loadedFiles.push(result);
+          }
+        }
+        renderDashboard();
+        return;
+      }
+
+      // Process each file in the snapshot
+      let loaded = 0;
+      raw.files.forEach(sf => {
+        if (!sf.envelope) return;
+        const result = parseEnvelope(sf.envelope, sf.filename || 'snapshot-item.json');
+        if (!result.error) {
+          const existingIdx = loadedFiles.findIndex(f =>
+            f.a3Data && result.a3Data && f.a3Data.a3Id === result.a3Data.a3Id
+          );
+          if (existingIdx >= 0) {
+            const existingDate = new Date(loadedFiles[existingIdx].exportedAt || 0);
+            const newDate = new Date(result.exportedAt || 0);
+            if (newDate >= existingDate) {
+              loadedFiles[existingIdx] = result;
+            }
+          } else {
+            loadedFiles.push(result);
+          }
+          loaded++;
+        }
+      });
+
+      renderDashboard();
+    } catch (err) {
+      console.error('Hub: Failed to load snapshot:', err);
+    }
+  };
+  reader.readAsText(file);
+}
+
+</script>
+</body>
+</html>

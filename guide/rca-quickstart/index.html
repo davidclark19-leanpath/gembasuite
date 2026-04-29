@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#181c1c">
+  <title>RCA Quick Start — Gemba Suite</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════
+       DESIGN TOKENS — Gemba Suite v1.0
+       ═══════════════════════════════════════ */
+    :root {
+      --ink:                #181c1c;
+      --ink-secondary:      #3e484c;
+      --ink-tertiary:       #6e797c;
+      --paper:              #f7faf9;
+      --card:               #ffffff;
+      --surface-low:        #f1f4f3;
+      --surface-high:       #e6e9e8;
+      --surface-dim:        #d7dbda;
+      --grid:               #bec8cc;
+      --grid-subtle:        #e0e3e2;
+      --primary:            #006172;
+      --primary-container:  #007c91;
+      --primary-tint:       #c4e5ef;
+      --primary-tint-strong:#79d3ea;
+      --on-primary:         #ffffff;
+      --on-primary-tint:    #004e5c;
+      --accent-warm:        #854a10;
+      --accent-warm-container: #a26227;
+      --accent-warm-bg:     #ffdcc3;
+      --on-accent-warm:     #ffffff;
+      --status-success:     #2e7d32;
+      --status-success-bg:  #d4edda;
+      --status-warning:     #856404;
+      --status-warning-bg:  #fff3cd;
+      --status-error:       #ba1a1a;
+      --status-error-bg:    #ffdad6;
+      --shadow-sm:          0 1px 3px rgba(24,28,28,0.06);
+      --shadow-md:          0 2px 8px rgba(24,28,28,0.08);
+      --shadow-lg:          0 4px 16px rgba(24,28,28,0.10);
+      --radius-sm:          4px;
+      --radius-md:          8px;
+      --radius-lg:          12px;
+      --radius-full:        9999px;
+      --font-display:       'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --font-body:          'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+      --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+      --space-12: 48px; --space-16: 64px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--ink);
+      background: var(--paper);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--ink);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-sm);
+    }
+    .header-inner {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 var(--space-5);
+      height: 56px;
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+    .back-link {
+      color: var(--primary-tint);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      opacity: 0.85;
+      transition: opacity 0.15s;
+      white-space: nowrap;
+    }
+    .back-link:hover { opacity: 1; }
+    .header-divider {
+      width: 1px;
+      height: 20px;
+      background: rgba(255,255,255,0.2);
+    }
+    .site-name {
+      color: var(--on-primary);
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      flex: 1;
+    }
+
+    /* ── Hero band ── */
+    .page-hero {
+      background: var(--accent-warm);
+      color: var(--on-primary);
+      padding: var(--space-10) var(--space-5) var(--space-8);
+    }
+    .page-hero .container { max-width: 860px; margin: 0 auto; }
+    .hero-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      color: var(--accent-warm-bg);
+      margin-bottom: var(--space-3);
+    }
+    .page-hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(24px, 4.5vw, 34px);
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      line-height: 1.15;
+      color: var(--on-primary);
+      margin-bottom: var(--space-4);
+    }
+    .page-hero p {
+      font-size: 16px;
+      line-height: 1.6;
+      color: rgba(255,255,255,0.85);
+      max-width: 540px;
+    }
+    .hero-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      margin-top: var(--space-5);
+      flex-wrap: wrap;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      background: rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.95);
+    }
+    .full-guide-link {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent-warm-bg);
+      text-decoration: none;
+      padding: var(--space-2) var(--space-4);
+      border: 1px solid rgba(255,220,195,0.4);
+      border-radius: var(--radius-full);
+      transition: background 0.15s;
+    }
+    .full-guide-link:hover { background: rgba(255,220,195,0.1); }
+
+    /* ── Main content ── */
+    main {
+      flex: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: var(--space-8) var(--space-5);
+      width: 100%;
+    }
+
+    /* ── Intro banner ── */
+    .intro-banner {
+      background: var(--primary-tint);
+      border-radius: var(--radius-md);
+      padding: var(--space-5);
+      margin-bottom: var(--space-8);
+      color: var(--on-primary-tint);
+    }
+    .intro-banner p { font-size: 14.5px; line-height: 1.6; margin: 0; }
+    .intro-banner strong { color: var(--on-primary-tint); }
+
+    /* ── Phase header ── */
+    .phase-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      margin-bottom: var(--space-5);
+      margin-top: var(--space-10);
+      padding-bottom: var(--space-3);
+      border-bottom: 2px solid var(--primary-tint-strong);
+    }
+    .phase-header:first-child { margin-top: 0; }
+    .phase-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      background: var(--primary-container);
+      color: var(--on-primary);
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .phase-title {
+      font-family: var(--font-display);
+      font-size: clamp(18px, 3vw, 22px);
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: -0.2px;
+    }
+    .phase-subtitle {
+      font-size: 13px;
+      color: var(--ink-tertiary);
+      margin-top: 2px;
+    }
+
+    /* ── Step blocks ── */
+    .step-block {
+      display: flex;
+      gap: var(--space-4);
+      margin-bottom: var(--space-5);
+      align-items: flex-start;
+    }
+    .step-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-full);
+      background: var(--primary-container);
+      color: var(--on-primary);
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .step-body { flex: 1; }
+    .step-body h3 {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: var(--space-2);
+    }
+    .step-body p {
+      font-size: 14.5px;
+      color: var(--ink-secondary);
+      line-height: 1.6;
+      margin-bottom: var(--space-3);
+    }
+    .step-body p:last-child { margin-bottom: 0; }
+    .step-body strong { color: var(--ink); }
+
+    /* ── Field reference table ── */
+    .field-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+      margin: var(--space-3) 0;
+      border: 1px solid var(--grid-subtle);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+    .field-table thead th {
+      background: var(--surface-low);
+      color: var(--ink-tertiary);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      padding: var(--space-2) var(--space-4);
+      text-align: left;
+    }
+    .field-table tbody td {
+      padding: var(--space-2) var(--space-4);
+      border-bottom: 1px solid var(--grid-subtle);
+      vertical-align: top;
+      color: var(--ink-secondary);
+      line-height: 1.5;
+    }
+    .field-table tbody tr:last-child td { border-bottom: none; }
+    .field-table td:first-child { font-weight: 600; color: var(--ink); width: 36%; }
+
+    /* ── Callout boxes ── */
+    .callout {
+      border-radius: var(--radius-md);
+      padding: var(--space-4) var(--space-5);
+      margin: var(--space-4) 0;
+      display: flex;
+      gap: var(--space-3);
+    }
+    .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .callout-body { flex: 1; }
+    .callout-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      margin-bottom: var(--space-1);
+    }
+    .callout-body p { font-size: 13.5px; line-height: 1.6; margin: 0; }
+    .callout-tip { background: var(--primary-tint); }
+    .callout-tip .callout-label { color: var(--on-primary-tint); }
+    .callout-tip .callout-body p { color: var(--on-primary-tint); }
+    .callout-important { background: var(--status-error-bg); }
+    .callout-important .callout-label { color: var(--status-error); }
+    .callout-important .callout-body p { color: var(--status-error); }
+    .callout-remember { background: var(--accent-warm-bg); }
+    .callout-remember .callout-label { color: var(--accent-warm); }
+    .callout-remember .callout-body p { color: var(--accent-warm); }
+
+    /* ── Tab cards (Fishbone / 5 Whys / Pareto) ── */
+    .tab-cards {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      margin: var(--space-4) 0;
+    }
+    .tab-card {
+      display: flex;
+      gap: var(--space-4);
+      background: var(--card);
+      border: 1px solid var(--grid-subtle);
+      border-radius: var(--radius-md);
+      padding: var(--space-4) var(--space-5);
+      align-items: flex-start;
+    }
+    .tab-card-icon {
+      font-size: 22px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .tab-card-body { flex: 1; }
+    .tab-card-body strong {
+      display: block;
+      font-size: 14px;
+      color: var(--ink);
+      margin-bottom: var(--space-1);
+    }
+    .tab-card-body p { font-size: 13.5px; color: var(--ink-secondary); line-height: 1.5; margin: 0; }
+
+    /* ── Export cards ── */
+    .export-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-3);
+      margin: var(--space-4) 0;
+    }
+    .export-card {
+      background: var(--card);
+      border: 1px solid var(--grid-subtle);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+    }
+    .export-card-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: var(--space-1);
+    }
+    .export-card-desc {
+      font-size: 12.5px;
+      color: var(--ink-secondary);
+      line-height: 1.5;
+    }
+
+    /* ── Reference table ── */
+    .ref-table-wrap {
+      overflow-x: auto;
+      margin: var(--space-5) 0;
+      border: 1px solid var(--grid-subtle);
+      border-radius: var(--radius-md);
+    }
+    .ref-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+    .ref-table thead th {
+      background: var(--primary);
+      color: var(--on-primary);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      padding: var(--space-3) var(--space-4);
+      text-align: left;
+    }
+    .ref-table tbody td {
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 1px solid var(--grid-subtle);
+      color: var(--ink-secondary);
+      vertical-align: top;
+      line-height: 1.5;
+    }
+    .ref-table tbody tr:last-child td { border-bottom: none; }
+    .ref-table td:first-child { font-weight: 600; color: var(--ink); }
+    .ref-table tbody tr:nth-child(even) { background: var(--surface-low); }
+
+    /* ── Footer ── */
+    footer {
+      background: var(--ink);
+      color: rgba(255,255,255,0.55);
+      padding: var(--space-6) var(--space-5);
+      font-size: 13px;
+      margin-top: auto;
+    }
+    .footer-inner {
+      max-width: 860px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+    }
+    .footer-inner a { color: var(--primary-tint); text-decoration: none; }
+    .footer-inner a:hover { text-decoration: underline; }
+    .footer-licence { font-size: 12px; opacity: 0.7; }
+
+    @media (max-width: 600px) {
+      .export-cards { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="/guide/" class="back-link">← Guides</a>
+    <div class="header-divider"></div>
+    <span class="site-name">GEMBA SUITE</span>
+  </div>
+</header>
+
+<div class="page-hero">
+  <div class="container">
+    <p class="hero-eyebrow">Quick Start · Root Cause Analysis</p>
+    <h1>RCA Quick Start</h1>
+    <p>For practitioners who know RCA methodology. A concise reference for Gemba-RCA v1.2 — setup, Fishbone, 5 Whys, Pareto, and export.</p>
+    <div class="hero-meta">
+      <span class="hero-badge">v1.2 — April 2026</span>
+      <a href="/guide/rca/" class="full-guide-link">Full guide →</a>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <div class="intro-banner">
+    <p>This is the concise reference for Gemba-RCA v1.2. It covers the app's structure and key controls without explaining the underlying RCA methodology. If you are new to RCA, Fishbone diagrams, or the 5 Whys, read the <a href="/guide/rca/" style="color: var(--on-primary-tint); font-weight: 600;">full guide</a> first.</p>
+  </div>
+
+  <!-- ═══════════════════════════════
+       PHASE 1: INSTALL
+  ═══════════════════════════════ -->
+  <div class="phase-header">
+    <div class="phase-icon">📲</div>
+    <div>
+      <div class="phase-title">Install Gemba-RCA</div>
+      <div class="phase-subtitle">One-time setup — runs offline once installed</div>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-circle">1</div>
+    <div class="step-body">
+      <h3>Open in browser</h3>
+      <p>Navigate to <strong>gembasuite.org/rca</strong> in Chrome (Android) or Safari (iOS/iPadOS). Works in any modern browser on desktop too.</p>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-circle">2</div>
+    <div class="step-body">
+      <h3>Add to home screen</h3>
+      <p><strong>Android:</strong> Three-dot menu → Add to Home screen. <strong>iPhone/iPad:</strong> Share button (□↑) → Add to Home Screen. Gemba-RCA will then load offline from cache.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════
+       PHASE 2: CREATE SESSION
+  ═══════════════════════════════ -->
+  <div class="phase-header">
+    <div class="phase-icon">＋</div>
+    <div>
+      <div class="phase-title">Create a New RCA Session</div>
+      <div class="phase-subtitle">Tap + New RCA on the home screen</div>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-circle">1</div>
+    <div class="step-body">
+      <h3>Fill in the project fields</h3>
+      <table class="field-table">
+        <thead>
+          <tr><th>Field</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Session name</td><td>Identifies this RCA in your project list. Include work area and problem, e.g. <em>Delayed TAT — Haematology</em></td></tr>
+          <tr><td>Work area</td><td>Department or ward where the problem is occurring</td></tr>
+          <tr><td>Author / Org</td><td>Appears on exports and AI coaching prompts</td></tr>
+          <tr><td>Date</td><td>Defaults to today — adjust if needed</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-circle">2</div>
+    <div class="step-body">
+      <h3>Choose problem statement entry route</h3>
+      <p><strong>Standalone</strong> — type the problem statement directly in the modal. Use a specific, quantified statement: what, where, how often, against what standard.</p>
+      <p><strong>Import from A3</strong> — if you have an active Gemba-A3 project, tap <em>Select Gemba-A3 JSON file</em> and choose your A3 export. The Section 1 problem statement is pre-populated automatically.</p>
+    </div>
+  </div>
+
+  <div class="callout callout-important">
+    <span class="callout-icon">⚠</span>
+    <div class="callout-body">
+      <p class="callout-label">Export often</p>
+      <p>localStorage can be cleared by the OS without warning. Tap Download JSON in the Pareto &amp; Export tab after every session. If you have not exported, you have not saved.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════
+       PHASE 3: FISHBONE TAB
+  ═══════════════════════════════ -->
+  <div class="phase-header">
+    <div class="phase-icon">🐟</div>
+    <div>
+      <div class="phase-title">Fishbone Tab — Map Possible Causes</div>
+      <div class="phase-subtitle">Divergent phase: get everything on the diagram before narrowing down</div>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-circle">1</div>
+    <div class="step-body">
+      <h3>Six default categories</h3>
+      <p>The Fishbone has six bones: <strong>People, Equipment, Method</strong> (top) and <strong>Materials, Measurement, Environment</strong> (bottom). These map to the 6M framework. Rename any category by tapping the pencil icon on its card — the SVG diagram updates automatically.</p>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-circle">2</div>
+    <div class="step-body">
+      <h3>Add causes to each category</h3>
+      <p>Tap <strong>+ Add cause</strong> in any category card. Enter a brief, specific description. Causes appear in the card list and on the corresponding bone in the SVG diagram. Work through all six categories before moving to selection — the most significant cause may not be in the most obvious category.</p>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-circle">3</div>
+    <div class="step-body">
+      <h3>Select up to 3 causes for investigation</h3>
+      <p>Tap any cause text in a category card to select it. Selected causes highlight in the card. The toolbar shows the count: <em>0 of 3 selected</em>. Select the causes your team judges most significant — you will investigate each with a 5 Whys chain. You need at least one selection to use the 5 Whys tab.</p>
+    </div>
+  </div>
+
+  <div class="callout callout-tip">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">
+      <p class="callout-label">Tip</p>
+      <p>Measurement and Environment are the most commonly under-populated categories in healthcare RCAs. Spend deliberate time on both before selecting causes to investigate.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════
+       PHASE 4: 5 WHYS TAB
+  ═══════════════════════════════ -->
+  <div class="phase-header">
+    <div class="phase-icon">❓</div>
+    <div>
+      <div class="phase-title">5 Whys Tab — Drill to Root Cause</div>
+      <div class="phase-subtitle">One chain per selected cause — evidence required at each step</div>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-circle">1</div>
+    <div class="step-body">
+      <h3>Navigate between chains</h3>
+      <p>Each selected cause appears as a tab at the top of the panel. Tap a tab to view and edit that chain. Chains are independent — work through each separately.</p>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-circle">2</div>
+    <div class="step-body">
+      <h3>Add Why steps</h3>
+      <p>Tap <strong>+ Add Why step</strong> to add the next level. Each step has two fields:</p>
+      <table class="field-table">
+        <tbody>
+          <tr><td>Why answer</td><td>Why does the previous level occur? Concise and specific. "We don't know" is valid — it means a gemba visit is needed.</td></tr>
+          <tr><td>Evidence</td><td>What data, observation, or document supports this? Unevidenced steps are hypotheses, not findings. Leave no evidence fields blank.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-circle">3</div>
+    <div class="step-body">
+      <h3>Know when to stop</h3>
+      <p>Stop when removing the cause would eliminate the problem. Continue if the problem would still occur without it. Typical chains are 3–6 steps. Stopping at "staff didn't follow the procedure" is almost always too soon — ask why they didn't follow it.</p>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-circle">4</div>
+    <div class="step-body">
+      <h3>Validate each root cause</h3>
+      <p>At the bottom of each chain is the root cause validation panel. Answer the question: <em>"If we address or remove this cause, does the problem disappear?"</em></p>
+      <table class="field-table">
+        <tbody>
+          <tr><td>✓ Yes — Validated</td><td>Chain is marked Root Cause Validated (green). This chain is included in the A3 export.</td></tr>
+          <tr><td>✗ No — revisit</td><td>Chain is marked Not Validated (red). Either go deeper in the Why chain or reconsider the selected cause.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════
+       PHASE 5: PARETO & EXPORT TAB
+  ═══════════════════════════════ -->
+  <div class="phase-header">
+    <div class="phase-icon">📊</div>
+    <div>
+      <div class="phase-title">Pareto &amp; Export Tab</div>
+      <div class="phase-subtitle">Prioritise the vital few, then export your findings</div>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-circle">1</div>
+    <div class="step-body">
+      <h3>Build the Pareto chart</h3>
+      <p>Tap <strong>+ Add cause</strong> in the Pareto section. Enter each candidate cause and the number of incidents attributable to it. The SVG bar chart orders causes by frequency automatically. The causes on the left — the steep bars — are your vital few. Address these first.</p>
+      <p>Data should come from actual observation: incident logs, tally data, LIMS queries, or audit data. Estimated figures are acceptable when hard data is unavailable — note the basis.</p>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-circle">2</div>
+    <div class="step-body">
+      <h3>Export your findings</h3>
+      <div class="export-cards">
+        <div class="export-card">
+          <div class="export-card-title">📥 Download JSON</div>
+          <div class="export-card-desc">Full backup of all RCA data. Use to save, share, or re-import on any device.</div>
+        </div>
+        <div class="export-card">
+          <div class="export-card-title">📤 Export for A3</div>
+          <div class="export-card-desc">Packages validated root causes + Fishbone SVG for import into Gemba-A3 Section 5. Only validated chains are included.</div>
+        </div>
+        <div class="export-card">
+          <div class="export-card-title">📂 Import A3 JSON</div>
+          <div class="export-card-desc">Loads problem statement from a Gemba-A3 export file into the problem banner.</div>
+        </div>
+        <div class="export-card">
+          <div class="export-card-title">🤖 AI Lean Sensei</div>
+          <div class="export-card-desc">Generates a coaching prompt for use with Claude, Copilot, or Gemini. Useful for structured reflection before committing to countermeasures.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════
+       REFERENCE: 6M CATEGORIES
+  ═══════════════════════════════ -->
+  <div class="phase-header" style="margin-top: var(--space-10);">
+    <div class="phase-icon" style="background: var(--surface-high); color: var(--ink-secondary);">📎</div>
+    <div>
+      <div class="phase-title" style="color: var(--ink);">Reference: 6M Fishbone Categories</div>
+      <div class="phase-subtitle">Default labels — all renameable in the app</div>
+    </div>
+  </div>
+
+  <div class="ref-table-wrap">
+    <table class="ref-table">
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>What it covers</th>
+          <th>Healthcare examples</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>👥 People</td>
+          <td>Skills, training, staffing, communication, task allocation</td>
+          <td>Phlebotomist training on culture collection; handover communication gaps; shift staffing ratios</td>
+        </tr>
+        <tr>
+          <td>🔧 Equipment</td>
+          <td>Devices, analysers, IT systems, maintenance, calibration</td>
+          <td>Analyser downtime; EPR system latency; barcode scanner failure; centrifuge imbalance</td>
+        </tr>
+        <tr>
+          <td>📋 Method</td>
+          <td>SOPs, clinical pathways, protocols, work sequence, handoffs</td>
+          <td>Sample labelling SOP not followed; no defined escalation pathway; ambiguous referral criteria</td>
+        </tr>
+        <tr>
+          <td>📦 Materials</td>
+          <td>Samples, reagents, consumables, forms, labels</td>
+          <td>Haemolysed samples; reagent shortage; inadequate sample volume; illegible paper requests</td>
+        </tr>
+        <tr>
+          <td>📊 Measurement</td>
+          <td>Data quality, KPIs, feedback loops, reporting frequency</td>
+          <td>TAT measured from receipt not collection; no daily feedback to ward; SLA not visible to lab</td>
+        </tr>
+        <tr>
+          <td>🏥 Environment</td>
+          <td>Physical space, layout, noise, adjacency, workspace design</td>
+          <td>Sample receipt area shared with high-traffic corridor; poor storage organisation causing specimen misplacement</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══════════════════════════════
+       REFERENCE: WORKFLOW
+  ═══════════════════════════════ -->
+  <div class="phase-header">
+    <div class="phase-icon" style="background: var(--surface-high); color: var(--ink-secondary);">🔗</div>
+    <div>
+      <div class="phase-title" style="color: var(--ink);">Reference: Gemba Suite Workflow</div>
+      <div class="phase-subtitle">How Gemba-RCA connects to the other tools</div>
+    </div>
+  </div>
+
+  <div class="ref-table-wrap">
+    <table class="ref-table">
+      <thead>
+        <tr><th>Tool</th><th>What it provides to RCA</th><th>What RCA provides back</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Gemba-VSM</td>
+          <td>Process map, lead time data, location of defects / delays — sharpens the problem statement</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td>Gemba-A3</td>
+          <td>A3 JSON → problem statement import (Section 1)</td>
+          <td>RCA JSON → root causes + Fishbone SVG import (Section 5)</td>
+        </tr>
+        <tr>
+          <td>Gemba-SPC</td>
+          <td>Special cause signals → problem statements for new RCA cycles</td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout callout-remember">
+    <span class="callout-icon">💾</span>
+    <div class="callout-body">
+      <p class="callout-label">Remember</p>
+      <p>All data transfers between Gemba Suite tools are manual JSON export/import — user-controlled. No data moves automatically. Export JSON from RCA → open Gemba-A3 → import the file.</p>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>David Clark — <a href="https://gembasuite.org">gembasuite.org</a></span>
+    <span class="footer-licence">CC BY-NC-SA 4.0 — Free for healthcare improvement</span>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#181c1c">
+  <title>Value Stream Mapping with Gemba-VSM — Gemba Suite</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #181c1c; --ink-secondary: #3e484c; --ink-tertiary: #6e797c;
+      --paper: #f7faf9; --card: #ffffff; --surface-low: #f1f4f3;
+      --surface-high: #e6e9e8; --grid: #bec8cc; --grid-subtle: #e0e3e2;
+      --primary: #006172; --primary-container: #007c91; --primary-tint: #c4e5ef;
+      --primary-tint-strong: #79d3ea; --on-primary: #ffffff; --on-primary-tint: #004e5c;
+      --accent-warm: #854a10; --accent-warm-container: #a26227; --accent-warm-bg: #ffdcc3; --on-accent-warm: #ffffff;
+      --status-error: #ba1a1a; --status-error-bg: #ffdad6;
+      --shadow-sm: 0 1px 3px rgba(24,28,28,0.06); --shadow-md: 0 2px 8px rgba(24,28,28,0.08);
+      --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px; --radius-full: 9999px;
+      --font-display: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+      --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); font-size: 15px; line-height: 1.7; color: var(--ink); background: var(--paper); min-height: 100vh; display: flex; flex-direction: column; }
+    /* Header */
+    header { background: var(--ink); position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow-sm); }
+    .header-inner { max-width: 860px; margin: 0 auto; padding: 0 var(--space-5); height: 56px; display: flex; align-items: center; gap: var(--space-4); }
+    .back-link { color: var(--primary-tint); text-decoration: none; font-size: 13px; font-weight: 600; opacity: 0.85; transition: opacity 0.15s; }
+    .back-link:hover { opacity: 1; }
+    .header-divider { width: 1px; height: 20px; background: rgba(255,255,255,0.2); }
+    .site-name { color: var(--on-primary); font-family: var(--font-display); font-size: 16px; font-weight: 700; letter-spacing: 0.18em; flex: 1; }
+    /* Hero */
+    .page-hero { background: var(--primary); color: var(--on-primary); padding: var(--space-10) var(--space-5) var(--space-8); }
+    .page-hero .container { max-width: 860px; margin: 0 auto; }
+    .hero-label { font-size: 11px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: var(--primary-tint); margin-bottom: var(--space-3); }
+    .page-hero h1 { font-family: var(--font-display); font-size: clamp(24px, 5vw, 34px); font-weight: 800; letter-spacing: -0.3px; line-height: 1.15; color: var(--on-primary); margin-bottom: var(--space-3); }
+    .hero-meta { font-size: 14px; color: rgba(255,255,255,0.75); margin-bottom: var(--space-3); }
+    .page-hero p.hero-desc { font-size: 15px; line-height: 1.6; color: rgba(255,255,255,0.85); max-width: 580px; }
+    /* Layout */
+    .page-layout { max-width: 860px; margin: 0 auto; padding: var(--space-8) var(--space-5); display: flex; gap: var(--space-8); align-items: flex-start; flex: 1; width: 100%; }
+    /* TOC */
+    .toc { position: sticky; top: 72px; width: 185px; flex-shrink: 0; background: var(--card); border: 1px solid var(--grid-subtle); border-radius: var(--radius-md); padding: var(--space-4); box-shadow: var(--shadow-sm); }
+    .toc-title { font-size: 10px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: var(--ink-tertiary); margin-bottom: var(--space-3); display: block; }
+    .toc ol { list-style: none; }
+    .toc li { margin-bottom: 2px; display: flex; align-items: baseline; gap: 6px; }
+    .toc-num { font-size: 11px; font-weight: 700; color: var(--primary-container); min-width: 16px; }
+    .toc a { display: block; font-size: 12px; line-height: 1.4; color: var(--ink-secondary); text-decoration: none; padding: 3px 6px 3px 0; border-radius: var(--radius-sm); transition: color 0.12s; flex: 1; }
+    .toc a:hover { color: var(--primary); }
+    /* Main */
+    main { flex: 1; min-width: 0; }
+    /* Sections */
+    .guide-section { margin-bottom: var(--space-8); scroll-margin-top: 72px; }
+    .section-header { display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-5); border-bottom: 2px solid var(--primary-tint); padding-bottom: var(--space-3); }
+    .section-num-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px; border-radius: var(--radius-full); flex-shrink: 0;
+      background: var(--primary-container); color: var(--on-primary);
+      font-family: var(--font-display); font-size: 14px; font-weight: 700;
+    }
+    .section-header h2 { font-family: var(--font-display); font-size: 20px; font-weight: 700; letter-spacing: -0.1px; color: var(--primary); }
+    h3 { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--ink); margin: var(--space-6) 0 var(--space-3); }
+    h4 { font-family: var(--font-body); font-size: 14px; font-weight: 600; color: var(--ink); margin: var(--space-4) 0 var(--space-2); }
+    p { color: var(--ink-secondary); margin-bottom: var(--space-4); line-height: 1.7; }
+    p:last-child { margin-bottom: 0; }
+    strong { color: var(--ink); font-weight: 600; }
+    ul, ol { padding-left: var(--space-6); margin-bottom: var(--space-4); color: var(--ink-secondary); }
+    li { margin-bottom: var(--space-2); line-height: 1.6; }
+    /* Callouts */
+    .callout { border-left: 4px solid; border-radius: var(--radius-md); padding: var(--space-4) var(--space-5); margin: var(--space-5) 0; }
+    .callout-label { font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: var(--space-2); display: block; }
+    .callout p { font-size: 14px; line-height: 1.65; margin-bottom: 0; }
+    .callout-tip { background: var(--primary-tint); border-color: var(--primary); }
+    .callout-tip .callout-label { color: var(--on-primary-tint); }
+    .callout-tip p { color: var(--on-primary-tint); }
+    .callout-remember { background: var(--accent-warm-bg); border-color: var(--accent-warm); }
+    .callout-remember .callout-label { color: var(--accent-warm); }
+    .callout-remember p { color: #5a2c00; }
+    .callout-important { background: var(--status-error-bg); border-color: var(--status-error); }
+    .callout-important .callout-label { color: var(--status-error); }
+    .callout-important p { color: #6b0000; }
+    .callout-offline { background: var(--surface-low); border-color: var(--ink-secondary); }
+    .callout-offline .callout-label { color: var(--ink-secondary); }
+    .callout-offline p { color: var(--ink-secondary); }
+    /* Tables */
+    .data-table { width: 100%; border-collapse: collapse; margin: var(--space-4) 0; font-size: 13px; }
+    .data-table th { background: var(--surface-high); color: var(--ink-secondary); font-size: 11px; font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; padding: 8px 10px; text-align: left; border-bottom: 2px solid var(--grid); }
+    .data-table td { padding: 8px 10px; border-bottom: 1px solid var(--grid-subtle); vertical-align: top; line-height: 1.55; }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table td:first-child { font-weight: 600; color: var(--ink); }
+    .data-table tr:nth-child(even) td { background: var(--surface-low); }
+    /* Download link */
+    .download-link { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--primary); text-decoration: none; font-size: 14px; font-weight: 600; padding: var(--space-2) var(--space-4); border: 1px solid var(--primary); border-radius: var(--radius-sm); transition: background 0.12s, color 0.12s; margin-bottom: var(--space-6); }
+    .download-link:hover { background: var(--primary); color: var(--on-primary); }
+    /* Install blocks */
+    .install-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin: var(--space-4) 0; }
+    .install-block { background: var(--surface-low); border: 1px solid var(--grid-subtle); border-radius: var(--radius-md); padding: var(--space-4); }
+    .install-block h4 { font-size: 13px; font-weight: 700; color: var(--ink); margin: 0 0 var(--space-3); }
+    .install-block ol { margin: 0; padding-left: var(--space-5); font-size: 13px; line-height: 1.6; }
+    .install-block li { margin-bottom: var(--space-2); }
+    /* Closing callout */
+    .closing-callout { background: var(--surface-low); border: 1px solid var(--grid-subtle); border-radius: var(--radius-md); padding: var(--space-5); text-align: center; margin-top: var(--space-8); }
+    .closing-callout .closing-motto { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--primary); margin-bottom: var(--space-3); font-style: italic; }
+    .closing-callout p { font-size: 14px; color: var(--ink-secondary); font-style: italic; }
+    /* Footer */
+    footer { background: var(--ink); color: rgba(255,255,255,0.55); padding: var(--space-6) var(--space-5); font-size: 13px; margin-top: auto; }
+    .footer-inner { max-width: 860px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3); }
+    .footer-inner a { color: var(--primary-tint); text-decoration: none; }
+    .footer-licence { font-size: 12px; opacity: 0.7; }
+    @media (max-width: 680px) {
+      .page-layout { flex-direction: column; }
+      .toc { position: static; width: 100%; }
+      .install-grid { grid-template-columns: 1fr; }
+      .section-header h2 { font-size: 17px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="/guide/" class="back-link">← Guides</a>
+    <div class="header-divider"></div>
+    <span class="site-name">GEMBA SUITE</span>
+  </div>
+</header>
+
+<div class="page-hero">
+  <div class="container">
+    <p class="hero-label">Full Guide · Gemba-VSM</p>
+    <h1>Value Stream Mapping<br>with Gemba-VSM</h1>
+    <p class="hero-meta">v6.3 · April 2026 · David Clark</p>
+    <p class="hero-desc">A practical guide to capturing facts and data at the gemba to create professional value stream maps. Covers VSM methodology, gemba observation skills, and a complete walkthrough of Gemba-VSM v6.3.</p>
+  </div>
+</div>
+
+<div class="page-layout">
+
+  <nav class="toc" aria-label="Contents">
+    <span class="toc-title">Contents</span>
+    <ol>
+      <li><span class="toc-num">1</span><a href="#s1">Overview</a></li>
+      <li><span class="toc-num">2</span><a href="#s2">A Beginner's Guide to VSM</a></li>
+      <li><span class="toc-num">3</span><a href="#s3">The 8 Wastes — DOWNTIME</a></li>
+      <li><span class="toc-num">4</span><a href="#s4">How to Create a VSM</a></li>
+      <li><span class="toc-num">5</span><a href="#s5">Developing Your Gemba Skills</a></li>
+      <li><span class="toc-num">6</span><a href="#s6">Installing Gemba-VSM</a></li>
+      <li><span class="toc-num">7</span><a href="#s7">Using Gemba-VSM</a></li>
+      <li><span class="toc-num">8</span><a href="#s8">Parallel Paths</a></li>
+      <li><span class="toc-num">9</span><a href="#s9">Variation Capture</a></li>
+      <li><span class="toc-num">10</span><a href="#s10">AI Coaching Export</a></li>
+      <li><span class="toc-num">11</span><a href="#s11">Saving, Exporting &amp; Importing</a></li>
+      <li><span class="toc-num">12</span><a href="#s12">References &amp; Further Reading</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+    <a href="Value_Stream_Mapping_with_Gemba_VSM_v6_0.docx" class="download-link" download>↓ Download as Word document</a>
+
+    <!-- Section 1 -->
+    <div class="guide-section" id="s1">
+      <div class="section-header">
+        <span class="section-num-badge">1</span>
+        <h2>Overview</h2>
+      </div>
+      <p>This guide introduces value stream mapping (VSM) and walks you through using Gemba-VSM v6.3 to capture data at the gemba, build professional current and future state maps, and export your work for printing, AI coaching, and further analysis.</p>
+      <p>Value stream mapping is one of the most powerful tools in lean management. It provides a visual representation of all the actions required to deliver a product or service, making it possible to see where waste occurs and where improvement opportunities exist.</p>
+
+      <h3>Who is this guide for?</h3>
+      <p>Anyone involved in process improvement — whether in healthcare, manufacturing, service industries or administration. No prior lean experience is required. The guide covers the theory behind VSM, the observation skills needed to capture reality at the gemba, and then provides practical, step-by-step instructions for using Gemba-VSM v6.3.</p>
+
+      <h3>What you will learn</h3>
+      <ul>
+        <li>What a value stream map is and why it matters</li>
+        <li>How to identify the 8 wastes (DOWNTIME) in your process</li>
+        <li>How to walk the gemba and collect accurate data</li>
+        <li>How to develop the observation skills that make a good map possible</li>
+        <li>How to build current state and future state maps</li>
+        <li>How to map parallel paths — concurrent processes that depart from and return to the main value stream</li>
+        <li>How to capture cycle time variation through multiple observations</li>
+        <li>How to record WIP range data showing flow patterns through the day</li>
+        <li>How to use the AI Lean Sensei Coaching Export for guided reflection</li>
+        <li>How to install and use Gemba-VSM on your phone or computer</li>
+        <li>How to save, export and share your value stream maps</li>
+      </ul>
+
+      <div class="callout callout-tip">
+        <span class="callout-label">Tip</span>
+        <p>The best way to learn value stream mapping is by doing it. Use this guide alongside the Gemba-VSM tool and map a real process in your workplace. When you first open the tool, it loads an example value stream (Brew &amp; Go Tea Shop) so you can explore the features before creating your own map.</p>
+      </div>
+    </div>
+
+    <!-- Section 2 -->
+    <div class="guide-section" id="s2">
+      <div class="section-header">
+        <span class="section-num-badge">2</span>
+        <h2>A Beginner's Guide to Value Stream Mapping</h2>
+      </div>
+
+      <h3>What is a value stream?</h3>
+      <p>A value stream is all the specific actions (process steps) within an end-to-end pathway that bring a product or service to the customer. This includes both value-adding activities and non-value-adding activities (waste).</p>
+
+      <h3>What is value?</h3>
+      <p>Value can only be defined by the end customer. It is any activity that directly contributes to satisfying the needs of the customer — any activity the customer would be willing to pay for. Everything else is waste.</p>
+
+      <h3>What is a value stream map?</h3>
+      <p>A value stream map (VSM) is a visual representation of all the actions currently required to deliver a product or service. It documents the flow of materials and information across the entire pathway from origin to final point of delivery. The map shows:</p>
+      <ul>
+        <li>Each process step and how long it takes (cycle time)</li>
+        <li>How work moves between steps (push or pull)</li>
+        <li>Where work accumulates between steps (inventory / WIP)</li>
+        <li>The delays and waiting times between steps</li>
+        <li>Batch sizes at each step</li>
+        <li>Defect rates and quality issues</li>
+        <li>How information flows (paper, electronic, verbal)</li>
+        <li>The trigger that starts each process step</li>
+        <li>Parallel paths where work leaves the main stream and returns later</li>
+      </ul>
+
+      <h3>The Five Principles of Lean</h3>
+      <p>Value stream mapping sits within the broader framework of lean thinking. Womack and Jones identified five key principles that underpin all lean activity:</p>
+      <ul>
+        <li><strong>Specify Value</strong> from the perspective of the customer. What does the customer actually need?</li>
+        <li><strong>Identify the Value Stream</strong> and map all the steps. This is where VSM comes in.</li>
+        <li><strong>Make Value Flow</strong> without interruption, waiting, detours or defects requiring rework.</li>
+        <li><strong>Respond to Pull</strong> — only produce what the customer demands, when they demand it.</li>
+        <li><strong>Pursue Perfection</strong> by continually removing successive layers of waste.</li>
+      </ul>
+
+      <h3>Key VSM Concepts</h3>
+      <p><strong>Cycle Time (C/T)</strong> — The time it takes to complete one unit of work at a process step. Measured by direct observation at the gemba, not from a desk. In Gemba-VSM, you can capture multiple cycle time observations to record the variation you see between operators and conditions.</p>
+      <p><strong>Lead Time</strong> — The total end-to-end time from when work enters the value stream to when it exits. Lead time = value-added time + all delays and waiting. In most processes, lead time is dramatically longer than the actual value-added (touch) time.</p>
+      <p><strong>Takt Time</strong> — The rate at which you need to complete work to meet customer demand. Calculated as: Available working time per day ÷ Customer demand per day.</p>
+      <p><strong>Batch Size</strong> — The number of items processed together before being passed to the next step. Large batches create delays and inventory. Reducing batch size towards single-piece flow is a key lean strategy.</p>
+      <p><strong>Process Efficiency</strong> — The ratio of value-added time to total lead time, expressed as a percentage. In many service and healthcare processes, this can be shockingly low — often well under 5%. This is normal and shows the scale of the improvement opportunity.</p>
+
+      <h3>Current State vs Future State</h3>
+      <p>You always start by mapping the current state — what actually happens today, based on direct observation. This is not what the procedure says should happen, or what managers think happens. It is what you see when you walk the process yourself.</p>
+      <p>Once you understand the current state, you design the future state — what the process should look like with waste removed. Use the ECSS technique:</p>
+      <ul>
+        <li><strong>Eliminate</strong> — can any steps be removed entirely?</li>
+        <li><strong>Combine</strong> — can steps be merged together?</li>
+        <li><strong>Simplify</strong> — can remaining steps be made simpler?</li>
+        <li><strong>Sequence</strong> — is the order of steps optimal for flow?</li>
+      </ul>
+
+      <div class="callout callout-remember">
+        <span class="callout-label">Remember</span>
+        <p>The future state map is a blueprint for improvement, not a wish list. Every change should be implemented through PDCA cycles and tested before being standardised.</p>
+      </div>
+
+      <h3>Going to the Gemba</h3>
+      <p>Gemba (現場) is a Japanese word meaning "the actual place" — where the work happens. Value stream mapping must be based on direct observation at the gemba, not on assumptions, reports or interviews. Walk the process yourself. Watch what actually happens. Time it. Count the inventory. Talk to the people who do the work. Capture photos.</p>
+      <p>This is the principle of "Go See, Ask Why, Respect People" — the foundation of all authentic lean practice.</p>
+      <ul>
+        <li>Keep your value stream map high level — don't get lost in the detail</li>
+        <li>Focus on the main pathway — what happens 80% of the time</li>
+        <li>Collect true and accurate information by walking through the pathway yourself</li>
+      </ul>
+    </div>
+
+    <!-- Section 3 -->
+    <div class="guide-section" id="s3">
+      <div class="section-header">
+        <span class="section-num-badge">3</span>
+        <h2>The 8 Wastes — DOWNTIME</h2>
+      </div>
+      <p>Waste (muda) is any activity that does not add value from the customer's perspective. Originally Taiichi Ohno identified 7 wastes as part of the Toyota Production System. An eighth waste, "Non-utilized Talent", was later added. The acronym DOWNTIME captures all eight.</p>
+
+      <table class="data-table">
+        <thead>
+          <tr><th>Letter</th><th>Waste</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>D</td><td>Defects</td><td>Producing defective products or services that require rework or replacement</td></tr>
+          <tr><td>O</td><td>Overproduction</td><td>Producing more than the customer needs or before it is needed</td></tr>
+          <tr><td>W</td><td>Waiting</td><td>Idle time when people, information, or materials are not moving</td></tr>
+          <tr><td>N</td><td>Non-utilized Talent</td><td>Failing to leverage the full capabilities and creativity of your people</td></tr>
+          <tr><td>T</td><td>Transportation</td><td>Unnecessary movement of products or materials between processes</td></tr>
+          <tr><td>I</td><td>Inventory</td><td>Excess storage of raw materials, work-in-progress, or finished goods</td></tr>
+          <tr><td>M</td><td>Motion</td><td>Unnecessary movement of people or equipment that does not add value</td></tr>
+          <tr><td>E</td><td>Extra Processing</td><td>Performing unnecessary steps or using inappropriate methods</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-tip">
+        <span class="callout-label">Tip</span>
+        <p>When walking the gemba, actively look for each of these 8 wastes at every process step. Gemba-VSM lets you tick the DOWNTIME wastes you observe directly in the data capture form.</p>
+      </div>
+    </div>
+
+    <!-- Section 4 -->
+    <div class="guide-section" id="s4">
+      <div class="section-header">
+        <span class="section-num-badge">4</span>
+        <h2>How to Create a Value Stream Map</h2>
+      </div>
+      <p>This section describes the methodology. <a href="#s7">Section 7</a> shows how to do each step using Gemba-VSM v6.3.</p>
+
+      <h3>Step 1: Define the Scope</h3>
+      <p>Establish the start and stop points of the value stream you are mapping. Who is the supplier (where does the work come from)? Who is the customer (where does the finished product or service go)? What is the customer demand rate? Agree the scope with the team before you start walking.</p>
+
+      <h3>Step 2: Walk the Process</h3>
+      <p>Go to the gemba and walk the entire process from end to end. Observe what actually happens. Do not rely on procedures, manuals, or what people tell you in a meeting room. Take your phone with Gemba-VSM v6.3 installed — it is your data collection tool, your stopwatch, and your camera in one. You enter the facts you observe, and the tool draws the map and calculates the metrics for you.</p>
+
+      <h3>Step 3: Document the Process Steps</h3>
+      <p>Record each major process step in sequence. For each step, enter the data into Gemba-VSM v6.3: cycle time (timed by direct observation), changeover time, batch size, defect/error rate, uptime/availability, number of operators, and the trigger that starts the step. The tool stores each step and builds the process box and data box on the map automatically.</p>
+
+      <h3>Step 4: Record Inventory, Delays and Variation</h3>
+      <p>Between each process step, count the work-in-progress (WIP) and measure or estimate the delay time. This is where most of the lead time hides. Enter the WIP count and delay for each step in Gemba-VSM v6.3 — the tool renders inventory triangles and delay segments on the timeline for you.</p>
+      <p>Capture the variation you observe. If WIP fluctuates through the day (e.g. 3 at 8am, 25 at 2pm), record the range and peak timing. If cycle time differs between operators or conditions, log multiple observations. The gap between your fastest and slowest observation is where the coaching conversation begins.</p>
+
+      <h3>Step 5: Map Information Flows</h3>
+      <p>Document how information moves through the process. Is it paper-based, electronic, or verbal? Which IT systems are involved at each step? Information flow problems are a major source of waste. Select the flow types for each step in Gemba-VSM v6.3, and the tool renders them on the map: paper flows as solid lines, electronic flows as dashed lines, and verbal flows as dotted lines with a speech bubble symbol.</p>
+
+      <h3>Step 6: Identify Waste</h3>
+      <p>At each step, identify the DOWNTIME wastes you observe. Tick the wastes you see in Gemba-VSM v6.3's data capture form and flag improvement opportunities — the tool marks them as kaizen bursts on the map.</p>
+
+      <h3>Step 7: Identify Parallel Paths</h3>
+      <p>Look for work that leaves the main value stream at one step and returns at a later step. These parallel processes — such as samples sent to an external laboratory, equipment sent for calibration, or referrals awaiting specialist input — have their own lead time and often determine how long the main stream waits. Add these as parallel paths in Gemba-VSM v6.3 and the tool renders them below the timeline on your map (see <a href="#s8">Section 8</a>).</p>
+
+      <h3>Step 8: Review the Timeline</h3>
+      <p>Gemba-VSM v6.3 calculates the timeline automatically from the data you have entered. It adds up all the cycle times to give you the total value-added (touch) time, adds up all the delays to give you the total non-value-added time, and calculates process efficiency: value-added time ÷ total lead time. The sawtooth timeline at the bottom of the map shows this visually. The gap between touch time and lead time is your improvement opportunity.</p>
+
+      <h3>Step 9: Design the Future State</h3>
+      <p>Using ECSS (Eliminate, Combine, Simplify, Sequence), design a future state map with waste removed. Copy your current state to future state in Gemba-VSM v6.3, then edit the steps to reflect improvements. The tool recalculates the projected metrics so you can see the impact of your proposed changes. Create an action plan of PDCA cycles to implement them.</p>
+
+      <div class="callout callout-remember">
+        <span class="callout-label">Remember</span>
+        <p>Always map the current state first. Resist the temptation to jump straight to solutions before you truly understand what is happening today.</p>
+      </div>
+    </div>
+
+    <!-- Section 5 -->
+    <div class="guide-section" id="s5">
+      <div class="section-header">
+        <span class="section-num-badge">5</span>
+        <h2>Developing Your Gemba Skills</h2>
+      </div>
+      <p>Value stream mapping is a skill, and like any skill it develops through practice. Your first map will be incomplete. Your second will be better. Your tenth will reveal things you could not have seen on your first visit. This is normal and expected — developing the ability to observe a process clearly, without preconception or judgement, takes time and deliberate effort.</p>
+
+      <h3>Facts, Not Just Data</h3>
+      <p>Taiichi Ohno drew a sharp distinction between data and facts. Data is what arrives on a report, in a spreadsheet, or on a dashboard. It tells you what the system recorded. Facts are what you see when you stand at the gemba and watch the work happen with your own eyes.</p>
+      <p>The two are not always the same. A system may record that a task takes 15 minutes. But when you stand and watch, you see that the operator finishes the hands-on work in 4 minutes, then spends 11 minutes searching for a missing piece of equipment, walking to a printer in another room, and waiting for a colleague to unlock a cupboard. The data says 15 minutes. The facts say 4 minutes of value and 11 minutes of waste — and the waste has specific, observable causes.</p>
+      <p>This is why going to the gemba is non-negotiable. You cannot map a value stream from a desk. You cannot identify waste from a report. You have to go and see.</p>
+
+      <h3>Learning to Observe Without Judgement</h3>
+      <p>The hardest skill in gemba observation is seeing what is actually happening without immediately judging it. When you see a workaround, it is natural to think "that's wrong" or "they should be doing it differently." Resist that impulse. Instead, ask yourself: why does this workaround exist? What is the person compensating for? Workarounds are intelligent responses to broken systems, not evidence of carelessness or rule-breaking.</p>
+      <p>Record what you see, not what you think should be happening. The unavailable equipment, the layout that forces unnecessary motion, the information that arrives on paper because the electronic system is too slow, the verbal handoff that happens because the formal process does not match the reality of the work — all of these are facts. They all need to be observed and recorded.</p>
+
+      <h3>What to Observe</h3>
+      <p>Beyond the cycle times and batch sizes, look for these things at each process step:</p>
+      <ul>
+        <li><strong>Workarounds</strong> — any place where people have developed their own method because the standard process does not work. Ask what problem the workaround solves.</li>
+        <li><strong>Equipment and materials</strong> — is everything needed for the step available, in the right place, at the right time? Watch for searching, fetching, and waiting for equipment.</li>
+        <li><strong>Layout and motion</strong> — how far do people walk? How many times do they move between workstations, printers, stores, or other areas? Draw a spaghetti diagram if the motion is significant.</li>
+        <li><strong>Information flow</strong> — how does the person know what to do next? Is the information clear, timely, and complete? Watch for phone calls to chase missing information, handwritten notes that supplement electronic records, and delays caused by unclear instructions.</li>
+        <li><strong>Interruptions</strong> — how often is the person pulled away from the task? What causes the interruption? Interruptions destroy flow and increase error risk.</li>
+        <li><strong>Variation between people</strong> — observe the same step performed by different operators. The differences in method, speed, and sequence tell you whether a standard exists and whether it is followed.</li>
+      </ul>
+
+      <h3>Building Trust</h3>
+      <p>The people doing the work need to trust you. They need to understand that your intention is to help them and empower them, not to judge or blame them. If people feel they are being assessed or monitored, they will perform the work differently — often more carefully and slowly than normal — and you will record a process that does not exist outside of your observation.</p>
+      <p>Be transparent about what you are doing and why. Explain that you are mapping the process, not measuring individuals. Make clear that the purpose is to find problems in the system so they can be fixed — problems belong to the process, not to people. Share what you are recording. Invite the people doing the work to correct you when you have misunderstood something, because you will.</p>
+      <p>The best value stream maps are created with the team, not about them. When the people who do the work contribute to the map, they see the waste for themselves. They understand why things take so long. They generate the improvement ideas. This is the foundation of sustainable change — the people who own the process own the improvement.</p>
+
+      <div class="callout callout-remember">
+        <span class="callout-label">Remember</span>
+        <p>Your first gemba walk is never your last. Expect to return multiple times, at different times of day, with different workloads, observing different operators. A single observation is a snapshot. The truth emerges over repeated visits. If you are unsure whether to record something, record it. You can always discard an observation later. You cannot go back and re-observe a moment that has passed.</p>
+      </div>
+    </div>
+
+    <!-- Section 6 -->
+    <div class="guide-section" id="s6">
+      <div class="section-header">
+        <span class="section-num-badge">6</span>
+        <h2>Installing Gemba-VSM on Your Device</h2>
+      </div>
+      <p>Gemba-VSM is a Progressive Web App (PWA). It runs in your browser and can be installed on your phone or tablet for full-screen, offline use at the gemba. No app store required.</p>
+      <p><strong>What you need to get started:</strong> A phone or computer with a modern browser and internet access. Open <strong>https://gembasuite.org/vsm</strong> in your browser.</p>
+
+      <div class="install-grid">
+        <div class="install-block">
+          <h4>Install on Android</h4>
+          <ol>
+            <li><strong>Open Chrome.</strong> Navigate to the Gemba-VSM URL in Chrome on your Android phone.</li>
+            <li><strong>Install the app.</strong> You will see an install banner at the bottom. Tap Install. If no banner appears, tap the three-dot menu (⋮) and select "Install app" or "Add to Home screen".</li>
+            <li><strong>Launch.</strong> The Gemba-VSM icon will appear on your home screen. It opens full-screen with no browser chrome.</li>
+          </ol>
+        </div>
+        <div class="install-block">
+          <h4>Install on iPhone / iPad</h4>
+          <ol>
+            <li><strong>Open Safari.</strong> This only works in Safari, not Chrome on iOS. Navigate to the Gemba-VSM URL.</li>
+            <li><strong>Add to Home Screen.</strong> Tap the Share button (square with arrow), scroll down and tap "Add to Home Screen", then tap Add.</li>
+            <li><strong>Launch.</strong> The app icon appears on your home screen and launches full-screen.</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="callout callout-offline">
+        <span class="callout-label">Offline Use</span>
+        <p>After installing, the app works offline. Load it once with internet access to cache the files, then use it at the gemba even without signal. Always export your data as JSON after a gemba walk — browser storage can be cleared if the phone runs low on space.</p>
+      </div>
+    </div>
+
+    <!-- Section 7 -->
+    <div class="guide-section" id="s7">
+      <div class="section-header">
+        <span class="section-num-badge">7</span>
+        <h2>Using Gemba-VSM to Create a Value Stream Map</h2>
+      </div>
+      <p>Gemba-VSM has six main tabs: Gemba Capture, Process Steps, Current State Map, Future Steps, Future State Map, and Compare. Work through them in order.</p>
+
+      <h3>Example Data</h3>
+      <p>When you first open Gemba-VSM, it loads an example value stream — the Brew &amp; Go Tea Shop — with five current state steps and four future state steps already populated. This lets you explore the mapping, comparison, and export features before creating your own project. Create a new blank project when you are ready to map your own process.</p>
+
+      <h3>Gemba Capture Tab</h3>
+      <p>This is where you enter all your data. It has three areas:</p>
+
+      <h4>Value Stream Information</h4>
+      <p>Fill this in once for each map. Enter the name of the value stream, the product/service family, who mapped it, the date, supplier (start point), customer (end point), customer demand per day, and available working time per day in seconds. This information appears on the printed map header and is used to calculate takt time.</p>
+
+      <h4>IT Systems Registry</h4>
+      <p>Register the IT systems used across your value stream (e.g. LIMS, EPR, Order Comms, PACS). Quick-add buttons are provided for common healthcare systems. Registered systems appear as checkboxes when you select "Electronic" information flow for a step, letting you record exactly which systems connect to each process step.</p>
+
+      <h4>Add Process Step</h4>
+      <p>For each step in the value stream, capture the following data:</p>
+      <table class="data-table">
+        <thead>
+          <tr><th>Field</th><th>What to capture</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Process Step Name</td><td>The name of the activity, e.g. "Specimen Reception"</td></tr>
+          <tr><td>Process Type</td><td>Process Step, Inspection, Transportation, Delay, or Storage</td></tr>
+          <tr><td>Trigger / Flow Type</td><td>Push, Pull, or FIFO — what starts this step</td></tr>
+          <tr><td>Cycle Time (C/T)</td><td>Time to process one unit — observed directly at the gemba</td></tr>
+          <tr><td>C/T Unit</td><td>Seconds, Minutes, or Hours</td></tr>
+          <tr><td>C/T Observations</td><td>Multiple timed observations with context — see Section 9</td></tr>
+          <tr><td>Changeover Time (C/O)</td><td>Time to switch between different types of work</td></tr>
+          <tr><td>Batch Size</td><td>Number of items processed together before passing downstream</td></tr>
+          <tr><td>Defects / Errors (%)</td><td>Error rate at this step</td></tr>
+          <tr><td>Uptime / Availability (%)</td><td>Percentage of time the step is available to process work</td></tr>
+          <tr><td>Operators</td><td>Number of people working at this step</td></tr>
+          <tr><td>WIP / Inventory</td><td>Count of items waiting before this step</td></tr>
+          <tr><td>WIP Range</td><td>Min and max WIP with peak timing notes — see Section 9</td></tr>
+          <tr><td>Inventory Type</td><td>Standard triangle or Supermarket symbol</td></tr>
+          <tr><td>Delay Before Step</td><td>Waiting time before this step begins (with unit)</td></tr>
+          <tr><td>Information Flow</td><td>Paper, Electronic, Verbal — multi-select</td></tr>
+          <tr><td>IT Systems</td><td>Which registered systems connect to this step (if Electronic)</td></tr>
+          <tr><td>DOWNTIME Wastes</td><td>Tick each waste type observed at this step</td></tr>
+          <tr><td>Kaizen Opportunity</td><td>Flag improvement ideas with a note</td></tr>
+          <tr><td>Notes</td><td>Gemba observations, workarounds, problems, waste seen</td></tr>
+          <tr><td>Photos</td><td>Take photos directly from the gemba using your phone camera (max 2 per step, auto-compressed)</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-tip">
+        <span class="callout-label">Tip</span>
+        <p>After entering each step, click "+ Add Step". The form clears ready for the next step. The stats bar at the bottom updates automatically as you add steps.</p>
+      </div>
+
+      <h3>Process Steps Tab</h3>
+      <p>This tab shows all your current state process steps in a list. You can drag and drop to reorder steps using the handle on the left, edit any step using the pencil button (opens a modal with all fields including variation capture), or delete a step using the bin button.</p>
+      <p>Each step displays its cycle time, batch size, defect rate, WIP (with range if captured), delay, waste badges (coloured tags showing which DOWNTIME wastes were observed), information flow badges, IT system badges, kaizen burst flags, data gap warnings, photo thumbnails, and variation badges showing observation count.</p>
+
+      <h3>Current State Map Tab</h3>
+      <p>This tab renders your data as a professional SVG value stream map in the traditional format:</p>
+      <ul>
+        <li>Supplier box on the left, customer box on the right with demand rate</li>
+        <li>Process boxes with data boxes underneath showing C/T (with variation range if captured), C/O, Batch, Defects, Uptime</li>
+        <li>Yellow inventory triangles (or supermarket symbols) with WIP counts between steps</li>
+        <li>Push arrows, pull circles, and FIFO lanes connecting process steps</li>
+        <li>Information flow bus/rail architecture — IT systems shown as horizontal rails with drop-down taps to connected steps, paper flows as solid lines, electronic flows as dashed lines</li>
+        <li>SVG speech bubble symbols for verbal information flow</li>
+        <li>Kaizen burst stars on flagged steps</li>
+        <li>Parallel path boxes below the timeline showing concurrent processes (see <a href="#s8">Section 8</a>)</li>
+        <li>Sawtooth timeline at the bottom — delays above (red), cycle times below (green)</li>
+        <li>Summary line: Value-Added Time, Total Lead Time, Process Efficiency, Takt Time</li>
+      </ul>
+      <p>The toolbar provides buttons to Print the map, download as SVG, and add parallel paths.</p>
+
+      <h3>Future State Map Tab</h3>
+      <p>Click "Copy Current → Future" to duplicate your current state data, including any parallel paths. Then use the Future Steps tab to modify the future state: eliminate steps, reduce batch sizes, remove delays, combine activities, change push to pull, add supermarket inventory. You can also add entirely new steps to the future state. The future state map renders with the same professional format and can be printed or exported independently.</p>
+
+      <h3>Compare Tab</h3>
+      <p>This tab shows current and future state maps side by side, making it easy to see the improvement at a glance. Use the Print button to produce a comparison sheet.</p>
+    </div>
+
+    <!-- Section 8 -->
+    <div class="guide-section" id="s8">
+      <div class="section-header">
+        <span class="section-num-badge">8</span>
+        <h2>Parallel Paths — Mapping Concurrent Processes</h2>
+      </div>
+      <p>In many value streams, work does not follow a single linear path. At certain steps, an item or request leaves the main process flow, undergoes a separate process in parallel, and returns at a later step. The main stream may wait for this parallel process to complete, or it may continue independently.</p>
+      <p>These parallel paths are common in healthcare, manufacturing, and service processes. Examples include:</p>
+      <ul>
+        <li>A specimen sent for specialist staining while the main workflow continues to the next case</li>
+        <li>A referral to an external laboratory or specialist, with the result returning days later</li>
+        <li>Equipment sent for calibration or repair, returning to the line when ready</li>
+        <li>A document sent for approval or sign-off while other work proceeds</li>
+      </ul>
+      <p>Without parallel paths on the map, these concurrent processes are invisible. The delay they introduce appears as an unexplained gap on the timeline. Making them visible is the first step to managing them.</p>
+
+      <h3>Two Ways to Record a Parallel Path</h3>
+      <p>Gemba-VSM offers two options when you create a parallel path:</p>
+      <p><strong>Quick Label</strong> — a named box on the map with a manually entered lead time. Use this when you know the parallel process exists and roughly how long it takes, but you do not need to map it in detail. The box appears below the timeline between the departure and return steps.</p>
+      <p><strong>Full VSM (Child Project)</strong> — a new, linked VSM project is created automatically for the parallel process. You map the parallel path as a complete value stream in its own right, with its own process steps, data boxes, and timeline. The child project links back to the parent, and you can navigate between them. Use this when the parallel process is complex enough to warrant its own map.</p>
+
+      <h3>Creating a Parallel Path</h3>
+      <p>Click the "Add Parallel Path" button in the map toolbar. A modal opens with the following fields:</p>
+      <table class="data-table">
+        <thead>
+          <tr><th>Field</th><th>What to enter</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Label</td><td>A name for the parallel process (e.g. "IHC Staining", "External Review")</td></tr>
+          <tr><td>Departure Step</td><td>The step where work leaves the main stream</td></tr>
+          <tr><td>Return Step</td><td>The step where the result re-enters the main stream (must be after the departure step)</td></tr>
+          <tr><td>Main Stream Waits</td><td>Toggle: does the main stream wait for this path to complete?</td></tr>
+          <tr><td>Type</td><td>Quick Label (enter a lead time) or Full VSM (creates a child project)</td></tr>
+        </tbody>
+      </table>
+
+      <h3>How Parallel Paths Appear on the Map</h3>
+      <p>Each parallel path renders as a labelled box below the timeline, positioned horizontally between the departure and return steps. Dashed arrows connect the departure step down to the parallel path box and the return step back up from it. If a child project is linked, clicking the box navigates to that project.</p>
+      <p>Multiple parallel paths stack vertically beneath the timeline. Each additional path extends the map height.</p>
+
+      <h3>Wait Time and Its Effect on Metrics</h3>
+      <p>If you have indicated that the main stream waits for the parallel path, the parallel path's lead time is added to the delay between the departure and return steps on the timeline. This affects the total lead time and process efficiency calculations for the main value stream.</p>
+      <p>If the main stream does not wait, the parallel path appears visually on the map but does not alter the main stream's timeline calculations. The lead time used for the wait calculation comes from the manually entered value (for quick labels) or the calculated total lead time of the child project (for full VSM paths). A manual override is always available.</p>
+
+      <h3>Navigating Between Parent and Child Projects</h3>
+      <p>When you are viewing a child project, a back-link appears in the project bar showing the parent project name and the parallel path label. Click it to return to the parent. From the parent, click the parallel path box on the SVG to navigate to the child project. Both parent and child appear in the normal project list and can also be opened directly from there.</p>
+
+      <div class="callout callout-tip">
+        <span class="callout-label">Tip</span>
+        <p>Start with a quick label to capture the parallel path's existence and estimated lead time during your gemba walk. You can always upgrade it to a full VSM child project later when you are ready to map the parallel process in detail.</p>
+      </div>
+    </div>
+
+    <!-- Section 9 -->
+    <div class="guide-section" id="s9">
+      <div class="section-header">
+        <span class="section-num-badge">9</span>
+        <h2>Variation Capture — Cycle Time Observations &amp; WIP Range</h2>
+      </div>
+      <p>A single cycle time number is a snapshot. What you actually see at the gemba is a distribution — operator A takes 4 minutes, operator B takes 11 minutes, the same operator takes 6 minutes before the morning backlog and 14 minutes during the afternoon rush. The gap between those numbers is where the coaching conversation lives.</p>
+
+      <h3>Cycle Time Observation Log</h3>
+      <p>Below the cycle time field in both the Gemba Capture form and the Edit modal, you will find a collapsible "Add observations" panel. Each observation records:</p>
+      <ul>
+        <li><strong>Value</strong> — the timed cycle time (with unit)</li>
+        <li><strong>Context</strong> — who was performing the work, what time of day, what conditions (e.g. "Operator A, morning, no queue")</li>
+        <li><strong>Timestamp</strong> — automatically recorded when the observation is added</li>
+      </ul>
+      <p>As you add observations, the app automatically calculates and displays the minimum, maximum, mean, and range. The typical cycle time field auto-updates to the mean but can be manually overridden — for example, if the mean is 9.9 minutes but you consider 7 minutes to be the typical value because one operator was in training.</p>
+
+      <h3>Manual Range Fallback</h3>
+      <p>If you did not capture individual observations but know the approximate range from memory or a previous visit, expand "Or enter range manually" to enter min, typical, and max values with a note explaining the source.</p>
+
+      <h3>WIP Range</h3>
+      <p>Below the WIP/Inventory field, a collapsible "WIP range" panel lets you record the minimum and maximum WIP observed, along with a peak timing note.</p>
+      <p>"WIP was 3 at 8am and 25 at 2pm" is dramatically more useful than "WIP: 14 (average)." It tells you something about flow, about where batching happens, about capacity mismatches across the day. This is exactly the kind of gemba observation that makes a coaching conversation come alive.</p>
+
+      <h3>Where Variation Data Appears</h3>
+      <ul>
+        <li>Step list — variation badges (observation count or range indicator) appear alongside each step</li>
+        <li>SVG data box — the C/T line shows the variation range in parentheses when observations or range data exist</li>
+        <li>AI coaching export — individual observations are listed for facilitator coaching; summary statistics are included for sensei prep</li>
+        <li>CSV/Excel export — additional columns for CT Observations, CT Range, and WIP Range</li>
+        <li>JSON export — full observation data with timestamps and context preserved for data portability</li>
+      </ul>
+
+      <div class="callout callout-tip">
+        <span class="callout-label">Tip</span>
+        <p>You do not have to capture variation data — the panels start collapsed and the feature adds zero extra taps if you just want to enter a single typical cycle time value. But when you do capture variation, the coaching conversations become significantly richer. Start with one or two observations per step and build from there.</p>
+      </div>
+    </div>
+
+    <!-- Section 10 -->
+    <div class="guide-section" id="s10">
+      <div class="section-header">
+        <span class="section-num-badge">10</span>
+        <h2>AI Lean Sensei Coaching Export</h2>
+      </div>
+      <p>Gemba-VSM can generate a structured coaching prompt from your value stream mapping data. You copy this prompt into a free AI assistant (Microsoft Copilot, Claude, or Google Gemini) for guided gemba reality validation — helping you see whether you have captured what actually happens and identify gaps in your observation.</p>
+
+      <h3>How It Works</h3>
+      <p>Click the "AI Coach" button in the header. A modal opens with the following options:</p>
+
+      <h4>Coaching Tier</h4>
+      <table class="data-table">
+        <thead>
+          <tr><th>Tier</th><th>Who and how</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Sensei Prep</td><td>You are an experienced lean coach preparing to guide a team. Peer-level, lean terminology used freely, concise single-shot data quality briefing.</td></tr>
+          <tr><td>Facilitator Coaching</td><td>You are a team leader with some lean knowledge running improvement projects. Guided reflection with concepts explained. Socratic questioning style.</td></tr>
+        </tbody>
+      </table>
+
+      <h4>AI Assistant</h4>
+      <ul>
+        <li><strong>Microsoft Copilot</strong> — available on NHS M365 desktops, no signup required. Shorter prompts for Copilot's context window.</li>
+        <li><strong>Claude</strong> — strong at following structured coaching instructions. Free account at claude.ai.</li>
+        <li><strong>Google Gemini</strong> — conversational style. Free account at gemini.google.com.</li>
+      </ul>
+
+      <h4>Additional Options</h4>
+      <ul>
+        <li>Work area context — describe your specific setting so the AI can frame its coaching appropriately</li>
+        <li>Mapping status — "Still mapping" or "Finished gemba walk" — changes the coaching approach</li>
+        <li>Step selection — choose which steps to include. For Copilot, steps are auto-prioritised and capped at 6 to fit context limits</li>
+        <li>Photo attachment — optionally select one gemba photo to paste alongside the prompt (with IG consent warning)</li>
+      </ul>
+
+      <h3>Preview and Copy</h3>
+      <p>The full prompt is shown in a preview panel so you can read through your data before copying. Click "Copy to Clipboard" to copy the prompt, or "Download .txt" to save it as a file. Then paste it into your chosen AI assistant and begin the coaching conversation.</p>
+
+      <h3>Core Principles Embedded in Every Prompt</h3>
+      <ul>
+        <li>Respect for people — workarounds are intelligent responses to broken systems, not rule-breaking</li>
+        <li>Observe multiple operators — one person's method is not the process</li>
+        <li>Observe across conditions — different times, workloads, shifts</li>
+        <li>First gemba walk is never the last — incomplete data is normal</li>
+        <li>Good enough to start team dialogue — a map that sits unshared is inventory waste</li>
+        <li>No measure, no do — challenge anything that cannot be measured</li>
+      </ul>
+
+      <div class="callout callout-important">
+        <span class="callout-label">Important</span>
+        <p>The AI is instructed to coach, not solve. It will never suggest solutions or countermeasures — those must come from the people who do the work. It will never critique individuals — problems belong to the process, not people. It will never make clinical or patient safety judgements.</p>
+      </div>
+    </div>
+
+    <!-- Section 11 -->
+    <div class="guide-section" id="s11">
+      <div class="section-header">
+        <span class="section-num-badge">11</span>
+        <h2>Saving, Exporting &amp; Importing</h2>
+      </div>
+
+      <h3>Project Management</h3>
+      <p>The dark project bar below the header lets you manage multiple value stream maps:</p>
+      <ul>
+        <li><strong>Project dropdown</strong> — switch between saved value streams</li>
+        <li><strong>Save</strong> — saves the current workspace (also auto-saves as you work with a 1.5-second debounce)</li>
+        <li><strong>+ New VSM</strong> — saves current work, clears the workspace, prompts for a name</li>
+        <li><strong>Rename</strong> — change the current project name</li>
+        <li><strong>Delete</strong> — permanently remove a project (export JSON first as backup)</li>
+      </ul>
+      <p>Each project stores its own metadata, current state steps (including variation data), future state steps, and parallel paths independently. Data auto-saves to your browser's local storage as you work. Child projects created from parallel paths appear in the same project list.</p>
+
+      <div class="callout callout-important">
+        <span class="callout-label">Important</span>
+        <p>Browser storage can be cleared by your phone if storage runs low. Always export JSON after completing a gemba walk. The JSON file is your permanent backup.</p>
+      </div>
+
+      <h3>JSON Export — Back Up Your Data</h3>
+      <div class="callout callout-important">
+        <span class="callout-label">Important — Back Up Your Work</span>
+        <p>Gemba-VSM stores your data in your browser's local storage. This can be wiped without warning if your phone runs low on space, if you clear your browser cache, or if your device is reset. Your gemba observations are irreplaceable — you cannot re-walk a process and get the same data twice. Export JSON after every gemba walk. Treat it like saving a document: if you have not exported, you have not saved.</p>
+      </div>
+      <p>Click "JSON" in the header to download a complete backup of your value stream map. The JSON file contains all metadata, current state steps (with all data fields, waste flags, kaizen notes, photos, cycle time observations, cycle time range, WIP range), future state steps, and parallel paths. This file can be re-imported to restore your work on any device.</p>
+      <p><strong>When to export:</strong> After every gemba walk session. Before switching devices. Before clearing your browser. Before deleting any project. Keep your JSON files in a folder on your computer or cloud drive — they are small and contain everything.</p>
+
+      <h3>CSV / Excel Export</h3>
+      <p>Click "Excel" to download a CSV file that opens directly in Excel, Google Sheets or Numbers. The file includes a metadata header, summary statistics (total steps, value-added time, lead time, process efficiency), a full data table with every field for each process step including variation data columns (CT Observations, CT Range, WIP Range), and a separate section listing all parallel paths.</p>
+
+      <h3>SVG Export</h3>
+      <p>On the Current State or Future State Map tab, click "SVG" to download the map as a scalable vector graphic. This produces a print-quality file that can be opened in a web browser, imported into documents or presentations, or printed at any size without losing quality. Parallel path boxes are included in the SVG.</p>
+
+      <h3>Printing</h3>
+      <p>Click "Print Map" to open the map in a new window formatted for your printer. For best results, set the orientation to landscape and choose "fit to page" in your print settings.</p>
+
+      <h3>Importing</h3>
+      <p>Click "Import" to load a previously exported JSON file. The imported data creates a new project automatically — it will not overwrite your current work. The import supports files from all previous versions of the tool and automatically handles backward compatibility for variation data fields and parallel paths.</p>
+    </div>
+
+    <!-- Section 12 -->
+    <div class="guide-section" id="s12">
+      <div class="section-header">
+        <span class="section-num-badge">12</span>
+        <h2>References &amp; Further Reading</h2>
+      </div>
+
+      <h3>Further Reading</h3>
+      <ul>
+        <li><em>NHS Improvement Diagnostic Team. "Bringing Lean to Life — Making Processes Flow in Healthcare."</em> A practical booklet covering A3 thinking, value stream mapping, standard work, visual management, waste identification, flow, pull, takt time, 5S, PDCA and continuous improvement. The VSM symbols and methodology used in Gemba-VSM are based on this resource.</li>
+        <li><em>Rother, M. &amp; Shook, J. "Learning to See: Value Stream Mapping to Create Value and Eliminate Muda."</em> The definitive guide to value stream mapping from the Lean Enterprise Institute (LEI). Essential reading for anyone serious about VSM.</li>
+        <li><em>Womack, J. &amp; Jones, D. "Lean Thinking: Banish Waste and Create Wealth in Your Corporation."</em> The foundational text on lean principles — the source of the five lean principles covered in this guide.</li>
+        <li><em>Liker, J. "The Toyota Way: 14 Management Principles from the World's Greatest Manufacturer."</em> Comprehensive overview of the Toyota Production System and the management philosophy behind it.</li>
+        <li><em>Clark, D. "Quality Improvement in Basic Histotechnology: The Lean Approach." Virchows Archiv, 2015.</em> Peer-reviewed paper documenting the application of lean transformation including VSM in a histopathology laboratory, with measurable results: 45% reduction in laboratory turnaround time, 98% reduction in labelling errors, with no increase in staffing.</li>
+      </ul>
+
+      <h3>Online Resources</h3>
+      <ul>
+        <li><strong>Lean Enterprise Institute (LEI)</strong> — <a href="https://www.lean.org" style="color: var(--primary);">www.lean.org</a> — Primary resource for lean thinking and practice.</li>
+        <li><strong>Lean Enterprise Academy</strong> — <a href="https://www.leanuk.org" style="color: var(--primary);">www.leanuk.org</a> — UK affiliate of the Lean Global Network.</li>
+      </ul>
+    </div>
+
+    <div class="closing-callout">
+      <p class="closing-motto">Go See · Ask Why · Respect People</p>
+      <p><em>Gemba-VSM was created to make value stream mapping accessible to teams at the gemba. The best map is one created by the people who do the work, based on what they observe with their own eyes.</em></p>
+      <p style="font-size: 12px; margin-top: var(--space-4); color: var(--ink-tertiary); font-style: normal;">© 2024–2026 David Clark. Licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0). These tools and guides are free for all healthcare improvement purposes. Full terms: <a href="https://gembasuite.org/licence" style="color: var(--primary);">gembasuite.org/licence</a></p>
+    </div>
+
+  </main>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <span>David Clark — <a href="https://gembasuite.org">gembasuite.org</a></span>
+    <span class="footer-licence">CC BY-NC-SA 4.0 — Free for healthcare improvement</span>
+  </div>
+</footer>
+
+</body>
+</html>

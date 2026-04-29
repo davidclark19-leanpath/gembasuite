@@ -1,0 +1,80 @@
+{
+  "articles": [
+    {
+      "title": "New to Lean? Start here",
+      "url": "https://gembasuite.org/guide/new-to-lean",
+      "description": "Not sure where to start? This guide explains what lean is, why it works in healthcare, and how to begin — in plain English, no jargon.",
+      "badge": "Guide",
+      "badge_type": "live",
+      "source": "Gemba Suite"
+    },
+    {
+      "title": "Articles from the author — coming soon",
+      "url": "",
+      "description": "Writing on lean in healthcare, digital pathology, and AI-assisted improvement. Published via Substack — link to follow.",
+      "badge": "Own writing",
+      "badge_type": "soon",
+      "source": ""
+    }
+  ],
+  "websites": [
+    {
+      "title": "Lean Enterprise Institute",
+      "url": "https://www.lean.org/",
+      "description": "The founding lean learning organisation — research, events, and resources on lean thinking across industries.",
+      "badge": "Organisation",
+      "badge_type": "org"
+    },
+    {
+      "title": "Lean Enterprise Academy",
+      "url": "https://www.leanuk.org/",
+      "description": "UK-based lean learning and development — workshops, research, and practical lean resources for practitioners.",
+      "badge": "Organisation",
+      "badge_type": "org"
+    },
+    {
+      "title": "Institute for Healthcare Improvement",
+      "url": "https://www.ihi.org/",
+      "description": "Global leader in healthcare improvement science — frameworks, tools, and learning resources for quality and patient safety.",
+      "badge": "Organisation",
+      "badge_type": "org"
+    },
+    {
+      "title": "SaaSoft",
+      "url": "https://www.saasoft.co.uk/",
+      "description": "Healthcare operations management education and software — specialists in capacity, demand, and flow in NHS settings.",
+      "badge": "Organisation",
+      "badge_type": "org"
+    }
+  ],
+  "courses": [
+    {
+      "title": "Healthcare Operations Management — Foundations",
+      "url": "https://saasoft.co.uk/hcom/foundations/",
+      "description": "SaaSoft. Demand, capacity, flow, and queue management in healthcare settings — practical, NHS-focused foundations course.",
+      "badge": "Course",
+      "badge_type": "course",
+      "provider": "SaaSoft"
+    },
+    {
+      "title": "Introduction to Operations Management",
+      "url": "https://www.coursera.org/learn/wharton-operations",
+      "description": "Wharton School / Coursera. Core operations management principles — process analysis, capacity, queuing, and variability. Free to audit.",
+      "badge": "Course",
+      "badge_type": "course",
+      "provider": "Wharton / Coursera"
+    }
+  ],
+  "podcasts": [
+    {
+      "title": "Health Care Improvement By Design",
+      "creator": "Simon-HCSE",
+      "url": "https://open.spotify.com/show/0z3ox5TudNpgw4r7HqBnpI",
+      "spotify_id": "0z3ox5TudNpgw4r7HqBnpI",
+      "platform": "spotify",
+      "description": "Inspiring stories of how a growing community of healthcare improvement practitioners are changing the NHS through health care systems engineering (HCSE). Audio podcasts generated from peer-reviewed case studies published in the Journal of Improvement Science and other validated sources."
+    }
+  ],
+  "videos": [],
+  "infographics": []
+}

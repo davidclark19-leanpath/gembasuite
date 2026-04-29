@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#181c1c">
+  <title>VSM Quick Start — Gemba Suite</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #181c1c; --ink-secondary: #3e484c; --ink-tertiary: #6e797c;
+      --paper: #f7faf9; --card: #ffffff; --surface-low: #f1f4f3;
+      --surface-high: #e6e9e8; --grid: #bec8cc; --grid-subtle: #e0e3e2;
+      --primary: #006172; --primary-container: #007c91; --primary-tint: #c4e5ef;
+      --primary-tint-strong: #79d3ea; --on-primary: #ffffff; --on-primary-tint: #004e5c;
+      --accent-warm: #854a10; --accent-warm-container: #a26227; --accent-warm-bg: #ffdcc3; --on-accent-warm: #ffffff;
+      --status-error: #ba1a1a; --status-error-bg: #ffdad6;
+      --status-success: #2e7d32; --status-success-bg: #d4edda;
+      --shadow-sm: 0 1px 3px rgba(24,28,28,0.06); --shadow-md: 0 2px 8px rgba(24,28,28,0.08);
+      --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px; --radius-full: 9999px;
+      --font-display: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+      --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-body); font-size: 15px; line-height: 1.6;
+      color: var(--ink); background: var(--paper); min-height: 100vh; display: flex; flex-direction: column;
+    }
+    /* Header */
+    header { background: var(--ink); position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow-sm); }
+    .header-inner {
+      max-width: 800px; margin: 0 auto; padding: 0 var(--space-5); height: 56px;
+      display: flex; align-items: center; gap: var(--space-4);
+    }
+    .back-link {
+      color: var(--primary-tint); text-decoration: none; font-size: 13px; font-weight: 600;
+      opacity: 0.85; transition: opacity 0.15s;
+    }
+    .back-link:hover { opacity: 1; }
+    .header-divider { width: 1px; height: 20px; background: rgba(255,255,255,0.2); }
+    .site-name { color: var(--on-primary); font-family: var(--font-display); font-size: 16px; font-weight: 700; letter-spacing: 0.18em; flex: 1; }
+    /* Hero */
+    .page-hero { background: var(--primary); color: var(--on-primary); padding: var(--space-10) var(--space-5) var(--space-8); }
+    .page-hero .container { max-width: 800px; margin: 0 auto; }
+    .hero-label { font-size: 11px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: var(--primary-tint); margin-bottom: var(--space-3); }
+    .page-hero h1 { font-family: var(--font-display); font-size: clamp(24px, 5vw, 32px); font-weight: 800; letter-spacing: -0.3px; line-height: 1.15; color: var(--on-primary); margin-bottom: var(--space-3); }
+    .hero-meta { font-size: 14px; color: rgba(255,255,255,0.75); margin-bottom: var(--space-3); }
+    .page-hero p { font-size: 15px; line-height: 1.6; color: rgba(255,255,255,0.85); max-width: 560px; }
+    /* Layout */
+    .page-layout { max-width: 800px; margin: 0 auto; padding: var(--space-8) var(--space-5); display: flex; gap: var(--space-8); align-items: flex-start; flex: 1; width: 100%; }
+    /* TOC */
+    .toc {
+      position: sticky; top: 72px; width: 180px; flex-shrink: 0;
+      background: var(--card); border: 1px solid var(--grid-subtle); border-radius: var(--radius-md);
+      padding: var(--space-4); box-shadow: var(--shadow-sm);
+    }
+    .toc-title { font-size: 10px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: var(--ink-tertiary); margin-bottom: var(--space-3); display: block; }
+    .toc ol { list-style: none; counter-reset: toc; }
+    .toc li { counter-increment: toc; margin-bottom: 2px; }
+    .toc a {
+      display: block; font-size: 12px; line-height: 1.4; color: var(--ink-secondary);
+      text-decoration: none; padding: 4px 6px; border-radius: var(--radius-sm);
+      transition: background 0.12s, color 0.12s;
+    }
+    .toc a:hover { background: var(--primary-tint); color: var(--on-primary-tint); }
+    /* Main */
+    main { flex: 1; min-width: 0; }
+    /* Sections */
+    section { margin-bottom: var(--space-8); scroll-margin-top: 72px; }
+    h2 {
+      font-family: var(--font-display); font-size: 19px; font-weight: 700; letter-spacing: -0.1px;
+      color: var(--primary); border-bottom: 2px solid var(--primary-tint);
+      padding-bottom: var(--space-2); margin-bottom: var(--space-5);
+    }
+    h3 { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--ink); margin: var(--space-5) 0 var(--space-3); letter-spacing: 0.1px; }
+    p { margin-bottom: var(--space-4); color: var(--ink-secondary); }
+    p:last-child { margin-bottom: 0; }
+    strong { color: var(--ink); font-weight: 600; }
+    /* Install steps */
+    .install-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin: var(--space-4) 0; }
+    .install-block {
+      background: var(--surface-low); border: 1px solid var(--grid-subtle);
+      border-radius: var(--radius-md); padding: var(--space-4);
+    }
+    .install-block h4 { font-family: var(--font-display); font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: var(--space-3); }
+    .install-block ol { margin: 0; padding-left: var(--space-5); font-size: 13px; color: var(--ink-secondary); line-height: 1.55; }
+    .install-block ol li { margin-bottom: var(--space-2); }
+    /* Tabs list */
+    .tabs-list { list-style: none; margin: var(--space-3) 0 var(--space-4); }
+    .tabs-list li {
+      display: flex; gap: var(--space-3); padding: 9px var(--space-3);
+      border-bottom: 1px solid var(--grid-subtle); font-size: 14px; align-items: baseline;
+    }
+    .tabs-list li:last-child { border-bottom: none; }
+    .tab-name { font-weight: 600; color: var(--primary); min-width: 120px; }
+    .tab-desc { color: var(--ink-secondary); }
+    /* Data table */
+    .field-table { width: 100%; border-collapse: collapse; margin: var(--space-4) 0; font-size: 13px; }
+    .field-table th {
+      background: var(--surface-high); color: var(--ink-secondary); font-size: 11px; font-weight: 600;
+      letter-spacing: 0.3px; text-transform: uppercase; padding: 7px 10px; text-align: left;
+      border-bottom: 2px solid var(--grid);
+    }
+    .field-table td { padding: 8px 10px; border-bottom: 1px solid var(--grid-subtle); vertical-align: top; line-height: 1.5; }
+    .field-table tr:last-child td { border-bottom: none; }
+    .field-table td:first-child { font-weight: 600; color: var(--ink); white-space: nowrap; }
+    .field-table tr:nth-child(even) td { background: var(--surface-low); }
+    /* Export list */
+    .export-list { list-style: none; margin: var(--space-3) 0; }
+    .export-list li {
+      display: flex; gap: var(--space-3); padding: 7px 0;
+      border-bottom: 1px solid var(--grid-subtle); font-size: 14px; align-items: baseline;
+    }
+    .export-list li:last-child { border-bottom: none; }
+    .export-name { font-weight: 600; color: var(--ink); min-width: 80px; }
+    /* Callout boxes */
+    .callout {
+      border-left: 4px solid; border-radius: var(--radius-md);
+      padding: var(--space-4) var(--space-5); margin: var(--space-5) 0;
+    }
+    .callout-title { font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: var(--space-2); }
+    .callout p { font-size: 14px; line-height: 1.6; margin-bottom: 0; }
+    .callout-tip { background: var(--primary-tint); border-color: var(--primary); }
+    .callout-tip .callout-title { color: var(--on-primary-tint); }
+    .callout-tip p { color: var(--on-primary-tint); }
+    .callout-important { background: var(--status-error-bg); border-color: var(--status-error); }
+    .callout-important .callout-title { color: var(--status-error); }
+    .callout-important p { color: #6b0000; }
+    .callout-offline { background: var(--surface-low); border-color: var(--ink-secondary); }
+    .callout-offline .callout-title { color: var(--ink-secondary); }
+    .callout-offline p { color: var(--ink-secondary); }
+    /* URL display */
+    .app-url {
+      display: inline-block; background: var(--ink); color: var(--primary-tint);
+      font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace; font-size: 14px;
+      padding: var(--space-2) var(--space-4); border-radius: var(--radius-sm);
+      text-decoration: none; margin: var(--space-3) 0 var(--space-4); letter-spacing: 0.02em;
+    }
+    .app-url:hover { background: var(--primary); }
+    /* Download link */
+    .download-link {
+      display: inline-flex; align-items: center; gap: var(--space-2);
+      color: var(--primary); text-decoration: none; font-size: 14px; font-weight: 600;
+      padding: var(--space-2) var(--space-4); border: 1px solid var(--primary);
+      border-radius: var(--radius-sm); transition: background 0.12s, color 0.12s; margin-bottom: var(--space-5);
+    }
+    .download-link:hover { background: var(--primary); color: var(--on-primary); }
+    /* Footer */
+    footer { background: var(--ink); color: rgba(255,255,255,0.55); padding: var(--space-6) var(--space-5); font-size: 13px; margin-top: auto; }
+    .footer-inner { max-width: 800px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3); }
+    .footer-inner a { color: var(--primary-tint); text-decoration: none; }
+    .footer-licence { font-size: 12px; opacity: 0.7; }
+    @media (max-width: 640px) {
+      .page-layout { flex-direction: column; }
+      .toc { position: static; width: 100%; }
+      .install-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="/guide/" class="back-link">← Guides</a>
+    <div class="header-divider"></div>
+    <span class="site-name">GEMBA SUITE</span>
+  </div>
+</header>
+
+<div class="page-hero">
+  <div class="container">
+    <p class="hero-label">Quick Start · Gemba-VSM</p>
+    <h1>VSM Quick Start</h1>
+    <p class="hero-meta">Gemba-VSM v6.3 · April 2026</p>
+    <p>For experienced lean practitioners who know VSM methodology and need a concise reference for the Gemba-VSM v6.3 tool. No methodology teaching — just the app.</p>
+  </div>
+</div>
+
+<div class="page-layout">
+
+  <nav class="toc" aria-label="On this page">
+    <span class="toc-title">On this page</span>
+    <ol>
+      <li><a href="#what">What is Gemba-VSM</a></li>
+      <li><a href="#install">Installation</a></li>
+      <li><a href="#layout">App layout</a></li>
+      <li><a href="#fields">Data capture fields</a></li>
+      <li><a href="#parallel">Parallel paths</a></li>
+      <li><a href="#variation">Variation capture</a></li>
+      <li><a href="#ai-coach">AI coaching export</a></li>
+      <li><a href="#exports">Export / import</a></li>
+      <li><a href="#backup">Backup warning</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+    <a href="Value_Stream_Mapping_with_Gemba_VSM_v6_0.docx" class="download-link" download>↓ Download full guide (Word)</a>
+
+    <section id="what">
+      <h2>What is Gemba-VSM</h2>
+      <p>Gemba-VSM is a Progressive Web App for real-time value stream mapping at the gemba — data capture, map generation, variation recording, and AI coaching export in a single browser-based tool. It runs offline after first load and requires no installation from an app store.</p>
+      <a href="https://gembasuite.org/vsm" class="app-url" target="_blank" rel="noopener">gembasuite.org/vsm</a>
+    </section>
+
+    <section id="install">
+      <h2>Installation</h2>
+      <div class="install-grid">
+        <div class="install-block">
+          <h4>Android</h4>
+          <ol>
+            <li>Open Chrome, navigate to <strong>gembasuite.org/vsm</strong></li>
+            <li>Tap install banner, or ⋮ menu → <strong>Install app</strong></li>
+            <li>Launches full-screen from home screen</li>
+          </ol>
+        </div>
+        <div class="install-block">
+          <h4>iPhone / iPad</h4>
+          <ol>
+            <li>Open <strong>Safari</strong> (not Chrome — required for iOS)</li>
+            <li>Navigate to <strong>gembasuite.org/vsm</strong></li>
+            <li>Share button → <strong>Add to Home Screen</strong></li>
+          </ol>
+        </div>
+      </div>
+      <div class="install-block" style="margin-top: 0;">
+        <h4>Desktop / laptop</h4>
+        <ol style="padding-left: 20px;">
+          <li>Open any modern browser (Chrome, Edge, Firefox, Safari)</li>
+          <li>Navigate to <strong>gembasuite.org/vsm</strong> — no installation required</li>
+        </ol>
+      </div>
+      <div class="callout callout-offline" style="margin-top: var(--space-4);">
+        <p class="callout-title">Offline use</p>
+        <p>Works offline after first load. Load once with internet access to cache the app, then use at the gemba without signal. Export JSON after every session — browser storage can be cleared if the phone runs low on space.</p>
+      </div>
+    </section>
+
+    <section id="layout">
+      <h2>App layout — six tabs</h2>
+      <ul class="tabs-list">
+        <li><span class="tab-name">Gemba Capture</span><span class="tab-desc">Data entry for value stream info, IT systems registry, and process steps. Primary working tab.</span></li>
+        <li><span class="tab-name">Process Steps</span><span class="tab-desc">List of all current state steps. Drag to reorder, edit (pencil), or delete (bin). Shows badges for waste, flow, variation, photos.</span></li>
+        <li><span class="tab-name">Current State Map</span><span class="tab-desc">Live SVG map generated from your data. Toolbar: Print, SVG download, Add Parallel Path.</span></li>
+        <li><span class="tab-name">Future Steps</span><span class="tab-desc">Future state process steps. Click "Copy Current → Future" to start from your current state data.</span></li>
+        <li><span class="tab-name">Future State Map</span><span class="tab-desc">Live SVG map of the future state. Same format as current state map.</span></li>
+        <li><span class="tab-name">Compare</span><span class="tab-desc">Current and future state maps side by side. Print button for a comparison sheet.</span></li>
+      </ul>
+      <p>On first open, the tool loads an example value stream (Brew &amp; Go Tea Shop) so you can explore features before creating your own project.</p>
+    </section>
+
+    <section id="fields">
+      <h2>Data capture fields</h2>
+      <p>For each process step in the <strong>Gemba Capture</strong> tab:</p>
+      <table class="field-table">
+        <thead>
+          <tr><th>Field</th><th>What to capture</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Process Step Name</td><td>Name of the activity, e.g. "Specimen Reception"</td></tr>
+          <tr><td>Process Type</td><td>Process Step, Inspection, Transportation, Delay, or Storage</td></tr>
+          <tr><td>Trigger / Flow Type</td><td>Push, Pull, or FIFO — what starts this step</td></tr>
+          <tr><td>Cycle Time (C/T)</td><td>Time to process one unit — observed directly at the gemba. Excludes waiting and delays.</td></tr>
+          <tr><td>C/T Unit</td><td>Seconds, Minutes, or Hours</td></tr>
+          <tr><td>C/T Observations</td><td>Multiple timed observations with operator, time of day, and conditions context (see Variation Capture)</td></tr>
+          <tr><td>Changeover Time (C/O)</td><td>Time to switch between different types of work at this step</td></tr>
+          <tr><td>Batch Size</td><td>Number of items processed together before passing downstream</td></tr>
+          <tr><td>Defects / Errors (%)</td><td>Error or rework rate at this step</td></tr>
+          <tr><td>Uptime / Availability (%)</td><td>Percentage of time the step is available to process work</td></tr>
+          <tr><td>Operators</td><td>Number of people working at this step</td></tr>
+          <tr><td>WIP / Inventory</td><td>Count of items waiting before this step at the time of observation</td></tr>
+          <tr><td>WIP Range</td><td>Min and max WIP with peak timing notes (see Variation Capture)</td></tr>
+          <tr><td>Inventory Type</td><td>Standard triangle or Supermarket (kanban) symbol</td></tr>
+          <tr><td>Delay Before Step</td><td>Waiting time before work begins at this step (with unit)</td></tr>
+          <tr><td>Information Flow</td><td>Paper, Electronic, Verbal — multi-select</td></tr>
+          <tr><td>IT Systems</td><td>Which registered systems connect to this step (if Electronic selected)</td></tr>
+          <tr><td>DOWNTIME Wastes</td><td>Tick each waste category observed at this step</td></tr>
+          <tr><td>Kaizen Opportunity</td><td>Flag improvement ideas with a note — renders as kaizen burst on map</td></tr>
+          <tr><td>Notes</td><td>Gemba observations, workarounds, problems seen</td></tr>
+          <tr><td>Photos</td><td>Up to 2 photos per step, taken from phone camera or uploaded. Auto-compressed.</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top: var(--space-3);">The <strong>Value Stream Information</strong> section at the top of Gemba Capture captures map-level metadata: value stream name, product/service family, mapper name, date, supplier, customer, demand per day, and available time per day. These calculate takt time and populate the map header.</p>
+      <p>The <strong>IT Systems Registry</strong> lets you register healthcare systems (LIMS, EPR, Order Comms, PACS, etc.) globally — registered systems then appear as checkboxes when Electronic information flow is selected for any step.</p>
+    </section>
+
+    <section id="parallel">
+      <h2>Parallel paths</h2>
+      <p>Click <strong>Add Parallel Path</strong> in the current state map toolbar. Two options:</p>
+      <table class="field-table">
+        <thead>
+          <tr><th>Option</th><th>Use when</th><th>How it works</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Quick Label</td>
+            <td>You know the parallel process and its approximate lead time but don't need to map it in detail</td>
+            <td>Enter label, departure step, return step, wait toggle, and lead time. Renders as a labelled box below the timeline.</td>
+          </tr>
+          <tr>
+            <td>Full VSM (Child project)</td>
+            <td>The parallel process is complex enough to warrant its own map</td>
+            <td>Creates a new linked VSM project. Map the child independently; its calculated lead time feeds back to the parent timeline. Navigate between parent and child via the project bar back-link or by clicking the parallel path box on the SVG.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>If <strong>Main Stream Waits</strong> is on, the parallel path's lead time is added to the timeline delay between departure and return steps, affecting total lead time and process efficiency. A manual override is always available.</p>
+    </section>
+
+    <section id="variation">
+      <h2>Variation capture</h2>
+      <h3>Cycle time observations</h3>
+      <p>Below the C/T field in Gemba Capture (and in the Edit modal), expand <strong>Add observations</strong> to log multiple timed observations. Each observation records value, context (who, what conditions, time of day), and an auto-timestamp. The app calculates min, max, mean, and range. The typical C/T field auto-updates to the mean but can be overridden manually.</p>
+      <p>If you have a rough range from memory rather than individual observations, expand <strong>Or enter range manually</strong> to enter min, typical, and max with a note.</p>
+      <h3>WIP range</h3>
+      <p>Below the WIP field, expand <strong>WIP range</strong> to record the minimum and maximum WIP observed, plus a peak timing note (e.g. "3 at 8am, 25 at 2pm"). WIP range data appears in the step list (badge), the SVG data box, the AI coaching export, the CSV export, and the JSON backup.</p>
+      <p>Both panels start collapsed — they add zero extra taps if you don't need them.</p>
+    </section>
+
+    <section id="ai-coach">
+      <h2>AI coaching export</h2>
+      <p>Click <strong>AI Coach</strong> in the header to open the coaching modal. Choose coaching tier (Sensei Prep — peer-level, concise; or Facilitator Coaching — guided, Socratic), choose AI platform (Copilot, Claude, or Gemini — each generates an optimised prompt), and optionally set work area context, mapping status, step selection, and a gemba photo. Preview the full prompt, then copy to clipboard or download as .txt. Paste into your chosen AI assistant.</p>
+      <p>The coaching prompt is data-driven: it includes your actual step names, cycle times, WIP, variation observations, waste flags, and kaizen notes. The AI is instructed to coach, not solve — it will never suggest countermeasures or make clinical judgements.</p>
+    </section>
+
+    <section id="exports">
+      <h2>Export / import</h2>
+      <ul class="export-list">
+        <li><span class="export-name">JSON</span><span>Full backup — all metadata, steps (with photos, variation data, waste flags), future steps, parallel paths. Re-importable on any device. Export after every session.</span></li>
+        <li><span class="export-name">CSV</span><span>Opens in Excel/Sheets/Numbers. Includes metadata header, summary statistics, full step data with variation columns, and parallel paths section.</span></li>
+        <li><span class="export-name">SVG</span><span>Print-quality vector map from the Current State or Future State Map tab. Includes parallel paths. Opens in any browser or imports to Office/Keynote.</span></li>
+        <li><span class="export-name">Print</span><span>"Print Map" opens a new window formatted for printing. Set orientation to landscape, fit to page.</span></li>
+        <li><span class="export-name">Import</span><span>"Import" loads a previously exported JSON file as a new project. Never overwrites existing data. Backward-compatible with all previous versions.</span></li>
+      </ul>
+      <p>Project management (create, rename, delete, switch) is handled via the dark project bar below the header. Child projects (from parallel paths) appear in the same list.</p>
+    </section>
+
+    <section id="backup">
+      <h2>Backup warning</h2>
+      <div class="callout callout-important">
+        <p class="callout-title">Important — Back up your data</p>
+        <p>Gemba-VSM stores data in your browser's local storage. This can be wiped without warning if your phone runs low on space, if you clear your browser cache, or if your device is reset. Your gemba observations are irreplaceable — you cannot re-walk a process and get the same data twice. <strong>Export JSON after every gemba walk. If you have not exported, you have not saved.</strong></p>
+      </div>
+    </section>
+
+    <div style="margin-top: var(--space-8); padding-top: var(--space-6); border-top: 1px solid var(--grid-subtle); font-size: 13px; color: var(--ink-tertiary); text-align: center; font-style: italic;">
+      <em>Go See · Ask Why · Respect People</em><br>
+      <span style="font-size: 12px; margin-top: 4px; display: block;">© 2024–2026 David Clark. CC BY-NC-SA 4.0. <a href="https://gembasuite.org/licence" style="color: var(--primary);">gembasuite.org/licence</a></span>
+    </div>
+
+  </main>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <span>David Clark — <a href="https://gembasuite.org">gembasuite.org</a></span>
+    <span class="footer-licence">CC BY-NC-SA 4.0 — Free for healthcare improvement</span>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#181c1c">
+  <title>Standard Work with Gemba-StandardWork — Gemba Suite</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════
+       DESIGN TOKENS — Gemba Suite v1.0
+       ═══════════════════════════════════════ */
+    :root {
+      --ink:                #181c1c;
+      --ink-secondary:      #3e484c;
+      --ink-tertiary:       #6e797c;
+      --paper:              #f7faf9;
+      --card:               #ffffff;
+      --surface-low:        #f1f4f3;
+      --surface-high:       #e6e9e8;
+      --surface-dim:        #d7dbda;
+      --grid:               #bec8cc;
+      --grid-subtle:        #e0e3e2;
+      --primary:            #006172;
+      --primary-container:  #007c91;
+      --primary-tint:       #c4e5ef;
+      --primary-tint-strong:#79d3ea;
+      --on-primary:         #ffffff;
+      --on-primary-tint:    #004e5c;
+      --accent-warm:        #854a10;
+      --accent-warm-container: #a26227;
+      --accent-warm-bg:     #ffdcc3;
+      --on-accent-warm:     #ffffff;
+      --status-success:     #2e7d32;
+      --status-success-bg:  #d4edda;
+      --status-warning:     #856404;
+      --status-warning-bg:  #fff3cd;
+      --status-error:       #ba1a1a;
+      --status-error-bg:    #ffdad6;
+      --shadow-sm:          0 1px 3px rgba(24,28,28,0.06);
+      --shadow-md:          0 2px 8px rgba(24,28,28,0.08);
+      --shadow-lg:          0 4px 16px rgba(24,28,28,0.10);
+      --radius-sm:          4px;
+      --radius-md:          8px;
+      --radius-lg:          12px;
+      --radius-full:        9999px;
+      --font-display:       'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --font-body:          'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+      --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+      --space-12: 48px; --space-16: 64px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--ink);
+      background: var(--paper);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--ink);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-sm);
+    }
+    .header-inner {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 var(--space-5);
+      height: 56px;
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+    .back-link {
+      color: var(--primary-tint);
+      text-decoration: none;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      opacity: 0.85;
+      transition: opacity 0.15s;
+      white-space: nowrap;
+    }
+    .back-link:hover { opacity: 1; }
+    .header-divider { width: 1px; height: 20px; background: rgba(255,255,255,0.2); }
+    .site-name {
+      color: var(--on-primary);
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      flex: 1;
+    }
+
+    /* ── Hero band ── */
+    .page-hero {
+      background: var(--primary);
+      color: var(--on-primary);
+      padding: var(--space-10) var(--space-5) var(--space-8);
+    }
+    .page-hero .container { max-width: 1140px; margin: 0 auto; }
+    .hero-eyebrow {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      color: var(--primary-tint);
+      margin-bottom: var(--space-3);
+    }
+    .page-hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(24px, 4.5vw, 34px);
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      line-height: 1.15;
+      color: var(--on-primary);
+      margin-bottom: var(--space-4);
+    }
+    .page-hero p {
+      font-size: 16px;
+      line-height: 1.6;
+      color: rgba(255,255,255,0.85);
+      max-width: 580px;
+    }
+    .hero-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      margin-top: var(--space-5);
+      flex-wrap: wrap;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      background: rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.9);
+    }
+
+    /* ── Two-column layout ── */
+    .body-wrap {
+      flex: 1;
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: var(--space-8) var(--space-5);
+      width: 100%;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: var(--space-8);
+      align-items: start;
+    }
+
+    /* ── TOC sidebar ── */
+    .toc-sidebar {
+      position: sticky;
+      top: 72px;
+      background: var(--card);
+      border: 1px solid var(--grid-subtle);
+      border-radius: var(--radius-md);
+      padding: var(--space-5);
+      box-shadow: var(--shadow-sm);
+    }
+    .toc-title {
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--ink-tertiary);
+      margin-bottom: var(--space-3);
+    }
+    .toc-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .toc-list li a {
+      display: flex;
+      align-items: baseline;
+      gap: var(--space-2);
+      text-decoration: none;
+      font-size: 12.5px;
+      color: var(--ink-secondary);
+      line-height: 1.4;
+      padding: 4px var(--space-2);
+      border-radius: var(--radius-sm);
+      transition: background 0.1s, color 0.1s;
+    }
+    .toc-list li a:hover {
+      background: var(--primary-tint);
+      color: var(--on-primary-tint);
+    }
+    .toc-num {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--primary-container);
+      min-width: 18px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .toc-list li a:hover .toc-num { color: var(--on-primary-tint); }
+    .toc-divider { height: 1px; background: var(--grid-subtle); margin: var(--space-2) 0; }
+    .toc-appendix-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      color: var(--ink-tertiary);
+      padding: 2px var(--space-2);
+      margin-top: var(--space-1);
+    }
+
+    /* ── Main article ── */
+    article { min-width: 0; }
+
+    /* ── Section header ── */
+    .section-header {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-4);
+      margin-bottom: var(--space-5);
+      scroll-margin-top: 72px;
+    }
+    .section-num-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      background: var(--primary-container);
+      color: var(--on-primary);
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .section-num-badge.appendix { background: var(--accent-warm-container); }
+    .section-header h2 {
+      font-family: var(--font-display);
+      font-size: clamp(20px, 3vw, 26px);
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: -0.3px;
+      line-height: 1.15;
+    }
+
+    /* ── Section body ── */
+    .section-body { margin-bottom: var(--space-12); }
+    .section-body + .section-header {
+      padding-top: var(--space-6);
+      border-top: 1px solid var(--grid-subtle);
+    }
+    .section-body h3 {
+      font-family: var(--font-display);
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-top: var(--space-6);
+      margin-bottom: var(--space-3);
+      letter-spacing: -0.1px;
+    }
+    .section-body h4 {
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-top: var(--space-5);
+      margin-bottom: var(--space-2);
+    }
+    .section-body p {
+      font-size: 15px;
+      color: var(--ink-secondary);
+      line-height: 1.7;
+      margin-bottom: var(--space-4);
+    }
+    .section-body p:last-child { margin-bottom: 0; }
+    .section-body strong { color: var(--ink); font-weight: 600; }
+    .section-body a { color: var(--primary-container); }
+
+    /* ── Callout boxes ── */
+    .callout {
+      border-radius: var(--radius-md);
+      padding: var(--space-4) var(--space-5);
+      margin: var(--space-5) 0;
+      display: flex;
+      gap: var(--space-3);
+    }
+    .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .callout-body { flex: 1; }
+    .callout-label {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      margin-bottom: var(--space-1);
+    }
+    .callout-body p { font-size: 14px; line-height: 1.6; margin: 0; }
+    .callout-tip { background: var(--primary-tint); }
+    .callout-tip .callout-label { color: var(--on-primary-tint); }
+    .callout-tip .callout-body p { color: var(--on-primary-tint); }
+    .callout-remember { background: var(--accent-warm-bg); }
+    .callout-remember .callout-label { color: var(--accent-warm); }
+    .callout-remember .callout-body p { color: var(--accent-warm); }
+    .callout-important { background: var(--status-error-bg); }
+    .callout-important .callout-label { color: var(--status-error); }
+    .callout-important .callout-body p { color: var(--status-error); }
+    .callout-offline { background: var(--surface-low); border: 1px solid var(--grid-subtle); }
+    .callout-offline .callout-label { color: var(--ink-tertiary); }
+    .callout-offline .callout-body p { color: var(--ink-secondary); }
+
+    /* ── Steps list ── */
+    .steps-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      margin: var(--space-4) 0;
+    }
+    .steps-list li {
+      display: flex;
+      gap: var(--space-3);
+      align-items: flex-start;
+    }
+    .step-content { font-size: 15px; line-height: 1.6; color: var(--ink-secondary); }
+    .step-content strong { color: var(--ink); }
+
+    /* ── Feature table ── */
+    .feature-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      margin: var(--space-5) 0;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--grid-subtle);
+    }
+    .feature-table th {
+      background: var(--surface-low);
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--ink-secondary);
+      padding: var(--space-3) var(--space-4);
+      text-align: left;
+      border-bottom: 1px solid var(--grid-subtle);
+    }
+    .feature-table td {
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 1px solid var(--grid-subtle);
+      color: var(--ink-secondary);
+      line-height: 1.5;
+      vertical-align: top;
+    }
+    .feature-table tr:last-child td { border-bottom: none; }
+    .feature-table td strong { color: var(--ink); }
+
+    /* ── VA classification pills ── */
+    .va-pills { display: flex; gap: var(--space-3); flex-wrap: wrap; margin: var(--space-4) 0; }
+    .va-pill {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: var(--space-3) var(--space-4);
+      border-radius: var(--radius-md);
+      flex: 1;
+      min-width: 160px;
+    }
+    .va-pill-label {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .va-pill-name { font-size: 14px; font-weight: 600; }
+    .va-pill-desc { font-size: 12px; line-height: 1.5; }
+    .va-va { background: var(--status-success-bg); }
+    .va-va .va-pill-label, .va-va .va-pill-name { color: var(--status-success); }
+    .va-va .va-pill-desc { color: #1e5722; }
+    .va-nnva { background: var(--status-warning-bg); }
+    .va-nnva .va-pill-label, .va-nnva .va-pill-name { color: var(--status-warning); }
+    .va-nnva .va-pill-desc { color: #5a4000; }
+    .va-nva { background: var(--status-error-bg); }
+    .va-nva .va-pill-label, .va-nva .va-pill-name { color: var(--status-error); }
+    .va-nva .va-pill-desc { color: #7a0e0e; }
+
+    /* ── Flow diagram ── */
+    .flow-diagram {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+      background: var(--surface-low);
+      border: 1px solid var(--grid-subtle);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5) var(--space-6);
+      margin: var(--space-5) 0;
+    }
+    .flow-step {
+      background: var(--card);
+      border: 1px solid var(--grid);
+      border-radius: var(--radius-md);
+      padding: var(--space-3) var(--space-4);
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink);
+      text-align: center;
+      line-height: 1.4;
+      flex: 1;
+      min-width: 100px;
+    }
+    .flow-arrow { font-size: 20px; color: var(--primary-container); flex-shrink: 0; }
+
+    /* ── Footer ── */
+    footer {
+      background: var(--ink);
+      color: rgba(255,255,255,0.7);
+      font-size: 13px;
+      padding: var(--space-5) var(--space-5);
+      margin-top: auto;
+    }
+    .footer-inner {
+      max-width: 1140px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+    }
+    .footer-inner a { color: var(--primary-tint); text-decoration: none; }
+    .footer-inner a:hover { text-decoration: underline; }
+    .footer-licence { font-size: 12px; opacity: 0.7; }
+
+    /* ── Responsive ── */
+    @media (max-width: 820px) {
+      .body-wrap { grid-template-columns: 1fr; }
+      .toc-sidebar { position: static; display: none; }
+    }
+    @media (max-width: 560px) {
+      .hero-meta { flex-direction: column; align-items: flex-start; }
+      .va-pills { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="/guide/" class="back-link">← Guides</a>
+    <div class="header-divider"></div>
+    <span class="site-name">GEMBA SUITE</span>
+  </div>
+</header>
+
+<div class="page-hero">
+  <div class="container">
+    <p class="hero-eyebrow">Full Guide · Standard Work</p>
+    <h1>Standard Work with Gemba-StandardWork</h1>
+    <p>The complete guide — why standard work matters, how to capture and classify work elements, analyse time and waste, model improvements, and export documentation for your quality management system.</p>
+    <div class="hero-meta">
+      <span class="hero-badge">v1.9 — April 2026</span>
+      <span class="hero-badge">Healthcare Improvement Edition</span>
+    </div>
+  </div>
+</div>
+
+<div class="body-wrap">
+
+  <!-- ── TOC sidebar ── -->
+  <aside class="toc-sidebar">
+    <p class="toc-title">Contents</p>
+    <ul class="toc-list">
+      <li><a href="#s1"><span class="toc-num">1</span>Overview</a></li>
+      <li><a href="#s2"><span class="toc-num">2</span>What is Standard Work?</a></li>
+      <li><a href="#s3"><span class="toc-num">3</span>Getting Started</a></li>
+      <li><a href="#s4"><span class="toc-num">4</span>Capturing Work Elements</a></li>
+      <li><a href="#s5"><span class="toc-num">5</span>Time Analysis &amp; Takt</a></li>
+      <li><a href="#s6"><span class="toc-num">6</span>The Combination Sheet</a></li>
+      <li><a href="#s7"><span class="toc-num">7</span>Analysis Charts</a></li>
+      <li><a href="#s8"><span class="toc-num">8</span>Creating the Future State</a></li>
+      <li><a href="#s9"><span class="toc-num">9</span>Comparing Current &amp; Future</a></li>
+      <li><a href="#s10"><span class="toc-num">10</span>Exports &amp; Documentation</a></li>
+      <li><a href="#s11"><span class="toc-num">11</span>Connecting to Gemba Suite</a></li>
+      <li><a href="#s12"><span class="toc-num">12</span>Common Mistakes</a></li>
+      <div class="toc-divider"></div>
+      <p class="toc-appendix-label">Appendices</p>
+      <li><a href="#appA"><span class="toc-num">A</span>Value Classification Guide</a></li>
+      <li><a href="#appB"><span class="toc-num">B</span>StandardWork in the Suite</a></li>
+    </ul>
+  </aside>
+
+  <!-- ── Main article ── -->
+  <article>
+
+    <!-- ══════════════════════════════════
+         SECTION 1: OVERVIEW
+    ══════════════════════════════════ -->
+    <div class="section-header" id="s1">
+      <div class="section-num-badge">1</div>
+      <h2>Overview</h2>
+    </div>
+    <div class="section-body">
+      <p>This guide introduces standard work — what it is, why it is the foundation of sustained improvement, and how to do it properly — and then walks you through using Gemba-StandardWork v1.9 to document, analyse, and improve a healthcare process from raw observation to QMS-ready documentation.</p>
+
+      <p>Standard work is the most underused tool in healthcare improvement. Most improvement projects find and fix a problem, declare success, and move on — only to find the same problem returning six months later. Standard work is what makes improvement stick. It captures the current best-known way to perform a task, makes it visible to everyone who does the work, and creates the stable baseline from which the next improvement can be measured.</p>
+
+      <h3>Who is this guide for?</h3>
+      <p>Anyone responsible for a repeatable healthcare process — laboratory scientists, ward leads, pharmacy staff, clinic coordinators, radiographers, theatres teams, and improvement practitioners. If you have a process that multiple people perform and you want it done consistently, safely, and to the current best standard, this guide is for you. No prior lean or standard work experience is needed.</p>
+
+      <h3>What you will learn</h3>
+      <ul class="steps-list">
+        <li><span style="color: var(--primary-container); font-size: 14px; margin-top:2px;">→</span><span class="step-content">What standard work is — and what it is not</span></li>
+        <li><span style="color: var(--primary-container); font-size: 14px; margin-top:2px;">→</span><span class="step-content">How to capture work elements at the gemba with accurate timing</span></li>
+        <li><span style="color: var(--primary-container); font-size: 14px; margin-top:2px;">→</span><span class="step-content">How to classify elements as Value-Adding, Necessary Non-Value-Adding, or Non-Value-Adding</span></li>
+        <li><span style="color: var(--primary-container); font-size: 14px; margin-top:2px;">→</span><span class="step-content">How to calculate takt time and understand whether a process is paced to demand</span></li>
+        <li><span style="color: var(--primary-container); font-size: 14px; margin-top:2px;">→</span><span class="step-content">How to read and use the Combination Sheet — the core standard work document</span></li>
+        <li><span style="color: var(--primary-container); font-size: 14px; margin-top:2px;">→</span><span class="step-content">How to use analysis charts to see waste patterns and improvement opportunities</span></li>
+        <li><span style="color: var(--primary-container); font-size: 14px; margin-top:2px;">→</span><span class="step-content">How to model a future state and compare it against the current baseline</span></li>
+        <li><span style="color: var(--primary-container); font-size: 14px; margin-top:2px;">→</span><span class="step-content">How to export a Job Instruction Sheet and QMS Appendix for your quality management system</span></li>
+      </ul>
+
+      <div class="callout callout-important">
+        <span class="callout-icon">⚠</span>
+        <div class="callout-body">
+          <p class="callout-label">Important</p>
+          <p>Gemba-StandardWork stores your data in your browser's local storage. This can be wiped without warning if your device runs low on space, you clear your browser cache, or the device is reset. Export your project JSON after every session. If you have not exported, you have not saved.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SECTION 2: WHAT IS STANDARD WORK?
+    ══════════════════════════════════ -->
+    <div class="section-header" id="s2">
+      <div class="section-num-badge">2</div>
+      <h2>What is Standard Work?</h2>
+    </div>
+    <div class="section-body">
+      <h3>The definition</h3>
+      <p>Standard work is the documented description of the current best-known method for performing a repeatable task. It specifies the sequence of work elements, the time each takes, the key points for safety and quality, and the relationship of the cycle time to demand. It is written at the operator level — not for management, not for the quality folder — for the person doing the work.</p>
+
+      <p>Three things define standard work: <strong>takt time</strong> (the pace at which the process must produce to meet demand), <strong>work sequence</strong> (the order in which elements are performed), and <strong>standard in-process stock</strong> (the minimum items needed in process to maintain flow). All three must be documented for standard work to exist in the lean sense.</p>
+
+      <h3>What standard work is not</h3>
+      <p>Standard work is not a policy, a procedure, or a protocol. Policies describe what must be done and why. Protocols specify clinical rules and decision points. Standard work describes how — the precise physical sequence of steps performed by a specific operator at a specific workstation, observable and timed at the gemba.</p>
+
+      <p>Standard work is also not a target. It describes how the process actually runs today, not how you wish it ran. If the current best method involves a workaround, that workaround is in the standard work — because documenting reality is the prerequisite for improving it. You cannot improve what you have not defined.</p>
+
+      <h3>Why standard work matters in healthcare</h3>
+      <p>Healthcare processes are highly variable — between operators, between shifts, between sites. Much of this variation is unnecessary and harmful: it produces inconsistent quality, unpredictable cycle times, and a training burden that is never quite resolved because the "right way" is never written down. Standard work reduces this variation to the irreducible minimum, making the process predictable, teachable, and auditable.</p>
+
+      <p>Standard work is also the foundation of improvement. Without a documented baseline, you cannot tell whether a change has actually improved the process — the outcome might have changed, but that could be explained by the specific operator on the day, the batch size, the time of week. With standard work in place, improvement becomes evidence-based: you change the standard, train to the new standard, and measure whether the cycle time, waste ratio, or takt ratio actually improved.</p>
+
+      <div class="callout callout-remember">
+        <span class="callout-icon">📋</span>
+        <div class="callout-body">
+          <p class="callout-label">Remember</p>
+          <p>Standard work belongs to the people who do the work, not the people who manage them. The best standard work documents are written with operators, not for operators — they reflect the genuine wisdom of the person who performs the task every day. Management's role is to provide the conditions in which standard work can be developed, improved, and sustained from within the team — not imposed from above.</p>
+        </div>
+      </div>
+
+      <h3>Standard work and the improvement cycle</h3>
+      <p>In the Gemba Suite workflow, standard work has two roles. First, it sits at the end of the improvement cycle — after you have mapped the value stream (Gemba-VSM), identified the root cause of the problem (Gemba-RCA), and run a structured countermeasure through an A3 (Gemba-A3). Here its role is to stabilise the new work processes, support rollout and training, and anchor the gains made through the improvement. Second, in parallel with mapping the current state, Gemba-StandardWork captures in detail how the work at individual process steps is actually performed — providing the granular operator-level view that a value stream map alone does not show. This dual role makes Gemba-StandardWork both a lens through which to understand how the current process can be improved, and a stable foundation upon which the new process is built.</p>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SECTION 3: GETTING STARTED
+    ══════════════════════════════════ -->
+    <div class="section-header" id="s3">
+      <div class="section-num-badge">3</div>
+      <h2>Getting Started</h2>
+    </div>
+    <div class="section-body">
+      <h3>Opening the app</h3>
+      <p>Open Gemba-StandardWork at <a href="/standardwork/">gembasuite.org/standardwork</a>. No installation, no login, no IT department required. The app runs entirely in your browser. For the most reliable experience — especially offline use at the gemba — install it to your device home screen: on Android, use Chrome and tap "Add to Home Screen"; on iPhone or iPad, use Safari and tap the Share button, then "Add to Home Screen".</p>
+
+      <h3>Creating a project</h3>
+      <p>Everything in Gemba-StandardWork is organised into projects. Each project represents a single process step or operator task — for example, "Blood culture processing — Microbiology bench" or "Pre-assessment blood draw — Outpatients." Create one project per process you are documenting. You can have multiple projects open and switch between them at any time.</p>
+
+      <p>When you create a project, give it a clear, specific name. Include the work area and the process step. Vague names like "Lab process" or "Ward task" will be unhelpful when you come back to the project weeks later or when a colleague opens the file.</p>
+
+      <h3>Project settings</h3>
+      <p>Before capturing elements, fill in the project settings: operator name (or role), work area, and your takt time if known. If you are importing from a VSM, the process step data will populate automatically — see <a href="#s11">Section 11</a> for the VSM import workflow. You can also set QMS document metadata here (document reference, effective date, review date, approver) for export purposes — though this can be completed later before you generate the QMS Appendix.</p>
+
+      <div class="callout callout-tip">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <p class="callout-label">Tip</p>
+          <p>Use the Load Demo Project button to explore the app with real example data before you start capturing your own process. The demo shows a complete standard work study with elements, timings, classifications, key points, and a future state — a useful reference for what a finished project looks like.</p>
+        </div>
+      </div>
+
+      <h3>Data storage</h3>
+      <p>All project data is stored in your browser's local storage. It persists between sessions — close the browser and come back, your work is still there. Data is specific to the browser on the device you used: it will not automatically appear on another device or browser. Use the JSON export to back up your project and to move it between devices.</p>
+
+      <div class="callout callout-important">
+        <span class="callout-icon">⚠</span>
+        <div class="callout-body">
+          <p class="callout-label">Important</p>
+          <p>Clearing your browser cache or site data will permanently delete all saved projects. Export your JSON before doing any browser maintenance. If you are using a shared device or a device managed by your Trust IT department, check whether browser data is wiped on logout — if so, export at the end of every session.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SECTION 4: CAPTURING WORK ELEMENTS
+    ══════════════════════════════════ -->
+    <div class="section-header" id="s4">
+      <div class="section-num-badge">4</div>
+      <h2>Capturing Work Elements</h2>
+    </div>
+    <div class="section-body">
+      <h3>What is a work element?</h3>
+      <p>A work element is the smallest discrete unit of work that can be moved, reassigned, or timed independently. Elements should be specific enough to time accurately but not so granular that they become meaningless — "reaches for tube" is too small; "processes blood culture sample" is too large. A good element is something like "removes tube from rack and labels with patient ID" or "enters result on LIS system." If a step can be done by a different operator, or at a different point in the sequence, it is probably a separate element.</p>
+
+      <h3>Observing at the gemba</h3>
+      <p>Standard work is observed, not estimated. Go to the place where the work happens and watch the operator perform the task from start to finish. Time each element with a stopwatch or the manual time entry in the app. Observe at least three to five cycles before committing timings — the first observation is almost always atypical. Use the median of your observations, not the average, as this is less sensitive to outliers caused by interruptions or unusual events.</p>
+
+      <p>Involve the operator in the capture. Explain what you are doing and why. Ask them to narrate the steps as they work — this surfaces tacit knowledge, key points, and workarounds that would be invisible to an observer alone. The goal is not to measure the operator; it is to document the process together.</p>
+
+      <h3>Adding elements in the app</h3>
+      <p>In the Elements tab, tap <strong>Add Work Element</strong> for each step in sequence. For each element, enter:</p>
+      <ul class="steps-list">
+        <li><span style="color: var(--primary-container); font-size: 14px; margin-top:2px;">→</span><span class="step-content"><strong>Element name</strong> — a short, descriptive label (e.g. "Label specimen tube")</span></li>
+        <li><span style="color: var(--primary-container); font-size: 14px; margin-top:2px;">→</span><span class="step-content"><strong>Time</strong> — the observed cycle time for this element in seconds</span></li>
+        <li><span style="color: var(--primary-container); font-size: 14px; margin-top:2px;">→</span><span class="step-content"><strong>Value classification</strong> — VA, NNVA, or NVA (see <a href="#appA">Appendix A</a>)</span></li>
+        <li><span style="color: var(--primary-container); font-size: 14px; margin-top:2px;">→</span><span class="step-content"><strong>Key points</strong> — the safety, quality, or skill points the operator needs to know for this element</span></li>
+        <li><span style="color: var(--primary-container); font-size: 14px; margin-top:2px;">→</span><span class="step-content"><strong>Image</strong> (optional) — a photo of the workstation, instrument, or material at this step, for use in the Job Instruction Sheet</span></li>
+      </ul>
+
+      <h3>Key points</h3>
+      <p>Key points are the most important part of the Job Instruction Sheet and the most commonly omitted. A key point is something an operator needs to understand to perform the element safely, to the right quality standard, or with the right technique. It answers the question: "What would I tell a new colleague that is not obvious from watching?" Examples include "check patient ID against request form before labelling" (safety), "cap must be pressed until it clicks — insufficient closure will cause haemolysis" (quality), or "grip lightly — excessive pressure on the tube can cause breakage" (technique).</p>
+
+      <p>Gemba-StandardWork allows you to tag key points by category: Safety, Quality, Skill, or Note. The app generates a Key Points by Category chart in the Analysis tab and organises them clearly in the Job Instruction Sheet. The key point and its reason are essential for training — they enable the person being trained to understand not just what to do, but why it matters. That understanding is what makes the standard reproducible and resilient.</p>
+
+      <div class="callout callout-remember">
+        <span class="callout-icon">🔑</span>
+        <div class="callout-body">
+          <p class="callout-label">Remember</p>
+          <p>The key point is "what to do", "how to do it", and "why it matters" — in that order. Without the "why", key points become rules without context and are harder to remember and follow. A operator who understands why a step matters is more likely to follow it consistently and to notice when something is wrong.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SECTION 5: TIME ANALYSIS AND TAKT
+    ══════════════════════════════════ -->
+    <div class="section-header" id="s5">
+      <div class="section-num-badge">5</div>
+      <h2>Time Analysis &amp; Takt</h2>
+    </div>
+    <div class="section-body">
+      <h3>Total cycle time</h3>
+      <p>The total cycle time is the sum of all work element times — the time it takes one operator to complete the full sequence from first element to last. Gemba-StandardWork calculates this automatically as you add elements. Cycle time is the primary output of a standard work study and the number you will track when testing whether an improvement has actually reduced the time burden on the operator.</p>
+
+      <h3>Takt time</h3>
+      <p>Takt time is the maximum time available per unit of output to meet customer demand. It is calculated as: available working time ÷ required output. For example, if a histopathology processing workstation has 420 minutes of available time per shift and must process 35 specimens, the takt time is 420 ÷ 35 = 12 minutes per specimen.</p>
+
+      <p>Enter your takt time in the project settings. Gemba-StandardWork will then display the <strong>takt ratio</strong> — the ratio of cycle time to takt time — for both the current and future states. A takt ratio above 1.0 means the operator cannot keep pace with demand; a ratio below 1.0 means there is spare capacity. A well-balanced process has a takt ratio between 0.85 and 0.95 — high enough to be efficient, low enough to absorb variation.</p>
+
+      <div class="callout callout-tip">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <p class="callout-label">Tip</p>
+          <p>If you are importing a process step from a Gemba-VSM map, the takt time may already be calculated from the VSM demand data. Use the VSM Import feature in the app to pull this in automatically rather than re-entering it. See <a href="#s11">Section 11</a> for the import workflow.</p>
+        </div>
+      </div>
+
+      <h3>VA, NNVA, and NVA time breakdown</h3>
+      <p>The app calculates the total time attributable to each value classification: Value-Adding time (VA), Necessary Non-Value-Adding time (NNVA), and Non-Value-Adding time (NVA). This breakdown is shown in the Analysis tab and in the Combination Sheet. The NVA time represents pure waste — activity that consumes time without adding value and that could, in principle, be eliminated. The NNVA time is waste that cannot be eliminated immediately given the current state of the system but that is a target for future improvement.</p>
+
+      <p>Tracking the VA/NNVA/NVA split over successive improvement cycles is one of the clearest ways to demonstrate that a process is genuinely improving — not just that something has changed, but that it is delivering more value per unit of operator time.</p>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SECTION 6: THE COMBINATION SHEET
+    ══════════════════════════════════ -->
+    <div class="section-header" id="s6">
+      <div class="section-num-badge">6</div>
+      <h2>The Combination Sheet</h2>
+    </div>
+    <div class="section-body">
+      <h3>What the Combination Sheet shows</h3>
+      <p>The Standard Work Combination Sheet is the core standard work document. It shows, in a single view: every work element, its time, its classification, and a horizontal bar chart showing the sequence and relative duration of each element. A vertical line marks takt time, making it immediately visible whether any element or the whole cycle exceeds takt.</p>
+
+      <p>The "combination" refers to the combination of manual work time (bars drawn as solid), automated machine time (bars drawn as dashed), and walking time (bars drawn as dotted). In many healthcare processes, all elements are manual — but in laboratory automation, the combination of operator loading time and analyser run time is critical to understanding where the operator can be productive while the instrument runs.</p>
+
+      <h3>Reading the Combination Sheet</h3>
+      <p>Elements are listed on the left in sequence. The bars extend to the right, drawn to a consistent scale. Read the sheet from top to bottom: this is the operator's sequence. Read left to right within each bar: this is the time. A glance at the right edge of the bars tells you whether the cycle time is under or over takt. A glance at the colour coding tells you what proportion of the time is VA versus waste.</p>
+
+
+      <div class="callout callout-remember">
+        <span class="callout-icon">📊</span>
+        <div class="callout-body">
+          <p class="callout-label">Remember</p>
+          <p>A standard work combination sheet that does not match how the work is actually done is worse than no standard work at all — it undermines trust in the documentation and makes improvement invisible. If the process changes, update the standard work within the same shift, not at the next quarterly review.</p>
+        </div>
+      </div>
+
+      <h3>The Combination Sheet in Gemba-StandardWork</h3>
+      <p>Gemba-StandardWork generates the Combination Sheet automatically from your elements and timings. It updates in real time as you add or edit elements. The chart is available in the Analysis tab and is included in both the Job Instruction Sheet and the QMS Appendix export. You can print it directly from the Print Layouts panel or export it as part of a document.</p>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SECTION 7: ANALYSIS CHARTS
+    ══════════════════════════════════ -->
+    <div class="section-header" id="s7">
+      <div class="section-num-badge">7</div>
+      <h2>Analysis Charts</h2>
+    </div>
+    <div class="section-body">
+      <p>The Analysis tab generates four charts automatically from your element data. Each answers a different question about the process.</p>
+
+      <table class="feature-table">
+        <thead>
+          <tr>
+            <th>Chart</th>
+            <th>What it shows</th>
+            <th>What to look for</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Combination Sheet</strong></td>
+            <td>Sequence, time, and classification of all elements against takt</td>
+            <td>Any element or the total cycle exceeding takt; NVA elements that could be eliminated</td>
+          </tr>
+          <tr>
+            <td><strong>Value Classification</strong></td>
+            <td>Proportional breakdown of total time into VA, NNVA, and NVA</td>
+            <td>High NVA proportion indicates significant waste opportunity; track this ratio across improvement cycles</td>
+          </tr>
+          <tr>
+            <td><strong>Waste Summary</strong></td>
+            <td>Distribution of NVA time by DOWNTIME waste category</td>
+            <td>The dominant waste type — this shapes the improvement hypothesis for the next A3 or RCA</td>
+          </tr>
+          <tr>
+            <td><strong>Key Points by Category</strong></td>
+            <td>Distribution of key points across Safety, Quality, Skill, and Note categories</td>
+            <td>Processes with many Safety key points may need enhanced verification steps; high Skill counts indicate training burden</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Using the analysis to inform improvement</h3>
+      <p>The analysis charts are not the output — they are the input to an improvement conversation. A Value Classification chart showing 40% NVA time is not a finding; it is a question: which elements are waste, and which of them can be reduced or eliminated? Use the charts to generate hypotheses, then investigate with Gemba-RCA, test countermeasures through Gemba-A3, and update the standard work when the improvement is confirmed.</p>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SECTION 8: CREATING THE FUTURE STATE
+    ══════════════════════════════════ -->
+    <div class="section-header" id="s8">
+      <div class="section-num-badge">8</div>
+      <h2>Creating the Future State</h2>
+    </div>
+    <div class="section-body">
+      <h3>Why model the future state?</h3>
+      <p>The future state is a modelled version of the process after improvement. Creating it in Gemba-StandardWork before implementing changes gives you a clear target, a quantified prediction of the benefit, and a structured way to communicate the proposed change to the team and to management. It answers the question: "If we make this change, what do we expect the cycle time and waste ratio to be?"</p>
+
+      <h3>Creating the future state in the app</h3>
+      <p>In the Elements tab, use the <strong>Create Future State</strong> function. This creates a copy of the current state elements, which you can then modify independently. You can remove NVA elements, reduce element times to reflect improvement targets, re-sequence steps, and add new elements introduced by the proposed change. The future state and the current state are stored in the same project and can be compared directly in the Compare tab.</p>
+
+      <p>Make future state changes conservatively. Base time reductions on observed data from pilot runs or timed experiments, not on optimistic estimates. A future state that overpromises and underdelivers damages credibility — for your improvement programme and for the team members who worked on the change.</p>
+
+      <div class="callout callout-tip">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <p class="callout-label">Tip</p>
+          <p>Use the future state as a "should-be" document before piloting. Share it with the operator and ask: "Does this reflect how you think the improved process would work?" Their feedback — before implementation — is far more valuable than their feedback after a change has already been made.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SECTION 9: COMPARING CURRENT AND FUTURE
+    ══════════════════════════════════ -->
+    <div class="section-header" id="s9">
+      <div class="section-num-badge">9</div>
+      <h2>Comparing Current &amp; Future</h2>
+    </div>
+    <div class="section-body">
+      <h3>The Compare tab</h3>
+      <p>The Compare tab shows the current state and future state Combination Sheets side by side. It calculates the difference in total cycle time, VA time, NVA time, and takt ratio between the two states. This is the business case for the improvement in a single view: here is where we are, here is where we are proposing to go, and here is the quantified difference.</p>
+
+      <h3>Using the comparison for improvement conversations</h3>
+      <p>Print or export the comparison when presenting an improvement proposal to a team, a manager, or a governance group. It provides the evidence base for the change without requiring the audience to read a lengthy report. The combination sheet format is intuitive — most people can read it without explanation — and the quantified time difference translates directly into capacity released, cost reduction, or patient benefit depending on your improvement context.</p>
+
+      <p>After implementation, re-observe the process and update the current state with actual (not modelled) timings. Run the comparison again. The gap between predicted and actual improvement tells you whether the change worked as intended, and if not, where to investigate next.</p>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SECTION 10: EXPORTS AND DOCUMENTATION
+    ══════════════════════════════════ -->
+    <div class="section-header" id="s10">
+      <div class="section-num-badge">10</div>
+      <h2>Exports &amp; Documentation</h2>
+    </div>
+    <div class="section-body">
+      <p>Gemba-StandardWork produces three types of output document, each serving a different audience and purpose.</p>
+
+      <h3>Job Instruction Sheet</h3>
+      <p>The Job Instruction Sheet (JIS) is the operator-facing document. It lists every work element in sequence with its time, classification, key points, and — where you have added them — photos of the workstation, instrument, or material. It is designed to be available at the workstation as a shared reference — for anyone performing the task, training a colleague, or thinking about how it could be done better. The JIS prints to A4 landscape for wall mounting or A4 portrait for a folder. Access it from the Export tab or the Print Layouts panel.</p>
+
+      <h3>QMS Appendix</h3>
+      <p>The QMS Appendix is the system-facing document. It includes the document metadata you entered in settings (reference number, version, effective date, review date, approver), the standard work combination sheet for both current and future states, the full element list with timings and classification, and the key points summary. It is formatted to be appended to an existing SOP, work instruction, or quality manual entry. Export it as a print-ready document from the Export tab.</p>
+
+      <h3>JSON export and import</h3>
+      <p>The JSON export saves the complete project — all elements, timings, key points, images, settings, and both states — to a single file. This is your backup, your archive, and your transfer mechanism. To share a project with a colleague, export the JSON and send the file. To move a project to another device, export on the first device and import on the second. To return to a previous version of a project, keep your exports after each session and import the one you need.</p>
+
+      <div class="callout callout-remember">
+        <span class="callout-icon">💾</span>
+        <div class="callout-body">
+          <p class="callout-label">Remember</p>
+          <p>Export your JSON at the end of every session. Give the file a name that includes the process, the state (current/future), and the date — for example "blood-culture-processing-current-2026-04-29.json". Store it on your Trust network or personal drive, not just on the device you observed on.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SECTION 11: CONNECTING TO GEMBA SUITE
+    ══════════════════════════════════ -->
+    <div class="section-header" id="s11">
+      <div class="section-num-badge">11</div>
+      <h2>Connecting to Gemba Suite</h2>
+    </div>
+    <div class="section-body">
+      <p>Gemba-StandardWork is designed to work as the final step in the Gemba Suite improvement workflow. It connects to both Gemba-VSM (at the start, for process context and takt data) and to the broader PDCA cycle that the suite supports.</p>
+
+      <div class="flow-diagram">
+        <div class="flow-step">🗺 Gemba-VSM<br><span style="font-weight:400;font-size:12px;">Map &amp; measure the flow</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">🐟 Gemba-RCA<br><span style="font-weight:400;font-size:12px;">Find the root cause</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">📋 Gemba-A3<br><span style="font-weight:400;font-size:12px;">Run the improvement</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">📌 Gemba-SW<br><span style="font-weight:400;font-size:12px;">Hold the gain</span></div>
+      </div>
+
+      <h3>Importing from Gemba-VSM</h3>
+      <p>If you have mapped the process in Gemba-VSM, you can import process step data directly into Gemba-StandardWork. In the Elements tab, tap <strong>Import from VSM</strong> and load your VSM JSON export. Select the process step you want to document. The app will import the process step name, operator, and takt time from the VSM data, pre-populating the project settings. This saves re-entry and ensures your standard work is consistent with the value stream map.</p>
+
+      <h3>After the A3</h3>
+      <p>If you have run a countermeasure through Gemba-A3, the standard work should be updated before the improvement is considered complete. The most effective way to close an A3 in the Act phase is to ensure the standard work for the affected process reflects the new method. This is what makes the countermeasure durable — not just tested and recorded, but genuinely embedded in how the work is done.</p>
+
+      <div class="callout callout-tip">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <p class="callout-label">Tip</p>
+          <p>For processes that are part of a larger improvement programme tracked in Gemba-A3, attach the Job Instruction Sheet export to the A3 as the implementation evidence for the Act stage. This creates a clean audit trail from problem statement, through countermeasure, to documented standard — all within the Gemba Suite.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SECTION 12: COMMON MISTAKES
+    ══════════════════════════════════ -->
+    <div class="section-header" id="s12">
+      <div class="section-num-badge">12</div>
+      <h2>Common Mistakes</h2>
+    </div>
+    <div class="section-body">
+      <h3>Documenting the ideal, not the actual</h3>
+      <p>The most common standard work mistake is writing down how the process should work rather than how it actually works. Standard work must be observed, not imagined. If the standard says a step takes 30 seconds but every operator actually takes 90 seconds, the standard is wrong — and it is useless as a baseline for improvement or as a training document.</p>
+
+      <h3>Over-granularity</h3>
+      <p>Breaking the process into too many micro-elements (every hand movement, every glance) produces a document that is impossible to follow and painful to maintain. Aim for elements that are meaningful work steps — things an operator would naturally describe as distinct parts of the task. If you have more than 20 elements for a single operator cycle, consider whether some adjacent steps should be combined.</p>
+
+      <h3>Omitting key points</h3>
+      <p>A standard work document without key points is a work instruction, not standard work. Key points carry the institutional knowledge that prevents errors and makes quality reproducible. They are especially important for processes where an error would reach a patient, where the technique is genuinely skill-dependent, or where the consequences of deviation are invisible at the time but significant later.</p>
+
+      <h3>Treating standard work as a one-off exercise</h3>
+      <p>Standard work is only valuable if it is kept current. A document created during an improvement project and then filed without update is quickly outdated and quickly ignored. It helps to have a named person who takes responsibility for keeping each standard work document current, and a shared review date (the QMS Appendix has a field for this). When the process changes — equipment, sequence, staffing, demand — the standard work should reflect that change promptly, ideally the same day.</p>
+
+      <h3>Not involving operators</h3>
+      <p>Standard work created without the participation of the people who do the work will be resisted, ignored, or quietly worked around. This is not a compliance failure; it is a design failure. Operators have detailed knowledge of the process that is invisible from the outside. Involve them in capture, classification, and key point generation. When people help write the standard, they understand it, believe in it, and follow it.</p>
+
+      <div class="callout callout-remember">
+        <span class="callout-icon">⚡</span>
+        <div class="callout-body">
+          <p class="callout-label">Remember</p>
+          <p>Standard work is not a management tool. It is a team tool. Its power comes from shared understanding — everyone doing the same work to the same method, for the same reason. Management's job is to create the conditions for that to happen: time to observe, training, and the conditions for standard work to be used, improved, and kept alive — not just created and filed away.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         APPENDIX A: VALUE CLASSIFICATION
+    ══════════════════════════════════ -->
+    <div class="section-header" id="appA">
+      <div class="section-num-badge appendix">A</div>
+      <h2>Value Classification Guide</h2>
+    </div>
+    <div class="section-body">
+      <p>Every work element is classified into one of three categories. The classification is made from the perspective of the customer — in healthcare, this means the patient or the clinician requesting the service.</p>
+
+      <div class="va-pills">
+        <div class="va-pill va-va">
+          <span class="va-pill-label">VA</span>
+          <span class="va-pill-name">Value-Adding</span>
+          <span class="va-pill-desc">The customer would pay for this. It physically transforms or moves the specimen/patient/information toward the required outcome and is done correctly the first time.</span>
+        </div>
+        <div class="va-pill va-nnva">
+          <span class="va-pill-label">NNVA</span>
+          <span class="va-pill-name">Necessary Non-Value-Adding</span>
+          <span class="va-pill-desc">Waste the customer would not pay for, but which cannot be eliminated given the current state of the system — regulatory requirements, safety checks, equipment limitations.</span>
+        </div>
+        <div class="va-pill va-nva">
+          <span class="va-pill-label">NVA</span>
+          <span class="va-pill-name">Non-Value-Adding</span>
+          <span class="va-pill-desc">Pure waste. The customer derives no benefit and the element could, in principle, be eliminated without affecting the output. The target for the improvement cycle.</span>
+        </div>
+      </div>
+
+      <h3>Classification examples in healthcare</h3>
+      <table class="feature-table">
+        <thead>
+          <tr>
+            <th>Element</th>
+            <th>Classification</th>
+            <th>Reasoning</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Processes specimen on analyser</td>
+            <td><strong style="color:var(--status-success);">VA</strong></td>
+            <td>Directly produces the result the patient needs</td>
+          </tr>
+          <tr>
+            <td>Verifies patient ID against request</td>
+            <td><strong style="color:var(--status-warning);">NNVA</strong></td>
+            <td>Does not add value to the result but is a non-negotiable safety step</td>
+          </tr>
+          <tr>
+            <td>Walks to retrieve specimen from wrong location</td>
+            <td><strong style="color:var(--status-error);">NVA</strong></td>
+            <td>Motion waste — caused by a storage design problem, not inherent to the task</td>
+          </tr>
+          <tr>
+            <td>Waits for LIS system to respond</td>
+            <td><strong style="color:var(--status-error);">NVA</strong></td>
+            <td>Waiting waste — system performance issue, not part of the clinical task</td>
+          </tr>
+          <tr>
+            <td>Re-labels specimen due to printing error</td>
+            <td><strong style="color:var(--status-error);">NVA</strong></td>
+            <td>Correction waste — caused by an upstream defect in the label printing process</td>
+          </tr>
+          <tr>
+            <td>Completes mandatory QC log entry</td>
+            <td><strong style="color:var(--status-warning);">NNVA</strong></td>
+            <td>Regulatory requirement — no direct patient value but cannot be eliminated</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-tip">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <p class="callout-label">Tip</p>
+          <p>When you are unsure whether an element is VA or NNVA, ask: "If we could change the system so this step was no longer needed, would we?" If yes, it is NNVA — it is waste constrained by the current system, not a genuine value-adding activity. NNVA classification is the signal that the system needs to change, not the operator.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         APPENDIX B: STANDARDWORK IN THE SUITE
+    ══════════════════════════════════ -->
+    <div class="section-header" id="appB">
+      <div class="section-num-badge appendix">B</div>
+      <h2>StandardWork in the Suite Workflow</h2>
+    </div>
+    <div class="section-body">
+      <p>Gemba-StandardWork is the final step in the Gemba Suite improvement cycle. It is how improvement becomes durable — not just recorded in an A3 report, but embedded in how the work is done every day.</p>
+
+      <table class="feature-table">
+        <thead>
+          <tr>
+            <th>Stage</th>
+            <th>Tool</th>
+            <th>Output</th>
+            <th>Connects to StandardWork</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Observe</strong></td>
+            <td>Gemba-VSM</td>
+            <td>Current state value stream map with process data and takt time</td>
+            <td>VSM export → Import from VSM in StandardWork settings</td>
+          </tr>
+          <tr>
+            <td><strong>Investigate</strong></td>
+            <td>Gemba-RCA</td>
+            <td>Validated root causes, Pareto prioritisation, export to A3</td>
+            <td>RCA findings identify which elements are waste candidates for the future state</td>
+          </tr>
+          <tr>
+            <td><strong>Improve</strong></td>
+            <td>Gemba-A3</td>
+            <td>Tested countermeasure, PDCA record, stage-gate completion</td>
+            <td>A3 Act stage requires updated standard work as completion evidence</td>
+          </tr>
+          <tr>
+            <td><strong>Standardise</strong></td>
+            <td>Gemba-StandardWork</td>
+            <td>Job Instruction Sheet, QMS Appendix, Combination Sheet</td>
+            <td>The output — updated future state becomes the new current standard</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>After standardising, the cycle begins again. The updated standard work becomes the new baseline for the next value stream map. The process has improved; the standard has been raised; and the next opportunity for improvement is visible — not because the process is still broken, but because the team can now see more clearly.</p>
+    </div>
+
+  </article>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <span><strong style="color:#fff;">Gemba Suite</strong> — <a href="/">gembasuite.org</a> · <a href="/guide/">All Guides</a> · <a href="/standardwork/">Open Gemba-StandardWork</a></span>
+    <span class="footer-licence"><a href="/licence/">CC BY-NC-SA 4.0</a> · Free for healthcare improvement · No patient data collected</span>
+  </div>
+</footer>
+
+</body>
+</html>

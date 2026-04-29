@@ -1,0 +1,1968 @@
+<!-- Gemba-SPC v1.0 — Process Behaviour Charts
+     Part of the Gemba Suite — gembasuite.org
+     © David Clark — CC BY-NC-SA 4.0
+     No patient-identifiable data. Process improvement tool only. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#181c1c">
+  <title>Gemba-SPC — Process Behaviour Charts</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --ink:#181c1c; --ink-secondary:#3e484c; --ink-tertiary:#6e797c;
+  --paper:#f7faf9; --card:#ffffff; --surface-low:#f1f4f3; --surface-high:#e6e9e8; --surface-dim:#d7dbda;
+  --grid:#bec8cc; --grid-subtle:#e0e3e2;
+  --primary:#006172; --primary-container:#007c91; --primary-tint:#c4e5ef; --primary-tint-strong:#79d3ea;
+  --on-primary:#ffffff; --on-primary-tint:#004e5c;
+  --accent-warm:#854a10; --accent-warm-container:#a26227; --accent-warm-bg:#ffdcc3; --on-accent-warm:#ffffff;
+  --status-success:#2e7d32; --status-success-bg:#d4edda;
+  --status-warning:#856404; --status-warning-bg:#fff3cd;
+  --status-error:#ba1a1a; --status-error-bg:#ffdad6;
+  --status-locked:#9e9e9e; --status-locked-bg:#e9e9e9;
+  --shadow-sm:0 1px 3px rgba(24,28,28,0.06); --shadow-md:0 2px 8px rgba(24,28,28,0.08); --shadow-lg:0 4px 16px rgba(24,28,28,0.10);
+  --radius-sm:4px; --radius-md:8px; --radius-lg:12px; --radius-full:9999px;
+  --font-display:'Public Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  --font-body:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  --font-mono:ui-monospace,'SF Mono','Cascadia Code',Consolas,monospace;
+  --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:20px;--space-6:24px;--space-8:32px;--space-10:40px;
+  --signal-red:#b3261e; --signal-amber:#926c00; --signal-red-bg:#fde9e9; --signal-amber-bg:#fef3c7;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{height:100%;font-size:16px;-webkit-text-size-adjust:100%}
+body{min-height:100%;font-family:var(--font-body);font-size:14px;line-height:1.5;color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased}
+button{cursor:pointer;font-family:inherit}
+input,textarea,select{font-family:inherit;font-size:14px}
+a{color:var(--primary)}
+svg{display:block}
+
+/* HEADER */
+.app-header{position:sticky;top:0;z-index:100;background:var(--ink);height:56px;display:flex;align-items:center;gap:var(--space-3);padding:0 var(--space-4);box-shadow:var(--shadow-md)}
+.header-back{display:none;background:none;border:none;color:var(--on-primary);font-size:20px;padding:var(--space-2);border-radius:var(--radius-sm);min-width:40px;min-height:40px;align-items:center;justify-content:center}
+.header-back.visible{display:flex}
+.header-brand{display:flex;align-items:baseline;gap:var(--space-2);flex-shrink:0}
+.header-title{font-family:var(--font-display);font-weight:800;font-size:18px;letter-spacing:-0.3px;color:var(--on-primary)}
+.header-title-sub{font-family:var(--font-display);font-weight:600;font-size:11px;letter-spacing:0.5px;color:var(--primary-tint);text-transform:uppercase}
+.header-project-name{flex:1;font-family:var(--font-display);font-weight:600;font-size:14px;color:var(--primary-tint);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:none}
+.header-project-name.visible{display:block}
+.header-actions{margin-left:auto;display:flex;gap:var(--space-2)}
+.header-btn{background:none;border:none;color:var(--on-primary);font-size:13px;font-family:var(--font-body);font-weight:500;padding:var(--space-2) var(--space-3);border-radius:var(--radius-sm);min-height:36px;display:flex;align-items:center;gap:var(--space-1);transition:background 0.15s}
+.header-btn:hover{background:rgba(255,255,255,0.1)}
+.header-btn-icon{background:none;border:none;color:var(--on-primary);font-size:18px;width:40px;height:40px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;transition:background 0.15s}
+.header-btn-icon:hover{background:rgba(255,255,255,0.1)}
+
+/* SCREENS */
+.screen{display:none}
+.screen.active{display:block}
+
+/* PROJECT LIST */
+.project-list-wrapper{max-width:800px;margin:0 auto;padding:var(--space-6) var(--space-4)}
+.project-list-hero{text-align:center;padding:var(--space-8) var(--space-4) var(--space-6)}
+.project-list-hero h1{font-family:var(--font-display);font-weight:800;font-size:28px;color:var(--primary);letter-spacing:-0.3px;margin-bottom:var(--space-2)}
+.project-list-hero p{color:var(--ink-secondary);font-size:15px;margin-bottom:var(--space-6)}
+.project-list-actions{display:flex;gap:var(--space-3);justify-content:center;flex-wrap:wrap;margin-bottom:var(--space-6)}
+.project-list-section-title{font-family:var(--font-display);font-weight:700;font-size:12px;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink-tertiary);margin-bottom:var(--space-3)}
+.project-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:var(--space-4)}
+.project-card{background:var(--card);border:1px solid var(--grid-subtle);border-radius:var(--radius-md);padding:var(--space-5);box-shadow:var(--shadow-sm);cursor:pointer;transition:box-shadow 0.15s,border-color 0.15s}
+.project-card:hover{box-shadow:var(--shadow-md);border-color:var(--primary-tint-strong)}
+.project-card-name{font-family:var(--font-display);font-weight:700;font-size:15px;color:var(--ink);margin-bottom:var(--space-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.project-card-meta{font-size:12px;color:var(--ink-tertiary);margin-bottom:var(--space-4)}
+.project-card-actions{display:flex;gap:var(--space-2)}
+.project-empty-state{text-align:center;padding:var(--space-10) var(--space-4);color:var(--ink-tertiary)}
+.project-empty-state .empty-icon{font-size:40px;margin-bottom:var(--space-4)}
+.project-empty-state p{font-size:14px;line-height:1.6}
+
+/* PROJECT VIEW */
+.project-view{max-width:960px;margin:0 auto;padding:var(--space-4)}
+.project-toolbar{display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-4);flex-wrap:wrap}
+.project-toolbar-left{flex:1;min-width:0}
+.metric-desc-display{font-family:var(--font-display);font-weight:700;font-size:16px;color:var(--primary);cursor:pointer;display:flex;align-items:center;gap:var(--space-2)}
+.metric-desc-display .edit-hint{font-size:11px;font-weight:400;color:var(--ink-tertiary);font-family:var(--font-body)}
+.project-toolbar-right{display:flex;gap:var(--space-2);flex-shrink:0}
+.phase-banner{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);border-radius:var(--radius-md);margin-bottom:var(--space-3);border:1px solid}
+.phase-banner.phase-1{background:var(--primary-tint);border-color:var(--primary-tint-strong)}
+.phase-banner.phase-2{background:var(--status-success-bg);border-color:#a3c9a8}
+.phase-banner-text{flex:1;font-size:13px;color:var(--ink-secondary)}
+.phase-banner-text strong{font-weight:600;color:var(--ink)}
+.phase-banner-limits{font-family:var(--font-mono);font-size:11px;color:var(--ink-tertiary);margin-top:2px}
+.validation-warnings{display:flex;flex-direction:column;gap:var(--space-2);margin-bottom:var(--space-3)}
+.validation-warning{display:flex;align-items:flex-start;gap:var(--space-3);background:var(--status-warning-bg);border:1px solid #e0c870;border-radius:var(--radius-sm);padding:var(--space-3) var(--space-4);font-size:13px;color:var(--status-warning)}
+.validation-warning .warn-icon{font-size:15px;flex-shrink:0;margin-top:1px}
+.validation-warning .warn-dismiss{margin-left:auto;background:none;border:none;color:var(--status-warning);font-size:16px;cursor:pointer;padding:0 0 0 var(--space-2)}
+
+/* ENTRY FORM */
+.entry-card{background:var(--card);border:1px solid var(--grid-subtle);border-radius:var(--radius-md);padding:var(--space-4) var(--space-5);box-shadow:var(--shadow-sm);margin-bottom:var(--space-4)}
+.entry-card-title{font-family:var(--font-display);font-weight:700;font-size:13px;letter-spacing:0.3px;text-transform:uppercase;color:var(--ink-tertiary);margin-bottom:var(--space-3)}
+.entry-form{display:flex;gap:var(--space-3);align-items:flex-end;flex-wrap:wrap}
+.entry-field{display:flex;flex-direction:column;gap:var(--space-1)}
+.entry-field label{font-size:11px;font-weight:600;letter-spacing:0.3px;text-transform:uppercase;color:var(--ink-tertiary)}
+.entry-field input{border:1px solid var(--grid);border-radius:var(--radius-sm);padding:var(--space-2) var(--space-3);background:var(--surface-high);color:var(--ink);min-height:40px;transition:border-color 0.15s}
+.entry-field input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-tint)}
+.entry-field-label{flex:1;min-width:140px}
+.entry-field-value{width:120px}
+.entry-field-note{flex:2;min-width:180px}
+
+/* CHART */
+.chart-card{background:var(--card);border:1px solid var(--grid-subtle);border-radius:var(--radius-md);box-shadow:var(--shadow-sm);margin-bottom:var(--space-4);overflow:hidden}
+.chart-card-header{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-4) var(--space-5) var(--space-3);border-bottom:1px solid var(--grid-subtle)}
+.chart-card-title{font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--ink);flex:1}
+.chart-legend{display:flex;gap:var(--space-4);flex-wrap:wrap}
+.chart-legend-item{display:flex;align-items:center;gap:var(--space-1);font-size:11px;color:var(--ink-tertiary)}
+.chart-legend-dot{width:8px;height:8px;border-radius:50%}
+.chart-scroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;padding:var(--space-2) 0}
+.chart-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:var(--space-10) var(--space-4);color:var(--ink-tertiary);font-size:14px;gap:var(--space-3)}
+.chart-empty-icon{font-size:36px}
+
+/* SIGNALS */
+.signals-summary{margin-bottom:var(--space-4);display:flex;flex-direction:column;gap:var(--space-2)}
+.signal-item{display:flex;align-items:center;gap:var(--space-3);background:var(--signal-red-bg);border:1px solid #f0b4b0;border-radius:var(--radius-sm);padding:var(--space-2) var(--space-4);font-size:13px;color:var(--signal-red)}
+.signal-item.amber{background:var(--signal-amber-bg);border-color:#e8cf80;color:var(--signal-amber)}
+.signal-export-btn{margin-left:auto;font-size:11px;background:none;border:1px solid;border-radius:var(--radius-sm);padding:2px 8px;cursor:pointer;font-family:var(--font-body);color:inherit}
+
+/* DATA TABLE */
+.data-card{background:var(--card);border:1px solid var(--grid-subtle);border-radius:var(--radius-md);box-shadow:var(--shadow-sm);margin-bottom:var(--space-4);overflow:hidden}
+.data-card-header{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-4) var(--space-5);border-bottom:1px solid var(--grid-subtle)}
+.data-card-title{font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--ink)}
+.data-point-count{font-size:12px;color:var(--ink-tertiary);margin-left:auto}
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.data-table{width:100%;border-collapse:collapse;font-size:13px}
+table.data-table thead th{background:var(--surface-low);font-family:var(--font-display);font-weight:700;font-size:11px;letter-spacing:0.3px;text-transform:uppercase;color:var(--ink-secondary);padding:8px 12px;text-align:left;border-bottom:2px solid var(--grid-subtle);white-space:nowrap}
+table.data-table tbody tr{border-bottom:1px solid var(--grid-subtle)}
+table.data-table tbody tr:hover{background:var(--surface-low)}
+table.data-table tbody tr.excluded{opacity:0.55}
+table.data-table tbody tr.flagged-red td.flag-cell{color:var(--signal-red);font-weight:600}
+table.data-table tbody tr.flagged-amber td.flag-cell{color:var(--signal-amber);font-weight:600}
+table.data-table td{padding:8px 12px;color:var(--ink);vertical-align:middle}
+table.data-table td.num{font-family:var(--font-mono);font-size:12px}
+table.data-table td.value-cell{font-weight:600}
+table.data-table td.mr-cell{color:var(--ink-secondary);font-family:var(--font-mono);font-size:12px}
+table.data-table td.actions-cell{white-space:nowrap;text-align:right}
+table.data-table td.note-cell{max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink-secondary)}
+.table-empty{padding:var(--space-8) var(--space-4);text-align:center;color:var(--ink-tertiary);font-size:14px}
+.excluded-badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;color:var(--status-warning);background:var(--status-warning-bg);border-radius:var(--radius-full);padding:2px 8px;cursor:pointer;border:none;font-family:var(--font-body)}
+.not-excluded-btn{background:none;border:1px solid var(--grid-subtle);border-radius:var(--radius-full);padding:2px 8px;font-size:11px;color:var(--ink-tertiary);cursor:pointer;font-family:var(--font-body)}
+.not-excluded-btn:hover{background:var(--status-warning-bg);color:var(--status-warning);border-color:#e0c870}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);font-family:var(--font-body);font-weight:500;font-size:14px;border-radius:var(--radius-sm);min-height:40px;padding:0 var(--space-4);border:1px solid transparent;cursor:pointer;transition:background 0.15s,border-color 0.15s;text-decoration:none;white-space:nowrap}
+.btn:focus{outline:3px solid var(--primary-tint);outline-offset:2px}
+.btn-primary{background:var(--primary-container);color:var(--on-primary);border-color:var(--primary-container)}
+.btn-primary:hover{background:var(--primary);border-color:var(--primary)}
+.btn-secondary{background:var(--card);color:var(--ink);border-color:var(--grid)}
+.btn-secondary:hover{background:var(--surface-high)}
+.btn-danger{background:var(--status-error-bg);color:var(--status-error);border-color:#f0b4b0}
+.btn-danger:hover{background:var(--status-error);color:var(--on-primary)}
+.btn-lock{background:var(--primary);color:var(--on-primary);border:none;font-size:13px;min-height:34px;padding:0 var(--space-4);border-radius:var(--radius-sm);cursor:pointer;font-family:var(--font-body);font-weight:500;flex-shrink:0}
+.btn-lock:hover{background:var(--primary-container)}
+.btn-lock:disabled{background:var(--surface-dim);color:var(--ink-tertiary);cursor:not-allowed}
+.btn-sm{min-height:32px;font-size:13px;padding:0 var(--space-3)}
+.btn-icon-sm{background:none;border:none;color:var(--ink-tertiary);font-size:14px;padding:var(--space-1) var(--space-2);cursor:pointer;border-radius:var(--radius-sm);min-width:28px;min-height:28px;display:inline-flex;align-items:center;justify-content:center;transition:background 0.15s;font-family:var(--font-body)}
+.btn-icon-sm:hover{background:var(--surface-high);color:var(--ink)}
+.btn-icon-sm.danger:hover{background:var(--status-error-bg);color:var(--status-error)}
+
+/* MODALS */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:300;background:rgba(24,28,28,0.5);align-items:center;justify-content:center;padding:var(--space-4)}
+.modal-overlay.show{display:flex}
+.modal{background:var(--card);border-radius:var(--radius-md);box-shadow:var(--shadow-lg);width:100%;max-width:480px;max-height:90vh;overflow-y:auto;padding:var(--space-6)}
+.modal-lg{max-width:640px}
+.modal-xl{max-width:780px}
+.modal-title{font-family:var(--font-display);font-weight:700;font-size:18px;color:var(--ink);margin-bottom:var(--space-2)}
+.modal-subtitle{font-size:13px;color:var(--ink-secondary);margin-bottom:var(--space-5)}
+.modal-actions{display:flex;gap:var(--space-3);justify-content:flex-end;flex-wrap:wrap}
+.form-group{display:flex;flex-direction:column;gap:var(--space-2);margin-bottom:var(--space-4)}
+.form-label{font-size:13px;font-weight:600;color:var(--ink-secondary)}
+.form-input,.form-select,.form-textarea{border:1px solid var(--grid);border-radius:var(--radius-sm);padding:var(--space-3);background:var(--surface-high);color:var(--ink);font-size:14px;font-family:var(--font-body)}
+.form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-tint)}
+.form-textarea{min-height:120px;resize:vertical}
+.form-textarea.mono{font-family:var(--font-mono);font-size:12px}
+.form-hint{font-size:12px;color:var(--ink-tertiary)}
+
+/* CSV PREVIEW */
+.csv-preview{overflow-x:auto;max-height:240px;overflow-y:auto;margin-top:var(--space-3)}
+.csv-preview table{border-collapse:collapse;font-size:12px;font-family:var(--font-mono)}
+.csv-preview th,.csv-preview td{border:1px solid var(--grid-subtle);padding:4px 8px;white-space:nowrap}
+.csv-preview th{background:var(--surface-low);font-family:var(--font-display);font-weight:700}
+.csv-col-select{margin-bottom:var(--space-3);display:flex;gap:var(--space-4);flex-wrap:wrap}
+.csv-col-field{display:flex;flex-direction:column;gap:var(--space-1);font-size:12px}
+.csv-col-field label{font-weight:600;color:var(--ink-secondary)}
+
+/* SETTINGS TOGGLES */
+.settings-group{margin-bottom:var(--space-5)}
+.settings-group-title{font-family:var(--font-display);font-weight:700;font-size:12px;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink-tertiary);margin-bottom:var(--space-3)}
+.settings-row{display:flex;align-items:flex-start;gap:var(--space-3);padding:var(--space-3) 0;border-bottom:1px solid var(--grid-subtle)}
+.settings-row:last-child{border-bottom:none}
+.settings-row-info{flex:1}
+.settings-row-label{font-size:13px;color:var(--ink);font-weight:500}
+.settings-row-desc{font-size:11px;color:var(--ink-tertiary);margin-top:2px}
+.toggle{position:relative;display:inline-block;width:42px;height:24px;flex-shrink:0;margin-top:1px}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-track{position:absolute;inset:0;background:var(--surface-dim);border-radius:var(--radius-full);cursor:pointer;transition:background 0.2s}
+.toggle input:checked + .toggle-track{background:var(--primary-container)}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:18px;height:18px;background:var(--card);border-radius:50%;transition:transform 0.2s;pointer-events:none}
+.toggle input:checked ~ .toggle-thumb{transform:translateX(18px)}
+
+/* COACHING */
+.coaching-callout{background:var(--accent-warm-bg);border-radius:var(--radius-lg);padding:var(--space-5);display:flex;gap:var(--space-4);margin-bottom:var(--space-5)}
+.coaching-callout-icon{background:var(--accent-warm-container);color:var(--on-accent-warm);border-radius:var(--radius-md);width:36px;height:36px;min-width:36px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.coaching-callout-text{font-size:13px;color:var(--accent-warm);line-height:1.5}
+.coaching-callout-text strong{font-weight:700}
+.coaching-section{margin-bottom:var(--space-5)}
+.coaching-section-title{font-family:var(--font-display);font-weight:700;font-size:13px;color:var(--ink-secondary);margin-bottom:var(--space-3);text-transform:uppercase;letter-spacing:0.3px}
+.coaching-options{display:flex;gap:var(--space-3);flex-wrap:wrap}
+.coaching-option{display:flex;flex-direction:column;align-items:center;gap:var(--space-2);padding:var(--space-4) var(--space-5);border:2px solid var(--grid-subtle);border-radius:var(--radius-md);cursor:pointer;background:var(--card);transition:border-color 0.15s,background 0.15s;flex:1;min-width:120px;text-align:center}
+.coaching-option:hover{border-color:var(--primary-tint-strong);background:var(--primary-tint)}
+.coaching-option.selected{border-color:var(--primary);background:var(--primary-tint)}
+.coaching-option-icon{font-size:24px}
+.coaching-option-label{font-size:13px;font-weight:600;color:var(--ink)}
+.coaching-option-desc{font-size:11px;color:var(--ink-tertiary)}
+.coaching-prompt-preview{background:var(--surface-low);border:1px solid var(--grid-subtle);border-radius:var(--radius-sm);padding:var(--space-4);font-family:var(--font-mono);font-size:11px;color:var(--ink-secondary);max-height:200px;overflow-y:auto;white-space:pre-wrap;margin-top:var(--space-3)}
+
+/* EXPORT / IMPORT */
+.export-group{display:flex;flex-direction:column;gap:var(--space-3)}
+.export-item{display:flex;align-items:flex-start;gap:var(--space-4);padding:var(--space-4);background:var(--surface-low);border-radius:var(--radius-md);border:1px solid var(--grid-subtle)}
+.export-item-icon{font-size:24px;flex-shrink:0}
+.export-item-text{flex:1}
+.export-item-title{font-weight:600;font-size:14px;color:var(--ink);margin-bottom:2px}
+.export-item-desc{font-size:12px;color:var(--ink-tertiary)}
+.import-options{display:flex;flex-direction:column;gap:var(--space-3)}
+.import-option{display:flex;align-items:flex-start;gap:var(--space-4);padding:var(--space-4);background:var(--surface-low);border-radius:var(--radius-md);border:1px solid var(--grid-subtle);cursor:pointer;transition:border-color 0.15s,background 0.15s}
+.import-option:hover{border-color:var(--primary-tint-strong);background:var(--primary-tint)}
+.import-option-icon{font-size:24px;flex-shrink:0}
+.import-option-title{font-weight:600;font-size:14px;color:var(--ink);margin-bottom:2px}
+.import-option-desc{font-size:12px;color:var(--ink-tertiary)}
+
+/* ABOUT */
+.about-section{margin-bottom:var(--space-5)}
+.about-section-title{font-family:var(--font-display);font-weight:700;font-size:12px;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink-tertiary);margin-bottom:var(--space-2)}
+.about-section p{font-size:13px;color:var(--ink-secondary);line-height:1.6}
+.about-version-badge{display:inline-block;background:var(--primary-tint);color:var(--on-primary-tint);border-radius:var(--radius-full);padding:2px 10px;font-size:12px;font-weight:600;font-family:var(--font-mono);margin-bottom:var(--space-3)}
+.about-licence{background:var(--surface-low);border-radius:var(--radius-sm);padding:var(--space-4);font-size:12px;color:var(--ink-secondary);line-height:1.6}
+
+/* PRINT */
+.print-header{display:none}
+@media print {
+  *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important}
+  @page{size:A4 portrait;margin:16mm 14mm}
+  .app-header,.project-toolbar,.phase-banner,.validation-warnings,.entry-card,.data-card,.signals-summary .signal-export-btn,.btn,button,.header-btn,.header-btn-icon{display:none !important}
+  .screen{display:block !important}
+  .project-view{max-width:none;padding:0}
+  .chart-card{box-shadow:none;border:none;margin:0;page-break-inside:avoid}
+  .chart-card-header{border-bottom:1px solid #ccc}
+  .chart-scroll{overflow:visible}
+  .print-header{display:block !important;margin-bottom:16px}
+  .chart-print-title{font-family:sans-serif;font-weight:700;font-size:14px;margin-bottom:4px}
+  .chart-print-meta{font-size:11px;color:#555}
+  .print-stats{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
+  .print-stat{background:#f5f5f5;border-radius:4px;padding:6px 10px}
+  .print-stat-label{font-size:9px;text-transform:uppercase;letter-spacing:0.3px;color:#666}
+  .print-stat-value{font-size:14px;font-weight:700;color:#181c1c;font-family:monospace}
+  .print-footer{margin-top:8px;font-size:10px;color:#888;text-align:center;border-top:1px solid #ddd;padding-top:4px}
+}
+  </style>
+</head>
+<body>
+<!-- HEADER -->
+<header class="app-header">
+  <button class="header-back" id="btnBack" onclick="showProjectListScreen()">&#8592;</button>
+  <div class="header-brand">
+    <span class="header-title">Gemba-SPC</span>
+    <span class="header-title-sub">XmR</span>
+  </div>
+  <span class="header-project-name" id="headerProjectName"></span>
+  <div class="header-actions">
+    <button class="header-btn" id="btnImportHeader" onclick="showImportModal()" style="display:none">&#8595; Import</button>
+    <button class="header-btn" id="btnExportHeader" onclick="showExportModal()" style="display:none">&#8593; Export</button>
+    <button class="header-btn-icon" id="btnCoachingHeader" onclick="showCoachingModal()" style="display:none" title="AI Lean Sensei">&#129504;</button>
+    <button class="header-btn-icon" id="btnSettingsHeader" onclick="showSettingsModal()" style="display:none" title="Settings">&#9881;</button>
+    <button class="header-btn-icon" onclick="showAboutModal()" title="About Gemba-SPC">&#8505;</button>
+  </div>
+</header>
+
+<!-- PROJECT LIST -->
+<div class="screen active" id="screenProjectList">
+  <div class="project-list-wrapper">
+    <div class="project-list-hero">
+      <h1>Gemba-SPC</h1>
+      <p>Process Behaviour Charts for NHS healthcare teams<br>Donald Wheeler XmR methodology</p>
+      <div class="project-list-actions">
+        <button class="btn btn-primary" onclick="newProject()">+ New Chart</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('importProjectFile').click()">&#8595; Restore JSON</button>
+      </div>
+    </div>
+    <div class="project-list-section-title">Your Charts</div>
+    <div id="projectGrid" class="project-grid"></div>
+    <div id="projectListEmpty" class="project-empty-state" style="display:none">
+      <div class="empty-icon">&#128200;</div>
+      <p>No charts yet.<br>Create your first process behaviour chart to get started.</p>
+    </div>
+  </div>
+</div>
+
+<!-- PROJECT VIEW -->
+<div class="screen" id="screenProject">
+  <div class="project-view">
+    <div class="print-header" id="printHeader"></div>
+    <div class="project-toolbar">
+      <div class="project-toolbar-left">
+        <div class="metric-desc-display" id="metricDescDisplay" onclick="showMetadataModal()">
+          <span id="metricDescText">Click to set metric description</span>
+          <span class="edit-hint">&#9998; edit</span>
+        </div>
+      </div>
+      <div class="project-toolbar-right">
+        <button class="btn btn-secondary btn-sm" onclick="showRenameModal()">&#9998; Rename</button>
+        <button class="btn btn-danger btn-sm" onclick="confirmDeleteProject()">&#128465; Delete</button>
+      </div>
+    </div>
+    <div id="phaseBanner" class="phase-banner phase-1">
+      <div class="phase-banner-text">
+        <strong id="phaseBannerTitle">Phase I</strong> &mdash; <span id="phaseBannerDesc">establishing baseline limits</span>
+        <div class="phase-banner-limits" id="phaseBannerLimits"></div>
+      </div>
+      <button id="btnLockLimits" class="btn-lock" onclick="lockLimits()">Lock Limits &#8594;</button>
+      <button id="btnRecalculate" class="btn-lock" onclick="recalculateLimits()" style="display:none">&#8635; Recalculate</button>
+    </div>
+    <div id="validationWarnings" class="validation-warnings"></div>
+    <div class="entry-card">
+      <div class="entry-card-title">Add Data Point</div>
+      <div class="entry-form">
+        <div class="entry-field entry-field-label">
+          <label for="entryLabel">Label</label>
+          <input type="text" id="entryLabel" placeholder="YYYY-MM-DD" autocomplete="off">
+        </div>
+        <div class="entry-field entry-field-value">
+          <label for="entryValue">Value</label>
+          <input type="number" id="entryValue" step="any" placeholder="0.00" inputmode="decimal">
+        </div>
+        <div class="entry-field" style="flex:2;min-width:180px">
+          <label for="entryNote">Note <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:10px">(optional)</span></label>
+          <input type="text" id="entryNote" placeholder="Optional note">
+        </div>
+        <button class="btn btn-primary" onclick="addDataPoint()" style="align-self:flex-end">Add</button>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-header">
+        <div class="chart-card-title">X-chart and mR-chart (XmR)</div>
+        <div class="chart-legend">
+          <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#b3261e"></span>Rule 1</span>
+          <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#926c00"></span>Rules 2/3</span>
+          <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#6e797c;border:2px solid #6e797c;background:none;width:10px;height:10px;border-radius:50%"></span>Excluded</span>
+        </div>
+      </div>
+      <div class="chart-scroll" id="chartScroll"><div id="chartWrapper"></div></div>
+      <div class="chart-empty" id="chartEmpty">
+        <div class="chart-empty-icon">&#128200;</div>
+        <div>Add data points to generate your process behaviour chart</div>
+        <div style="font-size:12px;color:var(--ink-tertiary)">Minimum 2 points to calculate moving ranges</div>
+      </div>
+    </div>
+    <div id="signalsSummary" class="signals-summary"></div>
+    <div class="data-card">
+      <div class="data-card-header">
+        <div class="data-card-title">Data Points</div>
+        <div class="data-point-count" id="dataPointCount"></div>
+      </div>
+      <div class="table-scroll">
+        <table class="data-table" id="dataTable" style="display:none">
+          <thead><tr><th>#</th><th>Label</th><th>Value</th><th>mR</th><th>Signal</th><th>Note</th><th>Excl.</th><th></th></tr></thead>
+          <tbody id="dataTableBody"></tbody>
+        </table>
+      </div>
+      <div id="tableEmpty" class="table-empty">No data points yet &mdash; add some above</div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<!-- Confirm -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal">
+    <div class="modal-title" id="confirmModalTitle">Confirm</div>
+    <div class="modal-subtitle" id="confirmModalMsg" style="white-space:pre-wrap"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('confirmModal')">Cancel</button>
+      <button class="btn btn-primary" id="confirmModalOk" onclick="execConfirmModal()">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- Info -->
+<div class="modal-overlay" id="infoModal">
+  <div class="modal">
+    <div class="modal-title" id="infoModalTitle">Information</div>
+    <div style="font-size:13px;color:var(--ink-secondary);margin-bottom:var(--space-5)" id="infoModalMsg"></div>
+    <div class="modal-actions"><button class="btn btn-primary" onclick="closeModal('infoModal')">OK</button></div>
+  </div>
+</div>
+
+<!-- Rename -->
+<div class="modal-overlay" id="renameModal">
+  <div class="modal">
+    <div class="modal-title">Rename Chart</div>
+    <div class="form-group" style="margin-top:var(--space-4)">
+      <label class="form-label" for="renameInput">Chart name</label>
+      <input class="form-input" type="text" id="renameInput" placeholder="e.g. Daily TAT — Histopathology">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('renameModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="execRenameModal()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Exclude reason -->
+<div class="modal-overlay" id="excludeModal">
+  <div class="modal">
+    <div class="modal-title">Exclude Data Point</div>
+    <div class="modal-subtitle">Excluded points remain visible on the chart (open circles) but do not contribute to limit calculations or run detection. Record the reason.</div>
+    <div class="form-group">
+      <label class="form-label" for="excludeReason">Reason for exclusion</label>
+      <input class="form-input" type="text" id="excludeReason" placeholder="e.g. Equipment fault, bank holiday, staffing gap">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="cancelExclude()">Cancel</button>
+      <button class="btn btn-primary" onclick="execExclude()">Exclude point</button>
+    </div>
+  </div>
+</div>
+
+<!-- Import source -->
+<div class="modal-overlay" id="importModal">
+  <div class="modal modal-lg">
+    <div class="modal-title">Import Data</div>
+    <div class="modal-subtitle">Choose your data source</div>
+    <div class="import-options">
+      <div class="import-option" onclick="triggerFileImport()">
+        <div class="import-option-icon">&#128193;</div>
+        <div><div class="import-option-title">CSV or TSV File</div><div class="import-option-desc">Upload .csv, .tsv, or .txt from your device</div></div>
+      </div>
+      <div class="import-option" onclick="showCSVPasteModal()">
+        <div class="import-option-icon">&#128203;</div>
+        <div><div class="import-option-title">Paste CSV / Tab-separated</div><div class="import-option-desc">Paste directly from Excel, Numbers, or any spreadsheet</div></div>
+      </div>
+      <div class="import-option" onclick="triggerGembaImport()">
+        <div class="import-option-icon">&#128279;</div>
+        <div><div class="import-option-title">Gemba Suite Data</div><div class="import-option-desc">Import from Gemba-VSM, Gemba-A3, or restore a saved Gemba-SPC chart</div></div>
+      </div>
+    </div>
+    <div class="modal-actions" style="margin-top:var(--space-5)">
+      <button class="btn btn-secondary" onclick="closeModal('importModal')">Cancel</button>
+    </div>
+    <input type="file" id="csvFileInput" accept=".csv,.tsv,.txt" style="display:none" onchange="handleCSVFile(event)">
+    <input type="file" id="gembaFileInput" accept=".json" style="display:none" onchange="handleGembaFile(event)">
+  </div>
+</div>
+
+<!-- CSV paste/preview -->
+<div class="modal-overlay" id="csvModal">
+  <div class="modal modal-xl">
+    <div class="modal-title">Import CSV Data</div>
+    <div class="modal-subtitle">Paste or load data, then map columns.</div>
+    <div id="csvPasteArea">
+      <div class="form-group">
+        <label class="form-label">Paste data here (CSV, TSV, or tab-separated)</label>
+        <textarea class="form-textarea mono" id="csvPasteInput" placeholder="date,value&#10;2026-01-01,32.5&#10;2026-01-02,31.0" rows="7"></textarea>
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="parseCSVPreview()">Preview &#8594;</button>
+    </div>
+    <div id="csvPreviewArea" style="display:none">
+      <div class="csv-col-select" id="csvColSelect"></div>
+      <div class="csv-preview" id="csvPreviewTable"></div>
+      <div style="font-size:12px;color:var(--ink-tertiary);margin-top:var(--space-2)" id="csvSkipCount"></div>
+    </div>
+    <div class="modal-actions" style="margin-top:var(--space-5)">
+      <button class="btn btn-secondary" onclick="backToCSVPaste()">&#8592; Back</button>
+      <button class="btn btn-secondary" onclick="closeModal('csvModal')">Cancel</button>
+      <button class="btn btn-primary" id="btnConfirmCSV" onclick="confirmCSVImport()" style="display:none">Import &#8594;</button>
+    </div>
+  </div>
+</div>
+
+<!-- Gemba source selection -->
+<div class="modal-overlay" id="gembaSelectModal">
+  <div class="modal">
+    <div class="modal-title">Select Metric</div>
+    <div class="modal-subtitle" id="gembaSelectDesc">Choose which data series to import.</div>
+    <div id="gembaSelectOptions" style="display:flex;flex-direction:column;gap:var(--space-2);margin:var(--space-4) 0"></div>
+    <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal('gembaSelectModal')">Cancel</button></div>
+  </div>
+</div>
+
+<!-- Export -->
+<div class="modal-overlay" id="exportModal">
+  <div class="modal modal-lg">
+    <div class="modal-title">Export</div>
+    <div class="export-group">
+      <div class="export-item">
+        <div class="export-item-icon">&#128190;</div>
+        <div class="export-item-text"><div class="export-item-title">Full Project JSON</div><div class="export-item-desc">Complete chart data &mdash; back up or restore this chart</div></div>
+        <button class="btn btn-secondary btn-sm" onclick="exportJSON()">Download</button>
+      </div>
+      <div class="export-item">
+        <div class="export-item-icon">&#128203;</div>
+        <div class="export-item-text"><div class="export-item-title">Export for Gemba-A3</div><div class="export-item-desc">Chart SVG + signal summary for A3 problem solving</div></div>
+        <button class="btn btn-secondary btn-sm" onclick="exportForA3()">Download</button>
+      </div>
+      <div class="export-item">
+        <div class="export-item-icon">&#128269;</div>
+        <div class="export-item-text"><div class="export-item-title">Export for RCA</div><div class="export-item-desc">Select a flagged signal point for root cause analysis</div></div>
+        <button class="btn btn-secondary btn-sm" onclick="showRCAExportModal()">Choose signal&hellip;</button>
+      </div>
+      <div class="export-item">
+        <div class="export-item-icon">&#128444;</div>
+        <div class="export-item-text"><div class="export-item-title">Download Chart SVG</div><div class="export-item-desc">Vector image for reports and presentations</div></div>
+        <button class="btn btn-secondary btn-sm" onclick="exportSVG()">Download</button>
+      </div>
+    </div>
+    <div class="modal-actions" style="margin-top:var(--space-5)">
+      <button class="btn btn-secondary" onclick="closeModal('exportModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- RCA signal selection -->
+<div class="modal-overlay" id="rcaExportModal">
+  <div class="modal">
+    <div class="modal-title">Export for RCA &mdash; Select Signal</div>
+    <div class="modal-subtitle">Choose the flagged point to investigate.</div>
+    <div id="rcaSignalList" style="display:flex;flex-direction:column;gap:var(--space-2);max-height:300px;overflow-y:auto;margin:var(--space-3) 0"></div>
+    <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal('rcaExportModal')">Cancel</button></div>
+  </div>
+</div>
+
+<!-- Metadata -->
+<div class="modal-overlay" id="metadataModal">
+  <div class="modal modal-lg">
+    <div class="modal-title">Chart Details</div>
+    <div class="modal-subtitle">Context fields are included in exports and coaching prompts.</div>
+    <div class="form-group"><label class="form-label" for="metaMetricDesc">Metric description</label><input class="form-input" type="text" id="metaMetricDesc" placeholder="e.g. Histopathology daily turnaround time (days)"></div>
+    <div class="form-group"><label class="form-label" for="metaUnit">Unit of measurement</label><input class="form-input" type="text" id="metaUnit" placeholder="e.g. days, minutes, count, %"></div>
+    <div class="form-group"><label class="form-label" for="metaWorkArea">Work area / department</label><input class="form-input" type="text" id="metaWorkArea" placeholder="e.g. Histopathology, Ward 7, Radiology"></div>
+    <div class="form-group"><label class="form-label" for="metaAuthor">Author</label><input class="form-input" type="text" id="metaAuthor" placeholder="Your name"></div>
+    <div class="form-group"><label class="form-label" for="metaOrg">Organisation</label><input class="form-input" type="text" id="metaOrg" placeholder="e.g. NHS Trust"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('metadataModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveMetadata()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Settings -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <div class="modal-title">Chart Settings</div>
+    <div class="settings-group">
+      <div class="settings-group-title">Detection Rules</div>
+      <div class="settings-row">
+        <div class="settings-row-info"><div class="settings-row-label">Zone tests (Rules 2 &amp; 3)</div><div class="settings-row-desc">Run of 8 and 3-of-4 pattern detection. Disable for non-normal or autocorrelated data.</div></div>
+        <label class="toggle"><input type="checkbox" id="settingZoneTests" checked onchange="onSettingChange()"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-info"><div class="settings-row-label">Extended rules (E1 &amp; E2)</div><div class="settings-row-desc">2-of-3 beyond 2&sigma;; 4-of-5 beyond 1&sigma;. Requires zone tests enabled.</div></div>
+        <label class="toggle"><input type="checkbox" id="settingExtended" onchange="onSettingChange()"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
+      </div>
+    </div>
+    <div class="settings-group">
+      <div class="settings-group-title">Display</div>
+      <div class="settings-row">
+        <div class="settings-row-info"><div class="settings-row-label">Show &sigma; zone lines</div><div class="settings-row-desc">Display dotted 1&sigma;, 1.5&sigma;, and 2&sigma; reference lines on the X-chart.</div></div>
+        <label class="toggle"><input type="checkbox" id="settingZoneLines" onchange="onSettingChange()"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
+      </div>
+    </div>
+    <div class="modal-actions" style="margin-top:var(--space-4)">
+      <button class="btn btn-primary" onclick="closeModal('settingsModal')">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- Coaching -->
+<div class="modal-overlay" id="coachingModal">
+  <div class="modal modal-lg">
+    <div class="modal-title">AI Lean Sensei</div>
+    <div class="coaching-callout">
+      <div class="coaching-callout-icon">&#129399;</div>
+      <div class="coaching-callout-text"><strong>Coaching export</strong> &mdash; copy the prompt below and paste it into your preferred AI assistant. The prompt includes your chart data, signals, and limits using Wheeler's framework.</div>
+    </div>
+    <div class="coaching-section">
+      <div class="coaching-section-title">Coaching tier</div>
+      <div class="coaching-options">
+        <div class="coaching-option selected" id="coachTierPractitioner" onclick="selectCoachTier('practitioner')"><div class="coaching-option-icon">&#128300;</div><div class="coaching-option-label">Practitioner</div><div class="coaching-option-desc">I can read charts &mdash; challenge my thinking</div></div>
+        <div class="coaching-option" id="coachTierFacilitator" onclick="selectCoachTier('facilitator')"><div class="coaching-option-icon">&#128105;&#8205;&#127979;</div><div class="coaching-option-label">Facilitator</div><div class="coaching-option-desc">Walk me through what the chart shows</div></div>
+      </div>
+    </div>
+    <div class="coaching-section">
+      <div class="coaching-section-title">AI platform</div>
+      <div class="coaching-options">
+        <div class="coaching-option selected" id="coachLLMClaude" onclick="selectCoachLLM('claude')"><div class="coaching-option-icon">&#129302;</div><div class="coaching-option-label">Claude</div><div class="coaching-option-desc">Full prompt + all data</div></div>
+        <div class="coaching-option" id="coachLLMCopilot" onclick="selectCoachLLM('copilot')"><div class="coaching-option-icon">&#128188;</div><div class="coaching-option-label">Copilot</div><div class="coaching-option-desc">Shorter prompt</div></div>
+        <div class="coaching-option" id="coachLLMGemini" onclick="selectCoachLLM('gemini')"><div class="coaching-option-icon">&#10024;</div><div class="coaching-option-label">Gemini</div><div class="coaching-option-desc">Full prompt + all data</div></div>
+      </div>
+    </div>
+    <div class="coaching-prompt-preview" id="coachingPromptPreview">Select tier and platform above to generate prompt&hellip;</div>
+    <div class="modal-actions" style="margin-top:var(--space-4)">
+      <button class="btn btn-secondary" onclick="closeModal('coachingModal')">Close</button>
+      <button class="btn btn-secondary" onclick="downloadCoachingPrompt()">&#8595; .txt</button>
+      <button class="btn btn-primary" onclick="copyCoachingPrompt()">&#128203; Copy prompt</button>
+    </div>
+  </div>
+</div>
+
+<!-- About -->
+<div class="modal-overlay" id="aboutModal">
+  <div class="modal">
+    <div class="modal-title">Gemba-SPC</div>
+    <div class="about-version-badge">v1.0</div>
+    <div class="about-section"><div class="about-section-title">About</div><p>Process Behaviour Charts (XmR) built for NHS healthcare improvement teams. Follows Donald Wheeler's methodology for understanding process variation &mdash; distinguishing common cause from special cause.</p></div>
+    <div class="about-section"><div class="about-section-title">Part of the Gemba Suite</div><p>Free tools for lean methodology at the gemba. <a href="https://gembasuite.org" target="_blank" rel="noopener">gembasuite.org</a></p></div>
+    <div class="about-section"><div class="about-section-title">Methodology &amp; Constants</div><p>XmR constants: 2.66 = 3/d&#8322; (genuine 3&sigma; limits), 3.268 = D&#8324; for span-2 mR. No patient-identifiable data collected. Process improvement tool only.</p></div>
+    <div class="about-section"><div class="about-section-title">Licence</div><div class="about-licence">CC BY-NC-SA 4.0 &mdash; Free for all healthcare improvement purposes. Commercial repackaging, resale, or proprietary redistribution not permitted. Full terms: <a href="https://gembasuite.org/licence" target="_blank" rel="noopener">gembasuite.org/licence</a></div></div>
+    <div class="about-section"><div class="about-section-title">Disclaimer</div><p>These tools support process improvement and do not make clinical decisions or recommendations. They are not medical devices and are not regulated as such under MHRA or equivalent frameworks. All data is stored locally on your device. The tools are provided as-is, without warranty. You are responsible for exporting and backing up your data regularly.</p></div>
+    <div class="about-section"><div class="about-section-title">Developer</div><p>David Clark &mdash; <a href="https://gembasuite.org" target="_blank" rel="noopener">gembasuite.org</a></p></div>
+    <div class="modal-actions"><button class="btn btn-primary" onclick="closeModal('aboutModal')">Close</button></div>
+  </div>
+</div>
+
+<input type="file" id="importProjectFile" accept=".json" style="display:none" onchange="handleProjectImport(event)">
+
+<script>
+'use strict';
+
+// ═══════════════════════════════════════
+// XmR CONSTANTS — DO NOT CHANGE
+// 2.66 = 3/d₂ = 3/1.128 — genuine 3σ control limits
+// 3.268 = D₄ for span-2 moving range
+// ═══════════════════════════════════════
+const XMR_E2      = 2.66;   // 3/d₂ — 3σ limit factor
+const XMR_D4      = 3.268;  // D₄ span-2
+const SIGMA1_M    = 0.887;  // (1/3) × 2.66 — 1σ in mR units
+const SIGMA15_M   = 1.33;   // (1.5/3) × 2.66 — 1.5σ *** NOT 2σ ***
+const SIGMA2_M    = 1.773;  // (2/3) × 2.66 — 2σ in mR units
+
+const APP_VERSION  = '1.0';
+const LS_KEY_LIST  = 'gemba_spc_projects';
+const LS_KEY_PFX   = 'gemba_spc_p_';
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+let currentProjectId = null;
+let currentProject   = null;
+let _confirmCallback = null;
+let _excludePointId  = null;
+let _coachTier       = 'practitioner';
+let _coachLLM        = 'claude';
+let _csvParsedRows   = null;
+let _csvHeaders      = null;
+let _gembaPayload    = null;
+
+// ═══════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function todayISO() { return new Date().toISOString().slice(0,10); }
+function roundN(v,n) { const f=Math.pow(10,n); return Math.round(v*f)/f; }
+function genId(pfx) { return pfx+'_'+Date.now()+'_'+Math.random().toString(36).substr(2,6); }
+function safeName(s) { return (s||'chart').replace(/[^a-z0-9]/gi,'_').slice(0,40).toLowerCase(); }
+function dlFile(content,filename,mime) {
+  const b=new Blob([content],{type:mime});
+  const u=URL.createObjectURL(b);
+  const a=document.createElement('a');
+  a.href=u; a.download=filename; a.click();
+  setTimeout(()=>URL.revokeObjectURL(u),1000);
+}
+
+// ═══════════════════════════════════════
+// localStorage PROJECT MANAGEMENT
+// ═══════════════════════════════════════
+function getProjectList() { try{return JSON.parse(localStorage.getItem(LS_KEY_LIST)||'[]')}catch(e){return[]} }
+function saveProjectList(l) { try{localStorage.setItem(LS_KEY_LIST,JSON.stringify(l))}catch(e){} }
+function getProjectData(id) { try{const r=localStorage.getItem(LS_KEY_PFX+id);return r?JSON.parse(r):null}catch(e){return null} }
+function saveProjectData(id,d) { try{localStorage.setItem(LS_KEY_PFX+id,JSON.stringify(d))}catch(e){} }
+function deleteProjectData(id) { try{localStorage.removeItem(LS_KEY_PFX+id)}catch(e){} }
+
+function createNewProject(name) {
+  const now=new Date().toISOString();
+  return {
+    id:genId('spc'), name:name||'New Chart', createdAt:now, updatedAt:now,
+    metadata:{metricDescription:'',unit:'',workArea:'',author:'',organisation:''},
+    config:{zoneTestsDisabled:false,extendedRulesEnabled:false,showZoneLines:false},
+    dataPoints:[],
+    phases:[{id:genId('ph'),startIndex:0,endIndex:null,limits:null,lockedAt:null}]
+  };
+}
+
+function saveCurrentProject() {
+  if(!currentProject) return;
+  currentProject.updatedAt=new Date().toISOString();
+  saveProjectData(currentProject.id,currentProject);
+  const list=getProjectList();
+  const item=list.find(p=>p.id===currentProject.id);
+  if(item){item.updated=currentProject.updatedAt;saveProjectList(list);}
+}
+
+// ═══════════════════════════════════════
+// SCREEN ROUTING
+// ═══════════════════════════════════════
+function showProjectListScreen() {
+  document.getElementById('screenProjectList').classList.add('active');
+  document.getElementById('screenProject').classList.remove('active');
+  document.getElementById('btnBack').classList.remove('visible');
+  document.getElementById('headerProjectName').classList.remove('visible');
+  ['btnImportHeader','btnExportHeader','btnCoachingHeader','btnSettingsHeader'].forEach(id=>{
+    document.getElementById(id).style.display='none';
+  });
+  currentProjectId=null; currentProject=null;
+  renderProjectList();
+}
+
+function showProjectViewScreen(id) {
+  const p=getProjectData(id);
+  if(!p){showProjectListScreen();return;}
+  currentProjectId=id; currentProject=p;
+  document.getElementById('screenProjectList').classList.remove('active');
+  document.getElementById('screenProject').classList.add('active');
+  document.getElementById('btnBack').classList.add('visible');
+  document.getElementById('headerProjectName').textContent=p.name;
+  document.getElementById('headerProjectName').classList.add('visible');
+  ['btnImportHeader','btnExportHeader','btnCoachingHeader','btnSettingsHeader'].forEach(id=>{
+    document.getElementById(id).style.display='';
+  });
+  document.getElementById('entryLabel').value=todayISO();
+  const cfg=p.config;
+  document.getElementById('settingZoneTests').checked=!cfg.zoneTestsDisabled;
+  document.getElementById('settingExtended').checked=!!cfg.extendedRulesEnabled;
+  document.getElementById('settingZoneLines').checked=!!cfg.showZoneLines;
+  renderProjectView();
+}
+
+// ═══════════════════════════════════════
+// PROJECT LIST RENDER
+// ═══════════════════════════════════════
+function renderProjectList() {
+  const list=getProjectList();
+  const grid=document.getElementById('projectGrid');
+  const empty=document.getElementById('projectListEmpty');
+  if(list.length===0){grid.innerHTML='';empty.style.display='';return;}
+  empty.style.display='none';
+  grid.innerHTML=list.map(item=>{
+    const d=getProjectData(item.id);
+    const n=d?d.dataPoints.length:0;
+    const updated=item.updated?new Date(item.updated).toLocaleDateString('en-GB'):'';
+    const desc=d&&d.metadata&&d.metadata.metricDescription?d.metadata.metricDescription:'';
+    // Phase info
+    let phaseTag='';
+    if(d&&d.phases){
+      const last=d.phases[d.phases.length-1];
+      phaseTag=last.lockedAt?'Phase II':'Phase I';
+    }
+    return `<div class="project-card" onclick="showProjectViewScreen('${esc(item.id)}')">
+      <div class="project-card-name">${esc(item.name)}</div>
+      <div class="project-card-meta">${desc?esc(desc)+' &middot; ':''}${n} point${n===1?'':'s'}${phaseTag?' &middot; '+phaseTag:''}</div>
+      <div class="project-card-actions">
+        <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();showProjectViewScreen('${esc(item.id)}')">Open</button>
+        <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();openRenameForProject('${esc(item.id)}')">Rename</button>
+        <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();confirmDeleteProjectById('${esc(item.id)}')">Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════
+// XmR CALCULATION ENGINE
+// ═══════════════════════════════════════
+
+/** Parse labels as dates. Returns array of Date|null, or null if <50% parsed. */
+function parseLabelsAsDates(labels) {
+  const dates=labels.map(l=>{const d=new Date(l);return isNaN(d)?null:d;});
+  if(dates.filter(d=>d!==null).length < labels.length/2) return null;
+  return dates;
+}
+
+/** Median of array */
+function median(arr) {
+  if(!arr.length) return 0;
+  const s=[...arr].sort((a,b)=>a-b);
+  const m=Math.floor(s.length/2);
+  return s.length%2===0?(s[m-1]+s[m])/2:s[m];
+}
+
+/**
+ * Compute moving ranges for all data points.
+ * CRITICAL: mR is not calculated across time gaps > 2× median interval.
+ * Returns [{value:number|null, gapSkipped:bool}], index 0 always null.
+ */
+function computeMRs(pts) {
+  const n=pts.length;
+  if(n===0) return [];
+  const dates=parseLabelsAsDates(pts.map(p=>p.label));
+  let medInt=null;
+  if(dates) {
+    const ivs=[];
+    for(let i=1;i<dates.length;i++) if(dates[i]&&dates[i-1]) ivs.push(Math.abs(dates[i]-dates[i-1]));
+    if(ivs.length>0) medInt=median(ivs);
+  }
+  const res=[{value:null,gapSkipped:false}];
+  for(let i=1;i<n;i++) {
+    let gap=false;
+    if(dates&&medInt&&medInt>0&&dates[i]&&dates[i-1]) {
+      if(Math.abs(dates[i]-dates[i-1])>2*medInt) gap=true;
+    }
+    res.push(gap?{value:null,gapSkipped:true}:{value:Math.abs(pts[i].value-pts[i-1].value),gapSkipped:false});
+  }
+  return res;
+}
+
+/**
+ * Compute XmR limits from an array of points and their mRs.
+ * Only non-excluded points contribute. mRs skipped if either endpoint excluded or gap.
+ * Returns {xBar,mRBar,uclX,lclX,uclMR} or null.
+ */
+function computeLimits(pts,mrs) {
+  const incl=pts.filter(p=>!p.excluded);
+  if(incl.length<2) return null;
+  const xBar=incl.reduce((a,b)=>a+b.value,0)/incl.length;
+  const mrVals=[];
+  for(let i=1;i<pts.length;i++) {
+    const mr=mrs[i];
+    if(!mr||mr.value===null||mr.gapSkipped) continue;
+    if(pts[i].excluded||pts[i-1].excluded) continue;
+    mrVals.push(mr.value);
+  }
+  if(mrVals.length===0) return null;
+  const mRBar=mrVals.reduce((a,b)=>a+b,0)/mrVals.length;
+  // XMR_E2 = 2.66 = 3/d₂ — genuine 3σ. XMR_D4 = 3.268 — D₄ span-2.
+  return {xBar, mRBar, uclX:xBar+XMR_E2*mRBar, lclX:xBar-XMR_E2*mRBar, uclMR:XMR_D4*mRBar};
+}
+
+// ── Detection Rules ──
+
+/** Rule 1: any point outside UCL or LCL → 'rule1' */
+function applyRule1(pts,limits,offset,allFlags) {
+  pts.forEach((p,i)=>{
+    if(p.excluded) return;
+    if(p.value>limits.uclX||p.value<limits.lclX) allFlags[offset+i].push('rule1');
+  });
+}
+
+/** Rule 2: run of 8+ consecutive same-side points. Excluded breaks run. */
+function applyRule2(pts,xBar,offset,allFlags) {
+  const n=pts.length;
+  let rStart=0, rSide=0;
+  for(let i=0;i<=n;i++) {
+    const p=i<n?pts[i]:null;
+    const side=(!p||p.excluded||p.value===xBar)?0:(p.value>xBar?1:-1);
+    if(i===n||side!==rSide) {
+      if(rSide!==0) {
+        const len=i-rStart;
+        if(len>=8) for(let j=rStart;j<i;j++) if(!allFlags[offset+j].includes('rule2')) allFlags[offset+j].push('rule2');
+      }
+      rStart=i; rSide=side;
+      if(side===0) { rStart=i+1; rSide=0; }
+    }
+  }
+}
+
+/** Rule 3: 3 of 4 consecutive beyond 1.5σ SAME side. Threshold = SIGMA15_M × m̄R. CRITICAL: NOT 2σ. */
+function applyRule3(pts,xBar,thr,offset,allFlags) {
+  const n=pts.length;
+  for(let i=3;i<n;i++) {
+    const win=[pts[i-3],pts[i-2],pts[i-1],pts[i]];
+    if(win.some(p=>p.excluded)) continue;
+    const above=win.filter(p=>p.value>xBar+thr).length;
+    const below=win.filter(p=>p.value<xBar-thr).length;
+    if(above>=3||below>=3) if(!allFlags[offset+i].includes('rule3')) allFlags[offset+i].push('rule3');
+  }
+}
+
+/** Rule E1: 2 of 3 consecutive beyond 2σ same side */
+function applyRuleE1(pts,xBar,thr,offset,allFlags) {
+  const n=pts.length;
+  for(let i=2;i<n;i++) {
+    const win=[pts[i-2],pts[i-1],pts[i]];
+    if(win.some(p=>p.excluded)) continue;
+    const above=win.filter(p=>p.value>xBar+thr).length;
+    const below=win.filter(p=>p.value<xBar-thr).length;
+    if(above>=2||below>=2) if(!allFlags[offset+i].includes('ruleE1')) allFlags[offset+i].push('ruleE1');
+  }
+}
+
+/** Rule E2: 4 of 5 consecutive beyond 1σ same side */
+function applyRuleE2(pts,xBar,thr,offset,allFlags) {
+  const n=pts.length;
+  for(let i=4;i<n;i++) {
+    const win=[pts[i-4],pts[i-3],pts[i-2],pts[i-1],pts[i]];
+    if(win.some(p=>p.excluded)) continue;
+    const above=win.filter(p=>p.value>xBar+thr).length;
+    const below=win.filter(p=>p.value<xBar-thr).length;
+    if(above>=4||below>=4) if(!allFlags[offset+i].includes('ruleE2')) allFlags[offset+i].push('ruleE2');
+  }
+}
+
+/**
+ * Apply all active detection rules to one phase's data.
+ * Rules evaluate WITHIN phases only — no cross-phase runs.
+ * flags[] is COMPUTED, never persisted.
+ */
+function applyDetectionRules(phasePts,limits,cfg,offset,allFlags) {
+  const {xBar,mRBar}=limits;
+  const zoneActive=!cfg.zoneTestsDisabled;
+  const extActive=zoneActive&&!!cfg.extendedRulesEnabled;
+  applyRule1(phasePts,limits,offset,allFlags);
+  if(!zoneActive) return;
+  applyRule2(phasePts,xBar,offset,allFlags);
+  // CRITICAL: Rule 3 threshold = SIGMA15_M × m̄R = 1.33 × m̄R = 1.5σ. NOT 2σ.
+  applyRule3(phasePts,xBar,SIGMA15_M*mRBar,offset,allFlags);
+  if(!extActive) return;
+  applyRuleE1(phasePts,xBar,SIGMA2_M*mRBar,offset,allFlags);
+  applyRuleE2(phasePts,xBar,SIGMA1_M*mRBar,offset,allFlags);
+}
+
+/**
+ * Master compute: returns {mrs, flags, activeLimits, phaseI_live_limits}
+ * flags are ALWAYS derived here — never read from or written to localStorage.
+ */
+function computeAll(project) {
+  const pts=project.dataPoints;
+  const n=pts.length;
+  const allFlags=pts.map(()=>[]);
+  const allMRs=computeMRs(pts);
+  let activeLimits=null;
+
+  project.phases.forEach((phase,pi)=>{
+    const s=phase.startIndex;
+    const e=phase.endIndex!==null?phase.endIndex:n-1;
+    if(s>e||s>=n) return;
+    const pPts=pts.slice(s,e+1);
+    const pMRs=allMRs.slice(s,e+1);
+    let limitsForPhase;
+    if(phase.lockedAt&&phase.limits) {
+      limitsForPhase=phase.limits;
+    } else {
+      // Phase I (first phase, unlocked): compute live limits
+      // Subsequent unlocked phase: inherit from previous locked limits
+      if(pi===0) {
+        limitsForPhase=computeLimits(pPts,pMRs);
+      } else {
+        limitsForPhase=project.phases[pi-1].limits||computeLimits(pPts,pMRs);
+      }
+    }
+    if(limitsForPhase) {
+      applyDetectionRules(pPts,limitsForPhase,project.config,s,allFlags);
+      if(pi===project.phases.length-1) activeLimits=limitsForPhase;
+    }
+  });
+
+  // If in Phase I (single unlocked phase), always use live computed limits
+  if(project.phases.length===1&&!project.phases[0].lockedAt) {
+    const allMRsTmp=computeMRs(pts);
+    activeLimits=computeLimits(pts,allMRsTmp);
+  }
+
+  return {mrs:allMRs, flags:allFlags, activeLimits};
+}
+
+// ═══════════════════════════════════════
+// VALIDATION WARNINGS
+// ═══════════════════════════════════════
+function lag1Pearson(vals) {
+  const n=vals.length; if(n<3) return 0;
+  const x=vals.slice(0,n-1), y=vals.slice(1);
+  const mx=x.reduce((a,b)=>a+b,0)/x.length, my=y.reduce((a,b)=>a+b,0)/y.length;
+  let num=0,dx2=0,dy2=0;
+  for(let i=0;i<x.length;i++){num+=(x[i]-mx)*(y[i]-my);dx2+=(x[i]-mx)**2;dy2+=(y[i]-my)**2;}
+  const d=Math.sqrt(dx2*dy2); return d===0?0:num/d;
+}
+
+function computeValidationWarnings(project,mrs,limits) {
+  const pts=project.dataPoints;
+  const last=project.phases[project.phases.length-1];
+  const s=last.startIndex, e=last.endIndex!==null?last.endIndex:pts.length-1;
+  const phasePts=pts.slice(s,e+1);
+  const nonExcl=phasePts.filter(p=>!p.excluded);
+  const warnings=[];
+  // 1. Insufficient data
+  if(!last.lockedAt&&nonExcl.length>0&&nonExcl.length<20) {
+    warnings.push({id:'w_insuf',text:`Fewer than 20 data points (${nonExcl.length}) — limits are provisional. Wheeler recommends at least 20 for stable estimates.`});
+  }
+  // 2. Time gap
+  for(let i=1;i<pts.length;i++) {
+    if(mrs[i]&&mrs[i].gapSkipped) {
+      warnings.push({id:'w_gap',text:`Gap detected: moving range not calculated between "${pts[i-1].label}" and "${pts[i].label}".`});
+      break;
+    }
+  }
+  // 3. Autocorrelation
+  if(nonExcl.length>=4) {
+    const r=lag1Pearson(nonExcl.map(p=>p.value));
+    if(r>0.6) warnings.push({id:'w_ac',text:`High autocorrelation (r = ${r.toFixed(2)}) — consecutive measurements are strongly correlated. Control limits may be too narrow.`});
+  }
+  // 4. Chunky data
+  if(limits&&limits.uclMR) {
+    const mrVals=mrs.filter(mr=>mr&&mr.value!==null&&!mr.gapSkipped&&mr.value<limits.uclMR).map(mr=>roundN(mr.value,6));
+    if(mrVals.length>=4&&new Set(mrVals).size<=3) warnings.push({id:'w_chunk',text:`Data appears excessively rounded (only ${new Set(mrVals).size} distinct moving range values below UCL). False signals may occur.`});
+  }
+  return warnings;
+}
+
+// ═══════════════════════════════════════
+// PHASE RENDERING
+// ═══════════════════════════════════════
+function getPhaseState(project) {
+  const last=project.phases[project.phases.length-1];
+  return last.lockedAt?'phase2':'phase1';
+}
+
+function renderPhaseInfo() {
+  if(!currentProject) return;
+  const state=getPhaseState(currentProject);
+  const {activeLimits}=computeAll(currentProject);
+  const banner=document.getElementById('phaseBanner');
+  const titleEl=document.getElementById('phaseBannerTitle');
+  const descEl=document.getElementById('phaseBannerDesc');
+  const limEl=document.getElementById('phaseBannerLimits');
+  const btnLock=document.getElementById('btnLockLimits');
+  const btnRecalc=document.getElementById('btnRecalculate');
+  if(state==='phase1') {
+    banner.className='phase-banner phase-1';
+    titleEl.textContent='Phase I';
+    descEl.textContent='establishing baseline limits';
+    btnLock.style.display=''; btnRecalc.style.display='none';
+    btnLock.disabled=!activeLimits;
+  } else {
+    banner.className='phase-banner phase-2';
+    const phN=currentProject.phases.length;
+    titleEl.textContent='Phase II'+(phN>2?' (period '+(phN-1)+')':'');
+    descEl.textContent='monitoring against established limits';
+    btnLock.style.display='none'; btnRecalc.style.display='';
+  }
+  if(activeLimits) {
+    limEl.textContent=`X\u0305 = ${roundN(activeLimits.xBar,3)}  |  UCL = ${roundN(activeLimits.uclX,3)}  |  LCL = ${roundN(activeLimits.lclX,3)}  |  m\u0305R = ${roundN(activeLimits.mRBar,3)}`;
+  } else {
+    limEl.textContent='Add at least 2 data points to calculate limits';
+  }
+}
+
+function renderValidationWarnings() {
+  if(!currentProject) return;
+  const {mrs,activeLimits}=computeAll(currentProject);
+  const warns=computeValidationWarnings(currentProject,mrs,activeLimits);
+  const dismissed=JSON.parse(sessionStorage.getItem('spc_dw')||'[]');
+  document.getElementById('validationWarnings').innerHTML=warns
+    .filter(w=>!dismissed.includes(w.id))
+    .map(w=>`<div class="validation-warning"><span class="warn-icon">\u26a0\ufe0f</span><span>${esc(w.text)}</span><button class="warn-dismiss" onclick="dismissWarn('${esc(w.id)}')">&#215;</button></div>`)
+    .join('');
+}
+function dismissWarn(id) {
+  const d=JSON.parse(sessionStorage.getItem('spc_dw')||'[]');
+  d.push(id); sessionStorage.setItem('spc_dw',JSON.stringify(d));
+  renderValidationWarnings();
+}
+
+// ═══════════════════════════════════════
+// SVG CHART RENDERER
+// ═══════════════════════════════════════
+const C={ML:68,MR:20,MT:14,GAP:24,XH:230,MRH:130,XLH:54,SP:36};
+function cTotalH(){return C.MT+C.XH+C.GAP+C.MRH+C.XLH;}
+function cY(v,mn,mx,top,h){if(mx===mn)return top+h/2;return top+h*(1-(v-mn)/(mx-mn));}
+function niceTicks(mn,mx,n){
+  const range=mx-mn; if(range===0) return [mn];
+  const step=Math.pow(10,Math.floor(Math.log10(range/n)));
+  const niceStep=[1,2,5,10].map(s=>s*step).find(s=>range/s<=n+1)||step*10;
+  const ticks=[]; let v=Math.floor(mn/niceStep)*niceStep;
+  while(v<=mx+niceStep*0.001){ticks.push(roundN(v,8));v+=niceStep;}
+  return ticks;
+}
+function fmtTick(v){
+  const a=Math.abs(v);
+  if(a>=10000) return v.toFixed(0);
+  if(a>=100) return v.toFixed(1);
+  return v.toFixed(2);
+}
+
+function renderChart() {
+  const wrap=document.getElementById('chartWrapper');
+  const empt=document.getElementById('chartEmpty');
+  const scroll=document.getElementById('chartScroll');
+  const pts=currentProject.dataPoints;
+  if(pts.length===0){wrap.innerHTML='';empt.style.display='';return;}
+  empt.style.display='none';
+  const {mrs,flags,activeLimits}=computeAll(currentProject);
+  const cfg=currentProject.config;
+  const n=pts.length;
+  const cW=scroll.clientWidth||820;
+  const innerW=Math.max(cW-C.ML-C.MR,n*C.SP);
+  const sp=n>1?innerW/(n-1):innerW;
+  const svgW=innerW+C.ML+C.MR;
+  const svgH=cTotalH();
+  const xTop=C.MT, mrTop=C.MT+C.XH+C.GAP;
+  const px=i=>C.ML+(n===1?innerW/2:i*sp);
+
+  // X-chart Y range
+  const allV=pts.map(p=>p.value);
+  let xMn=Math.min(...allV), xMx=Math.max(...allV);
+  if(activeLimits){
+    xMn=Math.min(xMn,activeLimits.lclX); xMx=Math.max(xMx,activeLimits.uclX);
+  }
+  const xPad=Math.max((xMx-xMn)*0.15,0.1);
+  xMn-=xPad; xMx+=xPad;
+  if(xMn===xMx){xMn-=1;xMx+=1;}
+  const xCY=v=>cY(v,xMn,xMx,xTop,C.XH);
+
+  // mR Y range
+  const mrVls=mrs.filter(m=>m&&m.value!==null).map(m=>m.value);
+  let mrMx=mrVls.length>0?Math.max(...mrVls):1;
+  if(activeLimits&&activeLimits.uclMR) mrMx=Math.max(mrMx,activeLimits.uclMR);
+  mrMx*=1.3; if(mrMx===0) mrMx=1;
+  const mrCY=v=>cY(v,0,mrMx,mrTop,C.MRH);
+
+  let svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${svgW}" height="${svgH}" viewBox="0 0 ${svgW} ${svgH}">`;
+  svg+=`<rect width="${svgW}" height="${svgH}" fill="#ffffff"/>`;
+  svg+=`<rect x="${C.ML}" y="${xTop}" width="${innerW}" height="${C.XH}" fill="#ffffff"/>`;
+  svg+=`<rect x="${C.ML}" y="${mrTop}" width="${innerW}" height="${C.MRH}" fill="#ffffff"/>`;
+
+  // Y-axis grid + labels for X-chart
+  niceTicks(xMn,xMx,6).forEach(v=>{
+    if(v<xMn||v>xMx) return;
+    const y=xCY(v);
+    svg+=`<line x1="${C.ML}" y1="${y}" x2="${C.ML+innerW}" y2="${y}" stroke="#e0e3e2" stroke-width="0.75"/>`;
+    svg+=`<text x="${C.ML-5}" y="${y+4}" text-anchor="end" fill="#6e797c" font-size="10" font-family="monospace">${fmtTick(v)}</text>`;
+  });
+  // Y-axis label
+  svg+=`<text x="12" y="${xTop+C.XH/2}" text-anchor="middle" fill="#3e484c" font-size="10" font-weight="600" transform="rotate(-90 12 ${xTop+C.XH/2})">X</text>`;
+
+  // Y-axis grid + labels for mR-chart
+  niceTicks(0,mrMx,4).forEach(v=>{
+    if(v<0||v>mrMx) return;
+    const y=mrCY(v);
+    svg+=`<line x1="${C.ML}" y1="${y}" x2="${C.ML+innerW}" y2="${y}" stroke="#e0e3e2" stroke-width="0.75"/>`;
+    svg+=`<text x="${C.ML-5}" y="${y+4}" text-anchor="end" fill="#6e797c" font-size="10" font-family="monospace">${fmtTick(v)}</text>`;
+  });
+  svg+=`<text x="12" y="${mrTop+C.MRH/2}" text-anchor="middle" fill="#3e484c" font-size="10" font-weight="600" transform="rotate(-90 12 ${mrTop+C.MRH/2})">mR</text>`;
+
+  // Phase limit lines (last 2 phases)
+  const phases=currentProject.phases;
+  phases.slice(-2).forEach((phase,vi)=>{
+    const globalPi=phases.length-Math.min(phases.length,2)+vi;
+    let lims;
+    if(phase.lockedAt&&phase.limits) lims=phase.limits;
+    else if(globalPi>0&&phases[globalPi-1]&&phases[globalPi-1].limits) lims=phases[globalPi-1].limits;
+    else lims=activeLimits;
+    if(!lims) return;
+    const s=phase.startIndex, e=phase.endIndex!==null?phase.endIndex:pts.length-1;
+    const x1=px(Math.min(s,pts.length-1)), x2=px(Math.min(e,pts.length-1))+(phase.endIndex===null?C.MR:0);
+    const isOld=vi<Math.min(phases.length,2)-1;
+    const op=isOld?0.35:1;
+    const lw=isOld?1:1.5;
+    // X-chart centreline
+    svg+=`<line x1="${x1}" y1="${xCY(lims.xBar)}" x2="${x2}" y2="${xCY(lims.xBar)}" stroke="#3e484c" stroke-width="${lw}" opacity="${op}"/>`;
+    // X-chart UCL/LCL
+    svg+=`<line x1="${x1}" y1="${xCY(lims.uclX)}" x2="${x2}" y2="${xCY(lims.uclX)}" stroke="#b3261e" stroke-width="${lw}" stroke-dasharray="6,3" opacity="${op}"/>`;
+    svg+=`<line x1="${x1}" y1="${xCY(lims.lclX)}" x2="${x2}" y2="${xCY(lims.lclX)}" stroke="#b3261e" stroke-width="${lw}" stroke-dasharray="6,3" opacity="${op}"/>`;
+    // Zone lines
+    if(!isOld&&cfg.showZoneLines) {
+      [[SIGMA1_M,'1\u03c3'],[SIGMA15_M,'1.5\u03c3'],[SIGMA2_M,'2\u03c3']].forEach(([m,lbl])=>{
+        [1,-1].forEach(sign=>{
+          const zy=xCY(lims.xBar+sign*m*lims.mRBar);
+          svg+=`<line x1="${x1}" y1="${zy}" x2="${x2}" y2="${zy}" stroke="#bec8cc" stroke-width="0.75" stroke-dasharray="3,3"/>`;
+          if(sign===1) svg+=`<text x="${x1+2}" y="${zy-2}" fill="#bec8cc" font-size="8">${lbl}</text>`;
+        });
+      });
+    }
+    // mR centreline + UCL (NO LCL on mR chart)
+    svg+=`<line x1="${x1}" y1="${mrCY(lims.mRBar)}" x2="${x2}" y2="${mrCY(lims.mRBar)}" stroke="#3e484c" stroke-width="${lw}" opacity="${op}"/>`;
+    svg+=`<line x1="${x1}" y1="${mrCY(lims.uclMR)}" x2="${x2}" y2="${mrCY(lims.uclMR)}" stroke="#b3261e" stroke-width="${lw}" stroke-dasharray="6,3" opacity="${op}"/>`;
+    // Labels (most recent phase only)
+    if(!isOld) {
+      const lx=Math.max(x1,C.ML)+3;
+      svg+=`<text x="${lx}" y="${xCY(lims.uclX)-4}" fill="#b3261e" font-size="9" font-family="monospace">UCL ${roundN(lims.uclX,2)}</text>`;
+      svg+=`<text x="${lx}" y="${xCY(lims.lclX)+10}" fill="#b3261e" font-size="9" font-family="monospace">LCL ${roundN(lims.lclX,2)}</text>`;
+      svg+=`<text x="${lx}" y="${xCY(lims.xBar)-4}" fill="#3e484c" font-size="9" font-family="monospace">X\u0305 ${roundN(lims.xBar,2)}</text>`;
+      svg+=`<text x="${lx}" y="${mrCY(lims.uclMR)-4}" fill="#b3261e" font-size="9" font-family="monospace">UCL ${roundN(lims.uclMR,2)}</text>`;
+      svg+=`<text x="${lx}" y="${mrCY(lims.mRBar)-4}" fill="#3e484c" font-size="9" font-family="monospace">m\u0305R ${roundN(lims.mRBar,2)}</text>`;
+    }
+  });
+
+  // Phase boundaries (vertical lines)
+  phases.forEach((phase,pi)=>{
+    if(pi===0) return;
+    if(phase.startIndex>=pts.length) return;
+    const bx=px(phase.startIndex);
+    svg+=`<line x1="${bx}" y1="${xTop}" x2="${bx}" y2="${mrTop+C.MRH}" stroke="#007c91" stroke-width="1.5" stroke-dasharray="6,3" opacity="0.7"/>`;
+    svg+=`<text x="${bx+4}" y="${xTop+14}" fill="#007c91" font-size="10" font-weight="600">P${pi+1}</text>`;
+  });
+
+  // X-chart: data polyline (break at excluded)
+  let seg=[];
+  pts.forEach((p,i)=>{
+    if(p.excluded){if(seg.length>1){svg+=`<polyline points="${seg.join(' ')}" fill="none" stroke="#006172" stroke-width="1.75" stroke-linejoin="round"/>`;}seg=[];}
+    else seg.push(`${px(i)},${xCY(p.value)}`);
+  });
+  if(seg.length>1) svg+=`<polyline points="${seg.join(' ')}" fill="none" stroke="#006172" stroke-width="1.75" stroke-linejoin="round"/>`;
+
+  // Dotted connectors through excluded
+  for(let i=1;i<pts.length;i++) {
+    if(pts[i].excluded||pts[i-1].excluded) {
+      svg+=`<line x1="${px(i-1)}" y1="${xCY(pts[i-1].value)}" x2="${px(i)}" y2="${xCY(pts[i].value)}" stroke="#6e797c" stroke-width="1" stroke-dasharray="4,3"/>`;
+    }
+  }
+
+  // X-chart data points
+  pts.forEach((p,i)=>{
+    const cx=px(i), cy=xCY(p.value);
+    const f=flags[i];
+    const isR1=f.includes('rule1');
+    const isAmb=f.some(x=>['rule2','rule3','ruleE1','ruleE2'].includes(x));
+    if(p.excluded) {
+      svg+=`<circle cx="${cx}" cy="${cy}" r="5" fill="none" stroke="#6e797c" stroke-width="1.5"/>`;
+    } else if(isR1) {
+      svg+=`<circle cx="${cx}" cy="${cy}" r="7" fill="#b3261e"/>`;
+    } else if(isAmb) {
+      svg+=`<circle cx="${cx}" cy="${cy}" r="6" fill="#926c00"/>`;
+    } else {
+      svg+=`<circle cx="${cx}" cy="${cy}" r="4" fill="#006172" stroke="#ffffff" stroke-width="1.5"/>`;
+    }
+    if(p.note&&!p.excluded) {
+      svg+=`<polygon points="${cx-3},${cy-9} ${cx+3},${cy-9} ${cx},${cy-3}" fill="#854a10" opacity="0.8"/>`;
+    }
+  });
+
+  // mR chart: line (break at nulls/gaps/excluded)
+  let mrSeg=[];
+  for(let i=1;i<pts.length;i++) {
+    const mr=mrs[i];
+    if(!mr||mr.value===null||mr.gapSkipped||pts[i].excluded||pts[i-1].excluded) {
+      if(mrSeg.length>1) svg+=`<polyline points="${mrSeg.join(' ')}" fill="none" stroke="#006172" stroke-width="1.5" stroke-linejoin="round" opacity="0.85"/>`;
+      mrSeg=[];
+    } else {
+      mrSeg.push(`${px(i)},${mrCY(mr.value)}`);
+    }
+  }
+  if(mrSeg.length>1) svg+=`<polyline points="${mrSeg.join(' ')}" fill="none" stroke="#006172" stroke-width="1.5" stroke-linejoin="round" opacity="0.85"/>`;
+
+  // mR points (skip index 0, gaps, excluded)
+  for(let i=1;i<pts.length;i++) {
+    const mr=mrs[i];
+    if(!mr||mr.value===null||mr.gapSkipped||pts[i].excluded||pts[i-1].excluded) continue;
+    svg+=`<circle cx="${px(i)}" cy="${mrCY(mr.value)}" r="3" fill="#006172" stroke="#ffffff" stroke-width="1" opacity="0.85"/>`;
+  }
+
+  // X-axis labels
+  const stride=Math.max(1,Math.ceil(n/40));
+  for(let i=0;i<n;i+=stride) {
+    const x=px(i);
+    const lbl=pts[i].label||String(i+1);
+    const d=lbl.length>11?lbl.slice(0,11)+'\u2026':lbl;
+    svg+=`<g transform="translate(${x},${mrTop+C.MRH+4})"><text transform="rotate(-45)" text-anchor="end" fill="#6e797c" font-size="10">${esc(d)}</text></g>`;
+    svg+=`<line x1="${x}" y1="${mrTop+C.MRH}" x2="${x}" y2="${mrTop+C.MRH+4}" stroke="#bec8cc" stroke-width="1"/>`;
+  }
+
+  // Axes
+  svg+=`<line x1="${C.ML}" y1="${xTop}" x2="${C.ML}" y2="${mrTop+C.MRH}" stroke="#bec8cc" stroke-width="1"/>`;
+  svg+=`<line x1="${C.ML}" y1="${mrTop+C.MRH}" x2="${C.ML+innerW}" y2="${mrTop+C.MRH}" stroke="#bec8cc" stroke-width="1"/>`;
+  svg+=`<line x1="${C.ML}" y1="${xTop}" x2="${C.ML+innerW}" y2="${xTop}" stroke="#bec8cc" stroke-width="1"/>`;
+  svg+=`<line x1="${C.ML}" y1="${mrTop}" x2="${C.ML+innerW}" y2="${mrTop}" stroke="#e0e3e2" stroke-width="1"/>`;
+
+  svg+='</svg>';
+  wrap.innerHTML=svg;
+  requestAnimationFrame(()=>{scroll.scrollLeft=scroll.scrollWidth;});
+}
+
+// ═══════════════════════════════════════
+// SIGNALS SUMMARY
+// ═══════════════════════════════════════
+const RULE_LABELS={rule1:'Rule 1 \u2014 beyond limits',rule2:'Rule 2 \u2014 run of 8+',rule3:'Rule 3 \u2014 3 of 4 beyond 1.5\u03c3',ruleE1:'Rule E1 \u2014 2 of 3 beyond 2\u03c3',ruleE2:'Rule E2 \u2014 4 of 5 beyond 1\u03c3'};
+
+function renderSignalsSummary() {
+  const el=document.getElementById('signalsSummary');
+  if(!currentProject){el.innerHTML='';return;}
+  const {flags}=computeAll(currentProject);
+  const pts=currentProject.dataPoints;
+  const sigs=flags.map((f,i)=>f.length?{i,p:pts[i],f}:null).filter(Boolean);
+  if(!sigs.length){el.innerHTML='';return;}
+  const show=sigs.slice(-6);
+  el.innerHTML=show.map(s=>{
+    const isRed=s.f.includes('rule1');
+    const rText=s.f.map(r=>RULE_LABELS[r]||r).join(', ');
+    return `<div class="signal-item${isRed?'':' amber'}">
+      <span>${isRed?'\ud83d\udd34':'\ud83d\udfe1'}</span>
+      <span><strong>${esc(s.p.label)}</strong>: ${roundN(s.p.value,3)} \u2014 ${esc(rText)}</span>
+      <button class="signal-export-btn" onclick="openRCAExportForPoint(${s.i})">\u2192 RCA</button>
+    </div>`;
+  }).join('')+(sigs.length>6?`<div style="font-size:12px;color:var(--ink-tertiary);padding:4px 12px">\u2026 and ${sigs.length-6} more signal${sigs.length-6===1?'':'s'}</div>`:'');
+}
+
+// ═══════════════════════════════════════
+// DATA TABLE
+// ═══════════════════════════════════════
+function renderDataTable() {
+  if(!currentProject) return;
+  const pts=currentProject.dataPoints;
+  const tbody=document.getElementById('dataTableBody');
+  const empty=document.getElementById('tableEmpty');
+  const tbl=document.getElementById('dataTable');
+  const count=document.getElementById('dataPointCount');
+  const isPhase1=getPhaseState(currentProject)==='phase1';
+  count.textContent=`${pts.length} point${pts.length===1?'':'s'}`;
+  if(pts.length===0){tbody.innerHTML='';empty.style.display='';tbl.style.display='none';return;}
+  empty.style.display='none'; tbl.style.display='';
+  const {mrs,flags}=computeAll(currentProject);
+  const rl={rule1:'R1',rule2:'R2',rule3:'R3',ruleE1:'E1',ruleE2:'E2'};
+  tbody.innerHTML=pts.map((p,i)=>{
+    const mr=mrs[i];
+    const mrD=(mr&&mr.value!==null)?roundN(mr.value,3):(mr&&mr.gapSkipped?'\u2014 gap':'\u2014');
+    const f=flags[i];
+    const isR1=f.includes('rule1');
+    const isAmb=f.some(x=>['rule2','rule3','ruleE1','ruleE2'].includes(x));
+    const rc=[p.excluded?'excluded':'',isR1?'flagged-red':(isAmb?'flagged-amber':'')].filter(Boolean).join(' ');
+    const fT=f.map(r=>rl[r]||r).join(' ');
+    const nd=p.note?(p.note.length>30?esc(p.note.slice(0,30))+'\u2026':esc(p.note)):'';
+    const exBtn=isPhase1
+      ?(p.excluded
+        ?`<button class="excluded-badge" onclick="toggleExclude('${p.id}')">\u2713 Excl.</button>`
+        :`<button class="not-excluded-btn" onclick="toggleExclude('${p.id}')">Exclude</button>`)
+      :(p.excluded?`<span class="excluded-badge" style="cursor:default">Excl.</span>`:'');
+    return `<tr class="${rc}">
+      <td class="num">${i+1}</td>
+      <td>${esc(p.label)}</td>
+      <td class="value-cell num">${roundN(p.value,4)}</td>
+      <td class="mr-cell">${mrD}</td>
+      <td class="flag-cell">${fT}</td>
+      <td class="note-cell" title="${esc(p.note)}">${nd}</td>
+      <td>${exBtn}</td>
+      <td class="actions-cell">
+        <button class="btn-icon-sm" onclick="editDP('${p.id}')" title="Edit">\u270f</button>
+        <button class="btn-icon-sm danger" onclick="deleteDP('${p.id}')" title="Delete">\ud83d\uddd1</button>
+      </td></tr>`;
+  }).join('');
+}
+
+function renderPrintHeader() {
+  if(!currentProject) return;
+  const {activeLimits,flags}=computeAll(currentProject);
+  const pts=currentProject.dataPoints;
+  const meta=currentProject.metadata;
+  const dr=pts.length>=2?`${pts[0].label} \u2013 ${pts[pts.length-1].label}`:(pts.length===1?pts[0].label:'');
+  const el=document.getElementById('printHeader');
+  if(!activeLimits){el.innerHTML='';return;}
+  const sigN=flags.filter(f=>f.length>0).length;
+  el.innerHTML=`<div class="chart-print-title">${esc(currentProject.name)}${meta.metricDescription?' \u2014 '+esc(meta.metricDescription):''}</div>
+  <div class="chart-print-meta">Process Behaviour Chart (XmR) \u00b7 ${dr}${meta.workArea?' \u00b7 '+esc(meta.workArea):''}</div>
+  <div class="print-stats">
+    <div class="print-stat"><div class="print-stat-label">X\u0305</div><div class="print-stat-value">${roundN(activeLimits.xBar,3)}</div></div>
+    <div class="print-stat"><div class="print-stat-label">m\u0305R</div><div class="print-stat-value">${roundN(activeLimits.mRBar,3)}</div></div>
+    <div class="print-stat"><div class="print-stat-label">UCL</div><div class="print-stat-value">${roundN(activeLimits.uclX,3)}</div></div>
+    <div class="print-stat"><div class="print-stat-label">LCL</div><div class="print-stat-value">${roundN(activeLimits.lclX,3)}</div></div>
+    <div class="print-stat"><div class="print-stat-label">Points</div><div class="print-stat-value">${pts.length}</div></div>
+    <div class="print-stat"><div class="print-stat-label">Signals</div><div class="print-stat-value">${sigN}</div></div>
+  </div>
+  <div class="print-footer">Gemba-SPC v${APP_VERSION} \u00b7 gembasuite.org \u00b7 Process behaviour chart \u2014 Donald Wheeler methodology \u00b7 ${new Date().toLocaleDateString('en-GB')}</div>`;
+}
+
+function renderProjectView() {
+  if(!currentProject) return;
+  renderMetricDesc();
+  renderPhaseInfo();
+  renderValidationWarnings();
+  renderChart();
+  renderSignalsSummary();
+  renderDataTable();
+  renderPrintHeader();
+}
+
+function renderMetricDesc() {
+  const desc=currentProject.metadata.metricDescription||'';
+  document.getElementById('metricDescText').textContent=desc||'Click to set metric description';
+}
+
+// ═══════════════════════════════════════
+// DATA OPERATIONS
+// ═══════════════════════════════════════
+function addDataPoint() {
+  const lEl=document.getElementById('entryLabel');
+  const vEl=document.getElementById('entryValue');
+  const nEl=document.getElementById('entryNote');
+  const label=lEl.value.trim();
+  const rawV=vEl.value.trim();
+  const note=nEl.value.trim();
+  if(!label){lEl.focus();showInfo('Label required','Please enter a label for this data point.');return;}
+  const value=parseFloat(rawV);
+  if(isNaN(value)||rawV===''){vEl.focus();showInfo('Value required','Please enter a numeric value.');return;}
+  currentProject.dataPoints.push({id:genId('dp'),label,value,note,excluded:false,excludeReason:''});
+  saveCurrentProject();
+  vEl.value=''; nEl.value='';
+  const d=new Date(label);
+  if(!isNaN(d)){d.setDate(d.getDate()+1);lEl.value=d.toISOString().slice(0,10);}
+  vEl.focus();
+  sessionStorage.removeItem('spc_dw');
+  renderProjectView();
+}
+
+function toggleExclude(id) {
+  const p=currentProject.dataPoints.find(pt=>pt.id===id);
+  if(!p) return;
+  if(p.excluded){p.excluded=false;p.excludeReason='';saveCurrentProject();renderProjectView();}
+  else{_excludePointId=id;document.getElementById('excludeReason').value='';showModal('excludeModal');setTimeout(()=>document.getElementById('excludeReason').focus(),100);}
+}
+function cancelExclude(){_excludePointId=null;closeModal('excludeModal');}
+function execExclude(){
+  if(!_excludePointId) return;
+  const p=currentProject.dataPoints.find(pt=>pt.id===_excludePointId);
+  if(p){p.excluded=true;p.excludeReason=document.getElementById('excludeReason').value.trim();}
+  _excludePointId=null;closeModal('excludeModal');saveCurrentProject();renderProjectView();
+}
+
+function deleteDP(id) {
+  showConfirmModal('Delete data point','Remove this data point? This cannot be undone.','Delete',()=>{
+    const idx=currentProject.dataPoints.findIndex(p=>p.id===id);
+    if(idx<0) return;
+    currentProject.dataPoints.splice(idx,1);
+    currentProject.phases.forEach(ph=>{
+      if(ph.endIndex!==null&&ph.endIndex>=idx) ph.endIndex=Math.max(ph.startIndex,ph.endIndex-1);
+    });
+    saveCurrentProject();sessionStorage.removeItem('spc_dw');renderProjectView();
+  });
+}
+
+function editDP(id) {
+  const p=currentProject.dataPoints.find(pt=>pt.id===id);
+  if(!p) return;
+  document.getElementById('entryLabel').value=p.label;
+  document.getElementById('entryValue').value=p.value;
+  document.getElementById('entryNote').value=p.note||'';
+  showConfirmModal('Edit data point',`Load "${p.label}: ${p.value}" into the entry form?\nThe existing point will be removed so you can save the updated values.`,'Load & Remove',()=>{
+    const idx=currentProject.dataPoints.findIndex(pt=>pt.id===id);
+    if(idx>=0) currentProject.dataPoints.splice(idx,1);
+    saveCurrentProject();renderProjectView();
+    document.getElementById('entryValue').focus();
+    document.getElementById('entryValue').select();
+  });
+}
+
+// ═══════════════════════════════════════
+// PHASE WORKFLOW
+// ═══════════════════════════════════════
+function lockLimits() {
+  const pts=currentProject.dataPoints;
+  if(pts.length<2){showInfo('Not enough data','Add at least 2 data points before locking limits.');return;}
+  const {activeLimits}=computeAll(currentProject);
+  if(!activeLimits){showInfo('Cannot lock','No valid limits to lock.');return;}
+  const ne=pts.filter(p=>!p.excluded).length;
+  const msg=ne<20
+    ?`Lock limits based on ${ne} data points?\n\nWheeler recommends at least 20 for stable limits. You can continue adding data in Phase II, but they will be evaluated against these limits.\n\nX\u0305 = ${roundN(activeLimits.xBar,3)}, UCL = ${roundN(activeLimits.uclX,3)}, LCL = ${roundN(activeLimits.lclX,3)}`
+    :`Lock current limits as your Phase II baseline?\n\nX\u0305 = ${roundN(activeLimits.xBar,3)}\nUCL = ${roundN(activeLimits.uclX,3)}, LCL = ${roundN(activeLimits.lclX,3)}\nm\u0305R = ${roundN(activeLimits.mRBar,3)}\n\nNew data will be monitored against these limits.`;
+  showConfirmModal('Lock Phase I Limits',msg,'Lock Limits',()=>{
+    const phases=currentProject.phases;
+    const last=phases[phases.length-1];
+    last.endIndex=pts.length-1;
+    last.limits={...activeLimits};
+    last.lockedAt=new Date().toISOString();
+    phases.push({id:genId('ph'),startIndex:pts.length,endIndex:null,limits:{...activeLimits},lockedAt:null});
+    saveCurrentProject();renderProjectView();
+  });
+}
+
+function recalculateLimits() {
+  const pts=currentProject.dataPoints;
+  const phases=currentProject.phases;
+  const last=phases[phases.length-1];
+  const pPts=pts.slice(last.startIndex);
+  const ne=pPts.filter(p=>!p.excluded).length;
+  if(ne<2){showInfo('Not enough data','Need at least 2 non-excluded points in the current phase to recalculate.');return;}
+  showConfirmModal('Recalculate Limits',`Recalculate limits from the current phase (${ne} non-excluded points from point ${last.startIndex+1} onwards)?\n\nThis creates a new phase boundary.`,'Recalculate',()=>{
+    const pMRs=computeMRs(pPts);
+    const newL=computeLimits(pPts,pMRs);
+    if(!newL){showInfo('Cannot recalculate','Insufficient valid data.');return;}
+    last.endIndex=pts.length-1; last.limits={...newL}; last.lockedAt=new Date().toISOString();
+    phases.push({id:genId('ph'),startIndex:pts.length,endIndex:null,limits:{...newL},lockedAt:null});
+    saveCurrentProject();renderProjectView();
+  });
+}
+
+// ═══════════════════════════════════════
+// PROJECT CRUD
+// ═══════════════════════════════════════
+function newProject() {
+  const name='New Chart '+(getProjectList().length+1);
+  const p=createNewProject(name);
+  saveProjectData(p.id,p);
+  const list=getProjectList();
+  list.unshift({id:p.id,name:p.name,created:p.createdAt,updated:p.updatedAt});
+  saveProjectList(list);
+  showProjectViewScreen(p.id);
+  setTimeout(()=>{document.getElementById('renameInput').value=p.name;showModal('renameModal');setTimeout(()=>{const inp=document.getElementById('renameInput');inp.focus();inp.select();},150);},100);
+}
+
+function showRenameModal() {
+  if(!currentProject) return;
+  document.getElementById('renameInput').value=currentProject.name;
+  showModal('renameModal');
+  setTimeout(()=>{const i=document.getElementById('renameInput');i.focus();i.select();},100);
+}
+function execRenameModal() {
+  const name=document.getElementById('renameInput').value.trim();
+  if(!name){document.getElementById('renameInput').focus();return;}
+  closeModal('renameModal');
+  if(currentProject){
+    currentProject.name=name; saveCurrentProject();
+    document.getElementById('headerProjectName').textContent=name;
+    const list=getProjectList();
+    const item=list.find(p=>p.id===currentProject.id);
+    if(item){item.name=name;saveProjectList(list);}
+  }
+}
+function openRenameForProject(id) {
+  showProjectViewScreen(id);
+  setTimeout(()=>showRenameModal(),200);
+}
+function confirmDeleteProject() {
+  if(currentProject) confirmDeleteProjectById(currentProject.id);
+}
+function confirmDeleteProjectById(id) {
+  const list=getProjectList();
+  const item=list.find(p=>p.id===id);
+  if(!item) return;
+  showConfirmModal('Delete Chart',`Delete "${item.name}"?\n\nThis cannot be undone. Export JSON first if you need a backup.`,'Delete',()=>{
+    const nl=list.filter(p=>p.id!==id);
+    saveProjectList(nl); deleteProjectData(id);
+    if(currentProjectId===id) showProjectListScreen(); else renderProjectList();
+  });
+}
+
+// ═══════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════
+function onSettingChange() {
+  if(!currentProject) return;
+  currentProject.config.zoneTestsDisabled=!document.getElementById('settingZoneTests').checked;
+  currentProject.config.extendedRulesEnabled=document.getElementById('settingExtended').checked;
+  currentProject.config.showZoneLines=document.getElementById('settingZoneLines').checked;
+  saveCurrentProject();renderProjectView();
+}
+function showSettingsModal(){showModal('settingsModal');}
+
+// Metadata
+function showMetadataModal() {
+  if(!currentProject) return;
+  const m=currentProject.metadata;
+  document.getElementById('metaMetricDesc').value=m.metricDescription||'';
+  document.getElementById('metaUnit').value=m.unit||'';
+  document.getElementById('metaWorkArea').value=m.workArea||'';
+  document.getElementById('metaAuthor').value=m.author||'';
+  document.getElementById('metaOrg').value=m.organisation||'';
+  showModal('metadataModal');
+  setTimeout(()=>document.getElementById('metaMetricDesc').focus(),100);
+}
+function saveMetadata() {
+  if(!currentProject) return;
+  currentProject.metadata.metricDescription=document.getElementById('metaMetricDesc').value.trim();
+  currentProject.metadata.unit=document.getElementById('metaUnit').value.trim();
+  currentProject.metadata.workArea=document.getElementById('metaWorkArea').value.trim();
+  currentProject.metadata.author=document.getElementById('metaAuthor').value.trim();
+  currentProject.metadata.organisation=document.getElementById('metaOrg').value.trim();
+  saveCurrentProject(); closeModal('metadataModal'); renderMetricDesc(); renderPrintHeader();
+}
+
+// ═══════════════════════════════════════
+// IMPORT
+// ═══════════════════════════════════════
+function showImportModal(){showModal('importModal');}
+function triggerFileImport(){closeModal('importModal');document.getElementById('csvFileInput').click();}
+function triggerGembaImport(){closeModal('importModal');document.getElementById('gembaFileInput').click();}
+
+function handleCSVFile(ev) {
+  const f=ev.target.files[0]; if(!f) return; ev.target.value='';
+  const r=new FileReader();
+  r.onload=e=>{
+    document.getElementById('csvPasteInput').value=e.target.result;
+    document.getElementById('csvPasteArea').style.display='';
+    document.getElementById('csvPreviewArea').style.display='none';
+    document.getElementById('btnConfirmCSV').style.display='none';
+    showModal('csvModal'); parseCSVPreview();
+  };
+  r.readAsText(f);
+}
+function showCSVPasteModal() {
+  closeModal('importModal');
+  document.getElementById('csvPasteInput').value='';
+  document.getElementById('csvPasteArea').style.display='';
+  document.getElementById('csvPreviewArea').style.display='none';
+  document.getElementById('btnConfirmCSV').style.display='none';
+  showModal('csvModal');
+}
+function backToCSVPaste() {
+  document.getElementById('csvPasteArea').style.display='';
+  document.getElementById('csvPreviewArea').style.display='none';
+  document.getElementById('btnConfirmCSV').style.display='none';
+}
+function parseCSVPreview() {
+  const text=document.getElementById('csvPasteInput').value;
+  if(!text.trim()) return;
+  const fl=text.split('\n')[0];
+  const dl=(fl.split('\t').length>fl.split(',').length)?'\t':(fl.split(';').length>fl.split(',').length)?';':',';
+  const lines=text.trim().split('\n').filter(l=>l.trim());
+  if(lines.length<2){showInfo('Not enough rows','Paste at least a header row and one data row.');return;}
+  const rows=lines.map(l=>l.split(dl).map(c=>c.trim().replace(/^["']|["']$/g,'')));
+  const maxC=Math.max(...rows.map(r=>r.length));
+  const hdrs=rows[0].map((h,i)=>h||`Column ${i+1}`);
+  rows.forEach(r=>{while(r.length<maxC)r.push('');});
+  _csvParsedRows=rows.slice(1); _csvHeaders=hdrs;
+  const opts=hdrs.map((h,i)=>`<option value="${i}">${esc(h)}</option>`).join('');
+  const opts2=hdrs.map((h,i)=>`<option value="${i}" ${i===1?'selected':''}>${esc(h)}</option>`).join('');
+  document.getElementById('csvColSelect').innerHTML=`<div class="csv-col-field"><label>Label column</label><select class="form-select" id="csvLabelCol">${opts}</select></div><div class="csv-col-field"><label>Value column</label><select class="form-select" id="csvValueCol">${hdrs.length>1?opts2:opts}</select></div>`;
+  const prev=rows.slice(0,6);
+  document.getElementById('csvPreviewTable').innerHTML=`<table><thead><tr>${hdrs.map(h=>`<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${prev.map(r=>`<tr>${r.map(c=>`<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+  document.getElementById('csvPasteArea').style.display='none';
+  document.getElementById('csvPreviewArea').style.display='';
+  document.getElementById('btnConfirmCSV').style.display='';
+}
+function confirmCSVImport() {
+  if(!_csvParsedRows) return;
+  const lc=parseInt(document.getElementById('csvLabelCol').value);
+  const vc=parseInt(document.getElementById('csvValueCol').value);
+  let imp=0,skip=0;
+  _csvParsedRows.forEach(r=>{
+    const lbl=r[lc]||''; const rawV=r[vc]; const val=parseFloat(rawV);
+    if(!lbl||isNaN(val)||rawV===''){skip++;return;}
+    currentProject.dataPoints.push({id:genId('dp'),label:lbl,value:val,note:'',excluded:false,excludeReason:''});
+    imp++;
+  });
+  saveCurrentProject(); closeModal('csvModal'); sessionStorage.removeItem('spc_dw');
+  renderProjectView();
+  showInfo('Import complete',`Imported ${imp} data point${imp===1?'':'s'}.${skip>0?` ${skip} row${skip===1?' was':'s were'} skipped (missing label or non-numeric value).`:''}`);
+}
+
+function handleGembaFile(ev) {
+  const f=ev.target.files[0]; if(!f) return; ev.target.value='';
+  const r=new FileReader();
+  r.onload=e=>{
+    try{processGembaImport(JSON.parse(e.target.result));}
+    catch(err){showInfo('Import error','Could not parse this file. Ensure it is a valid Gemba Suite JSON export.');}
+  };
+  r.readAsText(f);
+}
+function processGembaImport(json) {
+  if(!json.gembaApp){showInfo('Not a Gemba file','This file does not appear to be a Gemba Suite export.');return;}
+  if(json.gembaApp==='spc') {
+    if(!json.payload){showInfo('Invalid file','Missing project payload.');return;}
+    showConfirmModal('Restore SPC chart',`Import "${json.context&&json.context.projectName?json.context.projectName:'SPC chart'}" as a new chart?`,'Import',()=>{
+      const pl=json.payload;
+      const np=createNewProject(json.context&&json.context.projectName?json.context.projectName:'Imported Chart');
+      if(pl.dataPoints) np.dataPoints=pl.dataPoints;
+      if(pl.phases) np.phases=pl.phases;
+      if(pl.config) np.config=pl.config;
+      if(pl.metadata) np.metadata=pl.metadata;
+      saveProjectData(np.id,np);
+      const list=getProjectList();
+      list.unshift({id:np.id,name:np.name,created:np.createdAt,updated:np.updatedAt});
+      saveProjectList(list); showProjectViewScreen(np.id);
+    });
+    return;
+  }
+  if(json.gembaApp==='vsm') {
+    _gembaPayload=json;
+    const pl=json.payload;
+    if(!pl||!pl.steps||!pl.steps.length){showInfo('No VSM data','No process steps found.');return;}
+    const opts=[];
+    pl.steps.forEach((s,si)=>{
+      if(s.cycleTime) opts.push({lbl:`${s.name||'Step '+(si+1)} \u2014 Cycle Time`,val:s.cycleTime,sn:s.name||'Step '+(si+1)});
+      if(s.leadTime) opts.push({lbl:`${s.name||'Step '+(si+1)} \u2014 Lead Time`,val:s.leadTime,sn:s.name||'Step '+(si+1)});
+    });
+    if(!opts.length){showInfo('No metrics','No cycle or lead time data found.');return;}
+    document.getElementById('gembaSelectDesc').textContent='Choose which metric to import from the Gemba-VSM export:';
+    document.getElementById('gembaSelectOptions').innerHTML=opts.map((o,i)=>
+      `<button class="btn btn-secondary" style="text-align:left;padding:12px 16px" onclick="importVSMMetric(${i})">${esc(o.lbl)}</button>`).join('');
+    showModal('gembaSelectModal');
+    return;
+  }
+  if(json.gembaApp==='a3') {
+    const pl=json.payload;
+    const bef=pl&&pl.sections&&pl.sections.resultsMeasures&&pl.sections.resultsMeasures.beforeData;
+    if(bef) {
+      const lines=bef.split('\n').filter(l=>l.trim());
+      const pts=lines.map((l,i)=>{const p=l.split(/[\t,]/);const v=parseFloat(p[p.length-1]);return{label:p[0]||`Pt ${i+1}`,value:v};}).filter(p=>!isNaN(p.value));
+      if(pts.length>0) {
+        pts.forEach(p=>currentProject.dataPoints.push({id:genId('dp'),label:p.label,value:p.value,note:'From Gemba-A3',excluded:false,excludeReason:''}));
+        saveCurrentProject(); closeModal('gembaSelectModal');
+        showInfo('Import complete',`Imported ${pts.length} points from Gemba-A3.`); renderProjectView(); return;
+      }
+    }
+    showInfo('No measurement data','No measurement data found in this A3 export.'); return;
+  }
+  showInfo('Unknown source',`This file was exported from Gemba-${json.gembaApp}. Please open it in the correct Gemba Suite app.`);
+}
+function importVSMMetric(idx) {
+  if(!_gembaPayload) return;
+  const pl=_gembaPayload.payload;
+  const opts=[];
+  pl.steps.forEach((s,si)=>{
+    if(s.cycleTime) opts.push({lbl:`${s.name||'Step '+(si+1)} CT`,val:s.cycleTime});
+    if(s.leadTime) opts.push({lbl:`${s.name||'Step '+(si+1)} LT`,val:s.leadTime});
+  });
+  const opt=opts[idx]; if(!opt) return;
+  currentProject.dataPoints.push({id:genId('dp'),label:opt.lbl,value:Number(opt.val),note:'From Gemba-VSM',excluded:false,excludeReason:''});
+  closeModal('gembaSelectModal'); saveCurrentProject(); renderProjectView();
+  showInfo('Imported',`Added 1 data point from Gemba-VSM: ${opt.lbl}.`);
+}
+function handleProjectImport(ev) {
+  const f=ev.target.files[0]; if(!f) return; ev.target.value='';
+  const r=new FileReader();
+  r.onload=e=>{
+    try{processGembaImport(JSON.parse(e.target.result));}
+    catch(err){showInfo('Import error','Could not parse this file.');}
+  };
+  r.readAsText(f);
+}
+
+// ═══════════════════════════════════════
+// EXPORT
+// ═══════════════════════════════════════
+function showExportModal(){showModal('exportModal');}
+
+function buildGembaEnvelope(payload,context) {
+  return JSON.stringify({
+    gembaApp:'spc',appVersion:APP_VERSION,exportedAt:new Date().toISOString(),
+    developer:'David Clark',licence:'CC BY-NC-SA 4.0',
+    context:{projectName:currentProject.name,...context},
+    payload
+  },null,2);
+}
+
+function exportJSON() {
+  const env=buildGembaEnvelope(
+    {dataPoints:currentProject.dataPoints,phases:currentProject.phases,config:currentProject.config,metadata:currentProject.metadata},
+    {metricDescription:currentProject.metadata.metricDescription,chartType:'xmr',author:currentProject.metadata.author,organisation:currentProject.metadata.organisation,workArea:currentProject.metadata.workArea}
+  );
+  dlFile(env,`gemba-spc-${safeName(currentProject.name)}-${todayISO()}.json`,'application/json');
+}
+
+function getCurrentSVG() {
+  const svgEl=document.querySelector('#chartWrapper svg');
+  return svgEl?svgEl.outerHTML:'';
+}
+
+function exportSVG() {
+  const svg=getCurrentSVG();
+  if(!svg){showInfo('No chart','No chart to export yet.');return;}
+  dlFile(svg,`gemba-spc-${safeName(currentProject.name)}-${todayISO()}.svg`,'image/svg+xml');
+}
+
+function exportForA3() {
+  const {flags,activeLimits}=computeAll(currentProject);
+  if(!activeLimits){showInfo('No limits','No limits calculated yet.');return;}
+  const pts=currentProject.dataPoints;
+  const signals=flags.map((f,i)=>f.length?{label:pts[i].label,value:pts[i].value,rules:f}:null).filter(Boolean);
+  const env=buildGembaEnvelope(
+    {chartSVG:getCurrentSVG(),statistics:{xBar:activeLimits.xBar,mRBar:activeLimits.mRBar,uclX:activeLimits.uclX,lclX:activeLimits.lclX,uclMR:activeLimits.uclMR},signals,dataPointCount:pts.length,dateRange:pts.length>=2?`${pts[0].label} to ${pts[pts.length-1].label}`:'',metadata:currentProject.metadata},
+    {metricDescription:currentProject.metadata.metricDescription,exportType:'for-a3'}
+  );
+  dlFile(env,`gemba-spc-for-a3-${safeName(currentProject.name)}-${todayISO()}.json`,'application/json');
+}
+
+function showRCAExportModal() {
+  closeModal('exportModal');
+  const {flags}=computeAll(currentProject);
+  const pts=currentProject.dataPoints;
+  const sigs=flags.map((f,i)=>f.length?{i,p:pts[i],f}:null).filter(Boolean);
+  if(!sigs.length){showInfo('No signals','No flagged signals detected. Nothing to export for RCA.');return;}
+  document.getElementById('rcaSignalList').innerHTML=sigs.map(s=>{
+    const isR=s.f.includes('rule1');
+    return `<button class="btn btn-secondary" style="text-align:left;padding:10px 14px;justify-content:flex-start" onclick="exportRCAForPoint(${s.i})">
+      ${isR?'\ud83d\udd34':'\ud83d\udfe1'} ${esc(s.p.label)}: ${roundN(s.p.value,3)} \u2014 ${s.f.map(r=>RULE_LABELS[r]||r).join(', ')}</button>`;
+  }).join('');
+  showModal('rcaExportModal');
+}
+function openRCAExportForPoint(idx) {
+  exportRCAForPoint(idx);
+}
+function exportRCAForPoint(idx) {
+  const {flags,mrs,activeLimits}=computeAll(currentProject);
+  const pts=currentProject.dataPoints;
+  if(idx<0||idx>=pts.length) return;
+  const pt=pts[idx];
+  const ctx=pts.slice(Math.max(0,idx-5),Math.min(pts.length,idx+6));
+  const ctxMRs=mrs.slice(Math.max(0,idx-5),Math.min(pts.length,idx+6));
+  const env=buildGembaEnvelope(
+    {signal:{label:pt.label,value:pt.value,rules:flags[idx]},context:ctx.map((p,i)=>{const offset=Math.max(0,idx-5);return{label:p.label,value:p.value,mR:mrs[offset+i]?mrs[offset+i].value:null};}),limits:activeLimits,chartSVG:getCurrentSVG(),metadata:currentProject.metadata},
+    {metricDescription:currentProject.metadata.metricDescription,exportType:'for-rca'}
+  );
+  dlFile(env,`gemba-spc-for-rca-${safeName(pt.label)}-${todayISO()}.json`,'application/json');
+  closeModal('rcaExportModal');
+}
+
+// ═══════════════════════════════════════
+// AI LEAN SENSEI COACHING EXPORT
+// ═══════════════════════════════════════
+function showCoachingModal() {
+  if(!currentProject){showInfo('No chart','Open a chart first.');return;}
+  selectCoachTier('practitioner'); selectCoachLLM('claude');
+  generateCoachingPrompt();
+  showModal('coachingModal');
+}
+function selectCoachTier(tier) {
+  _coachTier=tier;
+  ['practitioner','facilitator'].forEach(t=>{
+    document.getElementById('coachTier'+t.charAt(0).toUpperCase()+t.slice(1)).classList.toggle('selected',t===tier);
+  });
+  generateCoachingPrompt();
+}
+function selectCoachLLM(llm) {
+  _coachLLM=llm;
+  ['claude','copilot','gemini'].forEach(l=>{
+    document.getElementById('coachLLM'+l.charAt(0).toUpperCase()+l.slice(1)).classList.toggle('selected',l===llm);
+  });
+  generateCoachingPrompt();
+}
+function generateCoachingPrompt() {
+  const el=document.getElementById('coachingPromptPreview');
+  if(!currentProject||!currentProject.dataPoints.length){el.textContent='Add data points first to generate a coaching prompt.';return;}
+  el.textContent=buildCoachingPrompt(_coachTier,_coachLLM);
+}
+function buildCoachingPrompt(tier,llm) {
+  const pts=currentProject.dataPoints;
+  const {activeLimits,flags}=computeAll(currentProject);
+  const meta=currentProject.metadata;
+  const isCopilot=llm==='copilot';
+  const signals=flags.map((f,i)=>f.length?`  - ${pts[i].label}: ${pts[i].value} (${f.map(r=>RULE_LABELS[r]||r).join(', ')})`:null).filter(Boolean).join('\n');
+  const dr=pts.length>=2?`${pts[0].label} to ${pts[pts.length-1].label}`:'';
+  const dataBlock=isCopilot
+    ?pts.slice(-20).map(p=>`${p.label}: ${p.value}${p.excluded?' [excluded]':''}`).join('\n')
+    :pts.map(p=>`${p.label}: ${p.value}${p.excluded?' [excluded]':''}`).join('\n');
+  const phaseInfo=currentProject.phases.length>1?'Phase II — monitoring against locked limits from Phase I.':'Phase I — establishing baseline limits.';
+  const rulesActive=currentProject.config.zoneTestsDisabled?'Rule 1 only (zone tests disabled)':`Rules 1, 2, 3${currentProject.config.extendedRulesEnabled?' (+ E1, E2 extended rules)':''}`;
+
+  let roleFrame='';
+  if(!isCopilot) roleFrame=`You are an expert lean methodology coach specialising in statistical process control (SPC) for healthcare settings. You follow Donald Wheeler's methodology strictly. You understand the difference between common cause and special cause variation, and you know that the purpose of control charts is to understand the voice of the process, not to judge it against targets.\n\n`;
+
+  let context=`CHART CONTEXT
+Metric: ${meta.metricDescription||currentProject.name}
+Unit: ${meta.unit||'not specified'}
+Work area: ${meta.workArea||'not specified'}
+Organisation: ${meta.organisation||'not specified'}
+Data points: ${pts.length} (${dr})
+Phase: ${phaseInfo}
+Active detection rules: ${rulesActive}\n`;
+
+  let stats=activeLimits
+    ?`\nCONTROL LIMITS (XmR — Wheeler methodology)
+X\u0305 (process average): ${roundN(activeLimits.xBar,4)}
+m\u0305R (mean moving range): ${roundN(activeLimits.mRBar,4)}
+UCL_X (upper): ${roundN(activeLimits.uclX,4)}
+LCL_X (lower): ${roundN(activeLimits.lclX,4)}
+UCL_mR: ${roundN(activeLimits.uclMR,4)}
+Note: UCL = X\u0305 + 2.66\u00d7m\u0305R (2.66 = 3/d\u2082 = genuine 3\u03c3 limits)\n`
+    :'\nLimits not yet calculated (fewer than 2 valid data points).\n';
+
+  let sigs=signals?`\nACTIVE SIGNALS\n${signals}\n`:'\nNo signals detected.\n';
+
+  let data=`\nDATA SERIES${isCopilot?' (last 20 points)':''}\n${dataBlock}\n`;
+
+  let coaching='';
+  if(tier==='practitioner') {
+    coaching=`\nCOACHING TASK (Practitioner level)
+The person using this tool has experience reading process behaviour charts. Please:
+1. Assess whether detected signals are likely genuine special cause variation, or whether context (exclusions, data quality, autocorrelation) should affect interpretation.
+2. Ask the practitioner what process knowledge they have that might explain any signals.
+3. Challenge any temptation to tamper with common cause variation.
+4. Assess whether the process is predictable (stable). If not, what type of instability?
+5. Are the limits appropriate for this type of data? Any data quality concerns?\n`;
+  } else {
+    coaching=`\nCOACHING TASK (Facilitator level)
+The person is learning to use process behaviour charts. Please:
+1. Explain in plain language what the chart is telling them about their process.
+2. Describe the difference between common cause (predictable, system-level) and special cause (unpredictable, assignable) variation, in context.
+3. Walk through any signals and explain what an appropriate response looks like.
+4. Explain that control limits come from the data, not from targets or specifications.
+5. Help them understand what action (if any) is appropriate.\n`;
+  }
+
+  const guardrails=`\nGUARDRAILS
+- Do not suggest solutions or countermeasures — ask questions that help the user find them.
+- Do not assign blame to individuals.
+- Do not make clinical judgements about the data content.
+- Do not invent data or trends not present in the series.
+- Do not recommend tightening or loosening limits without process evidence.
+- If you are uncertain about something, say so clearly.\n`;
+
+  const closing=`\nPLEASE PROVIDE
+1. Signal assessment: which signals (if any) warrant investigation, and why
+2. Process stability judgement: is this a predictable process?
+3. Recommended next actions for the team\n`;
+
+  return `${roleFrame}${context}${stats}${sigs}${data}${coaching}${guardrails}${closing}`;
+}
+
+function copyCoachingPrompt() {
+  const txt=document.getElementById('coachingPromptPreview').textContent;
+  if(!txt||txt.startsWith('Add data')) return;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const btn=document.querySelector('#coachingModal .btn-primary');
+    const orig=btn.textContent; btn.textContent='\u2713 Copied!';
+    setTimeout(()=>{btn.textContent=orig;},2000);
+  }).catch(()=>{
+    showInfo('Copy failed','Please select and copy the text manually from the preview area.');
+  });
+}
+function downloadCoachingPrompt() {
+  const txt=document.getElementById('coachingPromptPreview').textContent;
+  if(!txt||txt.startsWith('Add data')) return;
+  dlFile(txt,`gemba-spc-coach-${safeName(currentProject.name)}-${_coachTier}-${_coachLLM}-${todayISO()}.txt`,'text/plain');
+}
+
+// ═══════════════════════════════════════
+// MODAL SYSTEM
+// ═══════════════════════════════════════
+function showModal(id){document.getElementById(id).classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+function showAboutModal(){showModal('aboutModal');}
+function showConfirmModal(title,msg,okLabel,cb) {
+  document.getElementById('confirmModalTitle').textContent=title;
+  document.getElementById('confirmModalMsg').textContent=msg;
+  document.getElementById('confirmModalOk').textContent=okLabel||'OK';
+  _confirmCallback=cb; showModal('confirmModal');
+}
+function execConfirmModal(){const cb=_confirmCallback;closeModal('confirmModal');_confirmCallback=null;if(cb)cb();}
+function showInfo(title,msg){document.getElementById('infoModalTitle').textContent=title;document.getElementById('infoModalMsg').textContent=msg;showModal('infoModal');}
+
+// Close on overlay click
+document.querySelectorAll('.modal-overlay').forEach(o=>{
+  o.addEventListener('click',function(e){if(e.target===this)this.classList.remove('show');});
+});
+// Enter key in rename
+document.getElementById('renameInput').addEventListener('keydown',e=>{if(e.key==='Enter')execRenameModal();});
+// Enter key in entry
+document.getElementById('entryValue').addEventListener('keydown',e=>{if(e.key==='Enter')addDataPoint();});
+document.getElementById('entryNote').addEventListener('keydown',e=>{if(e.key==='Enter')addDataPoint();});
+// Enter in exclude
+document.getElementById('excludeReason').addEventListener('keydown',e=>{if(e.key==='Enter')execExclude();});
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+function init() {
+  showProjectListScreen();
+  // Keyboard shortcut: Enter on project list creates new
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape') {
+      document.querySelectorAll('.modal-overlay.show').forEach(m=>m.classList.remove('show'));
+    }
+  });
+  // Window resize redraws chart
+  let resizeTimer;
+  window.addEventListener('resize',()=>{
+    clearTimeout(resizeTimer);
+    resizeTimer=setTimeout(()=>{if(currentProject)renderChart();},300);
+  });
+}
+
+init();
+</script>
+</body>
+</html>

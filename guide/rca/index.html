@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#181c1c">
+  <title>Root Cause Analysis with Gemba-RCA — Gemba Suite</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════
+       DESIGN TOKENS — Gemba Suite v1.0
+       ═══════════════════════════════════════ */
+    :root {
+      --ink:                #181c1c;
+      --ink-secondary:      #3e484c;
+      --ink-tertiary:       #6e797c;
+      --paper:              #f7faf9;
+      --card:               #ffffff;
+      --surface-low:        #f1f4f3;
+      --surface-high:       #e6e9e8;
+      --surface-dim:        #d7dbda;
+      --grid:               #bec8cc;
+      --grid-subtle:        #e0e3e2;
+      --primary:            #006172;
+      --primary-container:  #007c91;
+      --primary-tint:       #c4e5ef;
+      --primary-tint-strong:#79d3ea;
+      --on-primary:         #ffffff;
+      --on-primary-tint:    #004e5c;
+      --accent-warm:        #854a10;
+      --accent-warm-container: #a26227;
+      --accent-warm-bg:     #ffdcc3;
+      --on-accent-warm:     #ffffff;
+      --status-success:     #2e7d32;
+      --status-success-bg:  #d4edda;
+      --status-warning:     #856404;
+      --status-warning-bg:  #fff3cd;
+      --status-error:       #ba1a1a;
+      --status-error-bg:    #ffdad6;
+      --shadow-sm:          0 1px 3px rgba(24,28,28,0.06);
+      --shadow-md:          0 2px 8px rgba(24,28,28,0.08);
+      --shadow-lg:          0 4px 16px rgba(24,28,28,0.10);
+      --radius-sm:          4px;
+      --radius-md:          8px;
+      --radius-lg:          12px;
+      --radius-full:        9999px;
+      --font-display:       'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --font-body:          'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+      --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+      --space-12: 48px; --space-16: 64px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--ink);
+      background: var(--paper);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--ink);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-sm);
+    }
+    .header-inner {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 var(--space-5);
+      height: 56px;
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+    .back-link {
+      color: var(--primary-tint);
+      text-decoration: none;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      opacity: 0.85;
+      transition: opacity 0.15s;
+      white-space: nowrap;
+    }
+    .back-link:hover { opacity: 1; }
+    .header-divider {
+      width: 1px;
+      height: 20px;
+      background: rgba(255,255,255,0.2);
+    }
+    .site-name {
+      color: var(--on-primary);
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      flex: 1;
+    }
+
+    /* ── Hero band ── */
+    .page-hero {
+      background: var(--primary);
+      color: var(--on-primary);
+      padding: var(--space-10) var(--space-5) var(--space-8);
+    }
+    .page-hero .container { max-width: 1140px; margin: 0 auto; }
+    .hero-eyebrow {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      color: var(--primary-tint);
+      margin-bottom: var(--space-3);
+    }
+    .page-hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(24px, 4.5vw, 34px);
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      line-height: 1.15;
+      color: var(--on-primary);
+      margin-bottom: var(--space-4);
+    }
+    .page-hero p {
+      font-size: 16px;
+      line-height: 1.6;
+      color: rgba(255,255,255,0.85);
+      max-width: 580px;
+    }
+    .hero-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      margin-top: var(--space-5);
+      flex-wrap: wrap;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      background: rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.9);
+    }
+    .download-link {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary-tint);
+      text-decoration: none;
+      padding: var(--space-2) var(--space-4);
+      border: 1px solid rgba(196,229,239,0.4);
+      border-radius: var(--radius-full);
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .download-link:hover {
+      background: rgba(196,229,239,0.1);
+      border-color: var(--primary-tint);
+    }
+
+    /* ── Two-column layout ── */
+    .body-wrap {
+      flex: 1;
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: var(--space-8) var(--space-5);
+      width: 100%;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: var(--space-8);
+      align-items: start;
+    }
+
+    /* ── TOC sidebar ── */
+    .toc-sidebar {
+      position: sticky;
+      top: 72px;
+      background: var(--card);
+      border: 1px solid var(--grid-subtle);
+      border-radius: var(--radius-md);
+      padding: var(--space-5);
+      box-shadow: var(--shadow-sm);
+    }
+    .toc-title {
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--ink-tertiary);
+      margin-bottom: var(--space-3);
+    }
+    .toc-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .toc-list li a {
+      display: flex;
+      align-items: baseline;
+      gap: var(--space-2);
+      text-decoration: none;
+      font-size: 12.5px;
+      color: var(--ink-secondary);
+      line-height: 1.4;
+      padding: 4px var(--space-2);
+      border-radius: var(--radius-sm);
+      transition: background 0.1s, color 0.1s;
+    }
+    .toc-list li a:hover {
+      background: var(--primary-tint);
+      color: var(--on-primary-tint);
+    }
+    .toc-num {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--primary-container);
+      min-width: 18px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .toc-list li a:hover .toc-num { color: var(--on-primary-tint); }
+    .toc-divider {
+      height: 1px;
+      background: var(--grid-subtle);
+      margin: var(--space-2) 0;
+    }
+    .toc-appendix-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      color: var(--ink-tertiary);
+      padding: 2px var(--space-2);
+      margin-top: var(--space-1);
+    }
+
+    /* ── Main article ── */
+    article { min-width: 0; }
+
+    /* ── Section header ── */
+    .section-header {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-4);
+      margin-bottom: var(--space-5);
+      scroll-margin-top: 72px;
+    }
+    .section-num-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      background: var(--primary-container);
+      color: var(--on-primary);
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .section-num-badge.appendix { background: var(--accent-warm-container); }
+    .section-header h2 {
+      font-family: var(--font-display);
+      font-size: clamp(20px, 3vw, 26px);
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: -0.3px;
+      line-height: 1.15;
+    }
+
+    /* ── Section body ── */
+    .section-body { margin-bottom: var(--space-12); }
+    .section-body + .section-header {
+      padding-top: var(--space-6);
+      border-top: 1px solid var(--grid-subtle);
+    }
+    .section-body h3 {
+      font-family: var(--font-display);
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-top: var(--space-6);
+      margin-bottom: var(--space-3);
+      letter-spacing: -0.1px;
+    }
+    .section-body h4 {
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-top: var(--space-5);
+      margin-bottom: var(--space-2);
+    }
+    .section-body p {
+      font-size: 15px;
+      color: var(--ink-secondary);
+      line-height: 1.7;
+      margin-bottom: var(--space-4);
+    }
+    .section-body p:last-child { margin-bottom: 0; }
+    .section-body strong { color: var(--ink); font-weight: 600; }
+    .section-body a { color: var(--primary-container); }
+
+    /* ── Callout boxes ── */
+    .callout {
+      border-radius: var(--radius-md);
+      padding: var(--space-4) var(--space-5);
+      margin: var(--space-5) 0;
+      display: flex;
+      gap: var(--space-3);
+    }
+    .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .callout-body { flex: 1; }
+    .callout-label {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      margin-bottom: var(--space-1);
+    }
+    .callout-body p { font-size: 14px; line-height: 1.6; margin: 0; }
+    .callout-tip { background: var(--primary-tint); }
+    .callout-tip .callout-label { color: var(--on-primary-tint); }
+    .callout-tip .callout-body p { color: var(--on-primary-tint); }
+    .callout-remember { background: var(--accent-warm-bg); }
+    .callout-remember .callout-label { color: var(--accent-warm); }
+    .callout-remember .callout-body p { color: var(--accent-warm); }
+    .callout-important { background: var(--status-error-bg); }
+    .callout-important .callout-label { color: var(--status-error); }
+    .callout-important .callout-body p { color: var(--status-error); }
+    .callout-offline {
+      background: var(--surface-low);
+      border: 1px solid var(--grid-subtle);
+    }
+    .callout-offline .callout-label { color: var(--ink-tertiary); }
+    .callout-offline .callout-body p { color: var(--ink-secondary); }
+
+    /* ── Tables ── */
+    .table-wrap {
+      overflow-x: auto;
+      margin: var(--space-5) 0;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--grid-subtle);
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    thead th {
+      background: var(--primary);
+      color: var(--on-primary);
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      padding: var(--space-3) var(--space-4);
+      text-align: left;
+      white-space: nowrap;
+    }
+    tbody tr:nth-child(even) { background: var(--surface-low); }
+    tbody tr:hover { background: var(--primary-tint); }
+    tbody td {
+      padding: var(--space-3) var(--space-4);
+      color: var(--ink-secondary);
+      vertical-align: top;
+      border-bottom: 1px solid var(--grid-subtle);
+      line-height: 1.5;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    td strong { color: var(--ink); }
+
+    /* ── Numbered steps ── */
+    .steps-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      margin: var(--space-4) 0;
+    }
+    .steps-list li { display: flex; gap: var(--space-3); align-items: flex-start; }
+    .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-full);
+      background: var(--primary-container);
+      color: var(--on-primary);
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .step-content {
+      flex: 1;
+      font-size: 14.5px;
+      color: var(--ink-secondary);
+      line-height: 1.55;
+    }
+    .step-content strong { color: var(--ink); }
+
+    /* ── Tab item cards ── */
+    .tabs-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      margin: var(--space-4) 0;
+    }
+    .tab-item {
+      display: flex;
+      gap: var(--space-4);
+      padding: var(--space-4) var(--space-5);
+      background: var(--card);
+      border: 1px solid var(--grid-subtle);
+      border-radius: var(--radius-md);
+      align-items: flex-start;
+    }
+    .tab-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      background: var(--primary-container);
+      color: var(--on-primary);
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .tab-text { flex: 1; }
+    .tab-text strong {
+      display: block;
+      font-size: 14px;
+      color: var(--ink);
+      margin-bottom: 2px;
+    }
+    .tab-text p { font-size: 13.5px; color: var(--ink-secondary); line-height: 1.5; margin: 0; }
+
+    /* ── 6M grid ── */
+    .sixm-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: var(--space-3);
+      margin: var(--space-4) 0;
+    }
+    .sixm-card {
+      background: var(--card);
+      border: 1px solid var(--grid-subtle);
+      border-radius: var(--radius-md);
+      padding: var(--space-4) var(--space-5);
+    }
+    .sixm-card-label {
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: var(--space-1);
+    }
+    .sixm-card-desc {
+      font-size: 13px;
+      color: var(--ink-secondary);
+      line-height: 1.5;
+    }
+
+    /* ── Install grid ── */
+    .install-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-4);
+      margin: var(--space-4) 0;
+    }
+    .install-card {
+      background: var(--card);
+      border: 1px solid var(--grid-subtle);
+      border-radius: var(--radius-md);
+      padding: var(--space-5);
+    }
+    .install-card h4 {
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: var(--space-3);
+      text-transform: none;
+      letter-spacing: 0;
+    }
+    .install-card ol {
+      padding-left: var(--space-5);
+      font-size: 14px;
+      color: var(--ink-secondary);
+      line-height: 1.6;
+    }
+    .install-card ol li { margin-bottom: var(--space-2); }
+
+    /* ── Flow diagram ── */
+    .flow-diagram {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      margin: var(--space-5) 0;
+      flex-wrap: wrap;
+    }
+    .flow-step {
+      background: var(--card);
+      border: 2px solid var(--primary-tint);
+      border-radius: var(--radius-md);
+      padding: var(--space-3) var(--space-5);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--on-primary-tint);
+      text-align: center;
+    }
+    .flow-arrow {
+      font-size: 18px;
+      color: var(--primary-container);
+      flex-shrink: 0;
+    }
+
+    /* ── Why steps ── */
+    .why-chain {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin: var(--space-4) 0;
+    }
+    .why-step {
+      display: flex;
+      gap: var(--space-3);
+      align-items: flex-start;
+      padding: var(--space-3) 0;
+    }
+    .why-q {
+      min-width: 44px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--primary-container);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      padding-top: 2px;
+      flex-shrink: 0;
+    }
+    .why-a {
+      flex: 1;
+      font-size: 14px;
+      color: var(--ink-secondary);
+      line-height: 1.5;
+    }
+    .why-step + .why-step { border-top: 1px dashed var(--grid-subtle); }
+
+    /* ── Footer ── */
+    footer {
+      background: var(--ink);
+      color: rgba(255,255,255,0.55);
+      padding: var(--space-6) var(--space-5);
+      font-size: 13px;
+      margin-top: auto;
+    }
+    .footer-inner {
+      max-width: 1140px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+    }
+    .footer-inner a { color: var(--primary-tint); text-decoration: none; }
+    .footer-inner a:hover { text-decoration: underline; }
+    .footer-licence { font-size: 12px; opacity: 0.7; }
+
+    /* ── Responsive ── */
+    @media (max-width: 820px) {
+      .body-wrap { grid-template-columns: 1fr; }
+      .toc-sidebar { position: static; display: none; }
+      .sixm-grid { grid-template-columns: 1fr 1fr; }
+      .install-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      .sixm-grid { grid-template-columns: 1fr; }
+      .hero-meta { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="/guide/" class="back-link">← Guides</a>
+    <div class="header-divider"></div>
+    <span class="site-name">GEMBA SUITE</span>
+  </div>
+</header>
+
+<div class="page-hero">
+  <div class="container">
+    <p class="hero-eyebrow">Full Guide · Root Cause Analysis</p>
+    <h1>Root Cause Analysis with Gemba-RCA</h1>
+    <p>The complete guide — why root cause matters, the Fishbone, 5 Whys, and Pareto methods, and a full walkthrough of Gemba-RCA v1.2.</p>
+    <div class="hero-meta">
+      <span class="hero-badge">v1.2 — April 2026</span>
+      <span class="hero-badge">Healthcare Improvement Edition</span>
+    </div>
+  </div>
+</div>
+
+<div class="body-wrap">
+
+  <!-- ── TOC sidebar ── -->
+  <aside class="toc-sidebar">
+    <p class="toc-title">Contents</p>
+    <ul class="toc-list">
+      <li><a href="#s1"><span class="toc-num">1</span>Overview</a></li>
+      <li><a href="#s2"><span class="toc-num">2</span>Why Root Cause Analysis?</a></li>
+      <li><a href="#s3"><span class="toc-num">3</span>The Three Tools</a></li>
+      <li><a href="#s4"><span class="toc-num">4</span>Starting Your RCA</a></li>
+      <li><a href="#s5"><span class="toc-num">5</span>The Fishbone Diagram</a></li>
+      <li><a href="#s6"><span class="toc-num">6</span>The 5 Whys</a></li>
+      <li><a href="#s7"><span class="toc-num">7</span>Validating Root Causes</a></li>
+      <li><a href="#s8"><span class="toc-num">8</span>Pareto Analysis</a></li>
+      <li><a href="#s9"><span class="toc-num">9</span>Connecting to Gemba-A3</a></li>
+      <li><a href="#s10"><span class="toc-num">10</span>AI Lean Sensei Export</a></li>
+      <li><a href="#s11"><span class="toc-num">11</span>Common Mistakes</a></li>
+      <div class="toc-divider"></div>
+      <p class="toc-appendix-label">Appendices</p>
+      <li><a href="#appA"><span class="toc-num">A</span>The 6M Framework</a></li>
+      <li><a href="#appB"><span class="toc-num">B</span>RCA in the Suite Workflow</a></li>
+    </ul>
+  </aside>
+
+  <!-- ── Main article ── -->
+  <article>
+
+    <!-- ══════════════════════════════════
+         SECTION 1: OVERVIEW
+    ══════════════════════════════════ -->
+    <div class="section-header" id="s1">
+      <div class="section-num-badge">1</div>
+      <h2>Overview</h2>
+    </div>
+    <div class="section-body">
+      <p>This guide introduces root cause analysis (RCA) — what it is, why it matters, and how to do it properly — and then walks you through using Gemba-RCA v1.2 to work through a structured investigation from problem statement to validated root cause.</p>
+
+      <p>Root cause analysis is one of the most misused tools in healthcare improvement. Used well, it is the discipline that separates problems from symptoms, evidence from opinion, and lasting change from firefighting. Used poorly, it produces blame, false certainty, and countermeasures that address the wrong thing. The difference lies not in the tools themselves — Fishbone diagrams, 5 Whys chains, Pareto charts — but in the rigour with which they are applied.</p>
+
+      <h3>Who is this guide for?</h3>
+      <p>Anyone investigating a recurring problem in a healthcare setting — ward managers, laboratory leads, service improvement practitioners, biomedical scientists, clinical staff, and quality teams. No prior lean or RCA experience is required. If you have a problem you have tried to fix before and it keeps coming back, this guide is for you.</p>
+
+      <h3>What you will learn</h3>
+      <ul class="steps-list" style="gap: 8px;">
+        <li><span style="color: var(--primary-container); font-size: 14px; margin-top:2px;">→</span><span class="step-content">Why treating symptoms does not solve problems</span></li>
+        <li><span style="color: var(--primary-container); font-size: 14px; margin-top:2px;">→</span><span class="step-content">How to write a problem statement that focuses the investigation</span></li>
+        <li><span style="color: var(--primary-container); font-size: 14px; margin-top:2px;">→</span><span class="step-content">How to use a Fishbone diagram to map possible causes across the 6M categories</span></li>
+        <li><span style="color: var(--primary-container); font-size: 14px; margin-top:2px;">→</span><span class="step-content">How to use the 5 Whys to drill from possible causes to root causes with evidence</span></li>
+        <li><span style="color: var(--primary-container); font-size: 14px; margin-top:2px;">→</span><span class="step-content">How to validate a root cause using the elimination test</span></li>
+        <li><span style="color: var(--primary-container); font-size: 14px; margin-top:2px;">→</span><span class="step-content">How to use Pareto analysis to prioritise the vital few causes</span></li>
+        <li><span style="color: var(--primary-container); font-size: 14px; margin-top:2px;">→</span><span class="step-content">How to export your findings to Gemba-A3 to complete the problem-solving loop</span></li>
+        <li><span style="color: var(--primary-container); font-size: 14px; margin-top:2px;">→</span><span class="step-content">How to use the AI Lean Sensei coaching export for guided reflection</span></li>
+      </ul>
+
+      <div class="callout callout-important">
+        <span class="callout-icon">⚠</span>
+        <div class="callout-body">
+          <p class="callout-label">Important</p>
+          <p>Gemba-RCA stores your data in your browser's local storage. This can be wiped without warning if your device runs low on space, you clear your browser cache, or the device is reset. Export your JSON after every session. If you have not exported, you have not saved.</p>
+        </div>
+      </div>
+
+      <div class="callout callout-tip">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <p class="callout-label">Tip</p>
+          <p>Gemba-RCA works best as part of a structured improvement cycle. If you are running an A3 problem-solving project, the RCA findings export directly into Gemba-A3. If you have not yet mapped the process, consider starting with Gemba-VSM first — the value stream map often reveals where the problem actually occurs, sharpening your problem statement before you investigate causes.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SECTION 2: WHY ROOT CAUSE ANALYSIS?
+    ══════════════════════════════════ -->
+    <div class="section-header" id="s2">
+      <div class="section-num-badge">2</div>
+      <h2>Why Root Cause Analysis?</h2>
+    </div>
+    <div class="section-body">
+      <h3>The problem with fixing symptoms</h3>
+      <p>Most healthcare improvement activity targets symptoms rather than root causes — and this is why the same problems recur. A department spends hours tracking down a delayed blood result, contacts the lab, chases the report, and eventually gets the answer. The patient pathway is patched for today. But tomorrow the same delay happens. The process of chasing and patching is itself a form of waste, repeated endlessly because the underlying cause — perhaps a poorly understood handoff point, or a capacity mismatch on Monday mornings — has never been identified and addressed.</p>
+
+      <p>Lean thinking describes this as working in the problem rather than on the problem. Root cause analysis is the discipline of stepping back, gathering evidence, and identifying the actual cause rather than the most visible symptom. The goal is a countermeasure that, when implemented, makes the problem go away — not just for this instance, but permanently.</p>
+
+      <h3>Symptoms vs causes</h3>
+      <p>A symptom is the observable effect: "TAT is too long." A cause is a contributing factor: "Samples arrive at an irregular rate, creating peaks the analyser queue cannot absorb." A root cause is the underlying system condition that, if removed, eliminates the problem: "There is no levelling mechanism between phlebotomy dispatch times and laboratory receipt."</p>
+
+      <p>The difficulty is that symptoms present themselves loudly and urgently — they are what staff experience every day. Causes are quieter and require investigation. Root causes are often structural, systemic, and not visible at all without deliberate enquiry.</p>
+
+      <div class="callout callout-remember">
+        <span class="callout-icon">🔍</span>
+        <div class="callout-body">
+          <p class="callout-label">Remember</p>
+          <p>Problems are friends, not enemies. They indicate a gap between the current standard and actual performance. The goal of RCA is not to assign blame but to understand the system condition that allowed the problem to occur — and then change the system.</p>
+        </div>
+      </div>
+
+      <h3>When to use RCA</h3>
+      <p>RCA is most valuable for problems that are recurring, complex, or costly enough to justify structured investigation. It is appropriate when:</p>
+      <ul class="steps-list" style="gap: 8px;">
+        <li><span style="color: var(--primary-container); font-size: 14px; margin-top:2px;">→</span><span class="step-content">The same problem has been "fixed" before without lasting effect</span></li>
+        <li><span style="color: var(--primary-container); font-size: 14px; margin-top:2px;">→</span><span class="step-content">The cause is genuinely unknown and multiple hypotheses exist</span></li>
+        <li><span style="color: var(--primary-container); font-size: 14px; margin-top:2px;">→</span><span class="step-content">Multiple contributing factors are suspected and need to be organised and prioritised</span></li>
+        <li><span style="color: var(--primary-container); font-size: 14px; margin-top:2px;">→</span><span class="step-content">The problem is being escalated through an A3 and root cause evidence is required</span></li>
+        <li><span style="color: var(--primary-container); font-size: 14px; margin-top:2px;">→</span><span class="step-content">A significant clinical event or near miss requires structured investigation</span></li>
+      </ul>
+
+      <h3>When to pause and map first</h3>
+      <p>If you cannot describe where in the process the problem occurs, complete a value stream map with Gemba-VSM first. A VSM will show you the current state of the process, identify where delays and defects cluster, and give you the data to write a sharp problem statement. Starting an RCA with a vague problem statement — "referral process is slow" — produces a vague Fishbone and inconclusive Whys chains. Starting with "post-procedure referral to radiology has a median wait of 4.8 days against a standard of 24 hours, occurring at the handoff between Ward 7 and the radiology booking team" produces a focused, productive investigation.</p>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SECTION 3: THE THREE TOOLS
+    ══════════════════════════════════ -->
+    <div class="section-header" id="s3">
+      <div class="section-num-badge">3</div>
+      <h2>The Three Tools</h2>
+    </div>
+    <div class="section-body">
+      <p>Gemba-RCA combines three complementary analysis tools that work in sequence. Each answers a different question and builds on the output of the previous one.</p>
+
+      <div class="flow-diagram">
+        <div class="flow-step">🐟 Fishbone<br><span style="font-weight:400;font-size:12px;">What might cause this?</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">❓ 5 Whys<br><span style="font-weight:400;font-size:12px;">Why does it happen?</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">📊 Pareto<br><span style="font-weight:400;font-size:12px;">Which causes matter most?</span></div>
+      </div>
+
+      <h3>The Fishbone diagram (Ishikawa diagram)</h3>
+      <p>The Fishbone — also called the Ishikawa diagram or cause-and-effect diagram after its creator Kaoru Ishikawa — is a structured brainstorming tool. The problem statement sits at the "head" of the fish on the right. The "bones" are categories of possible cause that fan out to the left. Within each category, the team lists specific causes they observe or hypothesise.</p>
+
+      <p>The Fishbone is a divergent tool. Its purpose is to cast the net wide — to surface every plausible contributing factor before narrowing down. It prevents the most common RCA mistake, which is investigating only the most obvious cause and missing the actual root. Done well at the gemba, with input from the people who do the work, the Fishbone will generate causes that were invisible from a meeting room.</p>
+
+      <p>Gemba-RCA uses the 6M category framework (People, Equipment, Method, Materials, Measurement, Environment — see <a href="#appA">Appendix A</a> for detailed descriptions). All category labels can be renamed to better fit your context.</p>
+
+      <h3>The 5 Whys</h3>
+      <p>The 5 Whys is a drilling technique that turns a cause into a root cause by repeatedly asking "Why does this happen?" until the underlying system condition is reached. The "5" is a guideline, not a rule — some chains need three iterations, some need seven. The question to stop asking Why is not "have I asked five times?" but "if I eliminate this cause, does the problem go away?"</p>
+
+      <p>Gemba-RCA allows you to select up to three causes from your Fishbone and investigate each with its own Why chain. Each step in the chain records both the answer and the evidence that supports it. This is the critical discipline: every Why answer must be verifiable. If you cannot supply evidence from the gemba, you are hypothesising rather than investigating.</p>
+
+      <h3>Pareto analysis</h3>
+      <p>The Pareto chart helps you decide which causes to address first. Based on the Pareto principle — roughly 80% of effects come from 20% of causes — the chart orders causes by frequency of occurrence, making it easy to identify the "vital few" that are responsible for the majority of the problem.</p>
+
+      <p>In practice, this means counting how many incidents or occurrences can be attributed to each cause. The causes with the highest frequency are the ones whose resolution will have the greatest impact. Pareto analysis is most powerful when you have real observation data from the gemba rather than estimates from a meeting room.</p>
+
+      <div class="callout callout-remember">
+        <span class="callout-icon">🔁</span>
+        <div class="callout-body">
+          <p class="callout-label">Remember</p>
+          <p>The three tools are a sequence, not a menu. Start with the Fishbone to identify candidate causes. Use the 5 Whys to drill the most significant ones. Use Pareto to prioritise. Skipping the Fishbone and going straight to Whys means investigating a cause you have already decided on — not the root cause of the actual problem.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SECTION 4: STARTING YOUR RCA
+    ══════════════════════════════════ -->
+    <div class="section-header" id="s4">
+      <div class="section-num-badge">4</div>
+      <h2>Starting Your RCA</h2>
+    </div>
+    <div class="section-body">
+      <h3>Installing Gemba-RCA</h3>
+      <p>Gemba-RCA is a single HTML file. There is nothing to install in the traditional sense — open it in a browser and it runs. You can add it to your home screen like an app on any phone or tablet.</p>
+
+      <div class="install-grid">
+        <div class="install-card">
+          <h4>Android (Chrome)</h4>
+          <ol>
+            <li>Open <a href="https://gembasuite.org/rca" target="_blank" rel="noopener">gembasuite.org/rca</a> in Chrome</li>
+            <li>Tap the three-dot menu (⋮)</li>
+            <li>Tap <em>Add to Home screen</em></li>
+            <li>Confirm — Gemba-RCA appears as an app icon</li>
+          </ol>
+        </div>
+        <div class="install-card">
+          <h4>iPhone / iPad (Safari)</h4>
+          <ol>
+            <li>Open <a href="https://gembasuite.org/rca" target="_blank" rel="noopener">gembasuite.org/rca</a> in Safari</li>
+            <li>Tap the Share button (□↑)</li>
+            <li>Tap <em>Add to Home Screen</em></li>
+            <li>Confirm — Gemba-RCA appears as an app icon</li>
+          </ol>
+        </div>
+      </div>
+
+      <p>Once opened, Gemba-RCA works fully offline. All data is stored locally on your device. You do not need a login, a subscription, or any IT approval to use it — though you may wish to brief your information governance lead if you intend to deploy it widely across a team (see the IG section below).</p>
+
+      <div class="callout callout-offline">
+        <span class="callout-icon">📶</span>
+        <div class="callout-body">
+          <p class="callout-label">Offline use</p>
+          <p>Once you have opened Gemba-RCA once with an internet connection, it will load from cache even in areas with no signal. This makes it suitable for use in basement laboratories, clinical areas with poor WiFi, and anywhere else with unreliable connectivity.</p>
+        </div>
+      </div>
+
+      <h3>Creating a new RCA session</h3>
+      <p>Tap <strong>+ New RCA</strong> on the home screen. The new project modal asks for:</p>
+
+      <ul class="steps-list">
+        <li><div class="step-num">1</div><div class="step-content"><strong>Project / session name</strong> — give it a meaningful name that identifies the problem and work area, e.g. <em>Delayed TAT investigation — Haematology</em>. This appears in your project list and on exports.</div></li>
+        <li><div class="step-num">2</div><div class="step-content"><strong>Work area / department</strong> — where the problem is occurring.</div></li>
+        <li><div class="step-num">3</div><div class="step-content"><strong>Author and organisation</strong> — your name and Trust, for export and sharing.</div></li>
+        <li><div class="step-num">4</div><div class="step-content"><strong>Date</strong> — defaults to today; adjust if recording a session from a previous date.</div></li>
+        <li><div class="step-num">5</div><div class="step-content"><strong>Problem statement entry route</strong> — choose <em>Standalone</em> to type the problem here, or <em>Import from A3</em> to load a problem statement from a Gemba-A3 JSON export (see below).</div></li>
+      </ul>
+
+      <h3>Writing a good problem statement</h3>
+      <p>The problem statement is the foundation of the entire RCA. A weak problem statement produces a sprawling Fishbone that investigates everything and concludes nothing. A sharp problem statement focuses the team on a specific, measurable gap between current and expected performance.</p>
+
+      <p>A good problem statement answers four questions: <strong>What</strong> is happening? <strong>Where</strong> is it happening? <strong>How often / how much</strong>? <strong>What is the expected standard</strong>? For example: "Post-procedure blood cultures are not being dispatched to the laboratory within one hour of collection (standard). On Ward 7, 63% of cultures in the last 4 weeks arrived after 2 hours, with some exceeding 6 hours."</p>
+
+      <div class="callout callout-tip">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <p class="callout-label">Tip</p>
+          <p>If you struggle to write a specific problem statement, it is a signal that you need more time at the gemba before you start the RCA. Go and see. Observe the process. Count the instances. Measure the gap. A day of gemba observation will sharpen your problem statement more than an hour of discussion in a meeting room.</p>
+        </div>
+      </div>
+
+      <h3>Importing a problem statement from Gemba-A3</h3>
+      <p>If you are running a formal A3 improvement project in Gemba-A3, you can pre-populate the problem statement in Gemba-RCA by importing the A3 JSON file. The RCA tool reads the Section 1 problem statement from the A3 export and loads it automatically. This keeps the problem definition consistent across tools and reduces re-entry errors.</p>
+
+      <p>To use this: in the New RCA modal, select <em>Import from A3</em>, tap <em>Select Gemba-A3 JSON file</em>, and choose the exported A3 file from your device. The problem statement will populate automatically.</p>
+
+      <h3>Information governance</h3>
+      <p>Gemba-RCA has no fields for patient-identifiable data. It focuses entirely on process — causes, evidence, categories, and why chains. All data is stored locally in your browser's localStorage until you explicitly export it. There is no backend, no cloud storage, no user accounts, and no tracking. This design means Gemba-RCA can typically be approved for NHS use without a data processor agreement, as no data ever leaves the device without the user's explicit action.</p>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SECTION 5: THE FISHBONE DIAGRAM
+    ══════════════════════════════════ -->
+    <div class="section-header" id="s5">
+      <div class="section-num-badge">5</div>
+      <h2>The Fishbone Diagram</h2>
+    </div>
+    <div class="section-body">
+      <h3>What the Fishbone tab shows</h3>
+      <p>When you open an RCA session, the Fishbone tab is shown first. At the top sits the problem banner — your problem statement, always visible as a reminder of what you are investigating. Beneath it is the fishbone itself: an SVG diagram with six bones arrayed either side of a central spine, ending at the problem statement head on the right. Below the diagram are six category cards — one for each bone — where you add, manage, and select causes.</p>
+
+      <h3>The six categories</h3>
+      <p>The default categories are the healthcare-adapted 6M framework. Three sit on the top bones (People, Equipment, Method) and three on the bottom (Materials, Measurement, Environment). See <a href="#appA">Appendix A</a> for detailed descriptions of each category and healthcare examples. All category labels can be renamed by tapping the pencil icon on any category card — for example, renaming "Equipment" to "Analysers" if you are investigating a laboratory process.</p>
+
+      <h3>Adding causes</h3>
+      <p>Tap the <strong>+ Add cause</strong> button in any category card. Type a brief, specific cause description and confirm. The cause appears in the category card list and on the corresponding bone in the fishbone SVG diagram. Keep cause descriptions concise but specific — "samples arriving in batches" is more useful than "timing issues".</p>
+
+      <p>The best way to populate the Fishbone is at the gemba, with the people who do the work. Run a brief facilitated session: project the Fishbone on a screen or use your phone, and work through each category systematically. Ask the team: "What in this category might cause the problem?" Do not edit or dismiss causes at this stage — this is divergent thinking. The purpose is to get everything on the diagram before you start narrowing down.</p>
+
+      <h3>Selecting causes for investigation</h3>
+      <p>Once you have populated the Fishbone with candidate causes, the next step is to select the most significant ones for deeper investigation with the 5 Whys. Tap any cause text in a category card to toggle its selection — selected causes highlight in the card and are indicated on the SVG diagram. You can select up to three causes.</p>
+
+      <p>The selection counter in the Fishbone toolbar shows how many causes you have selected ("0 of 3 selected"). Choose the causes that, in the team's judgement, are most likely to be significant contributors. You do not need evidence to select causes — you will gather evidence in the 5 Whys chains. But the selection should be based on what the team actually observes, not on opinion about what the problem "should" be.</p>
+
+      <div class="callout callout-tip">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <p class="callout-label">Tip</p>
+          <p>It is common to focus immediately on the most obvious or most discussed cause. Resist this. Work through every category before selecting. Some of the most impactful causes are in categories that teams initially neglect — Measurement (we do not actually know the data is accurate) and Environment (the physical workspace makes the right method difficult) are frequently underexplored in healthcare RCAs.</p>
+        </div>
+      </div>
+
+      <h3>Renaming categories</h3>
+      <p>Healthcare processes do not always fit neatly into the default 6M labels. If a category name is unhelpful for your context, tap the pencil icon next to any category header to rename it. For example, a community nursing team might rename "Materials" to "Consumables" and "Equipment" to "IT Systems" to better reflect their work. The structure of the Fishbone remains unchanged — only the label changes.</p>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SECTION 6: THE 5 WHYS
+    ══════════════════════════════════ -->
+    <div class="section-header" id="s6">
+      <div class="section-num-badge">6</div>
+      <h2>The 5 Whys</h2>
+    </div>
+    <div class="section-body">
+      <h3>What the 5 Whys tab shows</h3>
+      <p>Once you have selected causes in the Fishbone tab, switch to the <strong>5 Whys</strong> tab. Each selected cause appears as a tab — you can work through each chain independently. If no causes have been selected, the tab shows an empty state with instructions to return to the Fishbone and select causes first.</p>
+
+      <h3>How the 5 Whys works</h3>
+      <p>The 5 Whys is a drilling technique. You start with a cause — something that contributes to the problem — and ask "Why does this happen?" The answer becomes the next cause. You ask "Why does that happen?" again. You keep asking until you reach a condition that is truly systemic: a gap in a standard, a missing process, a structural constraint, or a design flaw in the system. That is the root cause.</p>
+
+      <p>Here is an example from a histopathology laboratory context:</p>
+
+      <div class="why-chain">
+        <div class="why-step">
+          <span class="why-q">Cause</span>
+          <span class="why-a">Blocks are not being embedded within the 4-hour standard.</span>
+        </div>
+        <div class="why-step">
+          <span class="why-q">Why 1</span>
+          <span class="why-a">The embedding room is understaffed on Tuesday afternoons when the highest volume tissue arrives. <em>Evidence: booking data + staffing rota.</em></span>
+        </div>
+        <div class="why-step">
+          <span class="why-q">Why 2</span>
+          <span class="why-a">The rota does not account for Tuesday volume peaks — it was written for average daily throughput. <em>Evidence: rota document + VSM lead time data.</em></span>
+        </div>
+        <div class="why-step">
+          <span class="why-q">Why 3</span>
+          <span class="why-a">No one has measured or modelled demand variation by day of week. <em>Evidence: no demand-by-day report exists.</em></span>
+        </div>
+        <div class="why-step">
+          <span class="why-q">Why 4</span>
+          <span class="why-a"><strong>Root cause:</strong> There is no standard for measuring and adjusting staffing to match demand variation by weekday. The rota is set once and reviewed annually without reference to volume data.</span>
+        </div>
+      </div>
+
+      <p>Note that this root cause is not "we need more staff." It is a systemic gap: no mechanism exists to match staffing to demand variation. A countermeasure that addresses this root cause — for example, a weekly demand review that adjusts the following week's cover — will solve the problem. Adding a single headcount without addressing the underlying planning gap will not.</p>
+
+      <h3>Adding Why steps</h3>
+      <p>In each chain panel, tap <strong>+ Add Why step</strong> to add the next level. Each step has two fields:</p>
+
+      <div class="tabs-list">
+        <div class="tab-item">
+          <div class="tab-icon" style="background: var(--primary-container); font-size: 14px; font-weight: 700;">W</div>
+          <div class="tab-text">
+            <strong>Why answer</strong>
+            <p>The explanation of why the previous level occurs. Keep this concise and specific. If the answer is "we don't know," that is a valid entry — it means you need more observation before proceeding.</p>
+          </div>
+        </div>
+        <div class="tab-item">
+          <div class="tab-icon" style="background: var(--accent-warm-container); font-size: 14px; font-weight: 700;">E</div>
+          <div class="tab-text">
+            <strong>Evidence</strong>
+            <p>What data, observation, or document supports this answer? This is the field that separates proper RCA from opinion-based root cause hunting. If you cannot fill in the evidence field, you have a hypothesis rather than a finding.</p>
+          </div>
+        </div>
+      </div>
+
+      <h3>How deep should you go?</h3>
+      <p>Stop when you reach a cause that satisfies the elimination test: "If we address or remove this cause, does the problem disappear?" If yes, you have found the root cause. If the answer is "it would help but not eliminate it," go deeper or investigate whether there are additional contributing root causes in other Why chains.</p>
+
+      <p>Common errors of depth: stopping too soon (at a symptom rather than a root cause — "the team didn't follow the procedure" is rarely a root cause; why didn't they?); and going too deep (beyond the boundary of what the team can influence — "the NHS is underfunded" may be true but is not actionable at ward level).</p>
+
+      <div class="callout callout-remember">
+        <span class="callout-icon">⚠</span>
+        <div class="callout-body">
+          <p class="callout-label">Remember</p>
+          <p>Every Why answer must have evidence attached. If a step has no evidence, flag it and plan a gemba visit to collect it before concluding the investigation. An unevidenced Why chain is not a root cause analysis — it is a guess written in a structured format.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SECTION 7: VALIDATING ROOT CAUSES
+    ══════════════════════════════════ -->
+    <div class="section-header" id="s7">
+      <div class="section-num-badge">7</div>
+      <h2>Validating Root Causes</h2>
+    </div>
+    <div class="section-body">
+      <h3>The elimination test</h3>
+      <p>At the bottom of each Why chain is a root cause validation section. This applies the elimination test — sometimes called the "if/then" test — to assess whether the deepest cause you have reached is genuinely causal rather than correlational.</p>
+
+      <p>The question is: <strong>"If we address or remove this cause, does the problem disappear?"</strong></p>
+
+      <p>Tap <strong>Yes — Validated</strong> if removing this cause would eliminate the problem. The chain is marked <em>Root Cause Validated</em> (green badge). Tap <strong>No — revisit</strong> if the problem would still occur even if you fixed this cause. The chain is marked <em>Not Validated — revisit Why chain</em> (red badge). If marked not validated, you have either stopped the Why chain too early — go deeper — or the cause you selected from the Fishbone is not a true contributor to the problem.</p>
+
+      <h3>Multiple root causes</h3>
+      <p>Most real healthcare problems have more than one root cause. You may run three Why chains and validate all three — meaning the problem is produced by three concurrent conditions, each of which must be addressed. This is normal and useful. It explains why single-intervention fixes often fail: they address one root cause but leave the others intact.</p>
+
+      <p>Only validated root causes are included when you export to Gemba-A3. This prevents unresolved chains from being imported as though they are conclusions.</p>
+
+      <h3>What to do when a chain does not validate</h3>
+      <p>A chain that does not validate on the elimination test should be revisited. Ask: have you gone deep enough? Is the cause in the Fishbone actually a contributing factor to this specific problem, or is it a general issue that exists independently? Sometimes a thorough Fishbone generates causes that are real problems in their own right but are not causally related to the problem being investigated. This is useful information — capture it separately — but do not let it dilute the current RCA.</p>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SECTION 8: PARETO ANALYSIS
+    ══════════════════════════════════ -->
+    <div class="section-header" id="s8">
+      <div class="section-num-badge">8</div>
+      <h2>Pareto Analysis</h2>
+    </div>
+    <div class="section-body">
+      <h3>The vital few</h3>
+      <p>Pareto analysis — named after the Italian economist Vilfredo Pareto — applies the observation that a minority of causes typically produce the majority of effects. In process improvement, this is often expressed as "80% of problems come from 20% of causes." The ratios are not precise, but the principle is robust: not all causes contribute equally, and prioritising the most frequent ones will deliver the greatest improvement for a given effort.</p>
+
+      <p>The Pareto chart in Gemba-RCA is found in the <strong>Pareto &amp; Export</strong> tab. It shows causes ranked from highest to lowest frequency, making the vital few immediately visible. Use it after completing your Fishbone and 5 Whys to decide which validated root causes to address in your countermeasures.</p>
+
+      <h3>Using the Pareto chart</h3>
+      <p>Tap <strong>+ Add cause</strong> in the Pareto section to enter each candidate cause and the number of incidents attributable to it. This data should come from actual observation — incident logs, process observations, defect tallies, or data extracted from your LIMS or EPR system. Estimated frequencies are acceptable when hard data is not available, but note the uncertainty.</p>
+
+      <p>The SVG bar chart updates automatically as you enter data, ordering causes by frequency. The pattern to look for is a steep drop-off after the first two or three bars — those are your vital few. Addressing the causes to the left of this "elbow" in the chart will produce the greatest impact.</p>
+
+      <div class="callout callout-tip">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <p class="callout-label">Tip</p>
+          <p>Pareto data collection is itself a gemba activity. Consider running a structured tally over a two to four week period — asking frontline staff to mark a tally sheet each time they observe each cause occurring. This produces clean frequency data and has the additional benefit of making the team's evidence visible and participatory. People who have counted the problem are much more committed to solving it.</p>
+        </div>
+      </div>
+
+      <h3>Pareto and prioritisation</h3>
+      <p>The Pareto chart does not make decisions for you — it informs them. A cause that appears infrequently may still be the most important one to address if it produces severe consequences when it occurs (for example, a rare but high-risk patient safety event). Frequency is one dimension of prioritisation. The others include severity of impact, feasibility of countermeasures, and whether the root cause is within the team's span of control.</p>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SECTION 9: CONNECTING TO GEMBA-A3
+    ══════════════════════════════════ -->
+    <div class="section-header" id="s9">
+      <div class="section-num-badge">9</div>
+      <h2>Connecting to Gemba-A3</h2>
+    </div>
+    <div class="section-body">
+      <h3>Completing the problem-solving loop</h3>
+      <p>Root cause analysis is the investigation phase of a broader improvement cycle. Finding a root cause is not the end — it is the transition point to designing and testing countermeasures, checking whether they work, and standardising the ones that do. This complete cycle is what an A3 captures. Gemba-RCA and Gemba-A3 are designed to connect directly, so findings from an RCA can flow into an A3 without re-entry.</p>
+
+      <div class="flow-diagram">
+        <div class="flow-step" style="font-size:12px;">Gemba-VSM<br><span style="font-weight:400;font-size:11px;">Map the process</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step" style="font-size:12px; border-color: var(--primary-tint-strong);">Gemba-RCA<br><span style="font-weight:400;font-size:11px;">Find root cause</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step" style="font-size:12px;">Gemba-A3<br><span style="font-weight:400;font-size:11px;">Countermeasures + PDCA</span></div>
+      </div>
+
+      <h3>Exporting to Gemba-A3</h3>
+      <p>In the <strong>Pareto &amp; Export</strong> tab, tap <strong>Export for A3</strong>. This packages your validated root causes together with the Fishbone SVG diagram into a JSON file formatted for Gemba-A3 import. Only validated Why chains are included — unvalidated chains are excluded automatically.</p>
+
+      <p>To import in Gemba-A3: open your A3 project, go to Section 5 (Root Cause Analysis), and use the <em>Import from Gemba-RCA</em> option. The root causes and Fishbone diagram will populate the A3 section automatically, with source attribution so reviewers can see the data came from a structured RCA rather than unstructured brainstorming.</p>
+
+      <h3>JSON backup export</h3>
+      <p>The <strong>Download JSON</strong> option exports your complete RCA data — all fishbone causes, all Why chains, all Pareto data — in a format you can re-import to Gemba-RCA on any device. Use this to back up your work after every session, share an RCA with colleagues at other sites, or hand over an investigation to another team member.</p>
+
+      <h3>Importing from Gemba-A3</h3>
+      <p>If you have an active A3 project and want to start an RCA from it, the <strong>Import A3 JSON</strong> option reads the problem statement from Section 1 of the A3 and loads it into the RCA problem banner. This ensures the problem definition is consistent between tools.</p>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SECTION 10: AI LEAN SENSEI EXPORT
+    ══════════════════════════════════ -->
+    <div class="section-header" id="s10">
+      <div class="section-num-badge">10</div>
+      <h2>AI Lean Sensei Export</h2>
+    </div>
+    <div class="section-body">
+      <h3>What it does</h3>
+      <p>The AI Lean Sensei coaching export, found in the Pareto &amp; Export tab, generates a structured coaching prompt containing your full RCA — problem statement, Fishbone causes, Why chains, evidence, and validation status. You can paste this prompt into any AI assistant (Claude, Microsoft Copilot, Gemini, or others) to receive structured coaching on your analysis.</p>
+
+      <p>The coaching is deliberately Socratic. A good AI coaching prompt will not tell you the answer — it will ask questions that help you see gaps in your own thinking. Typical questions include: Are there Fishbone categories with suspiciously few causes — what might have been missed? Do the Why chains go deep enough or stop at symptoms? Is the evidence at each step sufficient, or are some steps still hypotheses? Does the elimination test genuinely apply?</p>
+
+      <h3>What it does not do</h3>
+      <p>The AI Lean Sensei is not a substitute for gemba observation. No AI assistant can tell you whether your evidence is accurate, whether the process you have described reflects what actually happens, or whether the root causes you have identified will hold up when tested. These questions can only be answered at the gemba, with the people who do the work.</p>
+
+      <p>Use the AI coaching as a reflective practice tool — a way to stress-test your thinking before you commit to countermeasures — not as a source of root cause conclusions.</p>
+
+      <div class="callout callout-tip">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <p class="callout-label">Tip</p>
+          <p>The AI Lean Sensei export works best when your RCA is detailed and evidenced. An RCA with full Why chains, specific evidence at each step, and completed validation status will generate much richer coaching than a sparse analysis with empty evidence fields. The quality of the coaching reflects the quality of the work you have put in.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         SECTION 11: COMMON MISTAKES
+    ══════════════════════════════════ -->
+    <div class="section-header" id="s11">
+      <div class="section-num-badge">11</div>
+      <h2>Common Mistakes in RCA</h2>
+    </div>
+    <div class="section-body">
+      <p>These are the patterns that produce ineffective RCAs — investigations that consume time, generate plausible-sounding conclusions, and fail to produce lasting improvement.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Mistake</th>
+              <th>What it looks like</th>
+              <th>What to do instead</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Starting with the answer</strong></td>
+              <td>The team selects one cause from the Fishbone — the cause they already believe is responsible — and builds a Why chain to confirm it.</td>
+              <td>Populate all six Fishbone categories before selecting causes. Treat every category as genuinely open.</td>
+            </tr>
+            <tr>
+              <td><strong>Stopping at a symptom</strong></td>
+              <td>The Why chain reaches "staff didn't follow the procedure" or "not enough time" and stops. These are never root causes — they are symptoms of a deeper system condition.</td>
+              <td>Ask why again. Why didn't they follow it? Was the standard unclear? Was it unrealistic? Did they know it existed?</td>
+            </tr>
+            <tr>
+              <td><strong>No evidence</strong></td>
+              <td>Each Why answer is plausible and possibly correct, but no evidence field is filled in. The investigation is a structured conversation rather than an analysis of real data.</td>
+              <td>Treat every unevidenced Why step as a hypothesis requiring a gemba visit to verify.</td>
+            </tr>
+            <tr>
+              <td><strong>Blame as root cause</strong></td>
+              <td>"The root cause is that individual X is not doing their job." Problems are caused by systems, not people. If the same role fails repeatedly under different individuals, the system is the cause.</td>
+              <td>Ask: what system condition allowed this to happen? What standard is missing, unclear, or impossible to follow?</td>
+            </tr>
+            <tr>
+              <td><strong>Vague problem statement</strong></td>
+              <td>"Referral process is slow" or "patient experience could be better." Vague statements produce unfocused Fishbones and inconclusive investigations.</td>
+              <td>Quantify the problem before starting: what is the gap between actual and expected performance, where, and how often?</td>
+            </tr>
+            <tr>
+              <td><strong>Skipping Pareto</strong></td>
+              <td>Three chains are validated and all three are passed to the A3 for countermeasures, regardless of their relative frequency or impact.</td>
+              <td>Use the Pareto chart to prioritise. Start with the cause that accounts for the greatest share of the problem — address the vital few before the trivial many.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         APPENDIX A: THE 6M FRAMEWORK
+    ══════════════════════════════════ -->
+    <div class="section-header" id="appA">
+      <div class="section-num-badge appendix">A</div>
+      <h2>The 6M Framework</h2>
+    </div>
+    <div class="section-body">
+      <p>The 6M framework (sometimes called 6M, 5M+E, or the Ishikawa categories) organises possible causes into six groups that together cover the main domains of any process. Healthcare adaptations of the original manufacturing categories are used throughout Gemba-RCA.</p>
+
+      <div class="sixm-grid">
+        <div class="sixm-card">
+          <div class="sixm-card-label">👥 People</div>
+          <div class="sixm-card-desc">Skills, training, fatigue, communication, staffing levels, role clarity, task allocation, knowledge gaps. Anything involving the human beings in the process.</div>
+        </div>
+        <div class="sixm-card">
+          <div class="sixm-card-label">🔧 Equipment</div>
+          <div class="sixm-card-desc">Analysers, medical devices, IT systems, consumables, maintenance state, calibration, age and reliability. Anything physical that the team uses to do the work.</div>
+        </div>
+        <div class="sixm-card">
+          <div class="sixm-card-label">📋 Method</div>
+          <div class="sixm-card-desc">Standard operating procedures, clinical pathways, protocols, work sequences, handoff steps, decision criteria. The way the work is designed to be done — or actually done.</div>
+        </div>
+        <div class="sixm-card">
+          <div class="sixm-card-label">📦 Materials</div>
+          <div class="sixm-card-desc">Samples, reagents, consumables, documentation, forms, request cards, labels. The inputs to the process — their quality, availability, and condition when they arrive.</div>
+        </div>
+        <div class="sixm-card">
+          <div class="sixm-card-label">📊 Measurement</div>
+          <div class="sixm-card-desc">Data quality, measurement systems, performance indicators, feedback loops, reporting frequency. Can the team see whether the process is performing? Are the metrics accurate and timely?</div>
+        </div>
+        <div class="sixm-card">
+          <div class="sixm-card-label">🏥 Environment</div>
+          <div class="sixm-card-desc">Physical workspace layout, noise, temperature, interruptions, adjacency to related services, storage organisation, and any external or organisational pressures affecting the work.</div>
+        </div>
+      </div>
+
+      <div class="callout callout-tip">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <p class="callout-label">Tip</p>
+          <p>In healthcare RCAs, <strong>Measurement</strong> and <strong>Environment</strong> are the most frequently neglected categories. Teams often have strong views about People and Method but have rarely examined whether their metrics are reliable, whether feedback reaches the frontline in time to act, or how the physical workspace is contributing to the problem. Spend proportionately more time on these categories than feels natural.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         APPENDIX B: RCA IN THE SUITE WORKFLOW
+    ══════════════════════════════════ -->
+    <div class="section-header" id="appB">
+      <div class="section-num-badge appendix">B</div>
+      <h2>RCA in the Gemba Suite Workflow</h2>
+    </div>
+    <div class="section-body">
+      <p>Gemba-RCA sits at the investigation stage of the lean improvement cycle. Understanding where it fits helps you get the most from each tool and know when to move between them.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Tool</th>
+              <th>Stage</th>
+              <th>Key question</th>
+              <th>Output to RCA</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Gemba-VSM</strong></td>
+              <td>Observe &amp; map</td>
+              <td>What does the current process look like? Where are the delays, defects, and waste?</td>
+              <td>Sharp problem statement; process step context; lead time data</td>
+            </tr>
+            <tr>
+              <td><strong>Gemba-RCA</strong></td>
+              <td>Investigate</td>
+              <td>What is causing the problem identified in the VSM or A3?</td>
+              <td>Validated root causes + Fishbone SVG → export to Gemba-A3</td>
+            </tr>
+            <tr>
+              <td><strong>Gemba-A3</strong></td>
+              <td>Solve &amp; test</td>
+              <td>What countermeasures will address the root causes? Do they work?</td>
+              <td>Imports RCA findings into Section 5; countermeasures tested via PDCA</td>
+            </tr>
+            <tr>
+              <td><strong>Gemba-SPC</strong></td>
+              <td>Monitor</td>
+              <td>Has the process improved? Is it stable? Are there new signals to investigate?</td>
+              <td>Process behaviour charts detect signals that may trigger new RCA cycles</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>The tools are designed to be used discretely — you do not need all of them for every improvement project. For a focused, well-defined problem where the process is already understood, starting directly with Gemba-RCA is entirely appropriate. The inter-tool data exchange (VSM → RCA → A3 → SPC) is available when you need it, not mandatory when you do not.</p>
+
+      <p>All data transfers between tools are manual and user-controlled — you export a JSON file from one tool and import it into another. No data moves automatically between tools. This design is deliberate: it keeps each tool operationally independent, supports NHS information governance requirements, and means a connection failure in one tool does not affect the others.</p>
+    </div>
+
+  </article>
+</div><!-- .body-wrap -->
+
+<footer>
+  <div class="footer-inner">
+    <span>David Clark — <a href="https://gembasuite.org">gembasuite.org</a></span>
+    <span class="footer-licence">CC BY-NC-SA 4.0 — Free for healthcare improvement</span>
+  </div>
+</footer>
+
+</body>
+</html>

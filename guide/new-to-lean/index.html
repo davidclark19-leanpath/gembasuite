@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>New to Lean? — Gemba Suite</title>
+<meta name="description" content="A plain-English introduction to lean improvement for healthcare teams. No jargon, no prior experience required.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════
+   New to Lean? — Gemba Suite Guide Page
+   gembasuite.org/guide/new-to-lean
+   David Clark — gembasuite.org
+   CC BY-NC-SA 4.0
+   ═══════════════════════════════════════ */
+
+:root {
+  --ink:                #181c1c;
+  --ink-secondary:      #3e484c;
+  --ink-tertiary:       #6e797c;
+  --paper:              #f7faf9;
+  --card:               #ffffff;
+  --surface-low:        #f1f4f3;
+  --surface-high:       #e6e9e8;
+  --grid:               #bec8cc;
+  --grid-subtle:        #e0e3e2;
+  --primary:            #006172;
+  --primary-container:  #007c91;
+  --primary-tint:       #c4e5ef;
+  --on-primary:         #ffffff;
+  --on-primary-tint:    #004e5c;
+  --accent-warm:        #854a10;
+  --accent-warm-container: #a26227;
+  --accent-warm-bg:     #ffdcc3;
+  --on-accent-warm:     #ffffff;
+  --status-success:     #2e7d32;
+  --status-success-bg:  #d4edda;
+  --shadow-sm:          0 1px 3px rgba(24,28,28,0.06);
+  --shadow-md:          0 2px 8px rgba(24,28,28,0.08);
+  --radius-sm:          4px;
+  --radius-md:          8px;
+  --radius-lg:          12px;
+  --font-display:       'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-body:          'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --space-2:            8px;
+  --space-3:            12px;
+  --space-4:            16px;
+  --space-6:            24px;
+  --space-8:            32px;
+  --space-10:           40px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Header ── */
+.site-header {
+  background: var(--ink);
+  padding: 14px var(--space-6);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+.site-header-inner {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.site-header a {
+  color: var(--on-primary);
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.2px;
+}
+.site-header .back-link {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 13px;
+  opacity: 0.8;
+  transition: opacity 0.15s ease;
+}
+.site-header .back-link:hover { opacity: 1; }
+
+/* ── Article ── */
+.guide-article {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-6) 80px;
+}
+
+/* ── Hero ── */
+.guide-hero {
+  margin-bottom: var(--space-10);
+}
+.guide-hero .badge {
+  display: inline-block;
+  background: var(--primary-tint);
+  color: var(--on-primary-tint);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  margin-bottom: var(--space-3);
+}
+.guide-hero h1 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(28px, 5vw, 38px);
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+  color: var(--ink);
+  margin-bottom: var(--space-3);
+}
+.guide-hero .subtitle {
+  font-size: 17px;
+  color: var(--ink-secondary);
+  line-height: 1.55;
+  max-width: 580px;
+}
+
+/* ── Section headings ── */
+h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1.25;
+  letter-spacing: -0.3px;
+  color: var(--primary);
+  margin-top: 48px;
+  margin-bottom: var(--space-4);
+}
+h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 17px;
+  line-height: 1.35;
+  color: var(--ink);
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-3);
+}
+
+p { margin-bottom: var(--space-4); }
+
+/* ── Callout boxes ── */
+.callout {
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-6);
+  margin: var(--space-6) 0;
+}
+.callout-teal {
+  background: var(--primary-tint);
+  border-left: 4px solid var(--primary);
+}
+.callout-teal p { color: var(--on-primary-tint); }
+.callout-amber {
+  background: var(--accent-warm-bg);
+  border-left: 4px solid var(--accent-warm);
+}
+.callout-amber p { color: var(--accent-warm); margin-bottom: 0; }
+.callout-label {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  margin-bottom: var(--space-2);
+  display: block;
+}
+.callout-teal .callout-label { color: var(--primary); }
+.callout-amber .callout-label { color: var(--accent-warm); }
+
+/* ── Scenario cards ── */
+.scenario-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  margin: var(--space-6) 0;
+}
+@media (min-width: 560px) {
+  .scenario-grid { grid-template-columns: 1fr 1fr; }
+}
+.scenario-card {
+  background: var(--card);
+  border: 1px solid var(--grid-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-sm);
+}
+.scenario-card .role {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--primary);
+  margin-bottom: var(--space-2);
+}
+.scenario-card p {
+  font-size: 14px;
+  color: var(--ink-secondary);
+  margin-bottom: 0;
+  line-height: 1.5;
+}
+
+/* ── Step list ── */
+.step-list {
+  counter-reset: step;
+  list-style: none;
+  margin: var(--space-6) 0;
+}
+.step-list li {
+  counter-increment: step;
+  position: relative;
+  padding-left: 48px;
+  margin-bottom: var(--space-6);
+  min-height: 36px;
+}
+.step-list li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 2px;
+  width: 32px;
+  height: 32px;
+  background: var(--primary-container);
+  color: var(--on-primary);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+.step-list li strong {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+/* ── PDCA visual ── */
+.pdca-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  margin: var(--space-6) 0;
+}
+.pdca-card {
+  background: var(--card);
+  border: 1px solid var(--grid-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-sm);
+}
+.pdca-card .pdca-label {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.pdca-plan .pdca-label { color: var(--primary); }
+.pdca-do .pdca-label { color: var(--status-success); }
+.pdca-check .pdca-label { color: var(--accent-warm); }
+.pdca-act .pdca-label { color: #6D5BD0; }
+.pdca-card p { font-size: 14px; color: var(--ink-secondary); margin-bottom: 0; line-height: 1.45; }
+
+/* ── CTA section ── */
+.cta-section {
+  background: var(--primary);
+  color: var(--on-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8) var(--space-6);
+  margin-top: 56px;
+  text-align: center;
+}
+.cta-section h2 {
+  color: var(--on-primary);
+  margin-top: 0;
+  margin-bottom: var(--space-3);
+}
+.cta-section p {
+  color: rgba(255,255,255,0.85);
+  max-width: 480px;
+  margin: 0 auto var(--space-6);
+}
+.cta-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  justify-content: center;
+}
+.cta-buttons a {
+  display: inline-block;
+  padding: 12px 24px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  min-height: 44px;
+  transition: background 0.15s ease;
+}
+.btn-white {
+  background: var(--on-primary);
+  color: var(--primary);
+}
+.btn-white:hover { background: var(--primary-tint); }
+.btn-outline {
+  background: transparent;
+  color: var(--on-primary);
+  border: 1.5px solid rgba(255,255,255,0.4);
+}
+.btn-outline:hover { background: rgba(255,255,255,0.1); }
+
+/* ── Footer ── */
+.guide-footer {
+  max-width: 720px;
+  margin: 48px auto 0;
+  padding: var(--space-6);
+  border-top: 1px solid var(--grid-subtle);
+  text-align: center;
+  font-size: 13px;
+  color: var(--ink-tertiary);
+  line-height: 1.6;
+}
+.guide-footer a { color: var(--primary); text-decoration: none; }
+.guide-footer a:hover { text-decoration: underline; }
+
+/* ── Emphasis ── */
+strong { font-weight: 600; }
+em { font-style: italic; }
+a { color: var(--primary); }
+
+/* ── Waste list ── */
+.waste-list {
+  list-style: none;
+  margin: var(--space-4) 0 var(--space-6);
+}
+.waste-list li {
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--grid-subtle);
+  font-size: 15px;
+}
+.waste-list li:last-child { border-bottom: none; }
+.waste-letter {
+  display: inline-block;
+  width: 28px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: var(--primary);
+}
+
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-header-inner">
+    <a href="https://gembasuite.org">Gemba Suite</a>
+    <a href="https://gembasuite.org" class="back-link">&larr; Back to tools</a>
+  </div>
+</header>
+
+<article class="guide-article">
+
+  <section class="guide-hero">
+    <span class="badge">Getting Started</span>
+    <h1>New to Lean?</h1>
+    <p class="subtitle">You don't need any prior experience. If you've ever thought "there must be a better way to do this" — you're already thinking lean. This guide is your starting point.</p>
+  </section>
+
+  <!-- ════════════════════════════════ -->
+  <h2>What is lean improvement?</h2>
+
+  <p>Lean improvement is a structured way of making work better. Not by working harder or faster, but by understanding how work actually flows — step by step — and removing the things that slow it down, cause errors, or waste people's time.</p>
+
+  <p>It started in manufacturing but the ideas apply anywhere work follows a process. In healthcare, that means patient pathways, lab workflows, clinic schedules, referral routes — anywhere a patient, sample, or piece of information moves through a series of steps to reach a result.</p>
+
+  <div class="callout callout-teal">
+    <span class="callout-label">The core idea</span>
+    <p>Most of the time something spends in a process, nothing useful is happening to it. A blood sample sits in a transport bag. A referral waits in an inbox. A patient waits for a bed. Lean improvement makes that gap visible and gives your team a method for shrinking it.</p>
+  </div>
+
+  <!-- ════════════════════════════════ -->
+  <h2>This is for you</h2>
+
+  <p>Lean improvement works because the people who do the work are the ones who understand it best. You don't need to be a manager, a consultant, or have any special training. If you work in a healthcare team and you can describe what happens in your part of the process, you can do this.</p>
+
+  <div class="scenario-grid">
+    <div class="scenario-card">
+      <div class="role">Lab scientist</div>
+      <p>"Samples pile up every morning and we're always catching up. I want to understand why."</p>
+    </div>
+    <div class="scenario-card">
+      <div class="role">Ward nurse</div>
+      <p>"Discharge takes hours of chasing. I know where the bottlenecks are but I can't prove it."</p>
+    </div>
+    <div class="scenario-card">
+      <div class="role">Clinic coordinator</div>
+      <p>"We redesigned our booking process but nothing improved. I don't know what went wrong."</p>
+    </div>
+    <div class="scenario-card">
+      <div class="role">Team lead</div>
+      <p>"We've been told to do a QI project but nobody knows where to start."</p>
+    </div>
+  </div>
+
+  <p>Every one of these situations is a lean improvement opportunity. The tools in Gemba Suite are designed to help you work through them — from understanding your current process, to finding the root cause of problems, to testing and measuring real changes.</p>
+
+  <p>In an ideal world, every healthcare professional would have an expert improvement coach alongside them — someone to guide their thinking, challenge their assumptions, and help them build real expertise. In reality, for most teams, that coaching simply isn't available. The expertise exists but it doesn't scale.</p>
+
+  <p>Gemba Suite is built to close that gap. Free tools, structured learning resources, and built-in AI coaching support give you the framework to develop lean improvement skills yourself — at your own pace, on your own problems. The goal isn't just to run one project. It's to help you become someone who sees problems clearly and knows how to solve them. Like any skill, that expertise comes from repeated, structured practice with feedback. Every map you draw, every root cause you trace, every PDCA cycle you run makes the next one sharper.</p>
+
+  <!-- ════════════════════════════════ -->
+  <h2>Three principles — everything starts here</h2>
+
+  <p>Lean improvement rests on three ideas. They sound simple, but they change how you approach every problem. They're also skills — and like all skills, they get stronger each time you use them.</p>
+
+  <h3>1. Go and see</h3>
+  <p>Don't guess what happens in a process. Don't rely on what someone told you in a meeting. Walk to where the work happens — the lab bench, the clinic room, the ward — and watch. Time things. Count things. Take photos. The Japanese word for this is <em>genchi genbutsu</em>: go to the actual place and see with your own eyes.</p>
+
+  <p>In Gemba Suite, this is what "gemba" means. The gemba is wherever the work is done. The tools are designed to go with you — on your phone or tablet — so you capture real data in real time, not remembered data written up later.</p>
+
+  <h3>2. Ask why — with evidence</h3>
+  <p>When something goes wrong, the instinct is to fix the symptom. A sample was lost? Add a checklist. A patient waited too long? Hire another person. But if you haven't understood <em>why</em> the problem happened, the fix won't last.</p>
+
+  <p>Lean thinking asks you to trace problems back to their root cause by asking "why?" repeatedly, each time backing up the answer with evidence. Not opinions, not assumptions — observed facts.</p>
+
+  <h3>3. Involve the people who do the work</h3>
+  <p>The best improvements come from the team, not from a consultant or a manager's office. The people who process the samples, answer the phones, move the patients — they know where the problems are. Lean improvement gives them the structure and permission to solve those problems.</p>
+
+  <div class="callout callout-amber">
+    <span class="callout-label">Remember</span>
+    <p>Problems are friends, not enemies. Every problem is a gap between what should happen and what actually happens. Lean improvement correlates problems with broken processes and missing standards — never with blame.</p>
+  </div>
+
+  <!-- ════════════════════════════════ -->
+  <h2>What does "waste" mean?</h2>
+
+  <p>In lean thinking, waste is anything that takes time, effort, or resources but doesn't add value for the patient or end user. Most processes are full of it — typically only 5–15% of the total time is actually spent doing useful work.</p>
+
+  <p>There are eight types of waste. The mnemonic is <strong>DOWNTIME</strong>:</p>
+
+  <ul class="waste-list">
+    <li><span class="waste-letter">D</span> <strong>Defects</strong> — errors that need rework or correction</li>
+    <li><span class="waste-letter">O</span> <strong>Overproduction</strong> — doing more than is needed, or doing it too early</li>
+    <li><span class="waste-letter">W</span> <strong>Waiting</strong> — idle time between steps while work sits in a queue</li>
+    <li><span class="waste-letter">N</span> <strong>Non-utilised talent</strong> — not using people's skills and knowledge</li>
+    <li><span class="waste-letter">T</span> <strong>Transportation</strong> — moving things further than necessary</li>
+    <li><span class="waste-letter">I</span> <strong>Inventory</strong> — excess stock or work-in-progress piling up</li>
+    <li><span class="waste-letter">M</span> <strong>Motion</strong> — unnecessary movement of people</li>
+    <li><span class="waste-letter">E</span> <strong>Extra processing</strong> — steps that add no value to the outcome</li>
+  </ul>
+
+  <p>You don't need to memorise these before you start. The tools will prompt you. But once you start looking for waste, you'll see it everywhere — and that's a good thing, because now you can measure it and do something about it.</p>
+
+  <!-- ════════════════════════════════ -->
+  <h2>The improvement cycle — PDCA</h2>
+
+  <p>Lean improvement isn't about having one big idea and implementing it. It's about small, tested changes that you learn from. The method is called <strong>PDCA</strong> — Plan, Do, Check, Act — and every improvement follows this cycle:</p>
+
+  <div class="pdca-grid">
+    <div class="pdca-card pdca-plan">
+      <div class="pdca-label">Plan</div>
+      <p>Understand the problem. Gather data. Find the root cause. Design a countermeasure to test.</p>
+    </div>
+    <div class="pdca-card pdca-do">
+      <div class="pdca-label">Do</div>
+      <p>Test your countermeasure on a small scale. Don't roll it out everywhere — try it once and see what happens.</p>
+    </div>
+    <div class="pdca-card pdca-check">
+      <div class="pdca-label">Check</div>
+      <p>Measure the result. Did it work? Did it create new problems? What did you learn?</p>
+    </div>
+    <div class="pdca-card pdca-act">
+      <div class="pdca-label">Act</div>
+      <p>If it worked, make it the new standard. If it didn't, try a different approach. Either way, you've learned something.</p>
+    </div>
+  </div>
+
+  <p>This cycle repeats. Each time round, you understand the problem better and your process gets a little more reliable. But something else happens too — <em>you</em> get better. Your questions get sharper, your observations more precise, your instinct for where waste hides more reliable. That's continuous improvement applied to yourself, not just your process.</p>
+
+  <!-- ════════════════════════════════ -->
+  <h2>How the tools fit together</h2>
+
+  <p>Each tool in Gemba Suite handles one part of the improvement cycle. You don't need to use them all — start with whichever one matches where you are right now.</p>
+
+  <ol class="step-list">
+    <li>
+      <strong>Understand your process — Gemba-VSM</strong>
+      Value stream mapping captures what actually happens, step by step. Walk your process with the app on your phone, record the times, and see where the waste is. This is usually where improvement starts.
+    </li>
+    <li>
+      <strong>Find the root cause — Gemba-RCA</strong>
+      When you've spotted a problem, dig beneath the surface. Build a fishbone diagram to organise possible causes, then use 5 Whys evidence chains to trace each one to its root.
+    </li>
+    <li>
+      <strong>Solve the problem — Gemba-A3</strong>
+      A3 problem solving walks you through the full PDCA cycle on a single page. Define the problem, set a target, test countermeasures, and track whether they worked.
+    </li>
+    <li>
+      <strong>Monitor your process — Gemba-SPC</strong>
+      Statistical process control charts show whether your process is stable or signalling. They separate real change from normal variation — so you know when to act and when to leave things alone.
+    </li>
+    <li>
+      <strong>Hold the gains — Gemba-StandardWork</strong>
+      Once you've found a better way, write it down. Standard work captures the current best method so the whole team works consistently — and so your improvement doesn't quietly unravel.
+    </li>
+  </ol>
+
+  <p>Every app also includes an <strong>AI Lean Sensei coaching export</strong> — a structured prompt you paste into an AI assistant (Copilot, Claude, or Gemini) to get guided reflection on your work. It's not a replacement for a human coach, but it gives you the kind of structured questioning that builds your thinking: <em>What does the data tell you? What assumptions are you making? What would you test next?</em> The more you use it, the more you'll find yourself asking those questions before the AI does.</p>
+
+  <div class="callout callout-teal">
+    <span class="callout-label">Where to start</span>
+    <p>If you're new to all of this, start with <strong>Gemba-VSM</strong>. Map one process — just the part you know well. It will take 30–60 minutes at the gemba and the result will show you things about your own process that you've never seen laid out before. That's the moment lean improvement clicks.</p>
+  </div>
+
+  <!-- ════════════════════════════════ -->
+  <h2>You don't need permission to improve</h2>
+
+  <p>One of the most powerful things about lean improvement is that you can start small, with your own team, with no budget and no sign-off. Map one process. Find one waste. Test one change. If it works, show the data to your manager. The evidence does the persuading.</p>
+
+  <p>The tools are free, they run on your phone, and your data stays on your device. There's nothing to install, no accounts to create, and no IT department involved. You can start today — and each time you do, you're not just improving a process, you're building a capability that stays with you wherever you go in your career.</p>
+
+  <!-- ════════════════════════════════ -->
+  <section class="cta-section">
+    <h2>Ready to start?</h2>
+    <p>Pick a tool and try it. No setup needed — just open it in your browser. The first map is the hardest. After that, you'll wonder how you ever worked without one.</p>
+    <div class="cta-buttons">
+      <a href="https://gembasuite.org/vsm" class="btn-white">Open Gemba-VSM</a>
+      <a href="https://gembasuite.org/#tools" class="btn-outline">Explore all tools</a>
+      <a href="https://gembasuite.org/#get-started" class="btn-outline">How to get started</a>
+    </div>
+  </section>
+
+</article>
+
+<footer class="guide-footer">
+  <strong>Gemba Suite</strong> — David Clark — <a href="https://gembasuite.org">gembasuite.org</a><br>
+  <a href="https://gembasuite.org/licence">CC BY-NC-SA 4.0</a> · Free for healthcare improvement
+</footer>
+
+</body>
+</html>

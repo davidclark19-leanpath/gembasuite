@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#181c1c">
+  <title>A3 Quick Start — Gemba Suite</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #181c1c; --ink-secondary: #3e484c; --ink-tertiary: #6e797c;
+      --paper: #f7faf9; --card: #ffffff; --surface-low: #f1f4f3;
+      --surface-high: #e6e9e8; --grid: #bec8cc; --grid-subtle: #e0e3e2;
+      --primary: #006172; --primary-container: #007c91; --primary-tint: #c4e5ef;
+      --primary-tint-strong: #79d3ea; --on-primary: #ffffff; --on-primary-tint: #004e5c;
+      --accent-warm: #854a10; --accent-warm-container: #a26227; --accent-warm-bg: #ffdcc3; --on-accent-warm: #ffffff;
+      --status-error: #ba1a1a; --status-error-bg: #ffdad6;
+      --status-success: #2e7d32; --status-success-bg: #d4edda;
+      --status-warning: #856404; --status-warning-bg: #fff3cd;
+      --shadow-sm: 0 1px 3px rgba(24,28,28,0.06); --shadow-md: 0 2px 8px rgba(24,28,28,0.08);
+      --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px; --radius-full: 9999px;
+      --font-display: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+      --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-body); font-size: 15px; line-height: 1.6;
+      color: var(--ink); background: var(--paper); min-height: 100vh; display: flex; flex-direction: column;
+    }
+    header { background: var(--ink); position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow-sm); }
+    .header-inner { max-width: 800px; margin: 0 auto; padding: 0 var(--space-5); height: 56px; display: flex; align-items: center; gap: var(--space-4); }
+    .back-link { color: var(--primary-tint); text-decoration: none; font-size: 13px; font-weight: 600; opacity: 0.85; transition: opacity 0.15s; }
+    .back-link:hover { opacity: 1; }
+    .header-divider { width: 1px; height: 20px; background: rgba(255,255,255,0.2); }
+    .site-name { color: var(--on-primary); font-family: var(--font-display); font-size: 16px; font-weight: 700; letter-spacing: 0.18em; flex: 1; }
+    .page-hero { background: var(--primary); color: var(--on-primary); padding: var(--space-10) var(--space-5) var(--space-8); }
+    .page-hero .container { max-width: 800px; margin: 0 auto; }
+    .hero-label { font-size: 11px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: var(--primary-tint); margin-bottom: var(--space-3); }
+    .page-hero h1 { font-family: var(--font-display); font-size: clamp(24px, 5vw, 32px); font-weight: 800; letter-spacing: -0.3px; line-height: 1.15; color: var(--on-primary); margin-bottom: var(--space-3); }
+    .hero-meta { font-size: 14px; color: rgba(255,255,255,0.75); margin-bottom: var(--space-3); }
+    .page-hero p { font-size: 15px; line-height: 1.6; color: rgba(255,255,255,0.85); max-width: 560px; }
+    .page-layout { max-width: 800px; margin: 0 auto; padding: var(--space-8) var(--space-5); display: flex; gap: var(--space-8); align-items: flex-start; flex: 1; width: 100%; }
+    .toc { position: sticky; top: 72px; width: 180px; flex-shrink: 0; background: var(--card); border: 1px solid var(--grid-subtle); border-radius: var(--radius-md); padding: var(--space-4); box-shadow: var(--shadow-sm); }
+    .toc-title { font-size: 10px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: var(--ink-tertiary); margin-bottom: var(--space-3); display: block; }
+    .toc ol { list-style: none; }
+    .toc li { margin-bottom: 2px; }
+    .toc a { display: block; font-size: 12px; line-height: 1.4; color: var(--ink-secondary); text-decoration: none; padding: 4px 6px; border-radius: var(--radius-sm); transition: background 0.12s, color 0.12s; }
+    .toc a:hover { background: var(--primary-tint); color: var(--on-primary-tint); }
+    main { flex: 1; min-width: 0; }
+    section { margin-bottom: var(--space-8); scroll-margin-top: 72px; }
+    h2 { font-family: var(--font-display); font-size: 19px; font-weight: 700; letter-spacing: -0.1px; color: var(--primary); border-bottom: 2px solid var(--primary-tint); padding-bottom: var(--space-2); margin-bottom: var(--space-5); }
+    h3 { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--ink); margin: var(--space-5) 0 var(--space-3); letter-spacing: 0.1px; }
+    p { margin-bottom: var(--space-4); color: var(--ink-secondary); }
+    p:last-child { margin-bottom: 0; }
+    strong { color: var(--ink); font-weight: 600; }
+    /* Problem types table */
+    .problem-types { width: 100%; border-collapse: collapse; margin: var(--space-4) 0; font-size: 14px; }
+    .problem-types th { background: var(--surface-high); color: var(--ink-secondary); font-size: 11px; font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; padding: 7px 10px; text-align: left; border-bottom: 2px solid var(--grid); }
+    .problem-types td { padding: 9px 10px; border-bottom: 1px solid var(--grid-subtle); vertical-align: top; line-height: 1.5; }
+    .problem-types tr:last-child td { border-bottom: none; }
+    .type-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      font-family: var(--font-display); font-size: 11px; font-weight: 700;
+      width: 28px; height: 28px; border-radius: var(--radius-full);
+      background: var(--primary-container); color: var(--on-primary); margin-right: var(--space-2);
+    }
+    .type-1 { background: var(--status-warning-bg); color: var(--status-warning); border: 1px solid var(--status-warning); }
+    .type-2 { background: var(--primary); color: var(--on-primary); }
+    .type-3 { background: var(--status-success-bg); color: var(--status-success); border: 1px solid var(--status-success); }
+    .type-4 { background: var(--surface-high); color: var(--ink-secondary); border: 1px solid var(--grid); }
+    /* Tabs */
+    .tabs-list { list-style: none; margin: var(--space-3) 0 var(--space-4); }
+    .tabs-list li { display: flex; gap: var(--space-3); padding: 9px var(--space-3); border-bottom: 1px solid var(--grid-subtle); font-size: 14px; align-items: baseline; }
+    .tabs-list li:last-child { border-bottom: none; }
+    .tab-name { font-weight: 600; color: var(--primary); min-width: 100px; }
+    .tab-desc { color: var(--ink-secondary); }
+    /* Sections list */
+    .sections-list { list-style: none; margin: var(--space-3) 0; }
+    .sections-list li { display: flex; gap: var(--space-4); padding: 10px var(--space-3); border-bottom: 1px solid var(--grid-subtle); font-size: 14px; align-items: flex-start; }
+    .sections-list li:last-child { border-bottom: none; }
+    .section-num {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; border-radius: var(--radius-full); flex-shrink: 0;
+      background: var(--primary-container); color: var(--on-primary);
+      font-family: var(--font-display); font-size: 12px; font-weight: 700;
+    }
+    .section-num.dca { background: var(--accent-warm-container); }
+    .section-content { flex: 1; }
+    .section-title { font-weight: 600; color: var(--ink); display: block; margin-bottom: 3px; }
+    .section-note { color: var(--ink-secondary); font-size: 13px; line-height: 1.5; }
+    /* Import routing */
+    .data-table { width: 100%; border-collapse: collapse; margin: var(--space-4) 0; font-size: 14px; }
+    .data-table th { background: var(--surface-high); color: var(--ink-secondary); font-size: 11px; font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; padding: 7px 10px; text-align: left; border-bottom: 2px solid var(--grid); }
+    .data-table td { padding: 8px 10px; border-bottom: 1px solid var(--grid-subtle); vertical-align: top; line-height: 1.5; }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table td:first-child { font-weight: 600; color: var(--ink); }
+    .data-table tr:nth-child(even) td { background: var(--surface-low); }
+    /* Install */
+    .install-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin: var(--space-4) 0; }
+    .install-block { background: var(--surface-low); border: 1px solid var(--grid-subtle); border-radius: var(--radius-md); padding: var(--space-4); }
+    .install-block h4 { font-family: var(--font-display); font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: var(--space-3); }
+    .install-block ol { margin: 0; padding-left: var(--space-5); font-size: 13px; color: var(--ink-secondary); line-height: 1.55; }
+    .install-block ol li { margin-bottom: var(--space-2); }
+    /* Export list */
+    .export-list { list-style: none; margin: var(--space-3) 0; }
+    .export-list li { display: flex; gap: var(--space-3); padding: 7px 0; border-bottom: 1px solid var(--grid-subtle); font-size: 14px; align-items: baseline; }
+    .export-list li:last-child { border-bottom: none; }
+    .export-name { font-weight: 600; color: var(--ink); min-width: 80px; }
+    /* Callouts */
+    .callout { border-left: 4px solid; border-radius: var(--radius-md); padding: var(--space-4) var(--space-5); margin: var(--space-5) 0; }
+    .callout-title { font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: var(--space-2); }
+    .callout p { font-size: 14px; line-height: 1.6; margin-bottom: 0; }
+    .callout-tip { background: var(--primary-tint); border-color: var(--primary); }
+    .callout-tip .callout-title { color: var(--on-primary-tint); }
+    .callout-tip p { color: var(--on-primary-tint); }
+    .callout-important { background: var(--status-error-bg); border-color: var(--status-error); }
+    .callout-important .callout-title { color: var(--status-error); }
+    .callout-important p { color: #6b0000; }
+    .callout-offline { background: var(--surface-low); border-color: var(--ink-secondary); }
+    .callout-offline .callout-title { color: var(--ink-secondary); }
+    .callout-offline p { color: var(--ink-secondary); }
+    /* URL */
+    .app-url { display: inline-block; background: var(--ink); color: var(--primary-tint); font-family: 'SF Mono','Cascadia Code','Consolas',monospace; font-size: 14px; padding: var(--space-2) var(--space-4); border-radius: var(--radius-sm); text-decoration: none; margin: var(--space-3) 0 var(--space-4); }
+    .app-url:hover { background: var(--primary); }
+    .download-link { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--primary); text-decoration: none; font-size: 14px; font-weight: 600; padding: var(--space-2) var(--space-4); border: 1px solid var(--primary); border-radius: var(--radius-sm); transition: background 0.12s, color 0.12s; margin-bottom: var(--space-5); }
+    .download-link:hover { background: var(--primary); color: var(--on-primary); }
+    footer { background: var(--ink); color: rgba(255,255,255,0.55); padding: var(--space-6) var(--space-5); font-size: 13px; margin-top: auto; }
+    .footer-inner { max-width: 800px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3); }
+    .footer-inner a { color: var(--primary-tint); text-decoration: none; }
+    .footer-licence { font-size: 12px; opacity: 0.7; }
+    @media (max-width: 640px) {
+      .page-layout { flex-direction: column; }
+      .toc { position: static; width: 100%; }
+      .install-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="/guide/" class="back-link">← Guides</a>
+    <div class="header-divider"></div>
+    <span class="site-name">GEMBA SUITE</span>
+  </div>
+</header>
+
+<div class="page-hero">
+  <div class="container">
+    <p class="hero-label">Quick Start · Gemba-A3</p>
+    <h1>A3 Quick Start</h1>
+    <p class="hero-meta">Gemba-A3 v1.13 · April 2026</p>
+    <p>For experienced lean practitioners who know A3 methodology and need a concise reference for the Gemba-A3 v1.13 tool. No methodology teaching — just the app.</p>
+  </div>
+</div>
+
+<div class="page-layout">
+
+  <nav class="toc" aria-label="On this page">
+    <span class="toc-title">On this page</span>
+    <ol>
+      <li><a href="#what">What is Gemba-A3</a></li>
+      <li><a href="#install">Installation</a></li>
+      <li><a href="#problem-types">Problem type gate</a></li>
+      <li><a href="#layout">App layout</a></li>
+      <li><a href="#nine-sections">The nine sections</a></li>
+      <li><a href="#stage-gate">Stage gate</a></li>
+      <li><a href="#import">Importing evidence</a></li>
+      <li><a href="#ai-coach">AI coaching export</a></li>
+      <li><a href="#printing">Printing</a></li>
+      <li><a href="#exports">Export / import</a></li>
+      <li><a href="#backup">Backup warning</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+    <a href="A3_Thinking_PDCA_Problem_Solving_with_Gemba_A3_v1_14.docx" class="download-link" download>↓ Download full guide (Word)</a>
+
+    <section id="what">
+      <h2>What is Gemba-A3</h2>
+      <p>Gemba-A3 is a Progressive Web App for structured A3 problem solving. It provides nine sections following the PDCA cycle, a stage gate between Plan and Do/Check/Act, Pareto chart generation, evidence import from Gemba-VSM/RCA/SPC, and AI coaching export. Runs offline after first load.</p>
+      <a href="https://gembasuite.org/a3" class="app-url" target="_blank" rel="noopener">gembasuite.org/a3</a>
+    </section>
+
+    <section id="install">
+      <h2>Installation</h2>
+      <div class="install-grid">
+        <div class="install-block">
+          <h4>Android</h4>
+          <ol>
+            <li>Open Chrome, navigate to <strong>gembasuite.org/a3</strong></li>
+            <li>Tap install banner, or ⋮ menu → <strong>Install app</strong></li>
+            <li>Launches full-screen from home screen</li>
+          </ol>
+        </div>
+        <div class="install-block">
+          <h4>iPhone / iPad</h4>
+          <ol>
+            <li>Open <strong>Safari</strong> (required for iOS)</li>
+            <li>Navigate to <strong>gembasuite.org/a3</strong></li>
+            <li>Share button → <strong>Add to Home Screen</strong></li>
+          </ol>
+        </div>
+      </div>
+      <div class="callout callout-offline" style="margin-top: var(--space-2);">
+        <p class="callout-title">Offline use</p>
+        <p>Works offline after first load. Export JSON after every session — browser storage can be cleared if the phone runs low on space.</p>
+      </div>
+    </section>
+
+    <section id="problem-types">
+      <h2>Problem type classification gate</h2>
+      <p>When creating a new A3 project, classify the problem type. <strong>This cannot be changed after selection</strong> — it determines section labels and coaching prompt framing. Choose <strong>Type 2</strong> for most NHS improvement work.</p>
+      <table class="problem-types">
+        <thead>
+          <tr><th>Type</th><th>Description</th><th>Tool mode</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="type-badge type-1">1</span>Troubleshooting</td>
+            <td>Known standard not being met. Something has gone wrong and needs rapid containment.</td>
+            <td>4C Rapid Response tab (Contain, Correct, Confirm, Communicate). Simplified flow; full nine-section A3 not shown.</td>
+          </tr>
+          <tr>
+            <td><span class="type-badge type-2">2</span>Gap from Standard</td>
+            <td>There is a measurable gap between current performance and a known standard. The right choice for most NHS improvement A3s.</td>
+            <td>Full nine-section A3 with stage gate. Section 5 labelled "Root Cause Analysis."</td>
+          </tr>
+          <tr>
+            <td><span class="type-badge type-3">3</span>Target Condition</td>
+            <td>Aiming for a level of performance that has never been achieved. No gap to close — new ground to reach.</td>
+            <td>Full nine-section A3 with stage gate. Section 5 relabelled "Analysis &amp; Improvement Options."</td>
+          </tr>
+          <tr>
+            <td><span class="type-badge type-4">4</span>Open-ended Innovation</td>
+            <td>Exploratory — no defined target. Requires experimentation beyond single A3 scope.</td>
+            <td>Full nine-section A3 adapted for exploratory framing. Consider Gemba-Strategy for strategic initiatives.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="layout">
+      <h2>App layout — tabs</h2>
+      <ul class="tabs-list">
+        <li><span class="tab-name">Plan tab</span><span class="tab-desc">Sections 1–5 (Problem Statement, Current State, Goal, Waste Identified, Root Cause Analysis). The left side of the A3. Complete with gemba evidence before passing the stage gate.</span></li>
+        <li><span class="tab-name">Do/Check/Act tab</span><span class="tab-desc">Sections 6–9 (Future State / Countermeasures, Action Plan, Results &amp; Measures, Next Steps). Locked until stage gate is passed. Memo pad available on locked sections for capturing early thoughts.</span></li>
+        <li><span class="tab-name">Meta tab</span><span class="tab-desc">Project metadata (title, author, responder, department, organisation, PDCA cycle number), nemawashi tracker, Print A3, JSON export, and AI Coach button.</span></li>
+        <li><span class="tab-name">4C tab</span><span class="tab-desc">Appears only for Type 1 (troubleshooting) problems. Four-section rapid response: Contain, Correct, Confirm, Communicate.</span></li>
+      </ul>
+    </section>
+
+    <section id="nine-sections">
+      <h2>The nine sections</h2>
+      <p>Sections 1–5 are on the Plan tab. Sections 6–9 are on the Do/Check/Act tab (locked until stage gate is passed).</p>
+      <ul class="sections-list">
+        <li>
+          <span class="section-num">1</span>
+          <div class="section-content">
+            <span class="section-title">Problem Statement</span>
+            <span class="section-note">Free text, photo attachment, gemba import, status, responder review, revision history. The app does not auto-generate problem statements — write what is happening, how bad it is, and why it matters.</span>
+          </div>
+        </li>
+        <li>
+          <span class="section-num">2</span>
+          <div class="section-content">
+            <span class="section-title">Current State</span>
+            <span class="section-note">Free text, photo, import from Gemba-VSM current state, and a <strong>built-in Pareto chart generator</strong> — enter defect/waste categories and frequencies; chart renders automatically and is included in the printed A3.</span>
+          </div>
+        </li>
+        <li>
+          <span class="section-num">3</span>
+          <div class="section-content">
+            <span class="section-title">Goal / Target</span>
+            <span class="section-note">Free text plus <strong>SMART scaffolding fields</strong> (Specific, Measurable, Achievable, Relevant, Time-bound) to test whether your goal meets all five criteria. Both appear on the printed A3.</span>
+          </div>
+        </li>
+        <li>
+          <span class="section-num">4</span>
+          <div class="section-content">
+            <span class="section-title">Waste Identified</span>
+            <span class="section-note">Structured <strong>DOWNTIME waste categories</strong> with evidence fields, plus a second Pareto chart generator. If a VSM has been imported into Section 2, the app offers to cascade waste data from the VSM automatically.</span>
+          </div>
+        </li>
+        <li>
+          <span class="section-num">5</span>
+          <div class="section-content">
+            <span class="section-title">Root Cause Analysis <em>(Type 2) or Analysis &amp; Improvement Options (Type 3)</em></span>
+            <span class="section-note">Free text, photo, import from Gemba-RCA (fishbone, 5 Whys chains, validated root causes). This is where the stage gate test applies — if removing the identified root cause would not make the problem disappear, you have found a contributing factor, not the root cause.</span>
+          </div>
+        </li>
+        <li>
+          <span class="section-num dca">6</span>
+          <div class="section-content">
+            <span class="section-title">Future State / Countermeasures</span>
+            <span class="section-note">Free text, photo, import from Gemba-VSM future state. Each countermeasure should trace back to a specific root cause from Section 5.</span>
+          </div>
+        </li>
+        <li>
+          <span class="section-num dca">7</span>
+          <div class="section-content">
+            <span class="section-title">Action Plan</span>
+            <span class="section-note">Structured action list: description, named owner, due date, status (not started / in progress / complete / blocked), and PDCA phase. Renders as a compact table on the printed A3.</span>
+          </div>
+        </li>
+        <li>
+          <span class="section-num dca">8</span>
+          <div class="section-content">
+            <span class="section-title">Results &amp; Measures</span>
+            <span class="section-note">Free text, photo, import from Gemba-SPC (control charts). Record before and after data honestly — failed countermeasures are learning, not failure.</span>
+          </div>
+        </li>
+        <li>
+          <span class="section-num dca">9</span>
+          <div class="section-content">
+            <span class="section-title">Next Steps</span>
+            <span class="section-note">Follow-up actions, standardisation plan, monitoring schedule. A <strong>New A3 from here</strong> button lets you spawn a new A3 project inheriting relevant context from the current one.</span>
+          </div>
+        </li>
+      </ul>
+      <p style="margin-top: var(--space-3);">Each section includes: text area with character guidance, collapsible checkpoint questions, photo attachment (max 2, auto-compressed), import button, section status toggle (Draft / In Progress / Complete), responder review toggle, and auto-saved revision history.</p>
+    </section>
+
+    <section id="stage-gate">
+      <h2>Stage gate</h2>
+      <p>Sections 6–9 are locked when a new A3 is created. The memo pad on each locked section lets you capture timestamped thoughts at the gemba without unlocking full editing.</p>
+      <p>When ready, tap <strong>I'm ready to move to countermeasures</strong> on the Plan tab. A confirmation screen shows checkpoint questions for sections 1–5. You are prompted (not required) to confirm responder review. Confirm, and sections 6–9 unlock permanently. Memos from locked sections surface in a highlighted panel at the top of each Do/Check/Act section after unlocking.</p>
+      <p>The gate is a one-time check — it does not re-lock if you revise the left side after unlocking (which is normal).</p>
+    </section>
+
+    <section id="import">
+      <h2>Importing evidence</h2>
+      <p>In any section, tap <strong>Import from Gemba app</strong> and select a JSON file exported from another Gemba Suite app. Gemba-A3 reads and validates the file, shows a preview, and imports on confirmation. Imported content is <strong>read-only</strong> — you annotate it, you cannot edit it. This maintains evidence integrity.</p>
+      <h3>Smart routing defaults</h3>
+      <table class="data-table">
+        <thead>
+          <tr><th>Source</th><th>Default section</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>VSM current state</td><td>Section 2: Current State</td><td>Offers cascade of waste data to Section 4</td></tr>
+          <tr><td>VSM future state</td><td>Section 6: Future State</td><td>—</td></tr>
+          <tr><td>RCA (fishbone / 5 Whys)</td><td>Section 5: Root Cause Analysis</td><td>Imports fishbone SVG, Why chains, validated root cause list</td></tr>
+          <tr><td>SPC (control chart)</td><td>Section 8: Results &amp; Measures</td><td>Imports chart image and signal summary</td></tr>
+        </tbody>
+      </table>
+      <p>Default routing can be overridden — you can import any source to any section.</p>
+      <p><strong>Cascade offer:</strong> when a VSM is imported into Section 2, Gemba-A3 offers to cascade its waste flags into the DOWNTIME categories in Section 4. You can select which process steps to include.</p>
+    </section>
+
+    <section id="ai-coach">
+      <h2>AI coaching export</h2>
+      <p>Click <strong>AI Coach</strong> on the Meta tab or within any section. Choose <strong>whole-A3 coaching</strong> (reviews the coherent thread from problem to results) or <strong>section-level coaching</strong> (focuses on one section's evidence quality). Select coaching tier (Sensei Prep or Facilitator Coaching) and platform (Copilot, Claude, or Gemini). Preview the prompt, then copy or download as .txt.</p>
+      <p>The prompt is gate-aware: if the right side is still locked, the AI focuses only on the Plan sections and does not coach on countermeasures. Memos from locked sections are included in the export for context.</p>
+    </section>
+
+    <section id="printing">
+      <h2>Printing</h2>
+      <p>Click <strong>Print A3</strong> on the Meta tab. Opens a landscape-formatted print layout with the nine sections in the traditional A3 arrangement: left side (Plan, sections 1–5) on the left, right side (Do/Check/Act, sections 6–9) on the right. Set printer to <strong>landscape orientation</strong>. For A4 printers, use <strong>fit to page</strong>. The printed A3 includes concise narrative, photo thumbnails, Pareto charts, and the action plan table.</p>
+    </section>
+
+    <section id="exports">
+      <h2>Export / import</h2>
+      <ul class="export-list">
+        <li><span class="export-name">JSON</span><span>Full backup — all nine sections with text, photos, imports, memos, revision history, action items, Pareto data, DOWNTIME waste data, SMART fields, nemawashi records, and stage gate state. Re-importable on any device.</span></li>
+        <li><span class="export-name">Import</span><span>Loads a previously exported JSON as a new project. Never overwrites existing data.</span></li>
+      </ul>
+      <p>Project management (create, rename, delete, switch) is via the dark project bar below the header. Data auto-saves as you work.</p>
+    </section>
+
+    <section id="backup">
+      <h2>Backup warning</h2>
+      <div class="callout callout-important">
+        <p class="callout-title">Important — Back up your data</p>
+        <p>Gemba-A3 stores data in your browser's local storage. This can be wiped without warning if your phone runs low on space, if you clear your browser cache, or if your device is reset. Your A3 work — the gemba observations, the imported evidence, the revision history that shows how your thinking evolved — is irreplaceable. <strong>Export JSON after every session. If you have not exported, you have not saved.</strong></p>
+      </div>
+    </section>
+
+    <div style="margin-top: var(--space-8); padding-top: var(--space-6); border-top: 1px solid var(--grid-subtle); font-size: 13px; color: var(--ink-tertiary); text-align: center; font-style: italic;">
+      <em>Go See · Ask Why · Respect People</em><br>
+      <span style="font-size: 12px; margin-top: 4px; display: block;">© 2024–2026 David Clark. CC BY-NC-SA 4.0. <a href="https://gembasuite.org/licence" style="color: var(--primary);">gembasuite.org/licence</a></span>
+    </div>
+
+  </main>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <span>David Clark — <a href="https://gembasuite.org">gembasuite.org</a></span>
+    <span class="footer-licence">CC BY-NC-SA 4.0 — Free for healthcare improvement</span>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#006172">
+<meta name="description" content="Licence and terms for the Gemba Suite — free lean improvement tools for healthcare teams.">
+<title>Licence &amp; Terms — Gemba Suite</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:           #181c1c;
+  --ink-secondary: #3e484c;
+  --ink-tertiary:  #6e797c;
+  --paper:         #f7faf9;
+  --card:          #ffffff;
+  --surface-low:   #f1f4f3;
+  --grid:          #bec8cc;
+  --grid-subtle:   #e0e3e2;
+  --primary:       #006172;
+  --primary-tint:  #c4e5ef;
+  --on-primary-tint: #004e5c;
+  --accent-warm:   #854a10;
+  --accent-warm-bg:#ffdcc3;
+  --shadow-sm:     0 1px 3px rgba(24,28,28,0.06);
+  --shadow-md:     0 2px 8px rgba(24,28,28,0.08);
+  --radius-sm:     4px;
+  --radius-md:     8px;
+  --radius-lg:     12px;
+  --font-display:  'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-body:     'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.65;
+}
+
+/* ── Site header ── */
+.site-header {
+  background: var(--primary);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.site-header a {
+  color: #fff;
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: -0.2px;
+}
+.site-header a:hover { opacity: 0.85; }
+.site-header .breadcrumb {
+  color: rgba(255,255,255,0.6);
+  font-size: 14px;
+  font-weight: 400;
+  font-family: var(--font-body);
+}
+
+/* ── Page hero ── */
+.page-hero {
+  background: var(--card);
+  border-bottom: 1px solid var(--grid-subtle);
+  padding: 48px 24px 36px;
+}
+.page-hero-inner {
+  max-width: 780px;
+  margin: 0 auto;
+}
+.page-label {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--primary);
+  margin-bottom: 10px;
+}
+.page-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(26px, 4vw, 36px);
+  letter-spacing: -0.4px;
+  color: var(--ink);
+  line-height: 1.15;
+  margin-bottom: 12px;
+}
+.page-intro {
+  font-size: 16px;
+  color: var(--ink-secondary);
+  max-width: 680px;
+}
+
+/* ── CC badge ── */
+.cc-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--primary-tint);
+  color: var(--on-primary-tint);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  margin-top: 20px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+}
+.cc-badge svg { flex-shrink: 0; }
+
+/* ── Main content ── */
+main {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+/* ── Section blocks ── */
+.licence-section {
+  background: var(--card);
+  border: 1px solid var(--grid-subtle);
+  border-radius: var(--radius-lg);
+  padding: 28px 28px 24px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+}
+.licence-section + .licence-section { }
+
+.section-tag {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--ink-tertiary);
+  margin-bottom: 6px;
+}
+.licence-section h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--ink);
+  margin-bottom: 14px;
+}
+
+.licence-section p {
+  color: var(--ink-secondary);
+  font-size: 15px;
+  margin-bottom: 12px;
+}
+.licence-section p:last-child { margin-bottom: 0; }
+
+/* ── Allow / Restrict lists ── */
+.perm-list {
+  list-style: none;
+  margin: 14px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.perm-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 15px;
+  color: var(--ink-secondary);
+  line-height: 1.5;
+}
+.perm-list li .icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+  font-size: 15px;
+}
+.perm-list.allow .icon { color: #2a7d44; }
+.perm-list.restrict .icon { color: #c4453c; }
+
+/* ── Attribution box ── */
+.attribution-box {
+  background: var(--surface-low);
+  border: 1px solid var(--grid);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  font-size: 14px;
+  font-family: 'Courier New', Courier, monospace;
+  color: var(--ink);
+  margin-top: 14px;
+  line-height: 1.6;
+  word-break: break-word;
+}
+
+/* ── Clinical safety callout ── */
+.callout-safety {
+  background: var(--accent-warm-bg);
+  border-left: 4px solid var(--accent-warm);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: 14px;
+  color: #4a2800;
+  line-height: 1.55;
+}
+.callout-safety strong { color: #3a1f00; }
+
+/* ── Links ── */
+a { color: var(--primary); }
+a:hover { color: var(--primary-container, #007c91); }
+
+/* ── Footer ── */
+footer {
+  border-top: 1px solid var(--grid-subtle);
+  padding: 24px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--ink-tertiary);
+  line-height: 1.8;
+}
+footer a { color: var(--primary); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <a href="/">Gemba Suite</a>
+  <span class="breadcrumb">/ Licence &amp; Terms</span>
+</header>
+
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="page-label">Legal</div>
+    <h1 class="page-title">Licence &amp; Terms of Use</h1>
+    <p class="page-intro">The Gemba Suite is free to use for healthcare improvement. This page explains what that means in practice — what you can do, what you can't, and how to attribute the work if you share or adapt it.</p>
+    <div class="cc-badge">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="12" cy="12" r="10" stroke="#004e5c" stroke-width="2"/>
+        <path d="M9.5 10.5C9.5 9.4 10.4 8.5 11.5 8.5h1C13.6 8.5 14.5 9.4 14.5 10.5" stroke="#004e5c" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M9.5 15.5C9.5 14.4 10.4 13.5 11.5 13.5h1c1.1 0 2 .9 2 2" stroke="#004e5c" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      Creative Commons CC BY-NC-SA 4.0
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <!-- What you can do -->
+  <div class="licence-section">
+    <div class="section-tag">Permissions</div>
+    <h2>What you can do</h2>
+    <p>Under the <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">Creative Commons Attribution–NonCommercial–ShareAlike 4.0 International licence</a>, you are free to:</p>
+    <ul class="perm-list allow">
+      <li><span class="icon">✓</span><span><strong>Use</strong> the Gemba Suite tools for healthcare improvement, quality projects, service redesign, and education within NHS or other healthcare organisations — at no cost.</span></li>
+      <li><span class="icon">✓</span><span><strong>Share</strong> copies of the tools with colleagues, teams, and other NHS organisations, provided you include this licence and attribute David Clark / Gemba Suite.</span></li>
+      <li><span class="icon">✓</span><span><strong>Adapt</strong> the tools — modify the HTML/CSS/JavaScript, add your organisation's branding, or adjust workflows — as long as the adapted version is also shared under the same CC BY-NC-SA 4.0 licence.</span></li>
+      <li><span class="icon">✓</span><span><strong>Use in training</strong> — include tools in lean improvement courses, workshops, and educational materials for healthcare staff.</span></li>
+      <li><span class="icon">✓</span><span><strong>Cite and reference</strong> the suite in publications, reports, and improvement documentation.</span></li>
+    </ul>
+  </div>
+
+  <!-- What you cannot do -->
+  <div class="licence-section">
+    <div class="section-tag">Restrictions</div>
+    <h2>What you cannot do</h2>
+    <ul class="perm-list restrict">
+      <li><span class="icon">✗</span><span><strong>Commercial use</strong> — you may not sell, license, or charge for access to the tools or any adapted version. This includes bundling them into paid consultancy products or SaaS platforms.</span></li>
+      <li><span class="icon">✗</span><span><strong>Remove attribution</strong> — you must not strip out the authorship information, version notices, or licence references when sharing or redistributing.</span></li>
+      <li><span class="icon">✗</span><span><strong>Relicense under different terms</strong> — adapted or redistributed versions must use the same CC BY-NC-SA 4.0 licence, not a more restrictive or proprietary licence.</span></li>
+      <li><span class="icon">✗</span><span><strong>Clinical decision support</strong> — the tools are process improvement aids, not clinical decision-making tools. They must not be presented or used as such. See the clinical safety note below.</span></li>
+    </ul>
+  </div>
+
+  <!-- Attribution -->
+  <div class="licence-section">
+    <div class="section-tag">Attribution</div>
+    <h2>How to attribute</h2>
+    <p>If you share or publish work that uses the Gemba Suite tools — in a report, presentation, publication, or adapted tool — please include an attribution along these lines:</p>
+    <div class="attribution-box">
+      Gemba Suite — David Clark (2024–2025)<br>
+      gembasuite.org · CC BY-NC-SA 4.0<br>
+      Free for healthcare improvement
+    </div>
+    <p style="margin-top:14px">For academic publications, you may also cite the suite by name, version, URL, and access date. Contact <a href="mailto:david@gembasuite.org">david@gembasuite.org</a> if you need a formal citation format.</p>
+  </div>
+
+  <!-- Clinical safety -->
+  <div class="licence-section">
+    <div class="section-tag">Clinical Safety</div>
+    <h2>Important: clinical use limitations</h2>
+    <p>The Gemba Suite tools are designed to support <strong>process improvement</strong> — mapping, analysing, and redesigning how work flows through a service. They are not:</p>
+    <ul class="perm-list restrict">
+      <li><span class="icon">✗</span><span>Clinical decision support systems</span></li>
+      <li><span class="icon">✗</span><span>Medical devices under UK or EU regulation (MDR / IVDR / MHRA)</span></li>
+      <li><span class="icon">✗</span><span>Validated diagnostic or prescribing tools</span></li>
+    </ul>
+    <div class="callout-safety">
+      <strong>No patient-identifiable data should be entered into any Gemba Suite tool.</strong> The tools capture process data (times, steps, waste observations) not patient data. All data is stored locally in the browser and is not transmitted anywhere. You control when and how data is exported.
+    </div>
+    <p style="margin-top:14px">Before deploying in an NHS setting, organisations should satisfy themselves that use complies with their own information governance policies. The tools are designed to simplify this: single HTML files, local storage only, no accounts, no cloud, no third-party data sharing.</p>
+  </div>
+
+  <!-- NHS / IG notes -->
+  <div class="licence-section">
+    <div class="section-tag">Information Governance</div>
+    <h2>Information governance notes</h2>
+    <p>The Gemba Suite has been designed to make NHS information governance sign-off as straightforward as possible:</p>
+    <ul class="perm-list allow">
+      <li><span class="icon">✓</span><span>All processing is client-side — the HTML file runs entirely in the browser with no server calls.</span></li>
+      <li><span class="icon">✓</span><span>Data is stored only in the browser's localStorage on the device being used.</span></li>
+      <li><span class="icon">✓</span><span>No external APIs, no analytics tracking, no cookies, no user accounts.</span></li>
+      <li><span class="icon">✓</span><span>Data export is manual and user-controlled (JSON or CSV). Nothing leaves the device automatically.</span></li>
+      <li><span class="icon">✓</span><span>The entire codebase is a single readable HTML file — your IG team can review it in full.</span></li>
+    </ul>
+    <p style="margin-top:14px">These properties mean the tools fall outside the scope of most NHS DPIA requirements as standalone process observation aids, but you should verify this with your own Caldicott Guardian or IG lead if required by your organisation.</p>
+  </div>
+
+  <!-- Disclaimer -->
+  <div class="licence-section">
+    <div class="section-tag">Disclaimer</div>
+    <h2>Disclaimer</h2>
+    <p>These tools support process improvement activity. They do not make clinical decisions, process patient data, or interface with clinical systems. They are not medical devices and are not subject to medical device regulation (MHRA, CE-IVDR, or equivalent).</p>
+    <p>The tools are provided as-is, without warranty of any kind. All data entered into the tools is stored locally on the user's device via browser localStorage. The author accepts no liability for data loss resulting from browser data clearing, device failure, or accidental deletion. Users are responsible for exporting and backing up their data regularly using the built-in export function.</p>
+    <p>The tools are intended for process improvement use by healthcare teams. They do not constitute clinical advice and should not be used as a substitute for clinical judgement or organisational governance processes.</p>
+  </div>
+
+  <!-- Full licence -->
+  <div class="licence-section">
+    <div class="section-tag">Full Licence Text</div>
+    <h2>Creative Commons BY-NC-SA 4.0</h2>
+    <p>The complete legal text of the Creative Commons Attribution–NonCommercial–ShareAlike 4.0 International licence is available at:</p>
+    <p><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode" target="_blank" rel="noopener">creativecommons.org/licenses/by-nc-sa/4.0/legalcode</a></p>
+    <p>A human-readable summary is at: <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">creativecommons.org/licenses/by-nc-sa/4.0/</a></p>
+  </div>
+
+  <!-- Contact -->
+  <div class="licence-section">
+    <div class="section-tag">Contact</div>
+    <h2>Questions and permissions</h2>
+    <p>If you want to use the Gemba Suite in a way that falls outside this licence — for example, in a commercial healthcare consultancy product, or under a different licence arrangement — please get in touch to discuss:</p>
+    <p><a href="mailto:david@gembasuite.org">david@gembasuite.org</a></p>
+    <p>Feedback on the tools themselves is very welcome via the <a href="/feedback/">feedback page</a>.</p>
+  </div>
+
+</main>
+
+<footer>
+  <div><strong>Gemba Suite</strong> — David Clark — <a href="https://gembasuite.org/">gembasuite.org</a> · <a href="/feedback/">Feedback</a></div>
+  <div><a href="/licence/">CC BY-NC-SA 4.0</a> · Free for healthcare improvement · No patient data is collected</div>
+</footer>
+
+</body>
+</html>

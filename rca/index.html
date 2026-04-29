@@ -1,0 +1,3268 @@
+<!DOCTYPE html>
+<!--
+  Gemba-RCA v1.2
+  Root Cause Analysis Tool for NHS Healthcare Lean Improvement Teams
+  Part of the Gemba Suite — gembasuite.org
+  
+  Developer: David Clark — gembasuite.org
+  Licence: Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)
+  https://creativecommons.org/licenses/by-nc-sa/4.0/
+  
+  You are free to share and adapt this tool for non-commercial purposes,
+  provided you give appropriate credit and distribute your contributions
+  under the same licence.
+  
+  © David Clark — gembasuite.org
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="description" content="Gemba-RCA: Structured root cause analysis for NHS lean improvement teams. Fishbone diagram, 5 Whys chains, Pareto chart.">
+<meta name="theme-color" content="#181c1c">
+<title>Gemba-RCA v1.2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   CSS CUSTOM PROPERTIES — Gemba Suite Design System
+   ============================================================ */
+:root {
+  --ink:             #181c1c;
+  --ink-secondary:   #3e484c;
+  --ink-tertiary:    #6e797c;
+
+  --paper:           #f7faf9;
+  --card:            #ffffff;
+  --surface-low:     #f1f4f3;
+  --surface-high:    #e6e9e8;
+
+  --grid:            #bec8cc;
+  --grid-subtle:     #e0e3e2;
+
+  --primary:         #006172;
+  --primary-container: #007c91;
+  --primary-tint:    #c4e5ef;
+  --on-primary:      #ffffff;
+  --on-primary-tint: #004e5c;
+
+  --accent-warm:     #854a10;
+  --accent-warm-bg:  #ffdcc3;
+
+  --status-success:     #2e7d32;
+  --status-success-bg:  #d4edda;
+  --status-warning:     #856404;
+  --status-warning-bg:  #fff3cd;
+  --status-error:       #ba1a1a;
+  --status-error-bg:    #ffdad6;
+
+  --shadow-sm:       0 1px 3px rgba(24,28,28,0.06);
+  --shadow-md:       0 2px 8px rgba(24,28,28,0.08);
+
+  --color-navy:      #006172;
+  --color-navy-dark: #004e5c;
+  --color-blue:      #006172;
+  --color-blue-lt:   #c4e5ef;
+  --color-green:     #2e7d32;
+  --color-green-lt:  #d4edda;
+  --color-red:       #ba1a1a;
+  --color-red-lt:    #ffdad6;
+  --color-amber:     #854a10;
+  --color-amber-lt:  #ffdcc3;
+  --color-grey-100:  #f1f4f3;
+  --color-grey-200:  #e0e3e2;
+  --color-grey-300:  #bec8cc;
+  --color-grey-500:  #6e797c;
+  --color-grey-700:  #3e484c;
+  --color-grey-900:  #181c1c;
+  --color-white:     #ffffff;
+  --color-surface:   #f7faf9;
+
+  --space-xs:  4px;
+  --space-sm:  8px;
+  --space-md:  16px;
+  --space-lg:  24px;
+  --space-xl:  32px;
+  --space-2xl: 48px;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  --header-h: 60px;
+  --touch-min: 44px;
+
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-display: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+}
+
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-grey-900);
+  background: var(--color-surface);
+  min-height: 100vh;
+  padding-top: var(--header-h);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-size: 1rem;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+input, textarea, select {
+  font-family: inherit;
+  font-size: 1rem;
+  border: 1px solid var(--color-grey-300);
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm) var(--space-md);
+  width: 100%;
+  background: var(--color-white);
+  color: var(--color-grey-900);
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: 2px solid var(--color-blue);
+  outline-offset: 1px;
+  border-color: var(--color-blue);
+}
+
+textarea { resize: vertical; min-height: 80px; }
+
+label { display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: var(--space-xs); color: var(--color-grey-700); }
+
+a { color: var(--color-blue); }
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+#app-header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--header-h);
+  background: var(--color-navy);
+  color: var(--color-white);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-md);
+  z-index: 100;
+  gap: var(--space-sm);
+}
+
+#header-logo {
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+#header-logo span { color: #7dd3fc; }
+
+#header-project {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 var(--space-sm);
+}
+
+#header-project-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #bfdbfe;
+}
+
+#header-save-indicator {
+  font-size: 0.7rem;
+  color: #7dd3fc;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+#header-save-indicator.visible { opacity: 1; }
+
+.header-btn {
+  min-width: var(--touch-min);
+  min-height: var(--touch-min);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  color: var(--color-white);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0 var(--space-sm);
+  flex-shrink: 0;
+  transition: background 0.15s;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.header-btn:hover { background: rgba(255,255,255,0.15); }
+.header-btn-icon { font-size: 1.25rem; padding: 0; width: var(--touch-min); }
+
+/* ============================================================
+   HOME SCREEN (Project List)
+   ============================================================ */
+#home-screen {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: var(--space-lg) var(--space-md);
+}
+
+.home-hero {
+  text-align: center;
+  padding: var(--space-xl) 0 var(--space-lg);
+}
+
+.home-hero h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--color-navy);
+  letter-spacing: -0.03em;
+}
+
+.home-hero h1 span { color: var(--color-blue); }
+
+.home-hero p {
+  margin-top: var(--space-sm);
+  color: var(--color-grey-500);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.home-actions {
+  display: flex;
+  gap: var(--space-sm);
+  margin: var(--space-lg) 0;
+}
+
+.btn-primary {
+  background: var(--color-navy);
+  color: var(--color-white);
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-lg);
+  font-weight: 700;
+  min-height: var(--touch-min);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.btn-primary:hover { background: var(--color-navy-dark); }
+
+.btn-secondary {
+  background: var(--color-white);
+  color: var(--color-navy);
+  border: 2px solid var(--color-grey-200);
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-lg);
+  font-weight: 600;
+  min-height: var(--touch-min);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.btn-secondary:hover { border-color: var(--color-blue); color: var(--color-blue); }
+
+.btn-danger {
+  background: var(--color-red);
+  color: var(--color-white);
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+  font-weight: 600;
+  min-height: var(--touch-min);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  transition: background 0.15s;
+}
+
+.btn-danger:hover { background: #b91c1c; }
+
+.btn-ghost {
+  color: var(--color-grey-700);
+  border-radius: var(--radius-sm);
+  padding: var(--space-xs) var(--space-sm);
+  min-height: var(--touch-min);
+  min-width: var(--touch-min);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-ghost:hover { background: var(--color-grey-100); }
+
+.projects-list { margin-top: var(--space-md); }
+
+.project-card {
+  background: var(--color-white);
+  border: 1px solid var(--color-grey-200);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  margin-bottom: var(--space-sm);
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.project-card:hover { border-color: var(--color-blue); box-shadow: 0 2px 8px rgba(37,99,235,0.1); }
+
+.project-card-info { flex: 1; min-width: 0; }
+
+.project-card-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--color-navy);
+}
+
+.project-card-meta {
+  font-size: 0.75rem;
+  color: var(--color-grey-500);
+  margin-top: 2px;
+}
+
+.project-card-actions {
+  display: flex;
+  gap: var(--space-xs);
+  flex-shrink: 0;
+}
+
+.empty-state {
+  text-align: center;
+  padding: var(--space-2xl) var(--space-md);
+  color: var(--color-grey-500);
+}
+
+.empty-state-icon { font-size: 3rem; margin-bottom: var(--space-md); }
+
+/* ============================================================
+   MAIN APP — TAB NAVIGATION
+   ============================================================ */
+#app-screen { display: none; }
+#app-screen.active { display: block; }
+
+#tab-nav {
+  position: sticky;
+  top: var(--header-h);
+  background: var(--color-white);
+  border-bottom: 2px solid var(--color-grey-200);
+  display: flex;
+  z-index: 50;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+#tab-nav::-webkit-scrollbar { display: none; }
+
+.tab-btn {
+  min-width: var(--touch-min);
+  min-height: var(--touch-min);
+  padding: var(--space-sm) var(--space-md);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-grey-500);
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  white-space: nowrap;
+  transition: color 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tab-btn:hover { color: var(--color-navy); }
+.tab-btn.active { color: var(--color-navy); border-bottom-color: var(--color-navy); }
+
+.tab-panel { display: none; padding: var(--space-md); }
+.tab-panel.active { display: block; }
+
+/* ============================================================
+   PROBLEM STATEMENT BANNER
+   ============================================================ */
+#problem-banner {
+  background: linear-gradient(135deg, var(--color-navy), var(--primary-container));
+  color: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md) var(--space-lg);
+  margin-bottom: var(--space-md);
+  position: relative;
+}
+
+#problem-banner-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #bfdbfe;
+  margin-bottom: var(--space-xs);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.source-badge {
+  background: rgba(255,255,255,0.2);
+  border-radius: 999px;
+  padding: 1px 8px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+#problem-banner-text {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+#problem-banner-text:hover { text-decoration: underline; }
+
+#problem-banner-hint {
+  font-size: 0.75rem;
+  color: #bfdbfe;
+  margin-top: var(--space-xs);
+}
+
+/* ============================================================
+   FISHBONE SVG CONTAINER
+   ============================================================ */
+#fishbone-container {
+  background: var(--color-white);
+  border: 1px solid var(--color-grey-200);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: var(--space-md);
+  position: relative;
+}
+
+#fishbone-svg-wrap {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+#fishbone-svg {
+  display: block;
+  width: 100%;
+  min-width: 480px;
+}
+
+.fishbone-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid var(--color-grey-100);
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.fishbone-toolbar-title {
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: var(--color-navy);
+}
+
+#selection-count {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-grey-500);
+  background: var(--color-grey-100);
+  border-radius: 999px;
+  padding: 2px 10px;
+}
+
+#selection-count.has-selection { background: var(--color-blue-lt); color: var(--color-blue); }
+
+/* Fishbone cause list (below SVG on mobile) */
+.fishbone-categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-sm);
+  padding: var(--space-md);
+}
+
+.category-card {
+  background: var(--color-grey-100);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.category-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--color-navy);
+  color: var(--color-white);
+}
+
+.category-header-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex: 1;
+}
+
+.category-header button {
+  color: rgba(255,255,255,0.8);
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  min-height: 30px;
+  border-radius: var(--radius-sm);
+}
+
+.category-header button:hover { background: rgba(255,255,255,0.2); color: white; }
+
+.cause-list { padding: var(--space-sm); min-height: 40px; }
+
+.cause-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  margin-bottom: 4px;
+  background: var(--color-white);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  font-size: 0.85rem;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cause-item:hover { border-color: var(--color-blue); }
+
+.cause-item.selected {
+  background: var(--color-blue-lt);
+  border-color: var(--color-blue);
+  font-weight: 600;
+  color: var(--color-blue);
+}
+
+.cause-item-text { flex: 1; min-width: 0; word-break: break-word; }
+
+.cause-item-actions { display: flex; gap: 2px; flex-shrink: 0; }
+
+.cause-item-del {
+  color: var(--color-grey-500);
+  font-size: 0.8rem;
+  padding: 2px 4px;
+  min-height: 28px;
+  min-width: 28px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cause-item-del:hover { background: var(--color-red-lt); color: var(--color-red); }
+
+.cause-selected-badge {
+  background: var(--color-blue);
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 0 6px;
+  min-width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.add-cause-btn {
+  width: 100%;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  border: 1px dashed var(--color-grey-300);
+  color: var(--color-grey-500);
+  font-size: 0.8rem;
+  min-height: var(--touch-min);
+  background: transparent;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.add-cause-btn:hover { border-color: var(--color-blue); color: var(--color-blue); background: var(--color-blue-lt); }
+
+/* ============================================================
+   5 WHYS CHAINS
+   ============================================================ */
+#whys-empty {
+  text-align: center;
+  padding: var(--space-2xl) var(--space-md);
+  color: var(--color-grey-500);
+  background: var(--color-white);
+  border: 1px solid var(--color-grey-200);
+  border-radius: var(--radius-lg);
+}
+
+.chain-tabs {
+  display: flex;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-md);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.chain-tabs::-webkit-scrollbar { display: none; }
+
+.chain-tab-btn {
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  font-weight: 600;
+  min-height: var(--touch-min);
+  background: var(--color-white);
+  border: 2px solid var(--color-grey-200);
+  color: var(--color-grey-700);
+  white-space: nowrap;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 0;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.chain-tab-btn.active {
+  background: var(--color-navy);
+  border-color: var(--color-navy);
+  color: var(--color-white);
+}
+
+.chain-panel { display: none; }
+.chain-panel.active { display: block; }
+
+.chain-header {
+  background: var(--color-white);
+  border: 1px solid var(--color-grey-200);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding: var(--space-md);
+  border-bottom: none;
+}
+
+.chain-cause-label {
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: var(--color-navy);
+  margin-bottom: var(--space-xs);
+}
+
+.chain-cause-text {
+  font-size: 1rem;
+  color: var(--color-grey-900);
+  background: var(--color-blue-lt);
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm) var(--space-md);
+  border-left: 4px solid var(--color-blue);
+}
+
+.why-steps {
+  background: var(--color-white);
+  border-left: 1px solid var(--color-grey-200);
+  border-right: 1px solid var(--color-grey-200);
+  padding: var(--space-md);
+}
+
+.why-step {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+  position: relative;
+}
+
+.why-step::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 32px;
+  bottom: -16px;
+  width: 2px;
+  background: var(--color-grey-200);
+}
+
+.why-step:last-child::before { display: none; }
+
+.why-step-num {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--color-navy);
+  color: white;
+  font-weight: 700;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.why-step-body { flex: 1; }
+
+.why-step-label {
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: var(--color-grey-700);
+  margin-bottom: var(--space-xs);
+}
+
+.why-step-fields { display: flex; flex-direction: column; gap: var(--space-sm); }
+
+.evidence-row {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: flex-start;
+}
+
+.evidence-row textarea { flex: 1; }
+
+.evidence-gap-flag {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: 0.75rem;
+  color: var(--color-amber);
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.evidence-gap-flag.has-evidence { color: var(--color-green); }
+
+.photo-btn {
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-grey-300);
+  background: var(--color-white);
+  color: var(--color-grey-500);
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  position: relative;
+  overflow: hidden;
+}
+
+.photo-btn:hover { border-color: var(--color-blue); color: var(--color-blue); }
+.photo-btn.has-photo { border-color: var(--color-green); background: var(--color-green-lt); color: var(--color-green); }
+
+.photo-btn img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.6;
+}
+
+.add-why-btn {
+  width: 100%;
+  margin-top: var(--space-sm);
+  min-height: var(--touch-min);
+  border: 2px dashed var(--color-grey-300);
+  border-radius: var(--radius-md);
+  color: var(--color-grey-500);
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.add-why-btn:hover { border-color: var(--color-blue); color: var(--color-blue); background: var(--color-blue-lt); }
+
+/* Root cause validation section */
+.root-cause-section {
+  background: var(--color-white);
+  border: 1px solid var(--color-grey-200);
+  border-top: 3px solid var(--color-navy);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  padding: var(--space-md);
+}
+
+.root-cause-title {
+  font-weight: 800;
+  font-size: 0.875rem;
+  color: var(--color-navy);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-md);
+}
+
+.proposed-rc-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-grey-700);
+  margin-bottom: var(--space-xs);
+}
+
+.validation-question {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-grey-700);
+  margin: var(--space-md) 0 var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-grey-100);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--color-navy);
+  font-style: italic;
+}
+
+.validation-toggle {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.toggle-btn {
+  flex: 1;
+  min-height: var(--touch-min);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-grey-200);
+  font-weight: 700;
+  font-size: 0.875rem;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  background: var(--color-white);
+}
+
+.toggle-btn-yes:hover, .toggle-btn-yes.active {
+  border-color: var(--color-green);
+  background: var(--color-green-lt);
+  color: var(--color-green);
+}
+
+.toggle-btn-no:hover, .toggle-btn-no.active {
+  border-color: var(--color-red);
+  background: var(--color-red-lt);
+  color: var(--color-red);
+}
+
+.validation-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 4px 12px;
+  margin-top: var(--space-sm);
+}
+
+.badge-validated { background: var(--color-green-lt); color: var(--color-green); }
+.badge-candidate { background: var(--color-grey-200); color: var(--color-grey-700); }
+.badge-failed { background: var(--color-red-lt); color: var(--color-red); }
+.badge-incomplete { background: var(--color-amber-lt); color: var(--color-amber); }
+
+/* ============================================================
+   PARETO CHART
+   ============================================================ */
+#pareto-section {
+  background: var(--color-white);
+  border: 1px solid var(--color-grey-200);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.section-title {
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--color-navy);
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-sm);
+  border-bottom: 2px solid var(--color-grey-100);
+}
+
+.pareto-table { width: 100%; margin-bottom: var(--space-md); }
+
+.pareto-row {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+  align-items: flex-start;
+}
+
+.pareto-row input:first-child { flex: 2; }
+.pareto-row input:last-of-type { flex: 1; }
+
+.pareto-del-btn {
+  min-width: var(--touch-min);
+  min-height: var(--touch-min);
+  color: var(--color-grey-500);
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+}
+
+.pareto-del-btn:hover { background: var(--color-red-lt); color: var(--color-red); }
+
+#pareto-svg-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--color-grey-100);
+  border-radius: var(--radius-sm);
+}
+
+#pareto-svg { min-width: 400px; }
+
+/* ============================================================
+   EXPORT SECTION
+   ============================================================ */
+#export-section {
+  background: var(--color-white);
+  border: 1px solid var(--color-grey-200);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.export-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.export-card {
+  border: 1px solid var(--color-grey-200);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+}
+
+.export-card-title {
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: var(--color-navy);
+  margin-bottom: var(--space-xs);
+}
+
+.export-card-desc {
+  font-size: 0.75rem;
+  color: var(--color-grey-500);
+  margin-bottom: var(--space-md);
+  line-height: 1.4;
+}
+
+/* ============================================================
+   MODALS
+   ============================================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+  display: none;
+  align-items: flex-end;
+  padding: 0;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.modal-overlay.open {
+  opacity: 1;
+}
+
+@media (min-width: 640px) {
+  .modal-overlay { align-items: center; padding: var(--space-md); }
+}
+
+.modal-sheet {
+  background: var(--color-white);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  transform: translateY(100%);
+  transition: transform 0.25s;
+}
+
+.modal-overlay.open .modal-sheet {
+  transform: translateY(0);
+}
+
+@media (min-width: 640px) {
+  .modal-sheet {
+    border-radius: var(--radius-lg);
+    max-width: 560px;
+    margin: auto;
+    transform: scale(0.95);
+    transition: transform 0.2s;
+  }
+  .modal-overlay.open .modal-sheet { transform: scale(1); }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--color-grey-200);
+  position: sticky;
+  top: 0;
+  background: var(--color-white);
+  z-index: 1;
+}
+
+.modal-title {
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--color-navy);
+}
+
+.modal-close {
+  min-width: var(--touch-min);
+  min-height: var(--touch-min);
+  border-radius: var(--radius-sm);
+  font-size: 1.25rem;
+  color: var(--color-grey-500);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.modal-close:hover { background: var(--color-grey-100); }
+
+.modal-body {
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.modal-footer {
+  padding: var(--space-md) var(--space-lg);
+  border-top: 1px solid var(--color-grey-200);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.field-group { display: flex; flex-direction: column; gap: var(--space-xs); }
+
+/* AI Coaching Modal specific */
+.tier-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+}
+
+.tier-card {
+  border: 2px solid var(--color-grey-200);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  text-align: center;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.tier-card:hover { border-color: var(--color-blue); }
+.tier-card.selected { border-color: var(--color-navy); background: var(--color-navy); color: white; }
+
+.tier-card-name {
+  font-weight: 700;
+  font-size: 0.875rem;
+  margin-bottom: var(--space-xs);
+}
+
+.tier-card-desc {
+  font-size: 0.75rem;
+  opacity: 0.75;
+}
+
+.llm-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-sm);
+}
+
+.llm-btn {
+  border: 2px solid var(--color-grey-200);
+  border-radius: var(--radius-md);
+  padding: var(--space-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+  min-height: var(--touch-min);
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  background: var(--color-white);
+}
+
+.llm-btn:hover { border-color: var(--color-blue); color: var(--color-blue); }
+.llm-btn.selected { border-color: var(--color-navy); background: var(--color-navy); color: white; }
+
+.prompt-preview {
+  background: var(--color-grey-100);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  font-size: 0.8rem;
+  font-family: var(--font-mono);
+  white-space: pre-wrap;
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid var(--color-grey-200);
+  line-height: 1.5;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+footer {
+  text-align: center;
+  padding: var(--space-xl) var(--space-md);
+  color: var(--color-grey-500);
+  font-size: 0.75rem;
+  border-top: 1px solid var(--color-grey-200);
+  margin-top: var(--space-2xl);
+}
+
+footer a { color: var(--color-grey-500); }
+
+/* ============================================================
+   UTILITY CLASSES
+   ============================================================ */
+.hidden { display: none !important; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+.text-sm { font-size: 0.875rem; }
+.text-xs { font-size: 0.75rem; }
+.text-muted { color: var(--color-grey-500); }
+.fw-bold { font-weight: 700; }
+.mt-sm { margin-top: var(--space-sm); }
+.mt-md { margin-top: var(--space-md); }
+.gap-sm { gap: var(--space-sm); }
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.w-full { width: 100%; }
+
+/* ============================================================
+   DESKTOP LAYOUT
+   ============================================================ */
+@media (min-width: 1024px) {
+  #tab-nav { display: none; }
+
+  #app-panel-fishbone,
+  #app-panel-whys,
+  #app-panel-pareto {
+    display: block !important;
+  }
+
+  #app-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  #app-panel-fishbone {
+    grid-column: 1;
+    grid-row: 1;
+    padding: 0;
+  }
+
+  #app-panel-whys {
+    grid-column: 2;
+    grid-row: 1;
+    padding: 0;
+  }
+
+  #app-panel-pareto {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    padding: 0;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     HEADER
+     ============================================================ -->
+<header id="app-header">
+  <div id="header-logo">Gemba<span>-RCA</span></div>
+  <div id="header-project">
+    <div id="header-project-name">— No project open —</div>
+    <div id="header-save-indicator">✓ Saved</div>
+  </div>
+  <button class="header-btn hidden" id="btn-header-about" onclick="showAboutModal()" title="About">ℹ</button>
+  <button class="header-btn hidden" id="btn-header-home" onclick="goHome()" title="All projects">≡</button>
+</header>
+
+<!-- ============================================================
+     HOME SCREEN
+     ============================================================ -->
+<div id="home-screen">
+  <div class="home-hero">
+    <h1>Gemba<span>-RCA</span></h1>
+    <p>Structured root cause analysis for NHS healthcare teams.<br>Fishbone brainstorm · 5 Whys evidence chains · Pareto prioritisation.</p>
+  </div>
+
+  <div class="home-actions">
+    <button class="btn-primary" onclick="showNewProjectModal()">＋ New RCA</button>
+    <button class="btn-secondary" onclick="importOwnRCA()">↑ Import JSON</button>
+    <button class="btn-secondary" onclick="showAboutModal()">ℹ About</button>
+  </div>
+
+  <div class="projects-list" id="projects-list">
+    <!-- Populated by JS -->
+  </div>
+</div>
+
+<!-- ============================================================
+     APP SCREEN
+     ============================================================ -->
+<div id="app-screen">
+  <!-- Tab navigation (mobile/tablet) -->
+  <nav id="tab-nav">
+    <button class="tab-btn active" data-tab="fishbone" onclick="switchTab('fishbone')">🐟 Fishbone</button>
+    <button class="tab-btn" data-tab="whys" onclick="switchTab('whys')">❓ 5 Whys</button>
+    <button class="tab-btn" data-tab="pareto" onclick="switchTab('pareto')">📊 Pareto &amp; Export</button>
+  </nav>
+
+  <div id="app-content">
+    <!-- Problem banner -->
+    <div id="problem-banner-wrap" style="padding: var(--space-md) var(--space-md) 0;">
+      <div id="problem-banner">
+        <div id="problem-banner-label">
+          Problem Statement
+          <span class="source-badge" id="problem-source-badge">Standalone</span>
+        </div>
+        <div id="problem-banner-text" onclick="editProblemStatement()">—</div>
+        <div id="problem-banner-hint">Tap to edit</div>
+      </div>
+    </div>
+
+    <!-- FISHBONE PANEL -->
+    <div id="app-panel-fishbone" class="tab-panel active">
+      <div id="fishbone-container" style="margin: var(--space-md);">
+        <div class="fishbone-toolbar">
+          <span class="fishbone-toolbar-title">Fishbone Diagram</span>
+          <span id="selection-count">0 of 3 selected</span>
+        </div>
+        <div id="fishbone-svg-wrap">
+          <svg id="fishbone-svg" viewBox="0 0 900 480" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
+        <div class="fishbone-categories-grid" id="fishbone-categories-grid">
+          <!-- Category cards populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 5 WHYS PANEL -->
+    <div id="app-panel-whys" class="tab-panel">
+      <div style="padding: var(--space-md);">
+        <div id="whys-empty">
+          <div style="font-size: 2.5rem; margin-bottom: var(--space-md);">❓</div>
+          <div style="font-weight: 700; color: var(--color-navy); margin-bottom: var(--space-sm);">No causes selected yet</div>
+          <div style="font-size: 0.875rem;">Go to the Fishbone tab and tap up to 3 causes to investigate them with 5 Whys chains.</div>
+        </div>
+        <div id="chain-tabs" class="chain-tabs hidden"></div>
+        <div id="chain-panels"></div>
+      </div>
+    </div>
+
+    <!-- PARETO & EXPORT PANEL -->
+    <div id="app-panel-pareto" class="tab-panel">
+      <div style="padding: var(--space-md);">
+
+        <!-- Pareto section -->
+        <div id="pareto-section">
+          <div class="section-title">📊 Pareto Chart — Cause Frequency</div>
+          <p class="text-sm text-muted" style="margin-bottom: var(--space-md);">Enter each candidate cause and how many incidents it accounts for. The chart shows your vital few.</p>
+          <div id="pareto-table"></div>
+          <button class="btn-secondary text-sm mt-sm" onclick="addParetoRow()" style="min-height: var(--touch-min);">＋ Add cause</button>
+          <div id="pareto-svg-wrap" style="margin-top: var(--space-md);">
+            <svg id="pareto-svg" viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg"></svg>
+          </div>
+        </div>
+
+        <!-- Export section -->
+        <div id="export-section">
+          <div class="section-title">↑ Export &amp; Share</div>
+          <div class="export-grid">
+
+            <div class="export-card">
+              <div class="export-card-title">JSON Export</div>
+              <div class="export-card-desc">Full RCA data in Gemba Suite envelope format. Use to save a backup or share this RCA.</div>
+              <button class="btn-primary w-full" style="font-size:0.875rem;" onclick="exportJSON()">Download JSON</button>
+            </div>
+
+            <div class="export-card">
+              <div class="export-card-title">Export to Gemba-A3</div>
+              <div class="export-card-desc">Packages validated root causes + fishbone SVG for import into a Gemba-A3 project.</div>
+              <button class="btn-primary w-full" style="font-size:0.875rem;" onclick="exportToA3()">Export for A3</button>
+            </div>
+
+            <div class="export-card">
+              <div class="export-card-title">Import from Gemba-A3</div>
+              <div class="export-card-desc">Pre-populate the problem statement from a Gemba-A3 JSON export.</div>
+              <button class="btn-secondary w-full" style="font-size:0.875rem;" onclick="importFromA3()">Import A3 JSON</button>
+            </div>
+
+            <div class="export-card">
+              <div class="export-card-title">AI Lean Sensei</div>
+              <div class="export-card-desc">Generate a coaching prompt to review this RCA with Claude, Copilot, or Gemini.</div>
+              <button class="btn-primary w-full" style="font-size:0.875rem; background: #4f46e5;" onclick="showAICoachingModal()">Get Coaching Prompt</button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div><!-- #app-content -->
+</div><!-- #app-screen -->
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer>
+  <strong>Gemba-RCA v1.2</strong> — David Clark — <a href="https://gembasuite.org" target="_blank" rel="noopener">gembasuite.org</a><br>
+  <a href="https://gembasuite.org/licence" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · Free for healthcare improvement · No patient data is collected
+</footer>
+
+<!-- ============================================================
+     MODALS (all hidden initially)
+     ============================================================ -->
+
+<!-- About Modal -->
+<div id="modal-about" class="modal-overlay" onclick="closeModalIfOverlay(event, 'modal-about')">
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <div class="modal-title">About Gemba-RCA</div>
+      <button class="modal-close" onclick="closeModal('modal-about')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p><strong>Gemba-RCA v1.2</strong> is a structured root cause analysis tool for NHS healthcare teams implementing lean methodology.</p>
+      <p>Part of the <strong>Gemba Suite</strong> — free, single-file web apps for lean improvement at the gemba.</p>
+      <div style="background: var(--color-grey-100); border-radius: var(--radius-md); padding: var(--space-md);">
+        <div style="font-weight: 700; margin-bottom: var(--space-xs);">Licence</div>
+        <p class="text-sm">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0). Free for all healthcare improvement purposes. Not for commercial resale or proprietary repackaging.</p>
+        <p class="text-sm mt-sm"><a href="https://gembasuite.org/licence" target="_blank" rel="noopener">gembasuite.org/licence</a></p>
+      </div>
+      <div style="background: var(--color-grey-100); border-radius: var(--radius-md); padding: var(--space-md);">
+        <div style="font-weight: 700; margin-bottom: var(--space-xs);">Information Governance</div>
+        <p class="text-sm">No patient-identifiable data fields. All data stays on this device in your browser's localStorage until you explicitly export it. No backend, no cloud storage, no tracking.</p>
+      </div>
+      <div style="background: var(--color-grey-100); border-radius: var(--radius-md); padding: var(--space-md);">
+        <div style="font-weight: 700; margin-bottom: var(--space-xs);">Disclaimer</div>
+        <p class="text-sm">These tools support process improvement and do not make clinical decisions or recommendations. They are not medical devices and are not regulated as such under MHRA or equivalent frameworks.</p>
+        <p class="text-sm" style="margin-top: var(--space-xs);">All data is stored locally on your device. The tools are provided as-is, without warranty. You are responsible for exporting and backing up your data regularly.</p>
+      </div>
+      <p class="text-sm text-muted">Developer: David Clark — <a href="https://gembasuite.org" target="_blank" rel="noopener">gembasuite.org</a></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-primary" onclick="closeModal('modal-about')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- New Project Modal -->
+<div id="modal-new-project" class="modal-overlay" onclick="closeModalIfOverlay(event, 'modal-new-project')">
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <div class="modal-title">New RCA Session</div>
+      <button class="modal-close" onclick="closeModal('modal-new-project')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-group">
+        <label for="new-project-name">Project / session name</label>
+        <input type="text" id="new-project-name" placeholder="e.g. Delayed TAT investigation — Haematology" maxlength="120">
+      </div>
+      <div class="field-group">
+        <label for="new-work-area">Work area / department</label>
+        <input type="text" id="new-work-area" placeholder="e.g. Haematology laboratory" maxlength="100">
+      </div>
+      <div class="field-group">
+        <label for="new-author">Author</label>
+        <input type="text" id="new-author" placeholder="Your name" maxlength="100">
+      </div>
+      <div class="field-group">
+        <label for="new-org">Organisation</label>
+        <input type="text" id="new-org" placeholder="e.g. Mid Yorkshire NHS Trust" maxlength="100">
+      </div>
+      <div class="field-group">
+        <label for="new-date">Date</label>
+        <input type="date" id="new-date">
+      </div>
+
+      <div style="border-top: 1px solid var(--color-grey-200); padding-top: var(--space-md);">
+        <label style="margin-bottom: var(--space-sm);">Problem statement entry route</label>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm);">
+          <div class="tier-card selected" id="route-standalone" onclick="selectEntryRoute('standalone')">
+            <div class="tier-card-name">✏️ Standalone</div>
+            <div class="tier-card-desc">Type the problem statement here</div>
+          </div>
+          <div class="tier-card" id="route-a3import" onclick="selectEntryRoute('a3import')">
+            <div class="tier-card-name">📥 Import from A3</div>
+            <div class="tier-card-desc">Load from a Gemba-A3 JSON file</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="standalone-problem-wrap" class="field-group">
+        <label for="new-problem">Problem statement</label>
+        <textarea id="new-problem" placeholder="Describe the problem clearly and specifically. What is happening? Where? When? How often?" rows="3"></textarea>
+      </div>
+
+      <div id="a3import-wrap" class="hidden">
+        <button class="btn-secondary w-full" onclick="pickA3FileForNew()">📂 Select Gemba-A3 JSON file</button>
+        <p class="text-xs text-muted mt-sm" id="a3import-status">No file selected. The problem statement will be pre-populated from the A3 section 1.</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-new-project')">Cancel</button>
+      <button class="btn-primary" onclick="createNewProject()">Create RCA →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Rename Project Modal -->
+<div id="modal-rename-project" class="modal-overlay" onclick="closeModalIfOverlay(event, 'modal-rename-project')">
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <div class="modal-title">Rename Project</div>
+      <button class="modal-close" onclick="closeModal('modal-rename-project')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-group">
+        <label for="rename-input">Project name</label>
+        <input type="text" id="rename-input" maxlength="120">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-rename-project')">Cancel</button>
+      <button class="btn-primary" onclick="confirmRename()">Rename</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Delete Modal -->
+<div id="modal-confirm-delete" class="modal-overlay" onclick="closeModalIfOverlay(event, 'modal-confirm-delete')">
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <div class="modal-title">Delete Project?</div>
+      <button class="modal-close" onclick="closeModal('modal-confirm-delete')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p>This will permanently delete <strong id="delete-project-name"></strong> and all its data. This cannot be undone.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-confirm-delete')">Cancel</button>
+      <button class="btn-danger" onclick="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Cause Modal -->
+<div id="modal-add-cause" class="modal-overlay" onclick="closeModalIfOverlay(event, 'modal-add-cause')">
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <div class="modal-title">Add Cause — <span id="add-cause-category-name"></span></div>
+      <button class="modal-close" onclick="closeModal('modal-add-cause')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-group">
+        <label for="add-cause-input">Candidate cause</label>
+        <textarea id="add-cause-input" placeholder="Describe this candidate cause briefly and specifically." rows="2"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-add-cause')">Cancel</button>
+      <button class="btn-primary" onclick="confirmAddCause()">Add Cause</button>
+    </div>
+  </div>
+</div>
+
+<!-- Rename Category Modal -->
+<div id="modal-rename-category" class="modal-overlay" onclick="closeModalIfOverlay(event, 'modal-rename-category')">
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <div class="modal-title">Rename Category</div>
+      <button class="modal-close" onclick="closeModal('modal-rename-category')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-group">
+        <label for="rename-category-input">Category label</label>
+        <input type="text" id="rename-category-input" maxlength="40">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-rename-category')">Cancel</button>
+      <button class="btn-primary" onclick="confirmRenameCategory()">Rename</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Problem Statement Modal -->
+<div id="modal-edit-problem" class="modal-overlay" onclick="closeModalIfOverlay(event, 'modal-edit-problem')">
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <div class="modal-title">Edit Problem Statement</div>
+      <button class="modal-close" onclick="closeModal('modal-edit-problem')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-group">
+        <label for="edit-problem-input">Problem statement</label>
+        <textarea id="edit-problem-input" rows="4" placeholder="Describe the problem clearly and specifically."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-edit-problem')">Cancel</button>
+      <button class="btn-primary" onclick="confirmEditProblem()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Photo View Modal -->
+<div id="modal-photo-view" class="modal-overlay" onclick="closeModalIfOverlay(event, 'modal-photo-view')">
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <div class="modal-title">Evidence Photo</div>
+      <button class="modal-close" onclick="closeModal('modal-photo-view')">✕</button>
+    </div>
+    <div class="modal-body" style="align-items: center;">
+      <img id="modal-photo-img" src="" alt="Evidence photo" style="max-width: 100%; border-radius: var(--radius-md);">
+      <button class="btn-danger" id="modal-photo-delete" onclick="deleteCurrentPhoto()">🗑 Remove photo</button>
+    </div>
+  </div>
+</div>
+
+<!-- AI Coaching Modal -->
+<div id="modal-ai-coaching" class="modal-overlay" onclick="closeModalIfOverlay(event, 'modal-ai-coaching')">
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <div class="modal-title">AI Lean Sensei — Coaching Prompt</div>
+      <button class="modal-close" onclick="closeModal('modal-ai-coaching')">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <div class="field-group">
+        <label>Step 1: Select coaching tier</label>
+        <div class="tier-grid">
+          <div class="tier-card selected" id="ai-tier-sensei" onclick="selectAITier('sensei')">
+            <div class="tier-card-name">🎓 Sensei Prep</div>
+            <div class="tier-card-desc">Peer-level · Lean terminology · Concise challenge</div>
+          </div>
+          <div class="tier-card" id="ai-tier-facilitator" onclick="selectAITier('facilitator')">
+            <div class="tier-card-name">🤝 Facilitator Coaching</div>
+            <div class="tier-card-desc">Supportive · Concepts explained · Guided reflection</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label>Step 2: Select LLM</label>
+        <div class="llm-grid">
+          <button class="llm-btn selected" id="ai-llm-copilot" onclick="selectAILLM('copilot')">Copilot<br><span style="font-weight:400;font-size:0.7rem;">(NHS M365)</span></button>
+          <button class="llm-btn" id="ai-llm-claude" onclick="selectAILLM('claude')">Claude<br><span style="font-weight:400;font-size:0.7rem;">(Free tier)</span></button>
+          <button class="llm-btn" id="ai-llm-gemini" onclick="selectAILLM('gemini')">Gemini<br><span style="font-weight:400;font-size:0.7rem;">(Free tier)</span></button>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label for="ai-context-input">Step 3: Add context (optional)</label>
+        <textarea id="ai-context-input" rows="2" placeholder="Any additional context about the work area, team, or situation that would help the AI coach this RCA."></textarea>
+      </div>
+
+      <div class="field-group">
+        <label>Step 4: Preview &amp; copy prompt</label>
+        <div class="prompt-preview" id="ai-prompt-preview">Select tier and LLM above to generate prompt...</div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-ai-coaching')">Close</button>
+      <button class="btn-primary" onclick="copyCoachingPrompt()">📋 Copy to Clipboard</button>
+    </div>
+  </div>
+</div>
+
+<!-- Hidden file inputs -->
+<input type="file" id="file-import-rca" accept=".json" style="display:none" onchange="handleImportRCA(event)">
+<input type="file" id="file-import-a3" accept=".json" style="display:none" onchange="handleImportA3ForNew(event)">
+<input type="file" id="file-import-a3-existing" accept=".json" style="display:none" onchange="handleImportA3Existing(event)">
+
+<!-- Photo file inputs — created dynamically per step -->
+
+<script>
+/* ============================================================
+   UTILITY FUNCTIONS
+   ============================================================ */
+
+/**
+ * Escape user-entered content before inserting into innerHTML.
+ * Must be used consistently on all user-entered strings.
+ */
+function escHtml(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/**
+ * Generate a UUID using crypto.randomUUID() with fallback.
+ */
+function generateUUID() {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  // Fallback for older environments
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0;
+    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+  });
+}
+
+/**
+ * Compress an image file to max 800px, JPEG 80%.
+ * Returns a Promise resolving to a base64 data URL.
+ */
+function compressImage(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('File read failed'));
+    reader.onload = e => {
+      const img = new Image();
+      img.onerror = () => reject(new Error('Image load failed'));
+      img.onload = () => {
+        const MAX = 800;
+        let { width, height } = img;
+        if (width > MAX || height > MAX) {
+          if (width > height) { height = Math.round(height * MAX / width); width = MAX; }
+          else { width = Math.round(width * MAX / height); height = MAX; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', 0.8));
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+/**
+ * Trigger a file download in the browser.
+ */
+function downloadFile(filename, content, mimeType = 'application/json') {
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
+}
+
+/**
+ * Format a date string for display.
+ */
+function formatDate(isoStr) {
+  if (!isoStr) return '';
+  try {
+    return new Date(isoStr).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  } catch { return isoStr; }
+}
+
+/**
+ * Truncate a string to a max length with ellipsis.
+ */
+function truncate(str, max = 60) {
+  if (!str) return '';
+  return str.length > max ? str.slice(0, max) + '…' : str;
+}
+
+/* ============================================================
+   DATA MODEL — DEFAULT STATE
+   ============================================================ */
+
+const DEFAULT_CATEGORIES = [
+  { id: null, label: 'People',       causes: [] },
+  { id: null, label: 'Equipment',    causes: [] },
+  { id: null, label: 'Method',       causes: [] },
+  { id: null, label: 'Materials',    causes: [] },
+  { id: null, label: 'Measurement',  causes: [] },
+  { id: null, label: 'Environment',  causes: [] }
+];
+
+function createDefaultCategories() {
+  return DEFAULT_CATEGORIES.map(c => ({
+    id: generateUUID(),
+    label: c.label,
+    causes: []
+  }));
+}
+
+function createEmptyProject(name, context) {
+  return {
+    id: generateUUID(),
+    name: name || 'Untitled RCA',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    context: {
+      workArea: context.workArea || '',
+      author: context.author || '',
+      date: context.date || '',
+      organisation: context.organisation || ''
+    },
+    problemStatement: context.problemStatement || '',
+    problemSource: context.problemSource || 'standalone',
+    linkedA3Id: context.linkedA3Id || null,
+    fishbone: {
+      categories: createDefaultCategories()
+    },
+    selectedCauseIds: [],
+    whyChains: [],
+    paretoData: [],
+    validatedRootCauses: []
+  };
+}
+
+/* ============================================================
+   LOCAL STORAGE — PROJECT MANAGEMENT
+   ============================================================ */
+
+const STORAGE_PREFIX = 'gemba-rca-project-';
+const STORAGE_LIST_KEY = 'gemba-rca-projects';
+
+function getProjectList() {
+  try {
+    const raw = localStorage.getItem(STORAGE_LIST_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch { return []; }
+}
+
+function saveProjectList(list) {
+  localStorage.setItem(STORAGE_LIST_KEY, JSON.stringify(list));
+}
+
+function loadProject(id) {
+  try {
+    const raw = localStorage.getItem(STORAGE_PREFIX + id);
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
+}
+
+function persistProject(project) {
+  project.updatedAt = new Date().toISOString();
+  localStorage.setItem(STORAGE_PREFIX + project.id, JSON.stringify(project));
+
+  // Update project list entry
+  const list = getProjectList();
+  const idx = list.findIndex(p => p.id === project.id);
+  const meta = { id: project.id, name: project.name, updatedAt: project.updatedAt, createdAt: project.createdAt };
+  if (idx >= 0) list[idx] = meta; else list.unshift(meta);
+  saveProjectList(list);
+}
+
+function deleteProject(id) {
+  localStorage.removeItem(STORAGE_PREFIX + id);
+  const list = getProjectList().filter(p => p.id !== id);
+  saveProjectList(list);
+}
+
+/* ============================================================
+   AUTO-SAVE
+   ============================================================ */
+
+let saveTimer = null;
+
+function scheduleAutoSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    if (activeProject) {
+      persistProject(activeProject);
+      showSaveIndicator();
+    }
+  }, 1500);
+}
+
+function showSaveIndicator() {
+  const el = document.getElementById('header-save-indicator');
+  el.classList.add('visible');
+  setTimeout(() => el.classList.remove('visible'), 2000);
+}
+
+/* ============================================================
+   APPLICATION STATE
+   ============================================================ */
+
+let activeProject = null;    // The currently open project object
+let activeTab = 'fishbone';  // Current tab name
+
+// Modal state
+let pendingCategoryId = null;    // Category ID for Add Cause modal
+let pendingRenameProjectId = null;
+let pendingDeleteProjectId = null;
+let pendingRenameCategoryId = null;
+let pendingPhotoChainId = null;
+let pendingPhotoStepIndex = null;
+let newProjectEntryRoute = 'standalone';
+let pendingA3FileForNew = null;   // Stored A3 data during new project creation
+
+// AI coaching state
+let aiCoachingTier = 'sensei';
+let aiCoachingLLM = 'copilot';
+
+/* ============================================================
+   MODAL SYSTEM
+   ============================================================ */
+
+function openModal(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.display = 'flex';
+  // Force reflow then add open class for animation
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => el.classList.add('open'));
+  });
+}
+
+function closeModal(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.remove('open');
+  setTimeout(() => { el.style.display = 'none'; }, 250);
+}
+
+function closeModalIfOverlay(event, id) {
+  if (event.target === event.currentTarget) closeModal(id);
+}
+
+function showAboutModal() { openModal('modal-about'); }
+
+/* ============================================================
+   HOME SCREEN
+   ============================================================ */
+
+function renderHomeScreen() {
+  const list = getProjectList();
+  const container = document.getElementById('projects-list');
+
+  if (list.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">🔍</div>
+        <div style="font-weight:700; color: var(--color-navy); margin-bottom:8px;">No RCA sessions yet</div>
+        <div class="text-sm">Start a new RCA session to begin your root cause investigation.</div>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = list.map(p => `
+    <div class="project-card" onclick="openProject('${escHtml(p.id)}')">
+      <div class="project-card-info">
+        <div class="project-card-name">${escHtml(p.name)}</div>
+        <div class="project-card-meta">Updated ${formatDate(p.updatedAt)} · Created ${formatDate(p.createdAt)}</div>
+      </div>
+      <div class="project-card-actions" onclick="event.stopPropagation()">
+        <button class="btn-ghost" title="Rename" onclick="showRenameProjectModal('${escHtml(p.id)}', '${escHtml(p.name).replace(/'/g,"\\'")}')">✏️</button>
+        <button class="btn-ghost" title="Delete" onclick="showDeleteProjectModal('${escHtml(p.id)}', '${escHtml(p.name).replace(/'/g,"\\'")}')">🗑️</button>
+      </div>
+    </div>`).join('');
+}
+
+function showNewProjectModal() {
+  // Reset state
+  newProjectEntryRoute = 'standalone';
+  pendingA3FileForNew = null;
+  document.getElementById('new-project-name').value = '';
+  document.getElementById('new-work-area').value = '';
+  document.getElementById('new-author').value = '';
+  document.getElementById('new-org').value = '';
+  document.getElementById('new-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('new-problem').value = '';
+  document.getElementById('a3import-status').textContent = 'No file selected. The problem statement will be pre-populated from the A3 section 1.';
+  document.getElementById('route-standalone').classList.add('selected');
+  document.getElementById('route-a3import').classList.remove('selected');
+  document.getElementById('standalone-problem-wrap').classList.remove('hidden');
+  document.getElementById('a3import-wrap').classList.add('hidden');
+  openModal('modal-new-project');
+}
+
+function selectEntryRoute(route) {
+  newProjectEntryRoute = route;
+  document.getElementById('route-standalone').classList.toggle('selected', route === 'standalone');
+  document.getElementById('route-a3import').classList.toggle('selected', route === 'a3import');
+  document.getElementById('standalone-problem-wrap').classList.toggle('hidden', route !== 'standalone');
+  document.getElementById('a3import-wrap').classList.toggle('hidden', route !== 'a3import');
+}
+
+function pickA3FileForNew() {
+  document.getElementById('file-import-a3').click();
+}
+
+function handleImportA3ForNew(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.gembaApp || data.gembaApp !== 'a3') {
+        document.getElementById('a3import-status').textContent = '⚠️ This does not appear to be a Gemba-A3 file. Please check the file and try again.';
+        return;
+      }
+      const problemStatement = data.payload?.sections?.find(s => s.sectionNumber === 1)?.content?.text
+        || data.payload?.problemStatement
+        || '';
+      pendingA3FileForNew = { id: data.id || null, problemStatement, raw: data };
+      document.getElementById('a3import-status').textContent = `✓ Loaded: "${truncate(problemStatement || '(no problem statement found)', 80)}"`;
+    } catch {
+      document.getElementById('a3import-status').textContent = '⚠️ Could not parse this file. Make sure it is a valid Gemba-A3 JSON export.';
+    }
+  };
+  reader.readAsText(file);
+  // Reset input so same file can be re-selected
+  event.target.value = '';
+}
+
+function createNewProject() {
+  const name = document.getElementById('new-project-name').value.trim();
+  if (!name) {
+    alert('Please enter a project name.');
+    document.getElementById('new-project-name').focus();
+    return;
+  }
+
+  let problemStatement = '';
+  let problemSource = 'standalone';
+  let linkedA3Id = null;
+
+  if (newProjectEntryRoute === 'standalone') {
+    problemStatement = document.getElementById('new-problem').value.trim();
+  } else {
+    if (!pendingA3FileForNew) {
+      document.getElementById('a3import-status').textContent = '⚠️ Please select a Gemba-A3 JSON file first.';
+      return;
+    }
+    problemStatement = pendingA3FileForNew.problemStatement || '';
+    problemSource = 'a3-import';
+    linkedA3Id = pendingA3FileForNew.id;
+  }
+
+  const project = createEmptyProject(name, {
+    workArea:   document.getElementById('new-work-area').value.trim(),
+    author:     document.getElementById('new-author').value.trim(),
+    date:       document.getElementById('new-date').value,
+    organisation: document.getElementById('new-org').value.trim(),
+    problemStatement,
+    problemSource,
+    linkedA3Id
+  });
+
+  persistProject(project);
+  closeModal('modal-new-project');
+  openProject(project.id);
+}
+
+function openProject(id) {
+  const project = loadProject(id);
+  if (!project) { alert('Could not load project.'); renderHomeScreen(); return; }
+  activeProject = project;
+  activateAppScreen();
+}
+
+function goHome() {
+  activeProject = null;
+  document.getElementById('home-screen').style.display = '';
+  document.getElementById('app-screen').classList.remove('active');
+  document.getElementById('header-project-name').textContent = '— No project open —';
+  document.getElementById('btn-header-about').classList.add('hidden');
+  document.getElementById('btn-header-home').classList.add('hidden');
+  renderHomeScreen();
+}
+
+function showRenameProjectModal(id, name) {
+  pendingRenameProjectId = id;
+  document.getElementById('rename-input').value = name;
+  openModal('modal-rename-project');
+}
+
+function confirmRename() {
+  const newName = document.getElementById('rename-input').value.trim();
+  if (!newName) return;
+  const project = loadProject(pendingRenameProjectId);
+  if (project) {
+    project.name = newName;
+    persistProject(project);
+    if (activeProject && activeProject.id === pendingRenameProjectId) {
+      activeProject.name = newName;
+      document.getElementById('header-project-name').textContent = newName;
+    }
+  }
+  closeModal('modal-rename-project');
+  renderHomeScreen();
+}
+
+function showDeleteProjectModal(id, name) {
+  pendingDeleteProjectId = id;
+  document.getElementById('delete-project-name').textContent = name;
+  openModal('modal-confirm-delete');
+}
+
+function confirmDelete() {
+  deleteProject(pendingDeleteProjectId);
+  if (activeProject && activeProject.id === pendingDeleteProjectId) goHome();
+  closeModal('modal-confirm-delete');
+  renderHomeScreen();
+}
+
+/* ============================================================
+   APP SCREEN ACTIVATION
+   ============================================================ */
+
+function activateAppScreen() {
+  document.getElementById('home-screen').style.display = 'none';
+  document.getElementById('app-screen').classList.add('active');
+  document.getElementById('header-project-name').textContent = activeProject.name;
+  document.getElementById('btn-header-about').classList.remove('hidden');
+  document.getElementById('btn-header-home').classList.remove('hidden');
+
+  // Switch to fishbone tab
+  switchTab('fishbone');
+
+  // Render all sections
+  renderProblemBanner();
+  renderFishbone();
+  renderWhysSection();
+  renderParetoTable();
+  renderParetoChart();
+}
+
+/* ============================================================
+   TAB NAVIGATION
+   ============================================================ */
+
+function switchTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tab === tab);
+  });
+  document.querySelectorAll('.tab-panel').forEach(panel => {
+    panel.classList.toggle('active', panel.id === 'app-panel-' + tab);
+  });
+}
+
+/* ============================================================
+   PROBLEM BANNER
+   ============================================================ */
+
+function renderProblemBanner() {
+  if (!activeProject) return;
+  const text = activeProject.problemStatement || '(No problem statement — tap to add)';
+  document.getElementById('problem-banner-text').textContent = text;
+  document.getElementById('problem-source-badge').textContent =
+    activeProject.problemSource === 'a3-import' ? 'Imported from A3' : 'Standalone';
+}
+
+function editProblemStatement() {
+  document.getElementById('edit-problem-input').value = activeProject.problemStatement || '';
+  openModal('modal-edit-problem');
+}
+
+function confirmEditProblem() {
+  activeProject.problemStatement = document.getElementById('edit-problem-input').value.trim();
+  renderProblemBanner();
+  // Also update the effect box on the fishbone
+  renderFishboneSVG();
+  scheduleAutoSave();
+  closeModal('modal-edit-problem');
+}
+
+/* ============================================================
+   FISHBONE — CATEGORIES & CAUSES
+   ============================================================ */
+
+function renderFishbone() {
+  renderFishboneSVG();
+  renderFishboneCategoryCards();
+  updateSelectionCount();
+}
+
+/**
+ * Render the SVG fishbone diagram.
+ * Spine runs left to right. Effect box on right. 
+ * Top bones: People, Equipment, Method (left to right)
+ * Bottom bones: Materials, Measurement, Environment (left to right)
+ */
+function renderFishboneSVG() {
+  if (!activeProject) return;
+  const svg = document.getElementById('fishbone-svg');
+  const W = 900, H = 480;
+  const spineY = H / 2;
+  const spineX1 = 60, spineX2 = W - 130;
+  const effectBoxW = 120, effectBoxH = 80;
+  const effectBoxX = W - effectBoxW - 5;
+  const effectBoxY = spineY - effectBoxH / 2;
+
+  // Three evenly-spaced branch attachment points along the spine
+  const spineLen = spineX2 - spineX1;
+  const branchXs = [
+    spineX1 + spineLen * 0.22,
+    spineX1 + spineLen * 0.50,
+    spineX1 + spineLen * 0.78
+  ];
+
+  const branchLen = 110;  // length of main diagonal branch
+  const branchAngle = Math.PI / 4; // 45 degrees
+  const dx = branchLen * Math.cos(branchAngle);
+  const dy = branchLen * Math.sin(branchAngle);
+
+  const cats = activeProject.fishbone.categories;
+  // Ensure we have 6 categories (guard against old data)
+  const topCats = cats.slice(0, 3);    // People, Equipment, Method
+  const botCats = cats.slice(3, 6);    // Materials, Measurement, Environment
+
+  // Helper: truncate text for SVG
+  const svgText = (s, max) => {
+    const str = String(s || '');
+    return str.length > max ? str.slice(0, max) + '…' : str;
+  };
+
+  const selectedIds = new Set(activeProject.selectedCauseIds);
+
+  // Build SVG content
+  let content = '';
+
+  // Spine
+  content += `<line x1="${spineX1}" y1="${spineY}" x2="${spineX2}" y2="${spineY}" stroke="#006172" stroke-width="3" stroke-linecap="round"/>`;
+
+  // Fish head (arrowhead)
+  content += `<polygon points="${spineX2},${spineY} ${spineX2-12},${spineY-8} ${spineX2-12},${spineY+8}" fill="#006172"/>`;
+
+  // Effect box
+  const problemText = svgText(activeProject.problemStatement || 'Problem / Effect', 22);
+  const problemLines = wrapSVGText(problemText, 18);
+  const lineH = 14, textStartY = effectBoxY + (effectBoxH - problemLines.length * lineH) / 2 + 11;
+  content += `<rect x="${effectBoxX}" y="${effectBoxY}" width="${effectBoxW}" height="${effectBoxH}" rx="6" fill="#006172"/>`;
+  problemLines.forEach((line, i) => {
+    content += `<text x="${effectBoxX + effectBoxW/2}" y="${textStartY + i * lineH}" text-anchor="middle" fill="white" font-size="11" font-family="-apple-system,BlinkMacSystemFont,sans-serif" font-weight="600">${escHtml(line)}</text>`;
+  });
+
+  // Render each branch and its causes
+  for (let i = 0; i < 3; i++) {
+    const bx = branchXs[i];
+
+    // TOP BRANCH
+    const topCat = topCats[i];
+    if (topCat) {
+      const tipX = bx - dx;
+      const tipY = spineY - dy;
+      content += `<line x1="${bx}" y1="${spineY}" x2="${tipX}" y2="${tipY}" stroke="#006172" stroke-width="2"/>`;
+      // Category label at tip
+      content += `<rect x="${tipX - 46}" y="${tipY - 22}" width="92" height="22" rx="4" fill="#006172"/>`;
+      content += `<text x="${tipX}" y="${tipY - 7}" text-anchor="middle" fill="white" font-size="11" font-weight="700" font-family="-apple-system,BlinkMacSystemFont,sans-serif">${escHtml(svgText(topCat.label, 14))}</text>`;
+
+      // Sub-bones (causes)
+      topCat.causes.forEach((cause, ci) => {
+        const t = 0.3 + ci * 0.2;
+        const sbX = bx - dx * t;
+        const sbY = spineY - dy * t;
+        const subLen = 55;
+        const subEndX = sbX - subLen * 0.6;
+        const subEndY = sbY - subLen * 0.8;
+        const isSelected = selectedIds.has(cause.id);
+        const strokeC = isSelected ? '#006172' : '#6e797c';
+        const fillC = isSelected ? '#c4e5ef' : '#f9fafb';
+        content += `<line x1="${sbX}" y1="${sbY}" x2="${subEndX}" y2="${subEndY}" stroke="${strokeC}" stroke-width="${isSelected?2:1.5}"/>`;
+        content += `<rect x="${subEndX-50}" y="${subEndY-16}" width="100" height="20" rx="3" fill="${fillC}" stroke="${strokeC}" stroke-width="${isSelected?1.5:1}"/>`;
+        content += `<text x="${subEndX}" y="${subEndY-3}" text-anchor="middle" fill="${isSelected?'#004e5c':'#3e484c'}" font-size="9" font-family="-apple-system,BlinkMacSystemFont,sans-serif" font-weight="${isSelected?'700':'400'}">${escHtml(svgText(cause.text, 18))}</text>`;
+      });
+    }
+
+    // BOTTOM BRANCH
+    const botCat = botCats[i];
+    if (botCat) {
+      const tipX = bx - dx;
+      const tipY = spineY + dy;
+      content += `<line x1="${bx}" y1="${spineY}" x2="${tipX}" y2="${tipY}" stroke="#006172" stroke-width="2"/>`;
+      content += `<rect x="${tipX - 46}" y="${tipY}" width="92" height="22" rx="4" fill="#006172"/>`;
+      content += `<text x="${tipX}" y="${tipY + 15}" text-anchor="middle" fill="white" font-size="11" font-weight="700" font-family="-apple-system,BlinkMacSystemFont,sans-serif">${escHtml(svgText(botCat.label, 14))}</text>`;
+
+      botCat.causes.forEach((cause, ci) => {
+        const t = 0.3 + ci * 0.2;
+        const sbX = bx - dx * t;
+        const sbY = spineY + dy * t;
+        const subLen = 55;
+        const subEndX = sbX - subLen * 0.6;
+        const subEndY = sbY + subLen * 0.8;
+        const isSelected = selectedIds.has(cause.id);
+        const strokeC = isSelected ? '#006172' : '#6e797c';
+        const fillC = isSelected ? '#c4e5ef' : '#f9fafb';
+        content += `<line x1="${sbX}" y1="${sbY}" x2="${subEndX}" y2="${subEndY}" stroke="${strokeC}" stroke-width="${isSelected?2:1.5}"/>`;
+        content += `<rect x="${subEndX-50}" y="${subEndY-4}" width="100" height="20" rx="3" fill="${fillC}" stroke="${strokeC}" stroke-width="${isSelected?1.5:1}"/>`;
+        content += `<text x="${subEndX}" y="${subEndY+9}" text-anchor="middle" fill="${isSelected?'#004e5c':'#3e484c'}" font-size="9" font-family="-apple-system,BlinkMacSystemFont,sans-serif" font-weight="${isSelected?'700':'400'}">${escHtml(svgText(cause.text, 18))}</text>`;
+      });
+    }
+  }
+
+  svg.innerHTML = content;
+}
+
+function wrapSVGText(text, maxLen) {
+  if (!text) return [''];
+  const words = text.split(' ');
+  const lines = [];
+  let current = '';
+  words.forEach(word => {
+    if ((current + ' ' + word).trim().length > maxLen) {
+      if (current) lines.push(current);
+      current = word;
+    } else {
+      current = current ? current + ' ' + word : word;
+    }
+  });
+  if (current) lines.push(current);
+  return lines.slice(0, 3); // max 3 lines in effect box
+}
+
+function renderFishboneCategoryCards() {
+  if (!activeProject) return;
+  const container = document.getElementById('fishbone-categories-grid');
+  const selectedIds = new Set(activeProject.selectedCauseIds);
+
+  container.innerHTML = activeProject.fishbone.categories.map(cat => `
+    <div class="category-card">
+      <div class="category-header">
+        <span class="category-header-label">${escHtml(cat.label)}</span>
+        <button onclick="showRenameCategoryModal('${escHtml(cat.id)}')" title="Rename category">✏️</button>
+      </div>
+      <div class="cause-list">
+        ${cat.causes.length === 0 ? '<div class="text-xs text-muted" style="padding:4px 0;">No causes yet</div>' : ''}
+        ${cat.causes.map(cause => {
+          const selIdx = activeProject.selectedCauseIds.indexOf(cause.id);
+          const isSelected = selIdx >= 0;
+          return `
+            <div class="cause-item${isSelected ? ' selected' : ''}" onclick="toggleCauseSelection('${escHtml(cause.id)}')">
+              ${isSelected ? `<span class="cause-selected-badge">${selIdx + 1}</span>` : ''}
+              <span class="cause-item-text">${escHtml(cause.text)}</span>
+              <div class="cause-item-actions">
+                <button class="cause-item-del" onclick="event.stopPropagation(); deleteCause('${escHtml(cat.id)}', '${escHtml(cause.id)}')" title="Delete cause">✕</button>
+              </div>
+            </div>`;
+        }).join('')}
+      </div>
+      <div style="padding: 0 var(--space-sm) var(--space-sm);">
+        <button class="add-cause-btn" onclick="showAddCauseModal('${escHtml(cat.id)}')">＋ Add cause</button>
+      </div>
+    </div>`).join('');
+}
+
+function updateSelectionCount() {
+  if (!activeProject) return;
+  const count = activeProject.selectedCauseIds.length;
+  const el = document.getElementById('selection-count');
+  el.textContent = `${count} of 3 selected`;
+  el.classList.toggle('has-selection', count > 0);
+}
+
+function showAddCauseModal(categoryId) {
+  pendingCategoryId = categoryId;
+  const cat = activeProject.fishbone.categories.find(c => c.id === categoryId);
+  document.getElementById('add-cause-category-name').textContent = cat ? cat.label : '';
+  document.getElementById('add-cause-input').value = '';
+  openModal('modal-add-cause');
+}
+
+function confirmAddCause() {
+  const text = document.getElementById('add-cause-input').value.trim();
+  if (!text) return;
+  const cat = activeProject.fishbone.categories.find(c => c.id === pendingCategoryId);
+  if (!cat) return;
+  cat.causes.push({ id: generateUUID(), text, selected: false });
+  scheduleAutoSave();
+  closeModal('modal-add-cause');
+  renderFishbone();
+}
+
+function deleteCause(categoryId, causeId) {
+  const cat = activeProject.fishbone.categories.find(c => c.id === categoryId);
+  if (!cat) return;
+  cat.causes = cat.causes.filter(c => c.id !== causeId);
+  // Remove from selection if selected
+  activeProject.selectedCauseIds = activeProject.selectedCauseIds.filter(id => id !== causeId);
+  // Remove associated why chain
+  activeProject.whyChains = activeProject.whyChains.filter(ch => ch.causeId !== causeId);
+  syncValidatedRootCauses();
+  scheduleAutoSave();
+  renderFishbone();
+  renderWhysSection();
+}
+
+function toggleCauseSelection(causeId) {
+  const sel = activeProject.selectedCauseIds;
+  const idx = sel.indexOf(causeId);
+
+  if (idx >= 0) {
+    // Deselect
+    sel.splice(idx, 1);
+    // Remove the why chain for this cause
+    activeProject.whyChains = activeProject.whyChains.filter(ch => ch.causeId !== causeId);
+    syncValidatedRootCauses();
+  } else {
+    if (sel.length >= 3) {
+      // Provide feedback without alert — briefly highlight the count
+      const el = document.getElementById('selection-count');
+      el.style.background = 'var(--color-amber-lt)';
+      el.style.color = 'var(--color-amber)';
+      el.textContent = 'Maximum 3 selected';
+      setTimeout(() => {
+        el.style.background = '';
+        el.style.color = '';
+        updateSelectionCount();
+      }, 1500);
+      return;
+    }
+    sel.push(causeId);
+    // Create a why chain for this cause
+    const causeText = findCauseText(causeId);
+    activeProject.whyChains.push(createWhyChain(causeId, causeText));
+  }
+
+  scheduleAutoSave();
+  renderFishbone();
+  renderWhysSection();
+}
+
+function findCauseText(causeId) {
+  for (const cat of activeProject.fishbone.categories) {
+    const cause = cat.causes.find(c => c.id === causeId);
+    if (cause) return cause.text;
+  }
+  return '';
+}
+
+function showRenameCategoryModal(categoryId) {
+  pendingRenameCategoryId = categoryId;
+  const cat = activeProject.fishbone.categories.find(c => c.id === categoryId);
+  document.getElementById('rename-category-input').value = cat ? cat.label : '';
+  openModal('modal-rename-category');
+}
+
+function confirmRenameCategory() {
+  const newLabel = document.getElementById('rename-category-input').value.trim();
+  if (!newLabel) return;
+  const cat = activeProject.fishbone.categories.find(c => c.id === pendingRenameCategoryId);
+  if (cat) {
+    cat.label = newLabel;
+    scheduleAutoSave();
+    renderFishbone();
+  }
+  closeModal('modal-rename-category');
+}
+
+/* ============================================================
+   5 WHYS CHAINS
+   ============================================================ */
+
+function createWhyChain(causeId, causeLabel) {
+  return {
+    id: generateUUID(),
+    causeId,
+    causeLabel,
+    steps: [createWhyStep(1)],
+    proposedRootCause: '',
+    validationToggle: null,
+    validationRationale: '',
+    validationStatus: 'candidate'
+  };
+}
+
+function createWhyStep(stepNumber) {
+  return {
+    stepNumber,
+    why: '',
+    evidence: '',
+    evidencePhoto: null,
+    hasEvidence: false
+  };
+}
+
+function renderWhysSection() {
+  if (!activeProject) return;
+  const chains = activeProject.whyChains;
+  const emptyEl = document.getElementById('whys-empty');
+  const tabsEl = document.getElementById('chain-tabs');
+  const panelsEl = document.getElementById('chain-panels');
+
+  if (chains.length === 0) {
+    emptyEl.classList.remove('hidden');
+    tabsEl.classList.add('hidden');
+    panelsEl.innerHTML = '';
+    return;
+  }
+
+  emptyEl.classList.add('hidden');
+  tabsEl.classList.remove('hidden');
+
+  // Render tabs
+  tabsEl.innerHTML = chains.map((chain, idx) => `
+    <button class="chain-tab-btn${idx === 0 ? ' active' : ''}"
+            id="chain-tab-${escHtml(chain.id)}"
+            onclick="switchChainTab('${escHtml(chain.id)}')"
+            title="${escHtml(chain.causeLabel)}">
+      ${escHtml(truncate(chain.causeLabel, 20))}
+    </button>`).join('');
+
+  // Render panels
+  panelsEl.innerHTML = chains.map((chain, idx) => renderChainPanel(chain, idx === 0)).join('');
+}
+
+function renderChainPanel(chain, isActive) {
+  const validationBadge = getValidationBadge(chain.validationStatus);
+
+  const stepsHTML = chain.steps.map((step, si) => {
+    const hasEvidence = step.hasEvidence || step.evidence || step.evidencePhoto;
+    const photoHasImage = !!step.evidencePhoto;
+
+    return `
+      <div class="why-step" id="why-step-${escHtml(chain.id)}-${si}">
+        <div class="why-step-num">${step.stepNumber}</div>
+        <div class="why-step-body">
+          <div class="why-step-label">Why #${step.stepNumber}</div>
+          <div class="why-step-fields">
+            <textarea
+              placeholder="Why does this happen? Be specific — describe the mechanism, not a restatement."
+              rows="2"
+              onchange="updateWhyStep('${escHtml(chain.id)}', ${si}, 'why', this.value)"
+            >${escHtml(step.why)}</textarea>
+            <div class="evidence-row">
+              <textarea
+                placeholder="What is your evidence for this? (observation, data, photo)"
+                rows="2"
+                onchange="updateWhyStep('${escHtml(chain.id)}', ${si}, 'evidence', this.value)"
+              >${escHtml(step.evidence)}</textarea>
+              <button class="photo-btn${photoHasImage ? ' has-photo' : ''}"
+                      onclick="handlePhotoBtn('${escHtml(chain.id)}', ${si})"
+                      title="${photoHasImage ? 'View / remove photo' : 'Attach evidence photo'}">
+                ${photoHasImage ? `<img src="${step.evidencePhoto}" alt="evidence">📷` : '📷'}
+              </button>
+            </div>
+            <div class="evidence-gap-flag${hasEvidence ? ' has-evidence' : ''}">
+              ${hasEvidence ? '✓ Evidence recorded' : '⚠ No evidence — consider what data or observation supports this'}
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+
+  return `
+    <div class="chain-panel${isActive ? ' active' : ''}" id="chain-panel-${escHtml(chain.id)}">
+      <div class="chain-header">
+        <div class="chain-cause-label">Investigating cause:</div>
+        <div class="chain-cause-text">${escHtml(chain.causeLabel)}</div>
+      </div>
+      <div class="why-steps">
+        ${stepsHTML}
+        <button class="add-why-btn" onclick="addWhyStep('${escHtml(chain.id)}')">＋ Ask another Why</button>
+      </div>
+      <div class="root-cause-section">
+        <div class="root-cause-title">Root Cause Proposal &amp; Validation</div>
+        <div class="proposed-rc-label">Proposed root cause (end of your Why chain):</div>
+        <textarea
+          placeholder="State the proposed root cause — the deepest level at which you have evidence."
+          rows="2"
+          onchange="updateChainField('${escHtml(chain.id)}', 'proposedRootCause', this.value)"
+        >${escHtml(chain.proposedRootCause)}</textarea>
+
+        <div class="validation-question">"If we address or remove this cause, does the problem disappear?"</div>
+
+        <div class="validation-toggle">
+          <button class="toggle-btn toggle-btn-yes${chain.validationToggle === true ? ' active' : ''}"
+                  onclick="setValidationToggle('${escHtml(chain.id)}', true)">
+            ✓ Yes — Validated
+          </button>
+          <button class="toggle-btn toggle-btn-no${chain.validationToggle === false ? ' active' : ''}"
+                  onclick="setValidationToggle('${escHtml(chain.id)}', false)">
+            ✗ No — Not validated
+          </button>
+        </div>
+
+        <div class="field-group">
+          <label style="font-weight:600; font-size:0.8rem;">Validation rationale</label>
+          <textarea
+            placeholder="Explain your reasoning. What evidence supports this validation decision?"
+            rows="2"
+            onchange="updateChainField('${escHtml(chain.id)}', 'validationRationale', this.value)"
+          >${escHtml(chain.validationRationale)}</textarea>
+        </div>
+
+        ${validationBadge}
+      </div>
+    </div>`;
+}
+
+function getValidationBadge(status) {
+  const badges = {
+    validated:  `<div class="validation-status-badge badge-validated">✓ Root Cause Validated</div>`,
+    candidate:  `<div class="validation-status-badge badge-candidate">○ Candidate — not yet validated</div>`,
+    failed:     `<div class="validation-status-badge badge-failed">✗ Not Validated — revisit Why chain</div>`,
+    incomplete: `<div class="validation-status-badge badge-incomplete">⚠ Incomplete — proposed root cause missing</div>`
+  };
+  return badges[status] || badges.candidate;
+}
+
+function switchChainTab(chainId) {
+  document.querySelectorAll('.chain-tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.id === 'chain-tab-' + chainId);
+  });
+  document.querySelectorAll('.chain-panel').forEach(panel => {
+    panel.classList.toggle('active', panel.id === 'chain-panel-' + chainId);
+  });
+}
+
+function addWhyStep(chainId) {
+  const chain = activeProject.whyChains.find(ch => ch.id === chainId);
+  if (!chain) return;
+  chain.steps.push(createWhyStep(chain.steps.length + 1));
+  scheduleAutoSave();
+  renderWhysSection();
+  // Restore active tab
+  switchChainTab(chainId);
+}
+
+function updateWhyStep(chainId, stepIndex, field, value) {
+  const chain = activeProject.whyChains.find(ch => ch.id === chainId);
+  if (!chain || !chain.steps[stepIndex]) return;
+  chain.steps[stepIndex][field] = value;
+  // Update hasEvidence flag
+  const step = chain.steps[stepIndex];
+  step.hasEvidence = !!(step.evidence || step.evidencePhoto);
+  // Update evidence gap indicator in-place
+  const stepEl = document.getElementById(`why-step-${chainId}-${stepIndex}`);
+  if (stepEl) {
+    const flag = stepEl.querySelector('.evidence-gap-flag');
+    if (flag) {
+      const hasEv = !!(step.evidence || step.evidencePhoto);
+      flag.className = 'evidence-gap-flag' + (hasEv ? ' has-evidence' : '');
+      flag.textContent = hasEv ? '✓ Evidence recorded' : '⚠ No evidence — consider what data or observation supports this';
+    }
+  }
+  scheduleAutoSave();
+}
+
+function updateChainField(chainId, field, value) {
+  const chain = activeProject.whyChains.find(ch => ch.id === chainId);
+  if (!chain) return;
+  chain[field] = value;
+  updateChainValidationStatus(chain);
+  scheduleAutoSave();
+}
+
+function setValidationToggle(chainId, val) {
+  const chain = activeProject.whyChains.find(ch => ch.id === chainId);
+  if (!chain) return;
+  chain.validationToggle = val;
+  updateChainValidationStatus(chain);
+  syncValidatedRootCauses();
+  scheduleAutoSave();
+  // Re-render section to update badges and button states
+  renderWhysSection();
+  switchChainTab(chainId);
+}
+
+function updateChainValidationStatus(chain) {
+  if (!chain.proposedRootCause) {
+    chain.validationStatus = 'incomplete';
+  } else if (chain.validationToggle === true) {
+    chain.validationStatus = 'validated';
+  } else if (chain.validationToggle === false) {
+    chain.validationStatus = 'failed';
+  } else {
+    chain.validationStatus = 'candidate';
+  }
+}
+
+function syncValidatedRootCauses() {
+  if (!activeProject) return;
+  activeProject.validatedRootCauses = activeProject.whyChains
+    .filter(ch => ch.validationStatus === 'validated')
+    .map(ch => ({
+      causeId: ch.causeId,
+      causeLabel: ch.causeLabel,
+      proposedRootCause: ch.proposedRootCause,
+      validationRationale: ch.validationRationale
+    }));
+}
+
+/* ============================================================
+   PHOTO HANDLING
+   ============================================================ */
+
+function handlePhotoBtn(chainId, stepIndex) {
+  const chain = activeProject.whyChains.find(ch => ch.id === chainId);
+  if (!chain) return;
+  const step = chain.steps[stepIndex];
+
+  if (step.evidencePhoto) {
+    // Show view/delete modal
+    pendingPhotoChainId = chainId;
+    pendingPhotoStepIndex = stepIndex;
+    document.getElementById('modal-photo-img').src = step.evidencePhoto;
+    openModal('modal-photo-view');
+  } else {
+    // Pick a photo
+    pendingPhotoChainId = chainId;
+    pendingPhotoStepIndex = stepIndex;
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.capture = 'environment';
+    input.onchange = handlePhotoSelected;
+    input.click();
+  }
+}
+
+async function handlePhotoSelected(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  try {
+    const compressed = await compressImage(file);
+    const chain = activeProject.whyChains.find(ch => ch.id === pendingPhotoChainId);
+    if (!chain) return;
+    const step = chain.steps[pendingPhotoStepIndex];
+    step.evidencePhoto = compressed;
+    step.hasEvidence = true;
+    scheduleAutoSave();
+    renderWhysSection();
+    switchChainTab(pendingPhotoChainId);
+  } catch (err) {
+    console.error('Photo compression failed:', err);
+  }
+}
+
+function deleteCurrentPhoto() {
+  const chain = activeProject.whyChains.find(ch => ch.id === pendingPhotoChainId);
+  if (!chain) return;
+  const step = chain.steps[pendingPhotoStepIndex];
+  step.evidencePhoto = null;
+  step.hasEvidence = !!(step.evidence);
+  scheduleAutoSave();
+  closeModal('modal-photo-view');
+  renderWhysSection();
+  if (pendingPhotoChainId) switchChainTab(pendingPhotoChainId);
+}
+
+/* ============================================================
+   PARETO CHART
+   ============================================================ */
+
+function renderParetoTable() {
+  if (!activeProject) return;
+  const container = document.getElementById('pareto-table');
+  const rows = activeProject.paretoData;
+
+  container.innerHTML = rows.map((row, i) => `
+    <div class="pareto-row">
+      <input type="text" placeholder="Cause label" value="${escHtml(row.label)}"
+             oninput="updateParetoRow(${i}, 'label', this.value)">
+      <input type="number" placeholder="Frequency" min="0" value="${row.frequency || ''}"
+             oninput="updateParetoRow(${i}, 'frequency', this.value)">
+      <button class="pareto-del-btn" onclick="deleteParetoRow(${i})" title="Remove row">✕</button>
+    </div>`).join('');
+
+  renderParetoChart();
+}
+
+function addParetoRow() {
+  if (!activeProject) return;
+  activeProject.paretoData.push({ label: '', frequency: 0 });
+  scheduleAutoSave();
+  renderParetoTable();
+}
+
+function deleteParetoRow(index) {
+  if (!activeProject) return;
+  activeProject.paretoData.splice(index, 1);
+  scheduleAutoSave();
+  renderParetoTable();
+}
+
+function updateParetoRow(index, field, value) {
+  if (!activeProject) return;
+  if (field === 'frequency') {
+    activeProject.paretoData[index][field] = parseFloat(value) || 0;
+  } else {
+    activeProject.paretoData[index][field] = value;
+  }
+  scheduleAutoSave();
+  renderParetoChart();
+}
+
+function renderParetoChart() {
+  const svg = document.getElementById('pareto-svg');
+  if (!activeProject) { svg.innerHTML = ''; return; }
+
+  // Filter and sort data
+  const rawData = activeProject.paretoData.filter(d => d.label && d.frequency > 0);
+  if (rawData.length === 0) {
+    svg.innerHTML = `<text x="300" y="150" text-anchor="middle" fill="#9ca3af" font-family="-apple-system,sans-serif" font-size="13">Add causes and frequencies above to generate the Pareto chart</text>`;
+    return;
+  }
+
+  const data = [...rawData].sort((a, b) => b.frequency - a.frequency);
+  const total = data.reduce((s, d) => s + d.frequency, 0);
+
+  // Chart dimensions
+  const W = 600, H = 300;
+  const marginL = 50, marginR = 60, marginT = 20, marginB = 60;
+  const chartW = W - marginL - marginR;
+  const chartH = H - marginT - marginB;
+  const barW = Math.min(60, (chartW - data.length * 4) / data.length);
+
+  const maxFreq = Math.max(...data.map(d => d.frequency));
+
+  // Build cumulative percentages
+  let cumFreq = 0;
+  const cumPcts = data.map(d => {
+    cumFreq += d.frequency;
+    return cumFreq / total * 100;
+  });
+
+  // Y scale: bars
+  const yScale = v => chartH - (v / maxFreq) * chartH;
+  // Y scale for % line (right axis)
+  const yPctScale = p => chartH - (p / 100) * chartH;
+
+  let content = '';
+
+  // 80% threshold dashed line
+  const y80 = marginT + yPctScale(80);
+  content += `<line x1="${marginL}" y1="${y80}" x2="${W - marginR}" y2="${y80}" stroke="#854a10" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.8"/>`;
+  content += `<text x="${W - marginR + 4}" y="${y80 + 4}" fill="#854a10" font-size="10" font-family="-apple-system,sans-serif">80%</text>`;
+
+  // Bars
+  data.forEach((d, i) => {
+    const x = marginL + i * (barW + 4) + (chartW - data.length * (barW + 4)) / 2;
+    const barH = (d.frequency / maxFreq) * chartH;
+    const y = marginT + chartH - barH;
+    const isVitalFew = cumPcts[i] <= 80 || (i > 0 && cumPcts[i-1] < 80);
+    const fill = isVitalFew ? '#ba1a1a' : '#79d3ea';
+
+    content += `<rect x="${x}" y="${y}" width="${barW}" height="${barH}" fill="${fill}" rx="2"/>`;
+    // Frequency label on bar
+    content += `<text x="${x + barW/2}" y="${y - 4}" text-anchor="middle" fill="${isVitalFew?'#ba1a1a':'#3e484c'}" font-size="10" font-weight="600" font-family="-apple-system,sans-serif">${d.frequency}</text>`;
+    // X axis label
+    const labelLines = truncate(d.label, 12).split(' ');
+    labelLines.slice(0, 2).forEach((line, li) => {
+      content += `<text x="${x + barW/2}" y="${marginT + chartH + 14 + li * 12}" text-anchor="middle" fill="#3e484c" font-size="9" font-family="-apple-system,sans-serif">${escHtml(line)}</text>`;
+    });
+  });
+
+  // Cumulative % line and dots
+  const linePoints = data.map((d, i) => {
+    const x = marginL + i * (barW + 4) + (chartW - data.length * (barW + 4)) / 2 + barW / 2;
+    const y = marginT + yPctScale(cumPcts[i]);
+    return `${x},${y}`;
+  });
+
+  if (linePoints.length > 1) {
+    content += `<polyline points="${linePoints.join(' ')}" fill="none" stroke="#854a10" stroke-width="2"/>`;
+  }
+
+  data.forEach((d, i) => {
+    const x = marginL + i * (barW + 4) + (chartW - data.length * (barW + 4)) / 2 + barW / 2;
+    const y = marginT + yPctScale(cumPcts[i]);
+    content += `<circle cx="${x}" cy="${y}" r="4" fill="#854a10"/>`;
+    content += `<text x="${x}" y="${y - 7}" text-anchor="middle" fill="#854a10" font-size="9" font-weight="600" font-family="-apple-system,sans-serif">${Math.round(cumPcts[i])}%</text>`;
+  });
+
+  // Y axis (left)
+  content += `<line x1="${marginL}" y1="${marginT}" x2="${marginL}" y2="${marginT + chartH}" stroke="#bec8cc" stroke-width="1"/>`;
+  [0, 25, 50, 75, 100].forEach(pct => {
+    const v = (pct / 100) * maxFreq;
+    const y = marginT + yScale(v);
+    content += `<line x1="${marginL - 4}" y1="${y}" x2="${marginL}" y2="${y}" stroke="#bec8cc" stroke-width="1"/>`;
+    content += `<text x="${marginL - 6}" y="${y + 4}" text-anchor="end" fill="#6e797c" font-size="9" font-family="-apple-system,sans-serif">${Math.round(v)}</text>`;
+  });
+
+  // X axis
+  content += `<line x1="${marginL}" y1="${marginT + chartH}" x2="${W - marginR}" y2="${marginT + chartH}" stroke="#bec8cc" stroke-width="1"/>`;
+
+  // Legend
+  content += `<rect x="${marginL}" y="${H - 14}" width="10" height="10" fill="#ba1a1a" rx="1"/>`;
+  content += `<text x="${marginL + 13}" y="${H - 5}" fill="#3e484c" font-size="9" font-family="-apple-system,sans-serif">Vital few</text>`;
+  content += `<rect x="${marginL + 70}" y="${H - 14}" width="10" height="10" fill="#79d3ea" rx="1"/>`;
+  content += `<text x="${marginL + 83}" y="${H - 5}" fill="#3e484c" font-size="9" font-family="-apple-system,sans-serif">Useful many</text>`;
+  content += `<line x1="${marginL + 155}" y1="${H - 9}" x2="${marginL + 175}" y2="${H - 9}" stroke="#854a10" stroke-width="2"/>`;
+  content += `<circle cx="${marginL + 165}" cy="${H - 9}" r="3" fill="#854a10"/>`;
+  content += `<text x="${marginL + 178}" y="${H - 5}" fill="#3e484c" font-size="9" font-family="-apple-system,sans-serif">Cumulative %</text>`;
+
+  svg.innerHTML = content;
+}
+
+/* ============================================================
+   EXPORT / IMPORT
+   ============================================================ */
+
+/**
+ * Build the common Gemba Suite envelope.
+ */
+function buildExportEnvelope(includeA3Attachments = false) {
+  if (!activeProject) return null;
+  syncValidatedRootCauses();
+
+  const payload = {
+    problemStatement: activeProject.problemStatement,
+    problemSource: activeProject.problemSource,
+    linkedA3Id: activeProject.linkedA3Id,
+    fishbone: activeProject.fishbone,
+    selectedCauseIds: activeProject.selectedCauseIds,
+    whyChains: activeProject.whyChains,
+    paretoData: activeProject.paretoData,
+    validatedRootCauses: activeProject.validatedRootCauses
+  };
+
+  const envelope = {
+    gembaApp: 'rca',
+    appVersion: '1.2',
+    exportedAt: new Date().toISOString(),
+    developer: 'David Clark',
+    id: activeProject.id,
+    name: activeProject.name,
+    context: activeProject.context,
+    payload
+  };
+
+  if (includeA3Attachments) {
+    // Ensure the fishbone SVG is fully rendered before capturing.
+    // renderFishboneSVG() populates the DOM element — we must call it
+    // here because the user may be on a different tab when they export.
+    renderFishboneSVG();
+    const svgEl = document.getElementById('fishbone-svg');
+    // Capture outerHTML and inject xmlns if missing so the SVG is
+    // valid as a standalone document when imported elsewhere.
+    let svgStr = '';
+    if (svgEl) {
+      // Clone the element so we can add xmlns without mutating the live DOM
+      const clone = svgEl.cloneNode(true);
+      if (!clone.getAttribute('xmlns')) {
+        clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+      }
+      // Use XMLSerializer for reliable cross-browser serialisation
+      try {
+        const serializer = new XMLSerializer();
+        svgStr = serializer.serializeToString(clone);
+      } catch (e) {
+        svgStr = clone.outerHTML || '';
+      }
+    }
+    envelope.attachments = [
+      { type: 'fishbone-svg', data: svgStr }
+    ];
+  }
+
+  return envelope;
+}
+
+function exportJSON() {
+  if (!activeProject) return;
+  const envelope = buildExportEnvelope(false);
+  const filename = `gemba-rca-${activeProject.name.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}-${new Date().toISOString().split('T')[0]}.json`;
+  downloadFile(filename, JSON.stringify(envelope, null, 2));
+}
+
+function exportToA3() {
+  if (!activeProject) return;
+  syncValidatedRootCauses();
+  // Ensure SVG is fully rendered regardless of which tab is currently active
+  renderFishboneSVG();
+  const envelope = buildExportEnvelope(true);
+  const filename = `gemba-rca-for-a3-${activeProject.name.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}-${new Date().toISOString().split('T')[0]}.json`;
+  downloadFile(filename, JSON.stringify(envelope, null, 2));
+}
+
+function importOwnRCA() {
+  document.getElementById('file-import-rca').click();
+}
+
+function handleImportRCA(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.gembaApp || data.gembaApp !== 'rca') {
+        showToast('This does not appear to be a Gemba-RCA file.');
+        return;
+      }
+      // Restore project from envelope
+      const project = {
+        id: data.id || generateUUID(),
+        name: data.name || 'Imported RCA',
+        createdAt: data.createdAt || new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        context: data.context || {},
+        problemStatement: data.payload?.problemStatement || '',
+        problemSource: data.payload?.problemSource || 'standalone',
+        linkedA3Id: data.payload?.linkedA3Id || null,
+        fishbone: data.payload?.fishbone || { categories: createDefaultCategories() },
+        selectedCauseIds: data.payload?.selectedCauseIds || [],
+        whyChains: data.payload?.whyChains || [],
+        paretoData: data.payload?.paretoData || [],
+        validatedRootCauses: data.payload?.validatedRootCauses || []
+      };
+      persistProject(project);
+      openProject(project.id);
+    } catch {
+      showToast('Could not parse this file. Make sure it is a valid Gemba-RCA JSON export.');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function importFromA3() {
+  document.getElementById('file-import-a3-existing').click();
+}
+
+function handleImportA3Existing(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.gembaApp || data.gembaApp !== 'a3') {
+        showToast('This does not appear to be a Gemba-A3 file.');
+        return;
+      }
+      const problemStatement = data.payload?.sections?.find(s => s.sectionNumber === 1)?.content?.text
+        || data.payload?.problemStatement
+        || '';
+      if (!problemStatement) {
+        showToast('Could not find a problem statement in this A3 file.');
+        return;
+      }
+      activeProject.problemStatement = problemStatement;
+      activeProject.problemSource = 'a3-import';
+      activeProject.linkedA3Id = data.id || null;
+      scheduleAutoSave();
+      renderProblemBanner();
+      renderFishboneSVG();
+      showToast('Problem statement imported from Gemba-A3.');
+    } catch {
+      showToast('Could not parse this file.');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+/* ============================================================
+   TOAST NOTIFICATION (lightweight alternative to alert)
+   ============================================================ */
+
+function showToast(message) {
+  const existing = document.getElementById('toast-notification');
+  if (existing) existing.remove();
+
+  const toast = document.createElement('div');
+  toast.id = 'toast-notification';
+  toast.style.cssText = `
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: #006172; color: white; padding: 12px 20px; border-radius: 8px;
+    font-size: 0.875rem; font-weight: 600; z-index: 9999; max-width: 340px;
+    text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    animation: fadeIn 0.2s ease;
+  `;
+  toast.textContent = message;
+
+  // Add keyframe if not present
+  if (!document.getElementById('toast-style')) {
+    const style = document.createElement('style');
+    style.id = 'toast-style';
+    style.textContent = '@keyframes fadeIn { from { opacity:0; transform: translateX(-50%) translateY(10px); } to { opacity:1; transform: translateX(-50%) translateY(0); } }';
+    document.head.appendChild(style);
+  }
+
+  document.body.appendChild(toast);
+  setTimeout(() => { if (toast.parentNode) toast.remove(); }, 3000);
+}
+
+/* ============================================================
+   AI LEAN SENSEI COACHING EXPORT
+   ============================================================ */
+
+function showAICoachingModal() {
+  aiCoachingTier = 'sensei';
+  aiCoachingLLM = 'copilot';
+  document.getElementById('ai-tier-sensei').classList.add('selected');
+  document.getElementById('ai-tier-facilitator').classList.remove('selected');
+  document.getElementById('ai-llm-copilot').classList.add('selected');
+  document.getElementById('ai-llm-claude').classList.remove('selected');
+  document.getElementById('ai-llm-gemini').classList.remove('selected');
+  document.getElementById('ai-context-input').value = '';
+  generateCoachingPrompt();
+  openModal('modal-ai-coaching');
+}
+
+function selectAITier(tier) {
+  aiCoachingTier = tier;
+  document.getElementById('ai-tier-sensei').classList.toggle('selected', tier === 'sensei');
+  document.getElementById('ai-tier-facilitator').classList.toggle('selected', tier === 'facilitator');
+  generateCoachingPrompt();
+}
+
+function selectAILLM(llm) {
+  aiCoachingLLM = llm;
+  ['copilot', 'claude', 'gemini'].forEach(id => {
+    document.getElementById('ai-llm-' + id).classList.toggle('selected', id === llm);
+  });
+  generateCoachingPrompt();
+}
+
+function generateCoachingPrompt() {
+  if (!activeProject) return;
+  syncValidatedRootCauses();
+
+  const extraContext = document.getElementById('ai-context-input')?.value?.trim() || '';
+
+  // Summarise fishbone
+  const fishboneSummary = activeProject.fishbone.categories
+    .filter(cat => cat.causes.length > 0)
+    .map(cat => `${cat.label}: ${cat.causes.map(c => c.text).join(', ')}`)
+    .join('\n');
+
+  // Summarise Why chains
+  const chainsSummary = activeProject.whyChains.map((ch, i) => {
+    const steps = ch.steps.map((s, si) => {
+      const evNote = s.evidence ? ` [Evidence: ${s.evidence.slice(0, 80)}]` : ' [No evidence recorded]';
+      return `  Why ${si + 1}: ${s.why || '(not answered)'}${evNote}`;
+    }).join('\n');
+    const rcStatus = ch.validationStatus.toUpperCase();
+    return `Chain ${i + 1} — Investigating: "${ch.causeLabel}"\n${steps}\n  Proposed root cause: ${ch.proposedRootCause || '(not stated)'}\n  Validation: ${rcStatus} — ${ch.validationRationale || '(no rationale)'}`;
+  }).join('\n\n') || '(No 5 Whys chains started yet)';
+
+  // Pareto summary
+  const paretoSummary = activeProject.paretoData.length > 0
+    ? activeProject.paretoData.map(d => `${d.label}: ${d.frequency}`).join(', ')
+    : '(No Pareto data entered)';
+
+  const workArea = activeProject.context?.workArea || 'Not specified';
+  const problemStatement = activeProject.problemStatement || '(Not stated)';
+
+  let prompt = '';
+
+  if (aiCoachingTier === 'sensei') {
+    // TIER 1: SENSEI PREP — peer-level, lean terminology, concise challenge
+    const llmNote = aiCoachingLLM === 'copilot'
+      ? '\n[Note for Copilot: This is a lean improvement tool used in an NHS healthcare setting. Do not recommend clinical changes or patient management approaches.]'
+      : aiCoachingLLM === 'gemini'
+      ? '\n[Note for Gemini: Please respond as a lean methodology coach, not a general management consultant.]'
+      : '';
+
+    prompt = `You are a lean sensei reviewing a root cause analysis (RCA) from an NHS healthcare team. Your role is to challenge the quality of the analysis using Socratic questions — not to provide solutions or countermeasures. That is for the team's A3 problem solving process. Your guardrails: do not suggest solutions or countermeasures; do not critique individuals — all problems belong to processes; do not make clinical or patient safety judgements; do not invent data; do not recommend organisational changes.${llmNote}
+
+WORK AREA: ${workArea}
+${extraContext ? `ADDITIONAL CONTEXT: ${extraContext}\n` : ''}
+PROBLEM STATEMENT: ${problemStatement}
+
+FISHBONE — CANDIDATE CAUSES BY CATEGORY:
+${fishboneSummary || '(No causes entered)'}
+
+5 WHYS CHAINS:
+${chainsSummary}
+
+PARETO DATA (cause frequency):
+${paretoSummary}
+
+VALIDATED ROOT CAUSES: ${activeProject.validatedRootCauses.length > 0 ? activeProject.validatedRootCauses.map(r => r.proposedRootCause).join('; ') : '(None validated yet)'}
+
+Review this RCA as a lean sensei. Challenge:
+1. The depth and rigour of the Why chains — are they drilling to true root causes or stopping at symptoms? Is the cause-and-effect logic sound?
+2. The quality of evidence — which steps lack evidence? What types of direct observation or data would strengthen the weakest links?
+3. The validation test — has it been genuinely applied, or accepted too easily? If the root cause were addressed, would the problem truly disappear?
+4. Fishbone completeness — are there cause categories with suspiciously few or no entries? What might have been overlooked?
+5. Pareto interpretation — what does the pattern tell the team about where to focus?
+
+Use lean terminology freely. Be direct. Ask the questions a rigorous sensei would ask.`;
+
+  } else {
+    // TIER 2: FACILITATOR COACHING — supportive, concepts briefly explained, guided reflection
+    const llmNote = aiCoachingLLM === 'copilot'
+      ? '\n[Note for Copilot: This is a lean improvement tool used in an NHS healthcare setting. Do not recommend clinical changes or patient management approaches.]'
+      : aiCoachingLLM === 'gemini'
+      ? '\n[Note for Gemini: Please respond as a supportive lean improvement coach, not a general management consultant.]'
+      : '';
+
+    prompt = `You are a supportive lean improvement coach helping an NHS healthcare team work through their root cause analysis. Briefly explain lean concepts where helpful. Use Socratic questions to guide reflection — do not provide solutions or countermeasures. Your guardrails: do not suggest solutions or countermeasures; do not critique individuals — problems belong to processes; do not make clinical or patient safety judgements; do not invent data; do not recommend organisational changes.${llmNote}
+
+WORK AREA: ${workArea}
+${extraContext ? `ADDITIONAL CONTEXT: ${extraContext}\n` : ''}
+PROBLEM STATEMENT: ${problemStatement}
+
+FISHBONE DIAGRAM — CANDIDATE CAUSES:
+(The fishbone, or Ishikawa diagram, organises candidate causes across categories to help teams brainstorm systematically.)
+${fishboneSummary || '(No causes entered)'}
+
+5 WHYS CHAINS:
+(The 5 Whys technique drills into each candidate cause by repeatedly asking "why" — seeking the underlying root cause rather than stopping at visible symptoms.)
+${chainsSummary}
+
+PARETO DATA:
+(The Pareto chart helps teams focus on the vital few causes that account for most of the problem — often around 80% of incidents come from 20% of causes.)
+${paretoSummary}
+
+VALIDATED ROOT CAUSES: ${activeProject.validatedRootCauses.length > 0 ? activeProject.validatedRootCauses.map(r => r.proposedRootCause).join('; ') : '(None validated yet)'}
+
+Please give this team encouraging, constructive coaching on their RCA. Guide them to think about:
+1. Whether their Why chains are reaching root causes or stopping at symptoms — help them understand the difference with a gentle question
+2. The importance of evidence at each Why step — which areas need more direct observation or data?
+3. The validation question ("if we fix this, does the problem go away?") — help them think about whether they've answered it honestly
+4. Whether the fishbone feels complete — any categories that seem light that might be worth revisiting?
+5. What the Pareto data is telling them about priorities
+
+Be encouraging and helpful. Use questions to guide reflection rather than telling them what to think.`;
+  }
+
+  document.getElementById('ai-prompt-preview').textContent = prompt;
+}
+
+// Update prompt when user types in context field
+document.getElementById('ai-context-input')?.addEventListener('input', () => {
+  generateCoachingPrompt();
+});
+
+function copyCoachingPrompt() {
+  const promptText = document.getElementById('ai-prompt-preview').textContent;
+  if (!promptText || promptText.startsWith('Select tier')) return;
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(promptText)
+      .then(() => showToast('Prompt copied to clipboard! Paste into your chosen AI assistant.'))
+      .catch(() => fallbackCopy(promptText));
+  } else {
+    fallbackCopy(promptText);
+  }
+}
+
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try {
+    document.execCommand('copy');
+    showToast('Prompt copied to clipboard!');
+  } catch {
+    showToast('Could not copy automatically. Please select and copy the prompt text manually.');
+  }
+  document.body.removeChild(ta);
+}
+
+/* ============================================================
+   KEYBOARD SHORTCUTS
+   ============================================================ */
+
+document.addEventListener('keydown', e => {
+  // Close modal on Escape
+  if (e.key === 'Escape') {
+    const openModal = document.querySelector('.modal-overlay.open');
+    if (openModal) {
+      openModal.classList.remove('open');
+      setTimeout(() => { openModal.style.display = 'none'; }, 250);
+    }
+  }
+
+  // Enter to confirm in single-input modals
+  if (e.key === 'Enter' && !e.shiftKey) {
+    if (document.getElementById('modal-rename-project')?.classList.contains('open')) {
+      e.preventDefault(); confirmRename();
+    } else if (document.getElementById('modal-rename-category')?.classList.contains('open')) {
+      e.preventDefault(); confirmRenameCategory();
+    }
+  }
+});
+
+/* ============================================================
+   INITIALISATION
+   ============================================================ */
+
+function init() {
+  renderHomeScreen();
+
+  // Set today's date as default in new project modal
+  const dateInput = document.getElementById('new-date');
+  if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
+
+  // Wire up AI context textarea (already done inline above, but ensure event fires)
+  const aiCtx = document.getElementById('ai-context-input');
+  if (aiCtx) {
+    aiCtx.addEventListener('input', generateCoachingPrompt);
+  }
+}
+
+// Run on DOM ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+</script>
+</body>
+</html>

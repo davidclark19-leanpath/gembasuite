@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#181c1c">
+<title>Seeing Past the Chaos — Clinical &amp; Ward-Based Edition — Gemba Suite</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+      --ink: #181c1c; --ink-secondary: #3e484c; --ink-tertiary: #6e797c;
+      --paper: #f7faf9; --card: #ffffff; --surface-low: #f1f4f3;
+      --surface-high: #e6e9e8; --grid: #bec8cc; --grid-subtle: #e0e3e2;
+      --primary: #006172; --primary-container: #007c91; --primary-tint: #c4e5ef;
+      --primary-tint-strong: #79d3ea; --on-primary: #ffffff; --on-primary-tint: #004e5c;
+      --accent-warm: #854a10; --accent-warm-container: #a26227; --accent-warm-bg: #ffdcc3; --on-accent-warm: #ffffff;
+      --status-error: #ba1a1a; --status-error-bg: #ffdad6;
+      --shadow-sm: 0 1px 3px rgba(24,28,28,0.06); --shadow-md: 0 2px 8px rgba(24,28,28,0.08);
+      --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px; --radius-full: 9999px;
+      --font-display: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+      --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); font-size: 15px; line-height: 1.7; color: var(--ink); background: var(--paper); min-height: 100vh; display: flex; flex-direction: column; }
+    /* Header */
+    header { background: var(--ink); position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow-sm); }
+    .header-inner { max-width: 860px; margin: 0 auto; padding: 0 var(--space-5); height: 56px; display: flex; align-items: center; gap: var(--space-4); }
+    .back-link { color: var(--primary-tint); text-decoration: none; font-size: 13px; font-weight: 600; opacity: 0.85; transition: opacity 0.15s; }
+    .back-link:hover { opacity: 1; }
+    .header-divider { width: 1px; height: 20px; background: rgba(255,255,255,0.2); }
+    .site-name { color: var(--on-primary); font-family: var(--font-display); font-size: 16px; font-weight: 700; letter-spacing: 0.18em; flex: 1; }
+    /* Hero */
+    .page-hero { background: var(--primary); color: var(--on-primary); padding: var(--space-10) var(--space-5) var(--space-8); }
+    .page-hero .container { max-width: 860px; margin: 0 auto; }
+    .hero-label { font-size: 11px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: var(--primary-tint); margin-bottom: var(--space-3); }
+    .page-hero h1 { font-family: var(--font-display); font-size: clamp(24px, 5vw, 34px); font-weight: 800; letter-spacing: -0.3px; line-height: 1.15; color: var(--on-primary); margin-bottom: var(--space-3); }
+    .hero-meta { font-size: 14px; color: rgba(255,255,255,0.75); margin-bottom: var(--space-3); }
+    .page-hero p.hero-desc { font-size: 15px; line-height: 1.6; color: rgba(255,255,255,0.85); max-width: 580px; }
+    /* Layout */
+    .page-layout { max-width: 860px; margin: 0 auto; padding: var(--space-8) var(--space-5); display: flex; gap: var(--space-8); align-items: flex-start; flex: 1; width: 100%; }
+    /* TOC */
+    .toc { position: sticky; top: 72px; width: 185px; flex-shrink: 0; background: var(--card); border: 1px solid var(--grid-subtle); border-radius: var(--radius-md); padding: var(--space-4); box-shadow: var(--shadow-sm); }
+    .toc-title { font-size: 10px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: var(--ink-tertiary); margin-bottom: var(--space-3); display: block; }
+    .toc ol { list-style: none; }
+    .toc li { margin-bottom: 2px; display: flex; align-items: baseline; gap: 6px; }
+    .toc-num { font-size: 11px; font-weight: 700; color: var(--primary-container); min-width: 16px; }
+    .toc a { display: block; font-size: 12px; line-height: 1.4; color: var(--ink-secondary); text-decoration: none; padding: 3px 6px 3px 0; border-radius: var(--radius-sm); transition: color 0.12s; flex: 1; }
+    .toc a:hover { color: var(--primary); }
+    /* Main */
+    main { flex: 1; min-width: 0; }
+    /* Sections */
+    .guide-section { margin-bottom: var(--space-8); scroll-margin-top: 72px; }
+    .section-header { display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-5); border-bottom: 2px solid var(--primary-tint); padding-bottom: var(--space-3); }
+    .section-num-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px; border-radius: var(--radius-full); flex-shrink: 0;
+      background: var(--primary-container); color: var(--on-primary);
+      font-family: var(--font-display); font-size: 14px; font-weight: 700;
+    }
+    .section-header h2 { font-family: var(--font-display); font-size: 20px; font-weight: 700; letter-spacing: -0.1px; color: var(--primary); }
+    h3 { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--ink); margin: var(--space-6) 0 var(--space-3); }
+    h4 { font-family: var(--font-body); font-size: 14px; font-weight: 600; color: var(--ink); margin: var(--space-4) 0 var(--space-2); }
+    p { color: var(--ink-secondary); margin-bottom: var(--space-4); line-height: 1.7; }
+    p:last-child { margin-bottom: 0; }
+    strong { color: var(--ink); font-weight: 600; }
+    ul, ol { padding-left: var(--space-6); margin-bottom: var(--space-4); color: var(--ink-secondary); }
+    li { margin-bottom: var(--space-2); line-height: 1.6; }
+    /* Callouts */
+    .callout { border-left: 4px solid; border-radius: var(--radius-md); padding: var(--space-4) var(--space-5); margin: var(--space-5) 0; }
+    .callout-label { font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: var(--space-2); display: block; }
+    .callout p { font-size: 14px; line-height: 1.65; margin-bottom: 0; }
+    .callout-tip { background: var(--primary-tint); border-color: var(--primary); }
+    .callout-tip .callout-label { color: var(--on-primary-tint); }
+    .callout-tip p { color: var(--on-primary-tint); }
+    .callout-remember { background: var(--accent-warm-bg); border-color: var(--accent-warm); }
+    .callout-remember .callout-label { color: var(--accent-warm); }
+    .callout-remember p { color: #5a2c00; }
+    .callout-important { background: var(--status-error-bg); border-color: var(--status-error); }
+    .callout-important .callout-label { color: var(--status-error); }
+    .callout-important p { color: #6b0000; }
+    .callout-offline { background: var(--surface-low); border-color: var(--ink-secondary); }
+    .callout-offline .callout-label { color: var(--ink-secondary); }
+    .callout-offline p { color: var(--ink-secondary); }
+    /* Tables */
+    .data-table { width: 100%; border-collapse: collapse; margin: var(--space-4) 0; font-size: 13px; }
+    .data-table th { background: var(--surface-high); color: var(--ink-secondary); font-size: 11px; font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; padding: 8px 10px; text-align: left; border-bottom: 2px solid var(--grid); }
+    .data-table td { padding: 8px 10px; border-bottom: 1px solid var(--grid-subtle); vertical-align: top; line-height: 1.55; }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table td:first-child { font-weight: 600; color: var(--ink); }
+    .data-table tr:nth-child(even) td { background: var(--surface-low); }
+    /* Download link */
+    .download-link { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--primary); text-decoration: none; font-size: 14px; font-weight: 600; padding: var(--space-2) var(--space-4); border: 1px solid var(--primary); border-radius: var(--radius-sm); transition: background 0.12s, color 0.12s; margin-bottom: var(--space-6); }
+    .download-link:hover { background: var(--primary); color: var(--on-primary); }
+    /* Install blocks */
+    .install-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin: var(--space-4) 0; }
+    .install-block { background: var(--surface-low); border: 1px solid var(--grid-subtle); border-radius: var(--radius-md); padding: var(--space-4); }
+    .install-block h4 { font-size: 13px; font-weight: 700; color: var(--ink); margin: 0 0 var(--space-3); }
+    .install-block ol { margin: 0; padding-left: var(--space-5); font-size: 13px; line-height: 1.6; }
+    .install-block li { margin-bottom: var(--space-2); }
+    /* Closing callout */
+    .closing-callout { background: var(--surface-low); border: 1px solid var(--grid-subtle); border-radius: var(--radius-md); padding: var(--space-5); text-align: center; margin-top: var(--space-8); }
+    .closing-callout .closing-motto { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--primary); margin-bottom: var(--space-3); font-style: italic; }
+    .closing-callout p { font-size: 14px; color: var(--ink-secondary); font-style: italic; }
+    /* Footer */
+    footer { background: var(--ink); color: rgba(255,255,255,0.55); padding: var(--space-6) var(--space-5); font-size: 13px; margin-top: auto; }
+    .footer-inner { max-width: 860px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3); }
+    .footer-inner a { color: var(--primary-tint); text-decoration: none; }
+    .footer-licence { font-size: 12px; opacity: 0.7; }
+    @media (max-width: 680px) {
+      .page-layout { flex-direction: column; }
+      .toc { position: static; width: 100%; }
+      .install-grid { grid-template-columns: 1fr; }
+      .section-header h2 { font-size: 17px; }
+    }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="/guide/" class="back-link">← Guides</a>
+    <div class="header-divider"></div>
+    <span class="site-name">GEMBA SUITE</span>
+  </div>
+</header>
+
+<div class="page-hero">
+  <div class="container">
+    <p class="hero-label">Full Guide · VSM for Clinical Teams</p>
+    <h1>Seeing Past the Chaos<br>Clinical &amp; Ward-Based Edition</h1>
+    <p class="hero-meta">v6.3 · April 2026 · David Clark</p>
+    <p class="hero-desc">A practical guide to capturing facts and data on the ward, in clinic, and across patient pathways to create professional Value Stream Maps. Covers VSM methodology tailored to nursing, therapy, and clinical teams, gemba observation skills, and a complete walkthrough of Gemba-VSM v6.3.</p>
+  </div>
+</div>
+
+<div class="page-layout">
+
+  <nav class="toc" aria-label="Contents">
+    <span class="toc-title">Contents</span>
+    <ol>
+      <li><span class="toc-num">1</span><a href="#s1">Overview</a></li>
+      <li><span class="toc-num">2</span><a href="#s2">VSM for Clinical Teams</a></li>
+      <li><span class="toc-num">3</span><a href="#s3">The 8 Wastes on the Ward</a></li>
+      <li><span class="toc-num">4</span><a href="#s4">How to Map a Patient Pathway</a></li>
+      <li><span class="toc-num">5</span><a href="#s5">Developing Your Gemba Skills</a></li>
+      <li><span class="toc-num">6</span><a href="#s6">Installing Gemba-VSM</a></li>
+      <li><span class="toc-num">7</span><a href="#s7">Using Gemba-VSM</a></li>
+      <li><span class="toc-num">8</span><a href="#s8">Parallel Paths</a></li>
+      <li><span class="toc-num">9</span><a href="#s9">Variation Capture</a></li>
+      <li><span class="toc-num">10</span><a href="#s10">AI Coaching Export</a></li>
+      <li><span class="toc-num">11</span><a href="#s11">Saving, Exporting &amp; Importing</a></li>
+      <li><span class="toc-num">12</span><a href="#s12">References &amp; Further Reading</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+    <a href="Seeing_Past_the_Chaos_Guide_Clinical_v6_0.docx" class="download-link" download>↓ Download as Word document</a>
+
+    <!-- Section 1 -->
+    <div class="guide-section" id="s1">
+      <div class="section-header">
+        <span class="section-num-badge">1</span>
+        <h2>Overview</h2>
+      </div>
+<p>This guide introduces value stream mapping (VSM) for clinical and ward-based teams. It walks you through using Gemba-VSM v6.3 to capture data on your ward or in your department, build professional current and future state maps of patient pathways, and export your work for printing, AI coaching, and further analysis.</p>
+<p>Value stream mapping makes visible what patients experience but staff rarely see as a whole — the delays between steps, the handoffs between teams, the waits for beds, results, decisions, and transport that turn a 45-minute clinical interaction into a 6-hour stay.</p>
+<h3>Who is this guide for?</h3>
+<p>Nurses, ward managers, doctors, AHPs, healthcare assistants, and anyone involved in improving clinical pathways and ward-based processes. No prior lean experience is required.</p>
+<h3>What you will learn</h3>
+<ul>
+<li>How to map a patient pathway from referral to discharge (or any clinical process)</li>
+<li>How to identify the 8 wastes on the ward using DOWNTIME</li>
+<li>How to walk the patient journey and collect accurate process data</li>
+<li>How to develop the observation skills that make a good map possible</li>
+<li>How to build current state and future state maps</li>
+<li>How to map parallel paths such as diagnostic investigations running alongside clinical care</li>
+<li>How to measure cycle time variation across staff and shifts</li>
+<li>How to record patient flow patterns through the day</li>
+<li>How to use the AI Lean Sensei Coaching Export for guided reflection</li>
+</ul>
+<div class="callout callout-tip"><span class="callout-label">Tip</span><p>When you first open the tool, it loads an example value stream (Brew &amp; Go Tea Shop) so you can explore the features before mapping your own pathway.</p></div>
+    </div>
+    <!-- Section 2 -->
+    <div class="guide-section" id="s2">
+      <div class="section-header">
+        <span class="section-num-badge">2</span>
+        <h2>Value Stream Mapping for Clinical Teams</h2>
+      </div>
+<h3>What is a value stream in clinical work?</h3>
+<p>A value stream is the complete sequence of steps a patient experiences from the point of referral or arrival to the point of discharge or outcome. Every consultation, every test, every wait for a bed, every handoff between teams is part of the value stream.</p>
+<p>In clinical work, the customer is the patient. Value is any activity that directly contributes to diagnosis, treatment, or recovery — any activity the patient would consider necessary and worthwhile. Everything else is waste.</p>
+<h3>Why VSM matters on the ward</h3>
+<p>Clinical pathways are deceptive. Individual interactions — the consultation, the procedure, the medication round — may each be efficient. But when you map the whole pathway from the patient’s perspective, you discover that the actual clinical contact time accounts for a small fraction of the total stay. The rest is waiting: waiting for a bed, waiting for results, waiting for a decision, waiting for transport, waiting for discharge paperwork.</p>
+<p>A value stream map makes this visible. Process efficiencies of 5–15% are common in clinical pathways. This is not a criticism of clinical staff — it is a property of the system they work within.</p>
+<h3>Key VSM Concepts</h3>
+<p><strong>Cycle Time (C/T) —</strong> The time it takes to complete one clinical interaction or task. Measured by direct observation, not from EPR timestamps.</p>
+<p><strong>Lead Time —</strong> The total elapsed time from when a patient enters the pathway to when they leave. Lead time = clinical contact time + all delays and waiting.</p>
+<p><strong>Takt Time —</strong> The rate at which patients need to be processed to meet demand. Available time per day ÷ patient arrivals per day.</p>
+<p><strong>Batch Size —</strong> The number of patients handled together. Ward rounds, medication rounds, and discharge batches all create delays.</p>
+<p><strong>Process Efficiency —</strong> The ratio of clinical contact time to total pathway time. The gap is the improvement opportunity.</p>
+<h3>Current State vs Future State</h3>
+<p>Always map the current state first — what actually happens today, based on walking the pathway yourself. Then design the future state with waste removed using ECSS: Eliminate, Combine, Simplify, Sequence.</p>
+<div class="callout callout-remember"><span class="callout-label">Remember</span><p>The future state map is a blueprint for improvement, not a wish list. Every change should be implemented through PDCA cycles and tested before being standardised.</p></div>
+<h3>Going to the Gemba</h3>
+<p>In clinical work, the gemba is the ward, the clinic, the department. Walk the patient journey yourself. Watch what actually happens between the clinical interactions. The waste lives in the transitions and the waits, not in the consultations.</p>
+    </div>
+    <!-- Section 3 -->
+    <div class="guide-section" id="s3">
+      <div class="section-header">
+        <span class="section-num-badge">3</span>
+        <h2>The 8 Wastes on the Ward — DOWNTIME</h2>
+      </div>
+<p>Waste (muda) is any activity that does not add value from the patient’s perspective. The acronym DOWNTIME captures all eight wastes. Here is how they appear in clinical settings:</p>
+<table class="data-table"><thead><tr><th></th><th>Waste</th><th>Clinical Example</th></tr></thead><tbody><tr><td><strong>D</strong></td><td><strong>Defects</strong></td><td>Drug errors requiring incident reports, incorrect patient identifiers, discharge summaries with missing information</td></tr><tr><td><strong>O</strong></td><td><strong>Overproduction</strong></td><td>Ordering investigations not clinically indicated, preparing discharge paperwork before the decision is made</td></tr><tr><td><strong>W</strong></td><td><strong>Waiting</strong></td><td>Patients waiting for beds, results, transport, decisions, reviews, medications, procedures</td></tr><tr><td><strong>N</strong></td><td><strong>Non-utilized Talent</strong></td><td>Registered nurses performing housekeeping tasks, doctors doing clerical work, HCAs not trained to perform observations they could do</td></tr><tr><td><strong>T</strong></td><td><strong>Transportation</strong></td><td>Patients moved between wards unnecessarily, specimens hand-carried to the laboratory, equipment borrowed from other areas</td></tr><tr><td><strong>I</strong></td><td><strong>Inventory</strong></td><td>Patients boarding in ED, patients medically fit for discharge still occupying beds, stockpiled supplies beyond par levels</td></tr><tr><td><strong>M</strong></td><td><strong>Motion</strong></td><td>Nurses walking to distant supply rooms, doctors searching for working computers, staff travelling between wards for handovers</td></tr><tr><td><strong>E</strong></td><td><strong>Extra Processing</strong></td><td>Duplicate documentation across systems, repeated patient identity checks beyond protocol, unnecessary escalation steps</td></tr></tbody></table>
+<div class="callout callout-tip"><span class="callout-label">Tip</span><p>When walking the ward, actively look for each of these 8 wastes at every step in the patient pathway. Gemba-VSM lets you tick the DOWNTIME wastes you observe directly in the data capture form.</p></div>
+    </div>
+    <!-- Section 4 -->
+    <div class="guide-section" id="s4">
+      <div class="section-header">
+        <span class="section-num-badge">4</span>
+        <h2>How to Map a Patient Pathway</h2>
+      </div>
+<p>This section describes the methodology. Section 7 shows how to do each step using Gemba-VSM v6.3.</p>
+<h3>Step 1: Define the Scope</h3>
+<p>Establish the start and stop points. A typical scope might run from patient arrival in ED to discharge from the assessment unit. Define the patient group: all patients, or a specific cohort such as medical admissions or elective surgical patients? Agree the scope with the team.</p>
+<h3>Step 2: Walk the Patient Journey</h3>
+<p>Go to the ward and walk the pathway from end to end. Follow the patient experience, not the staff. Observe what actually happens. Do not rely on policies, pathway documents, or what people tell you in a meeting room. Take your phone with Gemba-VSM v6.3 installed — it is your data collection tool, your stopwatch, and your camera in one. You enter the facts you observe, and the tool draws the map and calculates the metrics for you.</p>
+<h3>Step 3: Document the Process Steps</h3>
+<p>Record each major step: triage, assessment, investigation, diagnosis, treatment, review, discharge planning, discharge. For each step, enter the data into Gemba-VSM v6.3: cycle time (timed by observation), number of staff involved, the trigger that starts each step. The tool stores each step and builds the process box and data box on the map automatically.</p>
+<h3>Step 4: Record Waits, Queues and Variation</h3>
+<p>Between each step, measure the waiting time. Count the patients queuing. Enter the patient count and delay for each step in Gemba-VSM v6.3 — the tool renders inventory triangles and delay segments on the timeline for you. If waits fluctuate through the day, record the range and peak timing.</p>
+<h3>Step 5: Map Information Flows</h3>
+<p>Document how clinical information moves. EPR entries, verbal handovers, paper forms, phone calls to chase results. Select the flow types for each step in Gemba-VSM v6.3, and the tool renders them on the map. Information flow problems are a major source of clinical delay.</p>
+<h3>Step 6: Identify Waste</h3>
+<p>At each step, identify the DOWNTIME wastes. Tick the wastes you see in Gemba-VSM v6.3’s data capture form and flag improvement opportunities — the tool marks them as kaizen bursts on the map.</p>
+<h3>Step 7: Identify Parallel Paths</h3>
+<p>Look for processes that run alongside the main patient pathway. Blood tests sent to the laboratory, imaging requested, specialist referrals awaited — each has its own lead time and may determine how long the patient waits. Add these as parallel paths in Gemba-VSM v6.3 and the tool renders them below the timeline on your map (see Section 8).</p>
+<h3>Step 8: Review the Timeline</h3>
+<p>Gemba-VSM v6.3 calculates the timeline automatically from the data you have entered. It adds up all clinical contact times (value-added) and all delays (non-value-added) and calculates process efficiency. The sawtooth timeline at the bottom of the map shows this visually. The gap between contact time and lead time is your improvement opportunity.</p>
+<h3>Step 9: Design the Future State</h3>
+<p>Using ECSS (Eliminate, Combine, Simplify, Sequence), design a future state with waste removed. Copy your current state to future state in Gemba-VSM v6.3, then edit the steps to reflect improvements. The tool recalculates the projected metrics so you can see the impact of your proposed changes.</p>
+<div class="callout callout-remember"><span class="callout-label">Remember</span><p>Always map the current state first. Resist the temptation to jump straight to solutions before you truly understand what the patient experiences today.</p></div>
+    </div>
+    <!-- Section 5 -->
+    <div class="guide-section" id="s5">
+      <div class="section-header">
+        <span class="section-num-badge">5</span>
+        <h2>Developing Your Gemba Skills</h2>
+      </div>
+<p>Value stream mapping is a skill, and like any skill it develops through practice. Your first map will be incomplete. Your second will be better. Your tenth will reveal things you could not have seen on your first visit. This is normal and expected — developing the ability to observe a clinical process clearly, without preconception or judgement, takes time and deliberate effort.</p>
+<h3>Facts, Not Just Data</h3>
+<p>Taiichi Ohno drew a sharp distinction between data and facts. Data is what arrives on a dashboard, in a report, or from the EPR. It tells you what the system recorded. Facts are what you see when you stand on the ward and watch the patient pathway unfold with your own eyes.</p>
+<p>The two are not always the same. The EPR may record that a patient was “admitted at 09:15 and seen by the medical team at 10:30.” But when you stand on the ward and watch, you see that the patient arrived at 09:15, waited 20 minutes for a bed to be cleaned, spent 15 minutes having observations taken, then waited 40 minutes for the medical team because the registrar was called to another ward. The data says 75 minutes. The facts say 15 minutes of clinical activity and 60 minutes of waste with specific, observable causes.</p>
+<p>This is why going to the gemba is non-negotiable. You cannot map a patient pathway from a performance dashboard. You have to go and see.</p>
+<h3>Learning to Observe Without Judgement</h3>
+<p>The hardest skill in gemba observation is seeing what is actually happening without immediately judging it. When you see a nurse using a workaround — perhaps writing patient details on a piece of paper because the electronic system is too slow to access during a medication round, or phoning the laboratory to chase a result because the system does not alert when results are ready — it is natural to think “that’s wrong.” Resist that impulse.</p>
+<p>Workarounds are intelligent responses to broken systems. They tell you where the standard process has failed the person doing the work. Record them as facts, not as problems with individuals.</p>
+<h3>What to Observe</h3>
+<p>Beyond the cycle times and waiting periods, look for these things at each step in the pathway:</p>
+<ul>
+<li><strong>Workarounds</strong> — any place where staff have developed their own method because the standard process does not work. Handwritten lists, unofficial whiteboards, verbal agreements about priorities.</li>
+<li><strong>Equipment and materials</strong> — is everything needed for the step available? Watch for searching for working equipment, waiting for monitors, fetching supplies from distant store rooms.</li>
+<li><strong>Layout and motion</strong> — how far do staff walk during a shift? How many trips to the medication room, the supply cupboard, the nurses’ station? Draw a spaghetti diagram if the motion is significant.</li>
+<li><strong>Information flow</strong> — how does the clinician know what to do next? Is the handover clear? Are results available when needed? Watch for phone calls chasing results, verbal handovers that lose critical details, and delays caused by incomplete or inaccessible information.</li>
+<li><strong>Interruptions</strong> — how often is the clinician or nurse pulled away from the current task? Bleeps, phone calls, urgent requests from other patients. Interruptions destroy flow and increase error risk.</li>
+<li><strong>Variation between shifts</strong> — observe the same pathway during day shift and night shift, during weekdays and weekends. The differences reveal where capacity, staffing, or support service availability creates variation in the patient experience.</li>
+</ul>
+<h3>A Worked Example: Medical Assessment with Diagnostic Investigations</h3>
+<p>Consider mapping the pathway for a medical patient admitted through the emergency department to a medical assessment unit (MAU). The main value stream runs from ED arrival through triage, clinical assessment, treatment initiation, senior review, and discharge or transfer decision. But at the point of clinical assessment, the doctor orders blood tests and a chest X-ray. Both of these are parallel paths.</p>
+<p>The bloods are sent to the laboratory. The patient is moved to radiology for the X-ray. The main pathway — the medical decision about treatment and disposition — waits for both results to come back. In Gemba-VSM, you would record the bloods as a parallel path departing at “Clinical Assessment” and returning at “Senior Review,” and the imaging as a second parallel path with the same departure and return steps. Both have “main stream waits” enabled, because the senior review cannot happen without the results.</p>
+<p>If you simply want to record that bloods take 90 minutes and imaging takes 2 hours, use quick labels. If the laboratory turnaround is complex enough to map in detail, create a full VSM child project for it. Either way, the parallel paths are now visible on the map and their lead times are reflected in the timeline, explaining why the patient waits 3 hours between assessment and review even though the clinical interactions take only minutes.</p>
+<p>When you walk this pathway at the gemba, you will discover facts that no dashboard contains: whether the blood request is raised before or after the clinical assessment is complete, how long the porter takes to arrive for the radiology transfer, whether the results come back to the EPR automatically or require a phone call to chase, and where the real bottleneck lies in what the system records as “awaiting results.”</p>
+<h3>Building Trust</h3>
+<p>The people doing the work need to trust you. They need to understand that your intention is to help them and empower them, not to judge or blame them. If staff feel they are being assessed or monitored, they will behave differently, and you will record a pathway that does not reflect normal practice.</p>
+<p>Be transparent about what you are doing and why. Explain that you are mapping the patient pathway, not measuring individuals. Make clear that the purpose is to find problems in the system so they can be fixed — problems belong to the process, not to people. Share what you are recording. Invite the team to correct you when you have misunderstood something, because you will.</p>
+<p>The best value stream maps are created with the clinical team, not about them. When the people who do the work contribute to the map, they see the waste for themselves. They generate the improvement ideas. This is the foundation of sustainable change.</p>
+<div class="callout callout-remember"><span class="callout-label">Remember</span><p>Your first gemba walk is never your last. Expect to return multiple times, at different times of day, across different shifts, with different patient cohorts. A single observation is a snapshot. The truth emerges over repeated visits.</p>
+<p>If you are unsure whether to record something, record it. You can always discard an observation later. You cannot go back and re-observe a moment that has passed.</p></div>
+    </div>
+    <!-- Section 6 -->
+    <div class="guide-section" id="s6">
+      <div class="section-header">
+        <span class="section-num-badge">6</span>
+        <h2>Installing Gemba-VSM on Your Device</h2>
+      </div>
+<p>Gemba-VSM is a Progressive Web App (PWA). It runs in your browser and can be installed on your phone or tablet for full-screen, offline use. No app store required.</p>
+<p><strong>What you need to get started:</strong> A phone or computer with a modern browser and internet access. Open https://gembasuite.org/vsm in your browser.</p>
+<h3>Install on Android</h3>
+<ol type="1">
+<li><strong>Open Chrome.</strong> Navigate to the Gemba-VSM URL in Chrome on your Android phone.</li>
+<li><strong>Install the app.</strong> You will see an install banner. Tap Install. If no banner appears, tap the three-dot menu (⋮) and select “Install app” or “Add to Home screen”.</li>
+<li><strong>Launch.</strong> The Gemba-VSM icon will appear on your home screen.</li>
+</ol>
+<h3>Install on iPhone / iPad</h3>
+<ol type="1">
+<li><strong>Open Safari.</strong> This only works in Safari, not Chrome on iOS.</li>
+<li><strong>Add to Home Screen.</strong> Tap the Share button, scroll down and tap “Add to Home Screen”, then tap Add.</li>
+<li><strong>Launch.</strong> The app icon appears on your home screen and launches full-screen.</li>
+</ol>
+<table class="data-table"><thead><tr><th>OFFLINE USE</th></tr></thead><tbody><tr><td>After installing, the app works offline. Load it once with internet access, then use it on the ward even without signal. Always export your data as JSON — browser storage can be cleared if the phone runs low on space.</td></tr></tbody></table>
+    </div>
+    <!-- Section 7 -->
+    <div class="guide-section" id="s7">
+      <div class="section-header">
+        <span class="section-num-badge">7</span>
+        <h2>Using Gemba-VSM to Map Your Clinical Pathway</h2>
+      </div>
+<p>Gemba-VSM has six main tabs: Gemba Capture, Process Steps, Current State Map, Future Steps, Future State Map, and Compare. Work through them in order.</p>
+<h3>Example Data</h3>
+<p>When you first open Gemba-VSM, it loads an example value stream — the Brew &amp; Go Tea Shop. Create a new blank project when you are ready to map your own pathway.</p>
+<h3>Gemba Capture Tab</h3>
+<p>Enter your value stream information (pathway name, patient group, mapper, date, start/end points, demand). Register IT systems (EPR, PAS, etc.). Then add process steps with cycle times, delays, waste observations, and photos.</p>
+<div class="callout callout-tip"><span class="callout-label">Tip</span><p>After entering each step, click “+ Add Step”. The stats bar updates automatically as you add steps.</p></div>
+<h3>Process Steps Tab</h3>
+<p>View, reorder, edit, and delete steps. Each displays cycle time, delays, waste badges, variation data, and photos.</p>
+<h3>Current State Map Tab</h3>
+<p>Professional SVG map with process boxes, data boxes, inventory triangles, information flow rails, kaizen bursts, parallel path boxes below the timeline, and the sawtooth timeline with summary metrics. The toolbar provides Print, SVG download, and Add Parallel Path buttons.</p>
+<h3>Future State Map Tab</h3>
+<p>Copy Current → Future to duplicate your data, then modify to reflect improvements.</p>
+<h3>Compare Tab</h3>
+<p>Side-by-side current and future state maps.</p>
+    </div>
+    <!-- Section 8 -->
+    <div class="guide-section" id="s8">
+      <div class="section-header">
+        <span class="section-num-badge">8</span>
+        <h2>Parallel Paths — Mapping Concurrent Processes</h2>
+      </div>
+<p>In many patient pathways, processes run concurrently. At certain steps, a request or referral leaves the main pathway, undergoes a separate process, and the result returns later. The main pathway may wait for this.</p>
+<p>In clinical settings, parallel paths are common:</p>
+<ul>
+<li>Blood tests sent to the laboratory with results returning hours later</li>
+<li>Imaging requests (X-ray, CT, MRI) with results awaited before clinical decisions</li>
+<li>Specialist referrals awaiting consultant opinion</li>
+<li>Pharmacy preparation of medications while nursing assessment continues</li>
+<li>Social care or therapy assessments running alongside medical treatment</li>
+</ul>
+<p>Without parallel paths on the map, these concurrent processes are invisible. Making them visible explains why patients wait.</p>
+<h3>Two Ways to Record a Parallel Path</h3>
+<p><strong>Quick Label</strong> — a named box with a manually entered lead time. Use when you know the process and its duration.</p>
+<p><strong>Full VSM (Child Project)</strong> — a linked VSM project for the parallel process. Use when it is complex enough to warrant its own map.</p>
+<h3>Creating a Parallel Path</h3>
+<p>Click “Add Parallel Path” in the map toolbar. Enter the label, select departure and return steps, indicate whether the main pathway waits, and choose quick label or full VSM.</p>
+<h3>Wait Time and Metrics</h3>
+<p>If the main pathway waits, the parallel path’s lead time is added to the delay on the timeline, affecting total lead time and process efficiency.</p>
+<h3>Navigating Between Projects</h3>
+<p>Click the parallel path box to open the child project. A back-link in the child returns you to the parent.</p>
+<div class="callout callout-tip"><span class="callout-label">Tip</span><p>Start with quick labels during your gemba walk. Upgrade to full VSM child projects later when you are ready to map the parallel process in detail.</p></div>
+    </div>
+    <!-- Section 9 -->
+    <div class="guide-section" id="s9">
+      <div class="section-header">
+        <span class="section-num-badge">9</span>
+        <h2>Variation Capture — Cycle Time Observations &amp; WIP Range</h2>
+      </div>
+<p>A single cycle time is a snapshot. What you see on the ward is variation — the same assessment takes 10 minutes with one doctor and 25 with another, 8 minutes on a quiet morning and 20 during the afternoon surge. The gap is where the coaching conversation lives.</p>
+<h3>Cycle Time Observation Log</h3>
+<p>Record multiple timed observations with context (who, what time, what conditions). The app calculates min, max, mean, and range automatically.</p>
+<h3>WIP Range</h3>
+<p>Record minimum and maximum patient counts with peak timing. “2 patients waiting at 8am, 14 at 4pm” tells you more than “average queue: 6.”</p>
+<div class="callout callout-tip"><span class="callout-label">Tip</span><p>Variation capture is optional but makes coaching conversations significantly richer.</p></div>
+    </div>
+    <!-- Section 10 -->
+    <div class="guide-section" id="s10">
+      <div class="section-header">
+        <span class="section-num-badge">10</span>
+        <h2>AI Lean Sensei Coaching Export</h2>
+      </div>
+<p>Generate a structured coaching prompt from your data. Copy it into Microsoft Copilot, Claude, or Google Gemini for guided gemba reality validation.</p>
+<div class="callout callout-important"><span class="callout-label">Important</span><p>The AI coaches, not solves. Solutions come from the team. Problems belong to the process, not people.</p></div>
+    </div>
+    <!-- Section 11 -->
+    <div class="guide-section" id="s11">
+      <div class="section-header">
+        <span class="section-num-badge">11</span>
+        <h2>Saving, Exporting &amp; Importing</h2>
+      </div>
+<h3>Project Management</h3>
+<p>Manage multiple maps from the project bar. Auto-saves as you work. Child projects from parallel paths appear in the same list.</p>
+<div class="callout callout-important"><span class="callout-label">Important</span><p>Browser storage can be cleared. Always export JSON after every gemba walk.</p></div>
+<h3>JSON Export</h3>
+<p>Complete backup of metadata, steps, variation data, parallel paths, and photos. Re-import on any device.</p>
+<h3>CSV / Excel Export</h3>
+<p>Full data table with variation columns and parallel paths section.</p>
+<h3>SVG Export</h3>
+<p>Print-quality vector map for documents and presentations.</p>
+<h3>Printing</h3>
+<p>Landscape, fit to page.</p>
+<h3>Importing</h3>
+<p>Creates a new project automatically — never overwrites existing data.</p>
+    </div>
+    <!-- Section 12 -->
+    <div class="guide-section" id="s12">
+      <div class="section-header">
+        <span class="section-num-badge">12</span>
+        <h2>References &amp; Further Reading</h2>
+      </div>
+<h3>Further Reading</h3>
+<p><em>NHS Improvement Diagnostic Team. “Bringing Lean to Life.”</em> The VSM symbols and methodology used in Gemba-VSM are based on this resource.</p>
+<p><em>Rother, M. &amp; Shook, J. “Learning to See.”</em> The definitive guide to value stream mapping from the Lean Enterprise Institute.</p>
+<p><em>Womack, J. &amp; Jones, D. “Lean Thinking.”</em> The foundational text on lean principles.</p>
+<p><em>Liker, J. “The Toyota Way.”</em> Comprehensive overview of the Toyota Production System.</p>
+<h3>Online Resources</h3>
+<p><strong>Lean Enterprise Institute (LEI)</strong> — www.lean.org</p>
+<p><strong>Lean Enterprise Academy</strong> — www.leanuk.org</p>
+<table class="data-table"><thead><tr><th>Go See · Ask Why · Respect People
+Gemba-VSM was created to make value stream mapping accessible to teams at the gemba. The best map is one created by the people who do the work, based on what they observe with their own eyes.</th></tr></thead><tbody></tbody></table>
+<p>© 2024–2026 David Clark. Licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0). These tools and guides are free for all healthcare improvement purposes. The NonCommercial restriction targets commercial resale, proprietary repackaging, and use as part of paid consultancy services. Full terms: gembasuite.org/licence</p>
+    </div>
+
+    <div class="closing-callout">
+      <div class="closing-motto">Go See · Ask Why · Respect People</div>
+      <p>The map is a tool. The real work happens at the gemba, with the people who do the work.</p>
+    </div>
+
+  </main>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div><strong>Gemba Suite</strong> — <a href="https://gembasuite.org/">gembasuite.org</a> — <a href="/feedback/">Feedback</a></div>
+    <div class="footer-licence">CC BY-NC-SA 4.0 · No patient data collected</div>
+  </div>
+</footer>
+
+</body>
+</html>

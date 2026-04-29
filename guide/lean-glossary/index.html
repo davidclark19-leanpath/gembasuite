@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#181c1c">
+  <title>Lean Glossary — Gemba Suite</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #181c1c; --ink-secondary: #3e484c; --ink-tertiary: #6e797c;
+      --paper: #f7faf9; --card: #ffffff; --surface-low: #f1f4f3;
+      --surface-high: #e6e9e8; --grid: #bec8cc; --grid-subtle: #e0e3e2;
+      --primary: #006172; --primary-container: #007c91; --primary-tint: #c4e5ef;
+      --primary-tint-strong: #79d3ea; --on-primary: #ffffff; --on-primary-tint: #004e5c;
+      --accent-warm: #854a10; --accent-warm-bg: #ffdcc3;
+      --shadow-sm: 0 1px 3px rgba(24,28,28,0.06); --shadow-md: 0 2px 8px rgba(24,28,28,0.08);
+      --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px; --radius-full: 9999px;
+      --font-display: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+      --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-body); font-size: 16px; line-height: 1.6;
+      color: var(--ink); background: var(--paper); min-height: 100vh; display: flex; flex-direction: column;
+    }
+    /* Header */
+    header { background: var(--ink); position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow-sm); }
+    .header-inner {
+      max-width: 860px; margin: 0 auto; padding: 0 var(--space-5); height: 56px;
+      display: flex; align-items: center; gap: var(--space-4);
+    }
+    .back-link {
+      color: var(--primary-tint); text-decoration: none; font-size: 13px; font-weight: 600;
+      letter-spacing: 0.01em; display: flex; align-items: center; gap: var(--space-1);
+      opacity: 0.85; transition: opacity 0.15s;
+    }
+    .back-link:hover { opacity: 1; }
+    .header-divider { width: 1px; height: 20px; background: rgba(255,255,255,0.2); }
+    .site-name {
+      color: var(--on-primary); font-family: var(--font-display); font-size: 16px;
+      font-weight: 700; letter-spacing: 0.18em; flex: 1;
+    }
+    /* Hero */
+    .page-hero { background: var(--primary); color: var(--on-primary); padding: var(--space-10) var(--space-5) var(--space-8); }
+    .page-hero .container { max-width: 860px; margin: 0 auto; }
+    .hero-label {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase;
+      color: var(--primary-tint); margin-bottom: var(--space-3);
+    }
+    .page-hero h1 {
+      font-family: var(--font-display); font-size: clamp(26px, 5vw, 36px); font-weight: 800;
+      letter-spacing: -0.3px; line-height: 1.15; color: var(--on-primary); margin-bottom: var(--space-4);
+    }
+    .page-hero p { font-size: 16px; line-height: 1.6; color: rgba(255,255,255,0.85); max-width: 580px; }
+    /* Layout */
+    .page-layout {
+      max-width: 860px; margin: 0 auto; padding: var(--space-8) var(--space-5);
+      display: flex; gap: var(--space-8); align-items: flex-start; flex: 1; width: 100%;
+    }
+    /* Sticky alpha nav */
+    .alpha-nav {
+      position: sticky; top: 72px; width: 160px; flex-shrink: 0;
+      background: var(--card); border: 1px solid var(--grid-subtle);
+      border-radius: var(--radius-md); padding: var(--space-4);
+      box-shadow: var(--shadow-sm);
+    }
+    .alpha-nav-title {
+      font-size: 10px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;
+      color: var(--ink-tertiary); margin-bottom: var(--space-3); display: block;
+    }
+    .alpha-nav-links { display: flex; flex-wrap: wrap; gap: var(--space-1); }
+    .alpha-nav-links a {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 26px; height: 26px; border-radius: var(--radius-sm);
+      font-size: 12px; font-weight: 600; color: var(--primary);
+      text-decoration: none; background: var(--primary-tint);
+      transition: background 0.12s, color 0.12s;
+    }
+    .alpha-nav-links a:hover { background: var(--primary); color: var(--on-primary); }
+    .alpha-nav-links a.inactive { background: var(--surface-high); color: var(--ink-tertiary); pointer-events: none; }
+    /* Main */
+    main { flex: 1; min-width: 0; }
+    .intro-text { font-size: 15px; color: var(--ink-secondary); line-height: 1.65; margin-bottom: var(--space-8); }
+    .intro-text a { color: var(--primary); }
+    /* Alpha section */
+    .alpha-section { margin-bottom: var(--space-8); }
+    .alpha-heading {
+      font-family: var(--font-display); font-size: 22px; font-weight: 800;
+      color: var(--primary); border-bottom: 2px solid var(--primary-tint);
+      padding-bottom: var(--space-2); margin-bottom: var(--space-5); scroll-margin-top: 80px;
+    }
+    /* Term entries */
+    .term {
+      margin-bottom: var(--space-6); padding-bottom: var(--space-5);
+      border-bottom: 1px solid var(--grid-subtle);
+    }
+    .term:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .term-header { display: flex; align-items: baseline; gap: var(--space-3); flex-wrap: wrap; margin-bottom: var(--space-2); }
+    .term-title {
+      font-family: var(--font-display); font-size: 17px; font-weight: 700;
+      color: var(--ink); letter-spacing: -0.1px;
+    }
+    .term-japanese {
+      font-size: 13px; color: var(--ink-tertiary); font-style: italic;
+    }
+    .term-abbr {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase;
+      background: var(--primary-tint); color: var(--on-primary-tint);
+      padding: 2px 7px; border-radius: var(--radius-full);
+    }
+    .term p { font-size: 14px; line-height: 1.65; color: var(--ink-secondary); }
+    .term p + p { margin-top: var(--space-2); }
+    /* DOWNTIME sub-entries */
+    .downtime-table { width: 100%; border-collapse: collapse; margin-top: var(--space-3); font-size: 14px; }
+    .downtime-table th {
+      background: var(--surface-high); color: var(--ink-secondary); font-size: 11px; font-weight: 600;
+      letter-spacing: 0.3px; text-transform: uppercase; padding: 7px 10px; text-align: left;
+      border-bottom: 2px solid var(--grid);
+    }
+    .downtime-table td { padding: 8px 10px; border-bottom: 1px solid var(--grid-subtle); vertical-align: top; }
+    .downtime-table tr:last-child td { border-bottom: none; }
+    .downtime-table td:first-child { font-weight: 600; color: var(--primary); white-space: nowrap; }
+    .downtime-letter {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 22px; height: 22px; border-radius: var(--radius-full);
+      background: var(--primary-container); color: var(--on-primary);
+      font-family: var(--font-display); font-size: 11px; font-weight: 700;
+      margin-right: var(--space-2); flex-shrink: 0;
+    }
+    /* Footer */
+    footer { background: var(--ink); color: rgba(255,255,255,0.55); padding: var(--space-6) var(--space-5); font-size: 13px; margin-top: auto; }
+    .footer-inner { max-width: 860px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3); }
+    .footer-inner a { color: var(--primary-tint); text-decoration: none; }
+    .footer-inner a:hover { text-decoration: underline; }
+    .footer-licence { font-size: 12px; opacity: 0.7; }
+    @media (max-width: 680px) {
+      .page-layout { flex-direction: column; }
+      .alpha-nav { position: static; width: 100%; }
+      .alpha-nav-links { justify-content: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="/guide/" class="back-link">← Guides</a>
+    <div class="header-divider"></div>
+    <span class="site-name">GEMBA SUITE</span>
+  </div>
+</header>
+
+<div class="page-hero">
+  <div class="container">
+    <p class="hero-label">Reference</p>
+    <h1>Lean Glossary</h1>
+    <p>Definitions for lean terms used across the Gemba Suite — Japanese originals where applicable, plain-language explanations, and healthcare context throughout.</p>
+  </div>
+</div>
+
+<div class="page-layout">
+
+  <nav class="alpha-nav" aria-label="Jump to letter">
+    <span class="alpha-nav-title">Jump to</span>
+    <div class="alpha-nav-links">
+      <a href="#A">A</a><a href="#B">B</a><a href="#C">C</a><a href="#D">D</a>
+      <a href="#E">E</a><a href="#F">F</a><a href="#G">G</a><a href="#H">H</a>
+      <a class="inactive">I</a><a class="inactive">J</a><a href="#K">K</a><a href="#L">L</a>
+      <a href="#M">M</a><a href="#N">N</a><a href="#O">O</a><a href="#P">P</a>
+      <a class="inactive">Q</a><a href="#R">R</a><a href="#S">S</a><a href="#T">T</a>
+      <a class="inactive">U</a><a href="#V">V</a><a href="#W">W</a>
+      <a class="inactive">X</a><a href="#Y">Y</a><a class="inactive">Z</a>
+    </div>
+  </nav>
+
+  <main>
+    <p class="intro-text">This glossary covers lean terminology used in the Gemba Suite tools and in lean healthcare improvement more broadly. Terms are listed alphabetically; Japanese originals appear in parentheses where the term is commonly used in its Japanese form. For a fuller introduction to lean thinking and where these concepts fit together, see the <a href="/guide/new-to-lean/">New to Lean?</a> guide.</p>
+
+    <!-- A -->
+    <section class="alpha-section" id="A">
+      <h2 class="alpha-heading">A</h2>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">5S</span>
+        </div>
+        <p>A workplace organisation method derived from five Japanese words: <em>Seiri</em> (Sort), <em>Seiton</em> (Set in order), <em>Seiso</em> (Shine/clean), <em>Seiketsu</em> (Standardise), and <em>Shitsuke</em> (Sustain). 5S creates a clean, organised, visual workplace where abnormalities are immediately obvious. In healthcare, a well-run 5S programme removes the searching, fetching, and motion waste that interrupts clinical and diagnostic workflows every day.</p>
+      </div>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">5 Whys</span>
+        </div>
+        <p>A root cause analysis technique developed by Taiichi Ohno at Toyota. When a problem occurs, ask "Why?" and answer with a fact or observation. Then ask "Why?" again about that answer — and so on, typically five times, until the underlying root cause is identified. The number five is a guide, not a rule: some problems require three iterations, others require seven.</p>
+        <p>The discipline is in each answer: "Because someone forgot" is not a fact. "Because no standard procedure existed for that step" is a fact. Each Why must be grounded in evidence from the gemba. Used in Gemba-RCA and referenced throughout Gemba-A3.</p>
+      </div>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">A3</span>
+        </div>
+        <p>A structured problem-solving method that captures an entire improvement project — problem statement, current state, goal, waste analysis, root cause, countermeasures, action plan, results, and next steps — on a single A3-sized page (297 × 420 mm). Named after the paper size, the format imposes concision: every word and data point must earn its place.</p>
+        <p>Developed within the Toyota Production System and brought to wider practice through the Lean Enterprise Institute. The A3 is both a document and a thinking process — its real purpose is to make problem solving transparent, teachable, and coach-able. In the Gemba Suite, Gemba-A3 provides a structured digital A3 environment with stage-gate discipline and evidence import from other apps.</p>
+      </div>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Andon</span>
+          <span class="term-japanese">(行灯)</span>
+        </div>
+        <p>A visual signal — originally a lamp or light on a manufacturing line — that alerts supervisors or team members to a problem or abnormal condition. In healthcare settings, an andon can be as simple as a coloured card, a raised flag, or a huddle board alert. The principle is that anyone in the process should be able to signal a problem immediately, stopping the line if necessary to prevent defects from propagating downstream.</p>
+      </div>
+
+    </section>
+
+    <!-- B -->
+    <section class="alpha-section" id="B">
+      <h2 class="alpha-heading">B</h2>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Batch size</span>
+        </div>
+        <p>The number of items processed together as a group before being passed to the next step. Large batch sizes are a major source of lead time waste: a specimen that arrives with 49 others must wait for all 49 to be processed before any of them move on, even if its individual cycle time is short. Reducing batch sizes — towards single-piece flow where possible — is one of the most reliable ways to reduce lead time and expose other wastes.</p>
+      </div>
+
+    </section>
+
+    <!-- C -->
+    <section class="alpha-section" id="C">
+      <h2 class="alpha-heading">C</h2>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">C/O (Changeover time)</span>
+          <span class="term-abbr">C/O</span>
+        </div>
+        <p>The time required to switch from one type of work to another at a process step — for example, reconfiguring a staining machine between specimen types, or reconfiguring an analytical platform between assays. Changeover time is a form of non-value-added time that reduces the effective capacity of a step. Reducing changeover time is called SMED (Single-Minute Exchange of Die) in lean manufacturing; in healthcare it applies to any setup or switch time between different work types.</p>
+      </div>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">C/T (Cycle time)</span>
+          <span class="term-abbr">C/T</span>
+        </div>
+        <p>The time taken to complete one unit of value-added work at a process step, measured by direct observation at the gemba. Cycle time begins when hands-on work physically starts on an item and ends when that work is complete and the item is ready to move. It excludes waiting, delays, interruptions, and rework.</p>
+        <p>Cycle time is not the same as lead time. A step may have a cycle time of 4 minutes but a lead time of 45 minutes if the item spends 41 minutes waiting. The gap between cycle time and lead time reveals the waste. In Gemba-VSM, cycle time is entered for each process step and can include multiple timed observations to capture variation between operators and conditions.</p>
+      </div>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Countermeasure</span>
+        </div>
+        <p>In A3 thinking, the preferred term for what might otherwise be called a "solution." The word is deliberate: a countermeasure directly addresses an existing condition at the root cause of a problem, but it is recognised that implementing it will create a new situation with its own set of problems. This framing preserves intellectual humility — there are no final solutions, only current best responses. Countermeasures are tested through PDCA cycles, not declared and implemented wholesale.</p>
+      </div>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Current state</span>
+        </div>
+        <p>A description of how a process actually operates today, based on direct observation at the gemba. In value stream mapping, the current state map is the first deliverable and the foundation for all improvement work. It is not what the procedure says should happen, not what managers believe happens, and not an average or composite — it is what you observe when you walk the process yourself.</p>
+      </div>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Customer</span>
+        </div>
+        <p>The recipient of the output of a value stream — the person or system for whom the work has value. In lean thinking, value can only be defined by the customer. In healthcare, the primary customer is usually the patient, but internal customers exist at every step: the biomedical scientist at microtomy is the customer for the specimen received at embedding, for example. Understanding who the customer is at each step is essential to identifying what constitutes value and what constitutes waste.</p>
+      </div>
+
+    </section>
+
+    <!-- D -->
+    <section class="alpha-section" id="D">
+      <h2 class="alpha-heading">D</h2>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">DOWNTIME</span>
+        </div>
+        <p>An acronym for the eight wastes (muda) identified in lean thinking. Originally Taiichi Ohno identified seven wastes as part of the Toyota Production System; an eighth — Non-utilized Talent — was added later. DOWNTIME is the most widely used mnemonic for the eight wastes in healthcare settings. In Gemba-VSM, each process step has a DOWNTIME checklist so you can record the wastes observed at the gemba.</p>
+
+        <table class="downtime-table">
+          <thead>
+            <tr>
+              <th>Letter</th>
+              <th>Waste</th>
+              <th>Description (healthcare context)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="downtime-letter">D</span>Defects</td>
+              <td>Defects</td>
+              <td>Errors, re-requests, relabelling, incorrect results requiring repeat analysis, transcription errors, mislabelled specimens.</td>
+            </tr>
+            <tr>
+              <td><span class="downtime-letter">O</span>Overproduction</td>
+              <td>Overproduction</td>
+              <td>Ordering tests before they are needed, printing reports before they are requested, batching work before the next step is ready.</td>
+            </tr>
+            <tr>
+              <td><span class="downtime-letter">W</span>Waiting</td>
+              <td>Waiting</td>
+              <td>Specimens waiting to be processed, staff waiting for equipment, patients waiting for results, information waiting to be entered.</td>
+            </tr>
+            <tr>
+              <td><span class="downtime-letter">N</span>Non-utilized Talent</td>
+              <td>Non-utilized Talent</td>
+              <td>Skills, knowledge, and experience of frontline staff not used in problem solving or improvement. The most consistently underused resource in NHS improvement.</td>
+            </tr>
+            <tr>
+              <td><span class="downtime-letter">T</span>Transportation</td>
+              <td>Transportation</td>
+              <td>Moving specimens, samples, paperwork, or equipment between locations unnecessarily. Each move is a delay and a defect opportunity.</td>
+            </tr>
+            <tr>
+              <td><span class="downtime-letter">I</span>Inventory</td>
+              <td>Inventory</td>
+              <td>Excess work-in-progress (WIP), overstocked reagents, forms waiting in queues. Inventory hides problems and consumes space.</td>
+            </tr>
+            <tr>
+              <td><span class="downtime-letter">M</span>Motion</td>
+              <td>Motion</td>
+              <td>Unnecessary movement of people — walking to a printer in another room, searching for missing equipment, reaching awkwardly because of poor layout.</td>
+            </tr>
+            <tr>
+              <td><span class="downtime-letter">E</span>Extra Processing</td>
+              <td>Extra Processing</td>
+              <td>Steps that add no value — double-entering data, over-checking, duplicate reporting, unnecessary sign-offs, reformatting information that already exists in another system.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+
+    <!-- E -->
+    <section class="alpha-section" id="E">
+      <h2 class="alpha-heading">E</h2>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">ECSS</span>
+          <span class="term-abbr">ECSS</span>
+        </div>
+        <p>A technique for designing the future state of a value stream: <strong>Eliminate</strong> (can any steps be removed entirely?), <strong>Combine</strong> (can steps be merged?), <strong>Simplify</strong> (can remaining steps be made simpler?), <strong>Sequence</strong> (is the order of steps optimal for flow?). ECSS is applied systematically to each step of the current state map before drawing the future state.</p>
+      </div>
+
+    </section>
+
+    <!-- F -->
+    <section class="alpha-section" id="F">
+      <h2 class="alpha-heading">F</h2>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">FIFO</span>
+          <span class="term-abbr">FIFO</span>
+        </div>
+        <p>First In, First Out — a flow principle where items are processed in the order they arrive, with no jumping the queue. FIFO is one of three flow types in Gemba-VSM (alongside Push and Pull). In healthcare, FIFO is the standard expectation for diagnostic workflows but is frequently broken by urgent requests, manual sorting, or batch processing — all of which introduce inequity and unpredictability into lead time.</p>
+      </div>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Flow</span>
+        </div>
+        <p>The third of the five lean principles: make value flow without interruption, waiting, detours, or defects requiring rework. Flow exists when work moves continuously from one value-adding step to the next with minimal inventory between steps. In most healthcare processes, true flow is rare — work stops and starts repeatedly as it moves through the system. Creating flow requires eliminating the conditions that stop it: batch processing, departmental handoffs, information delays, and equipment downtime.</p>
+      </div>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Future state</span>
+        </div>
+        <p>A description of how a process should operate once waste has been removed and improvements have been implemented. The future state is always designed after the current state has been mapped and understood — it is a blueprint for improvement, not a wish list. Every change in the future state should be grounded in specific observations from the current state and implemented through PDCA cycles. In Gemba-VSM, the Future State Map tab allows you to copy the current state and modify it to show the intended future state, with recalculated metrics.</p>
+      </div>
+
+    </section>
+
+    <!-- G -->
+    <section class="alpha-section" id="G">
+      <h2 class="alpha-heading">G</h2>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Gemba</span>
+          <span class="term-japanese">(現場)</span>
+        </div>
+        <p>Japanese for "the actual place" — where the real work happens. In manufacturing, the gemba is the shop floor. In healthcare, it is the laboratory bench, the ward bay, the phlebotomy chair, the specimen reception desk. The gemba principle holds that improvement must be based on what is actually observed at the gemba, not on assumptions, reports, or meetings in offices. "Go to the gemba" is not a preference — it is a requirement for authentic lean practice.</p>
+        <p>The Gemba Suite is named for this principle. Every tool in the suite is designed for use at the gemba, on a phone, in the moment of observation.</p>
+      </div>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Genchi genbutsu</span>
+          <span class="term-japanese">(現地現物)</span>
+        </div>
+        <p>"Go and see for yourself." A Toyota Production System principle that requires managers and improvement practitioners to personally observe the actual place, the actual thing, the actual situation — rather than relying on reports, data, or second-hand accounts. Genchi genbutsu is the practical expression of the gemba principle: it is not enough to believe in going to the gemba; you must actually go.</p>
+      </div>
+
+    </section>
+
+    <!-- H -->
+    <section class="alpha-section" id="H">
+      <h2 class="alpha-heading">H</h2>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Hansei</span>
+          <span class="term-japanese">(反省)</span>
+        </div>
+        <p>Reflection and self-examination, particularly after completing a project or cycle. In Toyota practice, hansei is an expectation: at the end of every significant piece of work, participants reflect honestly on what went wrong, what was missed, and what they would do differently. It is not blame — it is the discipline of learning from experience. In improvement work, hansei prevents teams from treating the end of a PDCA cycle as a finish line rather than a learning checkpoint.</p>
+      </div>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Heijunka</span>
+          <span class="term-japanese">(平準化)</span>
+        </div>
+        <p>Production levelling — the practice of smoothing workload over time rather than processing in large batches or responding to peaks with reactive surges. In healthcare, heijunka might mean distributing specimen arrivals across the day rather than processing everything that arrives in a morning batch, or scheduling certain request types to specific time windows to even out laboratory workload. Heijunka enables flow and reduces the muri (overburden) caused by uneven demand.</p>
+      </div>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Hoshin kanri</span>
+          <span class="term-japanese">(方針管理)</span>
+        </div>
+        <p>Strategy deployment — a management method for aligning the improvement activities of an organisation with its strategic objectives. Hoshin kanri uses a catchball process: objectives are shared downward through the organisation, team-level plans are developed in response, and those plans are refined through iterative dialogue (catchball) until alignment is achieved. The result is a coherent set of annual improvement priorities where every team understands how their work connects to the organisation's direction. Gemba-Strategy is the Gemba Suite tool designed to support hoshin kanri.</p>
+      </div>
+
+    </section>
+
+    <!-- K -->
+    <section class="alpha-section" id="K">
+      <h2 class="alpha-heading">K</h2>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Kaizen</span>
+          <span class="term-japanese">(改善)</span>
+        </div>
+        <p>"Change for better" — continuous, incremental improvement involving everyone in the organisation, every day. Kaizen is not a project: it is a habit. Small improvements, made consistently by the people who do the work, compound into significant results over time. On a value stream map, a kaizen burst symbol (an irregular star shape) marks a step where improvement opportunities have been identified. In Gemba-VSM, you can flag kaizen opportunities at any process step with a note.</p>
+      </div>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Kanban</span>
+          <span class="term-japanese">(看板)</span>
+        </div>
+        <p>A signalling system that controls the flow of work between steps, triggering replenishment or production only when downstream demand exists. The word means "signboard" or "card." A kanban signal tells the upstream step: "The downstream step needs more — produce or replenish now." In lean manufacturing, kanban cards or bins are used to create pull systems. In healthcare, kanban principles apply to reagent replenishment, consumable stock management, and any situation where upstream production should be triggered by downstream consumption rather than by a schedule or forecast.</p>
+      </div>
+
+    </section>
+
+    <!-- L -->
+    <section class="alpha-section" id="L">
+      <h2 class="alpha-heading">L</h2>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Lead time</span>
+        </div>
+        <p>The total elapsed time from when an item enters a process step (or the value stream) to when it leaves, including all waiting, delays, transportation, rework, and value-added work. Lead time = cycle time + all non-value-added time. In most healthcare processes, lead time is dramatically longer than cycle time — the specimen that takes 4 minutes to process may spend 2 hours waiting. The gap between cycle time and lead time is the improvement opportunity.</p>
+        <p>In Gemba-VSM, lead time is calculated automatically from the cycle times and delays you enter. The sawtooth timeline at the bottom of the map visualises value-added time (green) versus non-value-added time (red).</p>
+      </div>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Lean</span>
+        </div>
+        <p>A management philosophy derived from the Toyota Production System (TPS) and described for Western audiences by Womack and Jones in <em>Lean Thinking</em> (1996). Lean focuses on creating value for the customer while eliminating waste. Its five principles are: specify value, identify the value stream, make value flow, respond to pull, and pursue perfection. In healthcare, lean has been applied extensively to reduce waiting times, eliminate diagnostic errors, improve patient safety, and develop the problem-solving capability of frontline staff. The NHS Improvement programme "Bringing Lean to Life" is the primary UK reference for lean in NHS settings.</p>
+      </div>
+
+    </section>
+
+    <!-- M -->
+    <section class="alpha-section" id="M">
+      <h2 class="alpha-heading">M</h2>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Muda</span>
+          <span class="term-japanese">(無駄)</span>
+        </div>
+        <p>Waste — any activity that consumes resources without adding value for the customer. Muda is one of three forms of operational loss in lean thinking (alongside Mura and Muri). The DOWNTIME framework categorises the eight types of muda. Not all muda is immediately eliminable: some waste is necessary given current conditions (Type 2 muda) — the lab transport run that is wasteful but cannot be removed until a different specimen routing system exists, for example. Improvement work focuses first on Type 1 muda (waste that can be eliminated now).</p>
+      </div>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Mura</span>
+          <span class="term-japanese">(斑)</span>
+        </div>
+        <p>Unevenness or variability in workload, demand, or process performance. Mura is a root cause of muda: when demand fluctuates unpredictably, processes must be sized for peak demand and sit idle the rest of the time; staff rush and err during surges, then have nothing to do in troughs. Reducing mura — through heijunka (levelling) and standard work — reduces the muri and muda it generates.</p>
+      </div>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Muri</span>
+          <span class="term-japanese">(無理)</span>
+        </div>
+        <p>Overburden — requiring people, equipment, or systems to work beyond their designed capacity. Muri creates errors, breakdowns, and burnout. It is often invisible on a value stream map but evident in gemba observation: the staff member rushing because the batch arrived too large, the analyser running continuously without maintenance windows, the process step where defects spike on Monday mornings. Reducing muri is as important as reducing muda.</p>
+      </div>
+
+    </section>
+
+    <!-- N -->
+    <section class="alpha-section" id="N">
+      <h2 class="alpha-heading">N</h2>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Nemawashi</span>
+          <span class="term-japanese">(根回し)</span>
+        </div>
+        <p>Consensus building — the practice of consulting stakeholders before proposing a change, so that by the time a formal decision is made, all affected parties have been heard and their concerns addressed. Derived from the horticultural practice of preparing the roots of a tree before transplanting it. In A3 thinking, nemawashi means sharing your analysis with the people who will be affected by your countermeasures before implementing them. This is not seeking permission — it is building the understanding that makes change sustainable. Gemba-A3 includes a nemawashi tracker on its Meta tab.</p>
+      </div>
+
+    </section>
+
+    <!-- O -->
+    <section class="alpha-section" id="O">
+      <h2 class="alpha-heading">O</h2>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Ohno, Taiichi</span>
+          <span class="term-japanese">(大野耐一)</span>
+        </div>
+        <p>The father of the Toyota Production System. As a Toyota executive from the 1940s onwards, Ohno developed the just-in-time production system, identified the seven wastes (muda), pioneered the 5 Whys root cause technique, and created the kanban pull system. His approach was always grounded in direct observation — he famously drew chalk circles on the factory floor and instructed engineers to stand in them and observe until they truly understood the process. Ohno's insistence on going to the gemba rather than managing from a desk is the foundation of lean practice.</p>
+      </div>
+
+    </section>
+
+    <!-- P -->
+    <section class="alpha-section" id="P">
+      <h2 class="alpha-heading">P</h2>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">PDCA / PDSA</span>
+          <span class="term-abbr">PDCA</span>
+        </div>
+        <p>Plan, Do, Check, Act — a structured cycle for testing and implementing improvements. Plan: identify the problem, set a goal, design a countermeasure. Do: implement the countermeasure on a small scale. Check: measure what happened against the plan. Act: standardise what worked; revise and repeat if it did not. PDSA (Plan, Do, Study, Act) is an alternative framing that emphasises learning over compliance. Both describe the same scientific approach to improvement. In Gemba-A3, the PDCA cycle structures the nine-section A3 format and the stage gate enforces the Plan before Do discipline.</p>
+      </div>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Poka-yoke</span>
+          <span class="term-japanese">(ポカヨケ)</span>
+        </div>
+        <p>Error-proofing — a design feature that prevents a mistake from occurring or makes it immediately visible when it does. Named by Shigeo Shingo. Poka-yoke devices can be physical (connectors that only fit one way), process-based (a checklist that must be completed before the next step is accessible), or informational (a system alert when a field is left blank). The principle is that errors should be designed out of the system, not managed by relying on individual vigilance. In healthcare, specimen ID barcodes, two-identifier checking protocols, and forcing functions in electronic systems are all forms of poka-yoke.</p>
+      </div>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Process efficiency</span>
+        </div>
+        <p>The ratio of value-added time (cycle time) to total lead time, expressed as a percentage: Cycle Time ÷ Lead Time × 100%. In most healthcare and service processes, process efficiency is shockingly low — often 5–15%, sometimes less than 1%. A specimen that takes 4 minutes to process but spends 60 minutes waiting has a process efficiency of 6.25%. This is not a failure — it is typical, and it shows the scale of the improvement opportunity. Process efficiency is calculated automatically in Gemba-VSM from the data you enter.</p>
+      </div>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Pull</span>
+        </div>
+        <p>A flow control principle where work is only started when downstream demand exists — "pull" the work forward when the next step is ready to receive it, rather than "pushing" it forward as soon as the upstream step has finished. Pull systems reduce inventory between steps and prevent overproduction. In healthcare, pull is approximated by single-specimen flow, kanban replenishment systems, and demand-triggered batch releases. In Gemba-VSM, pull arrows on the map show steps where work is controlled by downstream demand.</p>
+      </div>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Push</span>
+        </div>
+        <p>A flow control principle where work is produced and forwarded to the next step as soon as it is complete, regardless of whether the next step is ready to receive it. Most healthcare processes are push systems: samples are batched and released on a schedule, reports are sent when produced rather than when requested. Push creates inventory between steps, increases lead time, and amplifies mura (unevenness). Identifying and reducing push flows is a key objective of future state design. In Gemba-VSM, push arrows on the map show steps where work is pushed forward without downstream signal.</p>
+      </div>
+
+    </section>
+
+    <!-- R -->
+    <section class="alpha-section" id="R">
+      <h2 class="alpha-heading">R</h2>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Responder</span>
+        </div>
+        <p>In A3 thinking, the colleague who coaches the A3 author through the problem-solving process. The responder does not solve the problem — they ask questions that test the quality of the thinking: Is the problem statement specific enough? Have you been to the gemba? How do you know this is the root cause? What evidence supports that? The responder role can be a manager, a peer, or a lean coach. Gemba-A3 includes a responder field in its project metadata and a review toggle on each section so the author can record which sections have been reviewed with their responder.</p>
+      </div>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Root cause</span>
+        </div>
+        <p>The fundamental underlying reason why a problem exists — the condition whose removal would prevent the problem from recurring. A root cause is not a symptom (the defect rate is high), not an immediate trigger (the label printer ran out of ribbon), and not a contributing factor (the ribbon was not checked before the shift). The test: if you remove this cause, does the problem disappear? If not, you have found a contributing factor, not the root cause. Root cause analysis (5 Whys, fishbone diagrams) is used in Gemba-RCA and supports A3 Section 5.</p>
+      </div>
+
+    </section>
+
+    <!-- S -->
+    <section class="alpha-section" id="S">
+      <h2 class="alpha-heading">S</h2>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Sensei</span>
+          <span class="term-japanese">(先生)</span>
+        </div>
+        <p>Teacher or guide — in lean practice, an experienced practitioner who teaches through observation, questioning, and challenge rather than through instruction. A lean sensei does not give answers; they ask questions that force practitioners to think more deeply and observe more carefully. The AI Lean Sensei Coaching Export in the Gemba Suite tools generates prompts designed to replicate this style of guided questioning — Socratic, evidence-demanding, and focused on the gemba rather than theory.</p>
+      </div>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">SMART goals</span>
+          <span class="term-abbr">SMART</span>
+        </div>
+        <p>A framework for writing measurable improvement goals: <strong>Specific</strong> (what exactly will change?), <strong>Measurable</strong> (how will we know?), <strong>Achievable</strong> (is this realistic given our current state?), <strong>Relevant</strong> (does this address the root cause?), <strong>Time-bound</strong> (by when?). A SMART goal cannot be satisfied by "we will improve." It requires "we will reduce specimen rejection rate from 3.2% to below 1% by 31 July 2026." Gemba-A3 includes SMART scaffolding fields in Section 3 to help teams test whether their goal meets all five criteria.</p>
+      </div>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Standard work</span>
+          <span class="term-japanese">(標準作業)</span>
+        </div>
+        <p>The current best-known way to perform a task, documented in enough detail that it can be taught, followed consistently, and used as the basis for improvement. Standard work is not a rigid rule — it is a baseline. When a problem occurs, the first question is: was the standard being followed? If yes, the standard needs to change. If no, the person needs support. Standard work prevents the drift and variation that makes processes unpredictable and hard to improve. Gemba-StandardWork in the Gemba Suite supports standard work documentation.</p>
+      </div>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Supplier</span>
+        </div>
+        <p>The source of the input to a value stream — the person, process, or system that provides work to the first step. On a value stream map, the supplier box appears at the far left, connected to the first process step. In healthcare, the supplier for a diagnostic value stream might be the requesting clinician, the ward that sends specimens, or the GP surgery that submits e-referrals. Understanding the supplier's demand rate and variation is essential to designing a pull system that can respond to real demand rather than anticipated schedules.</p>
+      </div>
+
+    </section>
+
+    <!-- T -->
+    <section class="alpha-section" id="T">
+      <h2 class="alpha-heading">T</h2>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Takt time</span>
+          <span class="term-japanese">(タクトタイム)</span>
+        </div>
+        <p>The rate at which the customer demands the product or service, calculated as: Available working time per period ÷ Customer demand per period. Takt time tells you how fast the process must run to meet demand — it is the heartbeat of a lean process. If takt time is 6 minutes and your cycle time is 4 minutes, you have spare capacity. If your cycle time is 9 minutes, the process will fall behind demand. Takt time is calculated automatically in Gemba-VSM when you enter customer demand and available working time.</p>
+      </div>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Toyota Production System (TPS)</span>
+          <span class="term-abbr">TPS</span>
+        </div>
+        <p>The management and manufacturing system developed by Toyota over several decades, primarily through the work of Taiichi Ohno and Shigeo Shingo. TPS is built on two pillars: just-in-time (producing only what is needed, when it is needed, in the amount needed) and jidoka (automation with a human touch — the authority and obligation to stop the line when a problem occurs). The tools and practices of lean — value stream mapping, 5S, standard work, kanban, PDCA, A3 — are all expressions of the TPS philosophy, adapted for different industries and contexts.</p>
+      </div>
+
+    </section>
+
+    <!-- V -->
+    <section class="alpha-section" id="V">
+      <h2 class="alpha-heading">V</h2>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Value</span>
+        </div>
+        <p>Any activity or feature that the customer would be willing to pay for — something that directly contributes to satisfying their needs. In lean thinking, value can only be defined by the customer: what the producer considers valuable is irrelevant if the customer does not share that view. In healthcare, the primary customer is the patient, and value is what directly contributes to their diagnosis, treatment, or care. Everything else — however time-consuming, however habitual, however well-intentioned — is either waste or necessary non-value-added activity.</p>
+      </div>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Value stream</span>
+        </div>
+        <p>All the specific actions — value-added and non-value-added — required to bring a product or service from origin to the customer. A value stream has a defined start and end point (supplier and customer), a primary product or service family, and a series of process steps connected by flows of materials and information. Most organisations contain many value streams; the first task of lean is to identify and map the one that matters most to start.</p>
+      </div>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Value stream map (VSM)</span>
+          <span class="term-abbr">VSM</span>
+        </div>
+        <p>A visual representation of all the actions currently required to deliver a product or service, showing process steps, data boxes, inventory levels, information flows, timeline, and metrics. The VSM was developed and popularised by Mike Rother and John Shook in <em>Learning to See</em> (LEI, 1998). It is the primary diagnostic tool in lean practice — it makes the current state visible in a way that enables a team to see waste and design the future state. Gemba-VSM is the Gemba Suite tool for creating value stream maps at the gemba.</p>
+      </div>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Visual management</span>
+        </div>
+        <p>The use of visual signals — colour coding, charts, boards, status indicators, floor markings — to make the current state of a process immediately visible to anyone who walks by, without requiring explanation or a report. A well-designed visual workplace communicates normal versus abnormal at a glance: the kanban card that signals a reorder point, the status board that shows which specimens are waiting and for how long, the control chart that shows whether the process is behaving predictably. Visual management reduces the information waste that comes from having to ask or look up the current state.</p>
+      </div>
+
+    </section>
+
+    <!-- W -->
+    <section class="alpha-section" id="W">
+      <h2 class="alpha-heading">W</h2>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">WIP (Work in Progress)</span>
+          <span class="term-abbr">WIP</span>
+        </div>
+        <p>Items that have entered the value stream and are somewhere between the start and the finish — neither with the supplier nor delivered to the customer. WIP is a form of inventory waste. High WIP increases lead time (Little's Law: Lead Time = WIP ÷ Throughput), hides defects (problems discovered late in the process are more expensive to correct), and signals that flow is broken somewhere upstream. In Gemba-VSM, WIP is recorded between each process step. The WIP Range feature allows you to capture the minimum, maximum, and peak timing — "3 at 8am, 25 at 2pm" — which reveals far more about flow problems than a single average figure.</p>
+      </div>
+
+    </section>
+
+    <!-- Y -->
+    <section class="alpha-section" id="Y">
+      <h2 class="alpha-heading">Y</h2>
+
+      <div class="term">
+        <div class="term-header">
+          <span class="term-title">Yokoten</span>
+          <span class="term-japanese">(横展)</span>
+        </div>
+        <p>Horizontal deployment — the practice of sharing learning and improvement solutions across teams, departments, or sites that face similar problems. When a team successfully solves a problem through A3 thinking, yokoten asks: where else does this problem exist? Which other teams could benefit from this countermeasure? Yokoten is an active responsibility, not passive information sharing — it involves going to those teams, explaining what was learned, and supporting adaptation to their context. In healthcare, yokoten between specialties and between NHS trusts has the potential to accelerate improvement dramatically.</p>
+      </div>
+
+    </section>
+
+    <div style="margin-top: var(--space-8); padding-top: var(--space-6); border-top: 1px solid var(--grid-subtle); font-size: 13px; color: var(--ink-tertiary); font-style: italic; text-align: center;">
+      <em>Go See · Ask Why · Respect People</em><br>
+      <span style="font-size: 12px; margin-top: 4px; display: block;">© 2024–2026 David Clark. CC BY-NC-SA 4.0. Free for healthcare improvement. <a href="https://gembasuite.org/licence" style="color: var(--primary);">gembasuite.org/licence</a></span>
+    </div>
+
+  </main>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <span>David Clark — <a href="https://gembasuite.org">gembasuite.org</a></span>
+    <span class="footer-licence">CC BY-NC-SA 4.0 — Free for healthcare improvement</span>
+  </div>
+</footer>
+
+</body>
+</html>
