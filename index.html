@@ -4,7 +4,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#006172">
-<meta name="description" content="Free lean improvement tools for NHS healthcare teams. Value stream mapping, A3 problem solving, root cause analysis, and statistical process control.">
+<meta name="description" content="Free, browser-based Lean improvement toolkit for healthcare teams. Value stream mapping, A3 problem solving, root cause analysis, SPC, and standard work — replacing your Word and Excel templates. 100% client-side, no patient data, no backend.">
 <title>Gemba Suite — Lean Improvement Tools for Healthcare</title>
 <link rel="preconnect" href="https://fonts.googleapis.com/">
 <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
@@ -62,10 +62,10 @@ body {
 .hero-text {}
 .hero-label {
   font-family: var(--font-display);
-  font-size: 18px;
+  font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.3px;
+  letter-spacing: 1.2px;
   color: var(--primary);
   margin-bottom: 12px;
 }
@@ -428,6 +428,12 @@ body {
   text-decoration: none;
 }
 .footer a:hover { text-decoration: underline; }
+.footer-tagline {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-secondary);
+  margin-bottom: 2px;
+}
 /* ── Get Started section ── */
 .gs-grid {
   display: grid;
@@ -560,20 +566,11 @@ body {
   .lr-list { grid-template-columns: 1fr 1fr; }
 }
 .lr-item {
-  display: block;
-  text-decoration: none;
-  color: inherit;
   background: var(--card);
   border: 1px solid var(--grid-subtle);
   border-radius: var(--radius-md);
   padding: 16px 20px;
   box-shadow: var(--shadow-sm);
-  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
-}
-a.lr-item:hover {
-  border-color: var(--primary);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
 }
 .lr-item-badge {
   display: inline-block;
@@ -628,119 +625,40 @@ a.lr-item:hover {
 .lr-book strong {
   color: var(--ink);
 }
-
-/* ── Section licence link ── */
-.section-licence-link {
-  margin-top: -16px;
-  margin-bottom: 24px;
-  font-size: 13px;
-}
-.section-licence-link a {
-  color: var(--primary);
-  text-decoration: none;
-}
-.section-licence-link a:hover { text-decoration: underline; }
-
-/* ── VSM guides collapsible ── */
-.lr-item-span { grid-column: 1 / -1; }
-details.vsm-guides-details summary {
-  cursor: pointer;
-  list-style: none;
-  -webkit-appearance: none;
-  user-select: none;
-}
-details.vsm-guides-details summary::-webkit-details-marker { display: none; }
-.vsm-guides-toggle { font-size: 0; }
-.vsm-guides-toggle::after { content: ' ▸ expand'; font-size: 11px; font-weight: 600; color: var(--primary); }
-details.vsm-guides-details[open] .vsm-guides-toggle::after { content: ' ▾ collapse'; }
-.vsm-guide-links {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid var(--grid-subtle);
-}
-.vsm-guide-links a {
-  font-size: 13px;
-  color: var(--primary);
-  text-decoration: none;
-}
-.vsm-guide-links a:hover { text-decoration: underline; }
-
-/* ── Books & References ── */
-.lr-ref-category {
-  font-family: var(--font-display);
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--ink-tertiary);
-  margin-bottom: 8px;
-  margin-top: 4px;
-}
-
-/* ── What's New ── */
-.wn-item {
-  padding: 14px 0;
-  border-bottom: 1px solid var(--grid-subtle);
-  max-width: 640px;
-}
-.wn-item:last-child { border-bottom: none; }
-.wn-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 4px;
-}
-.wn-app {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 14px;
-  color: var(--ink);
-}
-.wn-version {
-  font-size: 11px;
-  font-weight: 600;
-  background: var(--surface-low);
-  border: 1px solid var(--grid);
-  padding: 1px 8px;
-  border-radius: 9999px;
-  color: var(--ink-tertiary);
-}
-.wn-date {
-  font-size: 12px;
-  color: var(--ink-tertiary);
-}
-.wn-summary {
-  font-size: 14px;
-  line-height: 1.55;
-  color: var(--ink-secondary);
-}
-
-/* ── More Resources card ── */
-.lr-more-resources-card {
-  border: 2px solid var(--primary-tint);
-  background: linear-gradient(135deg, var(--card) 0%, #f4fbfd 100%);
-}
-.lr-more-resources-card:hover {
-  border-color: var(--primary);
-}
-.lr-more-resources-card .lr-item-title {
-  font-size: 16px;
-  color: var(--primary);
-}
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Gemba Suite",
+  "applicationCategory": "Process Improvement Toolkit",
+  "operatingSystem": "Web browser (any modern browser)",
+  "description": "A free, browser-based Lean process improvement toolkit for healthcare teams. Includes value stream mapping, A3 problem solving, root cause analysis, statistical process control, and standard work apps. Runs entirely client-side with no backend, no accounts, and no patient data. Replaces Word and Excel improvement templates with interactive apps that work offline on any device.",
+  "url": "https://gembasuite.org",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "GBP"
+  },
+  "license": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+  "author": {
+    "@type": "Person",
+    "name": "David Clark"
+  },
+  "applicationSubCategory": "Lean Healthcare Improvement",
+  "softwareRequirements": "Modern web browser (Chrome, Safari, Edge, Firefox)",
+  "permissions": "No accounts, no patient data, no clinical integration. 100% client-side localStorage."
+}
+</script>
 </head>
 <body>
 
 <header class="hero">
   <div class="hero-inner">
     <div class="hero-text">
-      <div class="hero-label">Lean systems improvement tools for healthcare</div>
+      <div class="hero-label">Lean Improvement Tools for Healthcare</div>
       <div class="hero-title">Gemba <span>Suite</span></div>
-      <p class="hero-tagline">Free, intuitive tools and learning guides for healthcare teams. Solve problems at the root cause and measure what matters — at the clinic, the lab, the ward.</p>
+      <p class="hero-tagline">Your personal Lean improvement toolbox — a suite of apps that work together, replacing your improvement templates in Word and Excel. Everything runs in your browser, on your device. Your data stays on your device.</p>
       <div class="hero-buttons">
         <a class="hero-btn hero-btn-primary" href="https://gembasuite.org/#get-started">Get Started</a>
         <a class="hero-btn hero-btn-secondary" href="https://gembasuite.org/#tools">Explore the Tools</a>
@@ -800,9 +718,8 @@ details.vsm-guides-details[open] .vsm-guides-toggle::after { content: ' ▾ coll
 
 <main class="main">
 
-  <div class="section-label" id="tools">The Toolbox</div>
+  <div class="section-label" id="tools">Start your improvement journey here</div>
   <h2 class="section-title">From Observation to Sustained Improvement</h2>
-  <p class="section-licence-link"><a href="/licence/">Licence &amp; Terms of Use</a></p>
 
   <!-- New to Lean callout -->
   <div class="callout-newcomer">
@@ -819,7 +736,7 @@ details.vsm-guides-details[open] .vsm-guides-toggle::after { content: ' ▾ coll
       <div class="app-task-label">Understanding the Workflow</div>
       <div class="app-card-header">
         <div class="app-name">Gemba-VSM</div>
-        <span class="app-version">v6.3</span>
+        <span class="app-version">v6.0</span>
       </div>
       <p class="app-desc">Learn to see the entire pathway. Value stream mapping captures process data at the gemba and generates current and future state maps with waste analysis and timeline.</p>
       <div class="app-status status-live"><span class="app-status-dot"></span>Live</div>
@@ -829,7 +746,7 @@ details.vsm-guides-details[open] .vsm-guides-toggle::after { content: ' ▾ coll
       <div class="app-task-label">Finding the Root Cause</div>
       <div class="app-card-header">
         <div class="app-name">Gemba-RCA</div>
-        <span class="app-version">v1.2</span>
+        <span class="app-version">v1.1</span>
       </div>
       <p class="app-desc">Dig beneath the surface with evidence. Fishbone diagrams, 5 Whys evidence chains with photo support, Pareto prioritisation, and validated root cause export to A3.</p>
       <div class="app-status status-beta"><span class="app-status-dot"></span>Beta Testing</div>
@@ -839,7 +756,7 @@ details.vsm-guides-details[open] .vsm-guides-toggle::after { content: ' ▾ coll
       <div class="app-task-label">Solving Problems at the Root</div>
       <div class="app-card-header">
         <div class="app-name">Gemba-A3</div>
-        <span class="app-version">v1.13</span>
+        <span class="app-version">v1.14</span>
       </div>
       <p class="app-desc">Structured problem solving using PDCA. Stage-gated A3 thinking with evidence imports from VSM and RCA, photo documentation, and AI coaching.</p>
       <div class="app-status status-beta"><span class="app-status-dot"></span>Beta Testing</div>
@@ -859,12 +776,21 @@ details.vsm-guides-details[open] .vsm-guides-toggle::after { content: ' ▾ coll
       <div class="app-task-label">Holding the Gains</div>
       <div class="app-card-header">
         <div class="app-name">Gemba-StandardWork</div>
-        <span class="app-version">v1.9</span>
+        <span class="app-version">v1.0</span>
       </div>
       <p class="app-desc">Define the current best practice. Standard work makes improvement stick — capture the agreed method so the team works to the same standard every time.</p>
       <div class="app-status status-prototype"><span class="app-status-dot"></span>Prototype</div>
     </a>
 
+    <a class="app-card" href="https://gembasuite.org/hub">
+      <div class="app-task-label">Seeing the Big Picture</div>
+      <div class="app-card-header">
+        <div class="app-name">Gemba-Hub</div>
+        <span class="app-version">v1.1</span>
+      </div>
+      <p class="app-desc">Track your improvement programme across teams. Load exports from any Gemba Suite app and see the portfolio — A3 status, actions, and programme health at a glance.</p>
+      <div class="app-status status-prototype"><span class="app-status-dot"></span>Prototype</div>
+    </a>
   </div>
 
   <!-- Expanding the Toolbox -->
@@ -874,7 +800,6 @@ details.vsm-guides-details[open] .vsm-guides-toggle::after { content: ' ▾ coll
     <div class="expanding-roadmap">
       <div class="roadmap-chip"><span class="chip-dot"></span> Strategy Deployment</div>
       <div class="roadmap-chip"><span class="chip-dot"></span> FMEA Risk Assessment</div>
-      <div class="roadmap-chip"><span class="chip-dot"></span> Demand Load Capacity Analyser (DLCA)</div>
     </div>
     <p class="expanding-text">Help us improve the toolbox.</p>
     <p class="expanding-cta"><a href="https://gembasuite.org/#feedback">Give feedback →</a></p>
@@ -956,35 +881,31 @@ details.vsm-guides-details[open] .vsm-guides-toggle::after { content: ' ▾ coll
     <p class="lr-sub-text">Step-by-step guides covering the lean methodology, how to install and use each app, and how to get the most from every feature.</p>
 
     <div class="lr-list">
-      <div class="lr-item lr-item-span">
-        <details class="vsm-guides-details">
-          <summary>
-            <div class="lr-item-badge lr-badge-live">Available — 3 editions</div>
-            <div class="lr-item-title">Value Stream Mapping User Guides <span class="vsm-guides-toggle"></span></div>
-            <div class="lr-item-desc">Full user guides for VSM in pathology/diagnostics, clinical/ward settings, and a generic edition. Tap to expand.</div>
-          </summary>
-          <div class="vsm-guide-links">
-            <a href="/guide/vsm-pathology/">Seeing Past the Chaos — Pathology &amp; Diagnostics Edition →</a>
-            <a href="/guide/vsm-clinical/">Seeing Past the Chaos — Clinical &amp; Ward-Based Edition →</a>
-            <a href="/guide/vsm/">Value Stream Mapping with Gemba-VSM (Generic Edition) →</a>
-          </div>
-        </details>
-      </div>
-      <a href="/guide/a3/" class="lr-item">
+      <div class="lr-item">
         <div class="lr-item-badge lr-badge-live">Available</div>
+        <div class="lr-item-title">Seeing Past the Chaos — Pathology &amp; Diagnostics Edition</div>
+        <div class="lr-item-desc">Value stream mapping guide for lab teams mapping histopathology, haematology, and diagnostic workflows.</div>
+      </div>
+      <div class="lr-item">
+        <div class="lr-item-badge lr-badge-live">Available</div>
+        <div class="lr-item-title">Seeing Past the Chaos — Clinical &amp; Ward-Based Edition</div>
+        <div class="lr-item-desc">Value stream mapping guide for nursing, therapy, and clinical teams mapping patient pathways.</div>
+      </div>
+      <div class="lr-item">
+        <div class="lr-item-badge lr-badge-live">Available</div>
+        <div class="lr-item-title">Value Stream Mapping with Gemba-VSM</div>
+        <div class="lr-item-desc">Generic edition — suitable for any setting. Covers VSM methodology, DOWNTIME waste framework, and every feature.</div>
+      </div>
+      <div class="lr-item">
+        <div class="lr-item-badge lr-badge-soon">Coming soon</div>
         <div class="lr-item-title">Problem Solving with Gemba-A3</div>
         <div class="lr-item-desc">A3 thinking, PDCA cycles, stage-gate problem solving, countermeasure testing, and AI coaching.</div>
-      </a>
-      <a href="/guide/rca/" class="lr-item">
-        <div class="lr-item-badge lr-badge-live">Available</div>
+      </div>
+      <div class="lr-item">
+        <div class="lr-item-badge lr-badge-soon">Coming soon</div>
         <div class="lr-item-title">Root Cause Analysis with Gemba-RCA</div>
-        <div class="lr-item-desc">Fishbone diagrams, evidence-based 5 Whys chains, Pareto prioritisation, and export to A3.</div>
-      </a>
-      <a href="/guide/standardwork/" class="lr-item">
-        <div class="lr-item-badge lr-badge-live">Available</div>
-        <div class="lr-item-title">Standard Work with Gemba-StandardWork</div>
-        <div class="lr-item-desc">Capturing work elements, VA/NNVA/NVA classification, takt time, combination sheets, and QMS documentation.</div>
-      </a>
+        <div class="lr-item-desc">Fishbone diagrams, 5 Whys evidence chains, Pareto prioritisation, and export to A3.</div>
+      </div>
       <div class="lr-item">
         <div class="lr-item-badge lr-badge-soon">Coming soon</div>
         <div class="lr-item-title">Process Behaviour Charts with Gemba-SPC</div>
@@ -992,106 +913,27 @@ details.vsm-guides-details[open] .vsm-guides-toggle::after { content: ' ▾ coll
       </div>
     </div>
 
-    <!-- Quick Start Guides -->
-    <h3 class="lr-sub-heading">Quick Start Guides</h3>
-    <p class="lr-sub-text">Short, task-focused walkthroughs — get up and running in minutes without reading the full user guide.</p>
+    <!-- Further Reading -->
+    <h3 class="lr-sub-heading">Further Reading</h3>
+    <p class="lr-sub-text">Books and resources that informed the design of Gemba Suite and the improvement methods it supports.</p>
 
-    <div class="lr-list">
-      <a href="/guide/vsm-quickstart/" class="lr-item">
-        <div class="lr-item-badge lr-badge-live">Available</div>
-        <div class="lr-item-title">Gemba-VSM Quick Start</div>
-        <div class="lr-item-desc">Map your first value stream in under 15 minutes. Covers capture, steps, and generating your current-state map.</div>
-      </a>
-      <a href="/guide/a3-quickstart/" class="lr-item">
-        <div class="lr-item-badge lr-badge-live">Available</div>
-        <div class="lr-item-title">Gemba-A3 Quick Start</div>
-        <div class="lr-item-desc">Frame a problem, run a PDCA cycle, and produce your first A3 — structured problem solving in minutes.</div>
-      </a>
-    </div>
-
-
-    <!-- More Resources link -->
-    <h3 class="lr-sub-heading">Learning Resources</h3>
-    <p class="lr-sub-text">Curated articles, infographics, podcasts and videos to support your team on its improvement journey.</p>
-
-    <div class="lr-list">
-      <a href="/resources/" class="lr-item lr-item-span lr-more-resources-card">
-        <div class="lr-item-badge lr-badge-live">Articles · Podcasts · Videos · Websites · Courses</div>
-        <div class="lr-item-title">More Resources →</div>
-        <div class="lr-item-desc">Browse the full collection — curated articles, podcasts, videos, websites and courses for lean improvement in healthcare.</div>
-      </a>
-    </div>
-
-    <!-- Reference -->
-    <h3 class="lr-sub-heading">Reference</h3>
-    <p class="lr-sub-text">Concepts, terminology, and definitions for the improvement methods used across Gemba Suite.</p>
-
-    <div class="lr-list">
-      <a href="/guide/lean-glossary/" class="lr-item">
-        <div class="lr-item-badge lr-badge-live">Available</div>
-        <div class="lr-item-title">Lean Glossary</div>
-        <div class="lr-item-desc">Plain-English definitions of lean, Toyota Production System, and process improvement terminology — with healthcare examples.</div>
-      </a>
-    </div>
-
-    <!-- Books & References -->
-    <h3 class="lr-sub-heading">Books &amp; References</h3>
-    <p class="lr-sub-text">Books, papers, and key references that informed the design of Gemba Suite and the improvement methods it supports.</p>
-
-    <div style="margin-bottom:16px;">
-      <div class="lr-ref-category">Books</div>
-      <div class="lr-reading">
-        <div class="lr-book"><strong>Learning to See</strong> — Mike Rother &amp; John Shook (1998). The definitive guide to value stream mapping.</div>
-        <div class="lr-book"><strong>Understanding Variation</strong> — Donald Wheeler (1993). The key to SPC and process behaviour charts.</div>
-        <div class="lr-book"><strong>Managing to Learn</strong> — John Shook (2008). A3 thinking as a management practice.</div>
-        <div class="lr-book"><strong>Four Types of Problems</strong> — Art Smalley (2019). Matching the right method to the right problem.</div>
-      </div>
+    <div class="lr-reading">
+      <div class="lr-book"><strong>Learning to See</strong> — Mike Rother &amp; John Shook. The definitive guide to value stream mapping.</div>
+      <div class="lr-book"><strong>Understanding Variation</strong> — Donald Wheeler. The key to SPC and process behaviour charts.</div>
+      <div class="lr-book"><strong>Managing to Learn</strong> — John Shook. A3 thinking as a management practice.</div>
+      <div class="lr-book"><strong>Four Types of Problems</strong> — Art Smalley. Matching the right method to the right problem.</div>
     </div>
   </div>
-
 
   <!-- ══ Feedback ══ -->
   <div class="about" id="feedback">
     <div class="section-label">Feedback</div>
     <h2 class="section-title">Help us improve</h2>
     <p>The Gemba Suite is built by a clinician for clinicians. Your feedback shapes what gets built next — tell us what's working, what's not, and what tool you wish existed.</p>
-    <p><a class="hero-btn hero-btn-primary" href="/feedback/">Share your feedback →</a></p>
-  </div>
-
-  <!-- ══ What's New ══ -->
-  <div class="about" id="whats-new">
-    <div class="section-label">What&#39;s New</div>
-    <h2 class="section-title">Recent Updates</h2>
-    <div id="whats-new-list">
-      <p style="font-size:14px; color:var(--ink-tertiary);">Loading updates…</p>
+    <div class="placeholder-note">
+      <strong>Feedback form coming soon.</strong> In the meantime, you can reach us via <a href="https://gembasuite.org/">gembasuite.org</a>.
     </div>
   </div>
-
-  <script>
-  (function() {
-    fetch('/whats-new.json')
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        var container = document.getElementById('whats-new-list');
-        var items = (data.items || []).slice(0, 5);
-        if (!items.length) { container.innerHTML = ''; return; }
-        container.innerHTML = items.map(function(item) {
-          var ver = (item.version && item.version !== '—')
-            ? '<span class="wn-version">' + item.version + '</span>' : '';
-          return '<div class="wn-item">'
-            + '<div class="wn-header">'
-            + '<span class="wn-app">' + item.app + '</span>' + ver
-            + '<span class="wn-date">' + item.date + '</span>'
-            + '</div>'
-            + '<p class="wn-summary">' + item.summary + '</p>'
-            + '</div>';
-        }).join('');
-      })
-      .catch(function() {
-        document.getElementById('whats-new-list').innerHTML = '';
-      });
-  })();
-  </script>
 
   <!-- ══ About ══ -->
   <div class="about">
@@ -1099,14 +941,16 @@ details.vsm-guides-details[open] .vsm-guides-toggle::after { content: ' ▾ coll
     <h2 class="section-title">Built for the gemba</h2>
     <p>Every tool in the Gemba Suite is a single HTML file that runs entirely in your browser. No accounts, no cloud storage, no IT department required. Your data stays on your device until you choose to export it.</p>
     <p>The tools are designed for mobile-first use at the lab bench, the ward, or the clinic — wherever the work happens — the gemba. They work offline, so poor hospital WiFi is never a barrier to improvement.</p>
+    <p>Gemba Suite is a process improvement toolkit, not a clinical system. It does not connect to hospital systems, does not process patient data, and does not require regulatory approval. It is the digital equivalent of the whiteboards, sticky notes, and Excel spreadsheets that improvement teams already use — just faster, more structured, and available on any device.</p>
     <p>The Gemba Suite is free for all healthcare improvement purposes under a Creative Commons licence. Read the full <a href="https://gembasuite.org/licence">licence and terms</a>.</p>
   </div>
 
 </main>
 
 <footer class="footer">
-  <div><strong>Gemba Suite</strong> — David Clark — <a href="https://gembasuite.org/">gembasuite.org</a> · <a href="/feedback/">Feedback</a></div>
-  <div><a href="https://gembasuite.org/licence">CC BY-NC-SA 4.0</a> · Free for healthcare improvement · No patient data is collected</div>
+  <div><strong>Gemba Suite</strong> — David Clark — <a href="https://gembasuite.org/">gembasuite.org</a></div>
+  <div class="footer-tagline">Built for the Gemba — where the real work is done.</div>
+  <div><a href="https://gembasuite.org/licence">CC BY-NC-SA 4.0</a> · Free for healthcare improvement · No patient data · No clinical integration · 100% browser-based</div>
 </footer>
 
 
