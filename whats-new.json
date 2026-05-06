@@ -1,6 +1,12 @@
 {
   "items": [
     {
+      "app": "Gemba-RCA",
+      "version": "v1.4",
+      "date": "2026-05-06",
+      "summary": "Therefore Validation — check the logic of your Why chain by reading it bottom-up; flag logic gaps per pair. Evidence completeness indicator in the export panel. Print / Save as PDF — generate a one-page governance-ready summary."
+    },
+    {
       "app": "Gemba-VSM",
       "version": "v6.3",
       "date": "2026-04-29",

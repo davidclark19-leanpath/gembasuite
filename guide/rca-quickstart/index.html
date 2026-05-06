@@ -455,9 +455,9 @@
   <div class="container">
     <p class="hero-eyebrow">Quick Start · Root Cause Analysis</p>
     <h1>RCA Quick Start</h1>
-    <p>For practitioners who know RCA methodology. A concise reference for Gemba-RCA v1.2 — setup, Fishbone, 5 Whys, Pareto, and export.</p>
+    <p>For practitioners who know RCA methodology. A concise reference for Gemba-RCA v1.4 — setup, Fishbone, 5 Whys, Pareto, and export.</p>
     <div class="hero-meta">
-      <span class="hero-badge">v1.2 — April 2026</span>
+      <span class="hero-badge">v1.4 — May 2026</span>
       <a href="/guide/rca/" class="full-guide-link">Full guide →</a>
     </div>
   </div>
@@ -466,7 +466,7 @@
 <main>
 
   <div class="intro-banner">
-    <p>This is the concise reference for Gemba-RCA v1.2. It covers the app's structure and key controls without explaining the underlying RCA methodology. If you are new to RCA, Fishbone diagrams, or the 5 Whys, read the <a href="/guide/rca/" style="color: var(--on-primary-tint); font-weight: 600;">full guide</a> first.</p>
+    <p>This is the concise reference for Gemba-RCA v1.4. It covers the app's structure and key controls without explaining the underlying RCA methodology. If you are new to RCA, Fishbone diagrams, or the 5 Whys, read the <a href="/guide/rca/" style="color: var(--on-primary-tint); font-weight: 600;">full guide</a> first.</p>
   </div>
 
   <!-- ═══════════════════════════════
@@ -640,6 +640,21 @@
     </div>
   </div>
 
+  <div class="step-block">
+    <div class="step-circle">5</div>
+    <div class="step-body">
+      <h3>Check the logic — Therefore Validation</h3>
+      <p>Tap the <strong>▶ Check logic</strong> button (top-right of the chain panel) to switch to Therefore view. This reads the chain bottom-up — from root cause back to the original cause — letting you verify the logical connection at each step.</p>
+      <table class="field-table">
+        <tbody>
+          <tr><td>👍 Holds</td><td>The logical connection between this pair is sound.</td></tr>
+          <tr><td>👎 Gap</td><td>The step does not follow clearly — an amber ⚠ warning appears in edit view so you can revisit that level.</td></tr>
+        </tbody>
+      </table>
+      <p>Tap <strong>◀ Edit view</strong> to return to editing. This check complements the elimination test — together they confirm both that the deepest cause is genuine and that the path from root cause to problem is logically coherent.</p>
+    </div>
+  </div>
+
   <!-- ═══════════════════════════════
        PHASE 5: PARETO & EXPORT TAB
   ═══════════════════════════════ -->
@@ -680,6 +695,10 @@
         <div class="export-card">
           <div class="export-card-title">🤖 AI Lean Sensei</div>
           <div class="export-card-desc">Generates a coaching prompt for use with Claude, Copilot, or Gemini. Useful for structured reflection before committing to countermeasures.</div>
+        </div>
+        <div class="export-card">
+          <div class="export-card-title">🖨 Print / Save as PDF</div>
+          <div class="export-card-desc">Generates a governance-ready summary of all chains, evidence, logic gap flags, and validation status. Use the browser print dialog to save as PDF.</div>
         </div>
       </div>
     </div>

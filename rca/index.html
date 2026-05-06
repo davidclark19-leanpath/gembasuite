@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  Gemba-RCA v1.2
+  Gemba-RCA v1.4
   Root Cause Analysis Tool for NHS Healthcare Lean Improvement Teams
   Part of the Gemba Suite — gembasuite.org
   
@@ -19,65 +19,31 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="description" content="Gemba-RCA: Structured root cause analysis for NHS lean improvement teams. Fishbone diagram, 5 Whys chains, Pareto chart.">
-<meta name="theme-color" content="#181c1c">
-<title>Gemba-RCA v1.2</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#1a3a5c">
+<title>Gemba-RCA v1.4</title>
 <style>
 /* ============================================================
-   CSS CUSTOM PROPERTIES — Gemba Suite Design System
+   CSS CUSTOM PROPERTIES — Colour Palette & Spacing
    ============================================================ */
 :root {
-  --ink:             #181c1c;
-  --ink-secondary:   #3e484c;
-  --ink-tertiary:    #6e797c;
-
-  --paper:           #f7faf9;
-  --card:            #ffffff;
-  --surface-low:     #f1f4f3;
-  --surface-high:    #e6e9e8;
-
-  --grid:            #bec8cc;
-  --grid-subtle:     #e0e3e2;
-
-  --primary:         #006172;
-  --primary-container: #007c91;
-  --primary-tint:    #c4e5ef;
-  --on-primary:      #ffffff;
-  --on-primary-tint: #004e5c;
-
-  --accent-warm:     #854a10;
-  --accent-warm-bg:  #ffdcc3;
-
-  --status-success:     #2e7d32;
-  --status-success-bg:  #d4edda;
-  --status-warning:     #856404;
-  --status-warning-bg:  #fff3cd;
-  --status-error:       #ba1a1a;
-  --status-error-bg:    #ffdad6;
-
-  --shadow-sm:       0 1px 3px rgba(24,28,28,0.06);
-  --shadow-md:       0 2px 8px rgba(24,28,28,0.08);
-
-  --color-navy:      #006172;
-  --color-navy-dark: #004e5c;
-  --color-blue:      #006172;
-  --color-blue-lt:   #c4e5ef;
-  --color-green:     #2e7d32;
-  --color-green-lt:  #d4edda;
-  --color-red:       #ba1a1a;
-  --color-red-lt:    #ffdad6;
-  --color-amber:     #854a10;
-  --color-amber-lt:  #ffdcc3;
-  --color-grey-100:  #f1f4f3;
-  --color-grey-200:  #e0e3e2;
-  --color-grey-300:  #bec8cc;
-  --color-grey-500:  #6e797c;
-  --color-grey-700:  #3e484c;
-  --color-grey-900:  #181c1c;
+  --color-navy:      #1a3a5c;
+  --color-navy-dark: #122840;
+  --color-blue:      #2563eb;
+  --color-blue-lt:   #dbeafe;
+  --color-green:     #16a34a;
+  --color-green-lt:  #dcfce7;
+  --color-red:       #dc2626;
+  --color-red-lt:    #fee2e2;
+  --color-amber:     #d97706;
+  --color-amber-lt:  #fef3c7;
+  --color-grey-100:  #f3f4f6;
+  --color-grey-200:  #e5e7eb;
+  --color-grey-300:  #d1d5db;
+  --color-grey-500:  #6b7280;
+  --color-grey-700:  #374151;
+  --color-grey-900:  #111827;
   --color-white:     #ffffff;
-  --color-surface:   #f7faf9;
+  --color-surface:   #f8fafc;
 
   --space-xs:  4px;
   --space-sm:  8px;
@@ -93,9 +59,8 @@
   --header-h: 60px;
   --touch-min: 44px;
 
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  --font-display: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'SF Mono', 'Fira Code', Consolas, monospace;
 }
 
 /* ============================================================
@@ -416,7 +381,7 @@ a { color: var(--color-blue); }
    PROBLEM STATEMENT BANNER
    ============================================================ */
 #problem-banner {
-  background: linear-gradient(135deg, var(--color-navy), var(--primary-container));
+  background: linear-gradient(135deg, var(--color-navy), #2563eb);
   color: var(--color-white);
   border-radius: var(--radius-lg);
   padding: var(--space-md) var(--space-lg);
@@ -811,6 +776,150 @@ a { color: var(--color-blue); }
 
 .add-why-btn:hover { border-color: var(--color-blue); color: var(--color-blue); background: var(--color-blue-lt); }
 
+/* ============================================================
+   THEREFORE VALIDATION (v1.4)
+   ============================================================ */
+
+.therefore-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-grey-300);
+  background: var(--color-white);
+  color: var(--color-grey-700);
+  font-size: 0.8rem;
+  font-weight: 600;
+  min-height: var(--touch-min);
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.therefore-toggle-btn:hover {
+  border-color: var(--color-navy);
+  color: var(--color-navy);
+}
+
+.therefore-toggle-btn.active {
+  border-color: var(--color-navy);
+  background: var(--color-navy);
+  color: var(--color-white);
+}
+
+/* Therefore view — read-only chain display */
+.therefore-view {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background: var(--color-white);
+  border-left: 1px solid var(--color-grey-200);
+  border-right: 1px solid var(--color-grey-200);
+}
+
+.therefore-view-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-grey-500);
+  margin-bottom: var(--space-xs);
+}
+
+.therefore-pair {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  background: var(--color-grey-100);
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+  border-left: 4px solid var(--color-grey-300);
+  transition: border-color 0.15s;
+}
+
+.therefore-pair.flag-ok {
+  border-left-color: var(--color-green);
+  background: var(--color-green-lt);
+}
+
+.therefore-pair.flag-gap {
+  border-left-color: var(--color-red);
+  background: var(--color-red-lt);
+}
+
+.therefore-pair-text {
+  flex: 1;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--color-grey-900);
+}
+
+.therefore-pair-text strong {
+  font-weight: 600;
+}
+
+.therefore-pair-text em {
+  color: var(--color-grey-500);
+  font-style: normal;
+  font-size: 0.8rem;
+}
+
+.therefore-pair-flags {
+  display: flex;
+  gap: var(--space-xs);
+  flex-shrink: 0;
+  align-items: flex-start;
+  padding-top: 2px;
+}
+
+/* Note: flag buttons are 36px — acceptable exception for supplementary review actions (spec §1b) */
+.therefore-flag-btn {
+  min-width: 36px;
+  min-height: 36px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-grey-300);
+  background: var(--color-white);
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.therefore-flag-btn:hover { border-color: var(--color-navy); }
+
+.therefore-flag-btn.active-ok {
+  border-color: var(--color-green);
+  background: var(--color-green-lt);
+}
+
+.therefore-flag-btn.active-gap {
+  border-color: var(--color-red);
+  background: var(--color-red-lt);
+}
+
+/* Logic gap indicator shown on Why steps when flagged in Therefore view */
+.why-step-logic-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-amber);
+  margin-top: var(--space-xs);
+}
+
+.therefore-empty {
+  padding: var(--space-lg);
+  text-align: center;
+  color: var(--color-grey-500);
+  font-size: 0.9rem;
+}
+
 /* Root cause validation section */
 .root-cause-section {
   background: var(--color-white);
@@ -991,7 +1100,7 @@ a { color: var(--color-blue); }
   inset: 0;
   background: rgba(0,0,0,0.5);
   z-index: 1000;
-  display: none;
+  display: flex;
   align-items: flex-end;
   padding: 0;
   opacity: 0;
@@ -1222,6 +1331,172 @@ footer a { color: var(--color-grey-500); }
     padding: 0;
   }
 }
+
+/* ============================================================
+   PRINT STYLES (v1.4)
+   ============================================================ */
+
+@media print {
+  /* Hide all interactive UI */
+  #app-header,
+  #tab-nav,
+  #app-workspace,
+  #home-screen,
+  .modal-overlay { display: none !important; }
+
+  /* Reset body for print */
+  body {
+    padding-top: 0;
+    background: white;
+    color: black;
+    font-size: 11pt;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* Show only the print view */
+  #print-view {
+    display: block !important;
+  }
+
+  /* Print layout styles */
+  .print-header {
+    border-bottom: 2pt solid #006172;
+    padding-bottom: 8pt;
+    margin-bottom: 16pt;
+  }
+
+  .print-title {
+    font-size: 18pt;
+    font-weight: 800;
+    color: #006172;
+    font-family: 'Public Sans', sans-serif;
+  }
+
+  .print-meta {
+    font-size: 9pt;
+    color: #6e797c;
+    margin-top: 2pt;
+  }
+
+  .print-problem {
+    background: #f1f4f3;
+    border-left: 4pt solid #006172;
+    padding: 8pt 12pt;
+    margin-bottom: 16pt;
+    border-radius: 0;
+    font-size: 10pt;
+  }
+
+  .print-section-title {
+    font-size: 10pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #006172;
+    margin: 12pt 0 4pt;
+    font-family: 'Public Sans', sans-serif;
+  }
+
+  .print-chain {
+    margin-bottom: 16pt;
+    page-break-inside: avoid;
+    border: 1pt solid #bec8cc;
+    border-radius: 4pt;
+    padding: 8pt 12pt;
+  }
+
+  .print-chain-cause {
+    font-weight: 700;
+    font-size: 10pt;
+    margin-bottom: 8pt;
+    color: #006172;
+  }
+
+  .print-why-step {
+    display: flex;
+    gap: 8pt;
+    margin-bottom: 6pt;
+    align-items: flex-start;
+  }
+
+  .print-why-num {
+    font-size: 8pt;
+    font-weight: 700;
+    color: #ffffff;
+    background: #006172;
+    border-radius: 50%;
+    width: 16pt;
+    height: 16pt;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1pt;
+  }
+
+  .print-why-body { flex: 1; }
+
+  .print-why-text {
+    font-size: 10pt;
+    line-height: 1.4;
+  }
+
+  .print-evidence {
+    font-size: 9pt;
+    color: #3e484c;
+    margin-top: 2pt;
+    padding-left: 4pt;
+    border-left: 2pt solid #bec8cc;
+  }
+
+  .print-no-evidence {
+    font-size: 9pt;
+    color: #854a10;
+    margin-top: 2pt;
+    font-style: italic;
+  }
+
+  .print-logic-gap {
+    font-size: 8pt;
+    font-weight: 700;
+    color: #ba1a1a;
+    margin-top: 2pt;
+  }
+
+  .print-root-cause {
+    background: #f7faf9;
+    border: 1pt solid #006172;
+    padding: 6pt 10pt;
+    margin-top: 8pt;
+    font-size: 10pt;
+    border-radius: 4pt;
+  }
+
+  .print-validation-status {
+    font-size: 9pt;
+    font-weight: 700;
+    margin-top: 4pt;
+  }
+
+  .print-validation-status.validated { color: #2e7d32; }
+  .print-validation-status.failed    { color: #ba1a1a; }
+  .print-validation-status.candidate { color: #854a10; }
+
+  .print-evidence-summary {
+    font-size: 9pt;
+    color: #854a10;
+    margin-top: 4pt;
+    font-style: italic;
+  }
+
+  .print-footer {
+    border-top: 1pt solid #bec8cc;
+    margin-top: 16pt;
+    padding-top: 6pt;
+    font-size: 8pt;
+    color: #6e797c;
+  }
+}
 </style>
 </head>
 <body>
@@ -1330,6 +1605,10 @@ footer a { color: var(--color-grey-500); }
         <!-- Export section -->
         <div id="export-section">
           <div class="section-title">↑ Export &amp; Share</div>
+
+          <!-- Evidence completeness badge (v1.4) — updated by renderParetoTable() -->
+          <div id="evidence-completeness-badge"></div>
+
           <div class="export-grid">
 
             <div class="export-card">
@@ -1351,6 +1630,12 @@ footer a { color: var(--color-grey-500); }
             </div>
 
             <div class="export-card">
+              <div class="export-card-title">Print / Save as PDF</div>
+              <div class="export-card-desc">Generates a one-page RCA summary for governance reports or incident documentation. Use your browser's "Save as PDF" option in the print dialog.</div>
+              <button class="btn-secondary w-full" style="font-size:0.875rem;" onclick="printRCA()">🖨 Print / Save as PDF</button>
+            </div>
+
+            <div class="export-card">
               <div class="export-card-title">AI Lean Sensei</div>
               <div class="export-card-desc">Generate a coaching prompt to review this RCA with Claude, Copilot, or Gemini.</div>
               <button class="btn-primary w-full" style="font-size:0.875rem; background: #4f46e5;" onclick="showAICoachingModal()">Get Coaching Prompt</button>
@@ -1368,7 +1653,7 @@ footer a { color: var(--color-grey-500); }
      FOOTER
      ============================================================ -->
 <footer>
-  <strong>Gemba-RCA v1.2</strong> — David Clark — <a href="https://gembasuite.org" target="_blank" rel="noopener">gembasuite.org</a><br>
+  <strong>Gemba-RCA v1.4</strong> — David Clark — <a href="https://gembasuite.org" target="_blank" rel="noopener">gembasuite.org</a><br>
   <a href="https://gembasuite.org/licence" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · Free for healthcare improvement · No patient data is collected
 </footer>
 
@@ -1384,7 +1669,7 @@ footer a { color: var(--color-grey-500); }
       <button class="modal-close" onclick="closeModal('modal-about')">✕</button>
     </div>
     <div class="modal-body">
-      <p><strong>Gemba-RCA v1.2</strong> is a structured root cause analysis tool for NHS healthcare teams implementing lean methodology.</p>
+      <p><strong>Gemba-RCA v1.4</strong> is a structured root cause analysis tool for NHS healthcare teams implementing lean methodology.</p>
       <p>Part of the <strong>Gemba Suite</strong> — free, single-file web apps for lean improvement at the gemba.</p>
       <div style="background: var(--color-grey-100); border-radius: var(--radius-md); padding: var(--space-md);">
         <div style="font-weight: 700; margin-bottom: var(--space-xs);">Licence</div>
@@ -1394,11 +1679,6 @@ footer a { color: var(--color-grey-500); }
       <div style="background: var(--color-grey-100); border-radius: var(--radius-md); padding: var(--space-md);">
         <div style="font-weight: 700; margin-bottom: var(--space-xs);">Information Governance</div>
         <p class="text-sm">No patient-identifiable data fields. All data stays on this device in your browser's localStorage until you explicitly export it. No backend, no cloud storage, no tracking.</p>
-      </div>
-      <div style="background: var(--color-grey-100); border-radius: var(--radius-md); padding: var(--space-md);">
-        <div style="font-weight: 700; margin-bottom: var(--space-xs);">Disclaimer</div>
-        <p class="text-sm">These tools support process improvement and do not make clinical decisions or recommendations. They are not medical devices and are not regulated as such under MHRA or equivalent frameworks.</p>
-        <p class="text-sm" style="margin-top: var(--space-xs);">All data is stored locally on your device. The tools are provided as-is, without warranty. You are responsible for exporting and backing up your data regularly.</p>
       </div>
       <p class="text-sm text-muted">Developer: David Clark — <a href="https://gembasuite.org" target="_blank" rel="noopener">gembasuite.org</a></p>
     </div>
@@ -2186,16 +2466,16 @@ function renderFishboneSVG() {
   let content = '';
 
   // Spine
-  content += `<line x1="${spineX1}" y1="${spineY}" x2="${spineX2}" y2="${spineY}" stroke="#006172" stroke-width="3" stroke-linecap="round"/>`;
+  content += `<line x1="${spineX1}" y1="${spineY}" x2="${spineX2}" y2="${spineY}" stroke="#1a3a5c" stroke-width="3" stroke-linecap="round"/>`;
 
   // Fish head (arrowhead)
-  content += `<polygon points="${spineX2},${spineY} ${spineX2-12},${spineY-8} ${spineX2-12},${spineY+8}" fill="#006172"/>`;
+  content += `<polygon points="${spineX2},${spineY} ${spineX2-12},${spineY-8} ${spineX2-12},${spineY+8}" fill="#1a3a5c"/>`;
 
   // Effect box
   const problemText = svgText(activeProject.problemStatement || 'Problem / Effect', 22);
   const problemLines = wrapSVGText(problemText, 18);
   const lineH = 14, textStartY = effectBoxY + (effectBoxH - problemLines.length * lineH) / 2 + 11;
-  content += `<rect x="${effectBoxX}" y="${effectBoxY}" width="${effectBoxW}" height="${effectBoxH}" rx="6" fill="#006172"/>`;
+  content += `<rect x="${effectBoxX}" y="${effectBoxY}" width="${effectBoxW}" height="${effectBoxH}" rx="6" fill="#1a3a5c"/>`;
   problemLines.forEach((line, i) => {
     content += `<text x="${effectBoxX + effectBoxW/2}" y="${textStartY + i * lineH}" text-anchor="middle" fill="white" font-size="11" font-family="-apple-system,BlinkMacSystemFont,sans-serif" font-weight="600">${escHtml(line)}</text>`;
   });
@@ -2209,9 +2489,9 @@ function renderFishboneSVG() {
     if (topCat) {
       const tipX = bx - dx;
       const tipY = spineY - dy;
-      content += `<line x1="${bx}" y1="${spineY}" x2="${tipX}" y2="${tipY}" stroke="#006172" stroke-width="2"/>`;
+      content += `<line x1="${bx}" y1="${spineY}" x2="${tipX}" y2="${tipY}" stroke="#1a3a5c" stroke-width="2"/>`;
       // Category label at tip
-      content += `<rect x="${tipX - 46}" y="${tipY - 22}" width="92" height="22" rx="4" fill="#006172"/>`;
+      content += `<rect x="${tipX - 46}" y="${tipY - 22}" width="92" height="22" rx="4" fill="#1a3a5c"/>`;
       content += `<text x="${tipX}" y="${tipY - 7}" text-anchor="middle" fill="white" font-size="11" font-weight="700" font-family="-apple-system,BlinkMacSystemFont,sans-serif">${escHtml(svgText(topCat.label, 14))}</text>`;
 
       // Sub-bones (causes)
@@ -2223,11 +2503,11 @@ function renderFishboneSVG() {
         const subEndX = sbX - subLen * 0.6;
         const subEndY = sbY - subLen * 0.8;
         const isSelected = selectedIds.has(cause.id);
-        const strokeC = isSelected ? '#006172' : '#6e797c';
-        const fillC = isSelected ? '#c4e5ef' : '#f9fafb';
+        const strokeC = isSelected ? '#2563eb' : '#6b7280';
+        const fillC = isSelected ? '#dbeafe' : '#f9fafb';
         content += `<line x1="${sbX}" y1="${sbY}" x2="${subEndX}" y2="${subEndY}" stroke="${strokeC}" stroke-width="${isSelected?2:1.5}"/>`;
         content += `<rect x="${subEndX-50}" y="${subEndY-16}" width="100" height="20" rx="3" fill="${fillC}" stroke="${strokeC}" stroke-width="${isSelected?1.5:1}"/>`;
-        content += `<text x="${subEndX}" y="${subEndY-3}" text-anchor="middle" fill="${isSelected?'#004e5c':'#3e484c'}" font-size="9" font-family="-apple-system,BlinkMacSystemFont,sans-serif" font-weight="${isSelected?'700':'400'}">${escHtml(svgText(cause.text, 18))}</text>`;
+        content += `<text x="${subEndX}" y="${subEndY-3}" text-anchor="middle" fill="${isSelected?'#1d4ed8':'#374151'}" font-size="9" font-family="-apple-system,BlinkMacSystemFont,sans-serif" font-weight="${isSelected?'700':'400'}">${escHtml(svgText(cause.text, 18))}</text>`;
       });
     }
 
@@ -2236,8 +2516,8 @@ function renderFishboneSVG() {
     if (botCat) {
       const tipX = bx - dx;
       const tipY = spineY + dy;
-      content += `<line x1="${bx}" y1="${spineY}" x2="${tipX}" y2="${tipY}" stroke="#006172" stroke-width="2"/>`;
-      content += `<rect x="${tipX - 46}" y="${tipY}" width="92" height="22" rx="4" fill="#006172"/>`;
+      content += `<line x1="${bx}" y1="${spineY}" x2="${tipX}" y2="${tipY}" stroke="#1a3a5c" stroke-width="2"/>`;
+      content += `<rect x="${tipX - 46}" y="${tipY}" width="92" height="22" rx="4" fill="#1a3a5c"/>`;
       content += `<text x="${tipX}" y="${tipY + 15}" text-anchor="middle" fill="white" font-size="11" font-weight="700" font-family="-apple-system,BlinkMacSystemFont,sans-serif">${escHtml(svgText(botCat.label, 14))}</text>`;
 
       botCat.causes.forEach((cause, ci) => {
@@ -2248,11 +2528,11 @@ function renderFishboneSVG() {
         const subEndX = sbX - subLen * 0.6;
         const subEndY = sbY + subLen * 0.8;
         const isSelected = selectedIds.has(cause.id);
-        const strokeC = isSelected ? '#006172' : '#6e797c';
-        const fillC = isSelected ? '#c4e5ef' : '#f9fafb';
+        const strokeC = isSelected ? '#2563eb' : '#6b7280';
+        const fillC = isSelected ? '#dbeafe' : '#f9fafb';
         content += `<line x1="${sbX}" y1="${sbY}" x2="${subEndX}" y2="${subEndY}" stroke="${strokeC}" stroke-width="${isSelected?2:1.5}"/>`;
         content += `<rect x="${subEndX-50}" y="${subEndY-4}" width="100" height="20" rx="3" fill="${fillC}" stroke="${strokeC}" stroke-width="${isSelected?1.5:1}"/>`;
-        content += `<text x="${subEndX}" y="${subEndY+9}" text-anchor="middle" fill="${isSelected?'#004e5c':'#3e484c'}" font-size="9" font-family="-apple-system,BlinkMacSystemFont,sans-serif" font-weight="${isSelected?'700':'400'}">${escHtml(svgText(cause.text, 18))}</text>`;
+        content += `<text x="${subEndX}" y="${subEndY+9}" text-anchor="middle" fill="${isSelected?'#1d4ed8':'#374151'}" font-size="9" font-family="-apple-system,BlinkMacSystemFont,sans-serif" font-weight="${isSelected?'700':'400'}">${escHtml(svgText(cause.text, 18))}</text>`;
       });
     }
   }
@@ -2425,7 +2705,8 @@ function createWhyChain(causeId, causeLabel) {
     proposedRootCause: '',
     validationToggle: null,
     validationRationale: '',
-    validationStatus: 'candidate'
+    validationStatus: 'candidate',
+    thereforeViewActive: false      // v1.4: Therefore Validation toggle state
   };
 }
 
@@ -2435,7 +2716,8 @@ function createWhyStep(stepNumber) {
     why: '',
     evidence: '',
     evidencePhoto: null,
-    hasEvidence: false
+    hasEvidence: false,
+    thereforeFlag: null     // v1.4: null = unchecked, 'ok' = logic holds, 'gap' = logic gap
   };
 }
 
@@ -2471,6 +2753,7 @@ function renderWhysSection() {
 
 function renderChainPanel(chain, isActive) {
   const validationBadge = getValidationBadge(chain.validationStatus);
+  const isThereforeActive = !!(chain.thereforeViewActive);
 
   const stepsHTML = chain.steps.map((step, si) => {
     const hasEvidence = step.hasEvidence || step.evidence || step.evidencePhoto;
@@ -2502,6 +2785,9 @@ function renderChainPanel(chain, isActive) {
             <div class="evidence-gap-flag${hasEvidence ? ' has-evidence' : ''}">
               ${hasEvidence ? '✓ Evidence recorded' : '⚠ No evidence — consider what data or observation supports this'}
             </div>
+            ${(step.thereforeFlag === 'gap')
+              ? `<div class="why-step-logic-flag">⚠ Logic gap flagged in Therefore view</div>`
+              : ''}
           </div>
         </div>
       </div>`;
@@ -2509,14 +2795,24 @@ function renderChainPanel(chain, isActive) {
 
   return `
     <div class="chain-panel${isActive ? ' active' : ''}" id="chain-panel-${escHtml(chain.id)}">
-      <div class="chain-header">
-        <div class="chain-cause-label">Investigating cause:</div>
-        <div class="chain-cause-text">${escHtml(chain.causeLabel)}</div>
+      <div class="chain-header" style="display:flex; align-items:flex-start; justify-content:space-between; gap:var(--space-sm);">
+        <div>
+          <div class="chain-cause-label">Investigating cause:</div>
+          <div class="chain-cause-text">${escHtml(chain.causeLabel)}</div>
+        </div>
+        <button class="therefore-toggle-btn${isThereforeActive ? ' active' : ''}"
+                onclick="toggleThereforeView('${escHtml(chain.id)}')"
+                title="${isThereforeActive ? 'Return to edit view' : 'Check logic — view this chain in Therefore direction'}">
+          ${isThereforeActive ? '◀ Edit view' : '▶ Check logic'}
+        </button>
       </div>
-      <div class="why-steps">
-        ${stepsHTML}
-        <button class="add-why-btn" onclick="addWhyStep('${escHtml(chain.id)}')">＋ Ask another Why</button>
-      </div>
+      ${isThereforeActive
+        ? renderThereforeView(chain)
+        : `<div class="why-steps">
+            ${stepsHTML}
+            <button class="add-why-btn" onclick="addWhyStep('${escHtml(chain.id)}')">＋ Ask another Why</button>
+          </div>`
+      }
       <div class="root-cause-section">
         <div class="root-cause-title">Root Cause Proposal &amp; Validation</div>
         <div class="proposed-rc-label">Proposed root cause (end of your Why chain):</div>
@@ -2563,6 +2859,22 @@ function getValidationBadge(status) {
   return badges[status] || badges.candidate;
 }
 
+/* ============================================================
+   EVIDENCE COMPLETENESS (v1.4)
+   ============================================================ */
+
+function getEvidenceCompleteness(project) {
+  let total = 0;
+  let withEvidence = 0;
+  for (const chain of (project.whyChains || [])) {
+    for (const step of (chain.steps || [])) {
+      total++;
+      if (step.evidence || step.evidencePhoto) withEvidence++;
+    }
+  }
+  return { total, withEvidence };
+}
+
 function switchChainTab(chainId) {
   document.querySelectorAll('.chain-tab-btn').forEach(btn => {
     btn.classList.toggle('active', btn.id === 'chain-tab-' + chainId);
@@ -2580,6 +2892,175 @@ function addWhyStep(chainId) {
   renderWhysSection();
   // Restore active tab
   switchChainTab(chainId);
+}
+
+/* ============================================================
+   THEREFORE VALIDATION (v1.4)
+   ============================================================ */
+
+function toggleThereforeView(chainId) {
+  const chain = activeProject.whyChains.find(ch => ch.id === chainId);
+  if (!chain) return;
+  chain.thereforeViewActive = !chain.thereforeViewActive;
+  scheduleAutoSave();
+  renderWhysSection();
+  switchChainTab(chainId);
+}
+
+function renderThereforeView(chain) {
+  const steps = chain.steps;
+
+  // Need at least one step with content to show the view
+  const hasContent = steps.some(s => s.why.trim());
+  if (!hasContent) {
+    return `<div class="therefore-view">
+      <div class="therefore-empty">Add at least one Why answer to check the logic.</div>
+    </div>`;
+  }
+
+  // Build pairs: read from deepest step to shallowest, then to the initiating cause.
+  // Pair [i]: step[i].why → step[i-1].why (or chain.causeLabel for i===0).
+  // Display order: deepest first (step[n-1] → step[n-2]), ..., step[0] → causeLabel.
+  // Deepest-first means the first pair is where logic most often breaks (true root cause → symptom).
+  const pairs = [];
+  for (let i = steps.length - 1; i >= 0; i--) {
+    const causeText = steps[i].why.trim() || '(no answer yet)';
+    const effectText = (i > 0)
+      ? (steps[i - 1].why.trim() || '(no answer yet)')
+      : chain.causeLabel;
+    const flag = steps[i].thereforeFlag;  // null | 'ok' | 'gap'
+    const pairClass = flag === 'ok' ? 'therefore-pair flag-ok'
+                    : flag === 'gap' ? 'therefore-pair flag-gap'
+                    : 'therefore-pair';
+    pairs.push(`
+      <div class="${pairClass}" id="therefore-pair-${escHtml(chain.id)}-${i}">
+        <div class="therefore-pair-text">
+          <strong>${escHtml(causeText)}</strong>
+          <em> → therefore →</em>
+          <strong> ${escHtml(effectText)}</strong>
+        </div>
+        <div class="therefore-pair-flags">
+          <button class="therefore-flag-btn${flag === 'ok' ? ' active-ok' : ''}"
+                  onclick="setThereforeFlag('${escHtml(chain.id)}', ${i}, 'ok')"
+                  title="Logic holds — this relationship makes sense">👍</button>
+          <button class="therefore-flag-btn${flag === 'gap' ? ' active-gap' : ''}"
+                  onclick="setThereforeFlag('${escHtml(chain.id)}', ${i}, 'gap')"
+                  title="Logic gap — this relationship doesn't hold">👎</button>
+        </div>
+      </div>`);
+  }
+
+  return `
+    <div class="therefore-view">
+      <div class="therefore-view-label">Logic check — reading root cause → effect</div>
+      ${pairs.join('')}
+    </div>`;
+}
+
+function setThereforeFlag(chainId, stepIndex, flag) {
+  const chain = activeProject.whyChains.find(ch => ch.id === chainId);
+  if (!chain || !chain.steps[stepIndex]) return;
+  // Toggle: clicking same flag again clears it
+  chain.steps[stepIndex].thereforeFlag =
+    (chain.steps[stepIndex].thereforeFlag === flag) ? null : flag;
+  scheduleAutoSave();
+  renderWhysSection();
+  switchChainTab(chainId);
+}
+
+/* ============================================================
+   PRINT / SAVE AS PDF (v1.4)
+   ============================================================ */
+
+function printRCA() {
+  if (!activeProject) return;
+
+  // Check evidence completeness — soft warning only, does not block printing
+  const { total, withEvidence } = getEvidenceCompleteness(activeProject);
+  const hasGaps = withEvidence < total;
+
+  // Populate the print view container
+  const printEl = document.getElementById('print-view');
+  printEl.innerHTML = buildPrintHTML(activeProject, hasGaps, total, withEvidence);
+
+  // Brief delay to let the DOM settle, then print
+  setTimeout(() => window.print(), 100);
+}
+
+function buildPrintHTML(project, hasGaps, total, withEvidence) {
+  const dateStr = new Date().toLocaleDateString('en-GB', {
+    day: '2-digit', month: 'long', year: 'numeric'
+  });
+
+  const chainsHTML = project.whyChains.map(chain => {
+    const stepsHTML = chain.steps.map(step => {
+      const hasEv = !!(step.evidence || step.evidencePhoto);
+      const isGap = step.thereforeFlag === 'gap';
+      return `
+        <div class="print-why-step">
+          <div class="print-why-num">${step.stepNumber}</div>
+          <div class="print-why-body">
+            <div class="print-why-text">${escHtml(step.why || '(no answer recorded)')}</div>
+            ${hasEv
+              ? `<div class="print-evidence">Evidence: ${escHtml(step.evidence || '')}${step.evidencePhoto ? ' [photo attached]' : ''}</div>`
+              : `<div class="print-no-evidence">No evidence recorded</div>`}
+            ${isGap ? `<div class="print-logic-gap">⚠ Logic gap flagged in Therefore review</div>` : ''}
+          </div>
+        </div>`;
+    }).join('');
+
+    const valText = {
+      validated:  '✓ Root Cause Validated',
+      failed:     '✗ Not Validated — revisit chain',
+      candidate:  '○ Candidate — not yet validated',
+      incomplete: '⚠ Incomplete'
+    }[chain.validationStatus] || '○ Candidate';
+
+    const valClass = {
+      validated:  'validated',
+      failed:     'failed',
+      candidate:  'candidate',
+      incomplete: 'candidate'
+    }[chain.validationStatus] || 'candidate';
+
+    return `
+      <div class="print-chain">
+        <div class="print-chain-cause">Investigating: ${escHtml(chain.causeLabel)}</div>
+        ${stepsHTML}
+        <div class="print-root-cause">
+          <strong>Proposed root cause:</strong> ${escHtml(chain.proposedRootCause || '(not yet stated)')}
+          <div class="print-validation-status ${valClass}">${valText}</div>
+          ${chain.validationRationale
+            ? `<div style="font-size:9pt; margin-top:4pt; color:#3e484c;">${escHtml(chain.validationRationale)}</div>`
+            : ''}
+        </div>
+      </div>`;
+  }).join('');
+
+  const evidenceSummary = hasGaps
+    ? `<div class="print-evidence-summary">Evidence completeness: ${withEvidence} of ${total} steps have evidence recorded.</div>`
+    : '';
+
+  return `
+    <div class="print-header">
+      <div class="print-title">${escHtml(project.name || 'Untitled RCA')}</div>
+      <div class="print-meta">Gemba-RCA v1.4 · Printed ${dateStr} · gembasuite.org</div>
+    </div>
+
+    ${project.problemStatement
+      ? `<div class="print-section-title">Problem Statement</div>
+         <div class="print-problem">${escHtml(project.problemStatement)}</div>`
+      : ''}
+
+    <div class="print-section-title">5 Whys Chains</div>
+    ${chainsHTML || '<p style="color:#6e797c; font-size:10pt;">No Why chains recorded.</p>'}
+
+    ${evidenceSummary}
+
+    <div class="print-footer">
+      Gemba Suite — free, browser-based Lean improvement tools for healthcare teams · gembasuite.org<br>
+      No patient data collected. Data remains on this device. CC BY-NC-SA 4.0 · David Clark
+    </div>`;
 }
 
 function updateWhyStep(chainId, stepIndex, field, value) {
@@ -2722,6 +3203,19 @@ function renderParetoTable() {
       <button class="pareto-del-btn" onclick="deleteParetoRow(${i})" title="Remove row">✕</button>
     </div>`).join('');
 
+  // Update evidence completeness badge (v1.4)
+  const compEl = document.getElementById('evidence-completeness-badge');
+  if (compEl && activeProject) {
+    const { total, withEvidence } = getEvidenceCompleteness(activeProject);
+    if (total === 0) {
+      compEl.innerHTML = '';
+    } else if (withEvidence === total) {
+      compEl.innerHTML = `<div class="validation-status-badge badge-validated" style="margin-bottom:var(--space-md);">✓ Evidence complete — all ${total} steps have evidence recorded</div>`;
+    } else {
+      compEl.innerHTML = `<div class="validation-status-badge badge-incomplete" style="margin-bottom:var(--space-md);">⚠ Evidence gaps — ${withEvidence} of ${total} steps have evidence recorded</div>`;
+    }
+  }
+
   renderParetoChart();
 }
 
@@ -2789,8 +3283,8 @@ function renderParetoChart() {
 
   // 80% threshold dashed line
   const y80 = marginT + yPctScale(80);
-  content += `<line x1="${marginL}" y1="${y80}" x2="${W - marginR}" y2="${y80}" stroke="#854a10" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.8"/>`;
-  content += `<text x="${W - marginR + 4}" y="${y80 + 4}" fill="#854a10" font-size="10" font-family="-apple-system,sans-serif">80%</text>`;
+  content += `<line x1="${marginL}" y1="${y80}" x2="${W - marginR}" y2="${y80}" stroke="#d97706" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.8"/>`;
+  content += `<text x="${W - marginR + 4}" y="${y80 + 4}" fill="#d97706" font-size="10" font-family="-apple-system,sans-serif">80%</text>`;
 
   // Bars
   data.forEach((d, i) => {
@@ -2798,15 +3292,15 @@ function renderParetoChart() {
     const barH = (d.frequency / maxFreq) * chartH;
     const y = marginT + chartH - barH;
     const isVitalFew = cumPcts[i] <= 80 || (i > 0 && cumPcts[i-1] < 80);
-    const fill = isVitalFew ? '#ba1a1a' : '#79d3ea';
+    const fill = isVitalFew ? '#dc2626' : '#93c5fd';
 
     content += `<rect x="${x}" y="${y}" width="${barW}" height="${barH}" fill="${fill}" rx="2"/>`;
     // Frequency label on bar
-    content += `<text x="${x + barW/2}" y="${y - 4}" text-anchor="middle" fill="${isVitalFew?'#ba1a1a':'#3e484c'}" font-size="10" font-weight="600" font-family="-apple-system,sans-serif">${d.frequency}</text>`;
+    content += `<text x="${x + barW/2}" y="${y - 4}" text-anchor="middle" fill="${isVitalFew?'#dc2626':'#374151'}" font-size="10" font-weight="600" font-family="-apple-system,sans-serif">${d.frequency}</text>`;
     // X axis label
     const labelLines = truncate(d.label, 12).split(' ');
     labelLines.slice(0, 2).forEach((line, li) => {
-      content += `<text x="${x + barW/2}" y="${marginT + chartH + 14 + li * 12}" text-anchor="middle" fill="#3e484c" font-size="9" font-family="-apple-system,sans-serif">${escHtml(line)}</text>`;
+      content += `<text x="${x + barW/2}" y="${marginT + chartH + 14 + li * 12}" text-anchor="middle" fill="#374151" font-size="9" font-family="-apple-system,sans-serif">${escHtml(line)}</text>`;
     });
   });
 
@@ -2818,36 +3312,36 @@ function renderParetoChart() {
   });
 
   if (linePoints.length > 1) {
-    content += `<polyline points="${linePoints.join(' ')}" fill="none" stroke="#854a10" stroke-width="2"/>`;
+    content += `<polyline points="${linePoints.join(' ')}" fill="none" stroke="#d97706" stroke-width="2"/>`;
   }
 
   data.forEach((d, i) => {
     const x = marginL + i * (barW + 4) + (chartW - data.length * (barW + 4)) / 2 + barW / 2;
     const y = marginT + yPctScale(cumPcts[i]);
-    content += `<circle cx="${x}" cy="${y}" r="4" fill="#854a10"/>`;
-    content += `<text x="${x}" y="${y - 7}" text-anchor="middle" fill="#854a10" font-size="9" font-weight="600" font-family="-apple-system,sans-serif">${Math.round(cumPcts[i])}%</text>`;
+    content += `<circle cx="${x}" cy="${y}" r="4" fill="#d97706"/>`;
+    content += `<text x="${x}" y="${y - 7}" text-anchor="middle" fill="#d97706" font-size="9" font-weight="600" font-family="-apple-system,sans-serif">${Math.round(cumPcts[i])}%</text>`;
   });
 
   // Y axis (left)
-  content += `<line x1="${marginL}" y1="${marginT}" x2="${marginL}" y2="${marginT + chartH}" stroke="#bec8cc" stroke-width="1"/>`;
+  content += `<line x1="${marginL}" y1="${marginT}" x2="${marginL}" y2="${marginT + chartH}" stroke="#d1d5db" stroke-width="1"/>`;
   [0, 25, 50, 75, 100].forEach(pct => {
     const v = (pct / 100) * maxFreq;
     const y = marginT + yScale(v);
-    content += `<line x1="${marginL - 4}" y1="${y}" x2="${marginL}" y2="${y}" stroke="#bec8cc" stroke-width="1"/>`;
-    content += `<text x="${marginL - 6}" y="${y + 4}" text-anchor="end" fill="#6e797c" font-size="9" font-family="-apple-system,sans-serif">${Math.round(v)}</text>`;
+    content += `<line x1="${marginL - 4}" y1="${y}" x2="${marginL}" y2="${y}" stroke="#d1d5db" stroke-width="1"/>`;
+    content += `<text x="${marginL - 6}" y="${y + 4}" text-anchor="end" fill="#6b7280" font-size="9" font-family="-apple-system,sans-serif">${Math.round(v)}</text>`;
   });
 
   // X axis
-  content += `<line x1="${marginL}" y1="${marginT + chartH}" x2="${W - marginR}" y2="${marginT + chartH}" stroke="#bec8cc" stroke-width="1"/>`;
+  content += `<line x1="${marginL}" y1="${marginT + chartH}" x2="${W - marginR}" y2="${marginT + chartH}" stroke="#d1d5db" stroke-width="1"/>`;
 
   // Legend
-  content += `<rect x="${marginL}" y="${H - 14}" width="10" height="10" fill="#ba1a1a" rx="1"/>`;
-  content += `<text x="${marginL + 13}" y="${H - 5}" fill="#3e484c" font-size="9" font-family="-apple-system,sans-serif">Vital few</text>`;
-  content += `<rect x="${marginL + 70}" y="${H - 14}" width="10" height="10" fill="#79d3ea" rx="1"/>`;
-  content += `<text x="${marginL + 83}" y="${H - 5}" fill="#3e484c" font-size="9" font-family="-apple-system,sans-serif">Useful many</text>`;
-  content += `<line x1="${marginL + 155}" y1="${H - 9}" x2="${marginL + 175}" y2="${H - 9}" stroke="#854a10" stroke-width="2"/>`;
-  content += `<circle cx="${marginL + 165}" cy="${H - 9}" r="3" fill="#854a10"/>`;
-  content += `<text x="${marginL + 178}" y="${H - 5}" fill="#3e484c" font-size="9" font-family="-apple-system,sans-serif">Cumulative %</text>`;
+  content += `<rect x="${marginL}" y="${H - 14}" width="10" height="10" fill="#dc2626" rx="1"/>`;
+  content += `<text x="${marginL + 13}" y="${H - 5}" fill="#374151" font-size="9" font-family="-apple-system,sans-serif">Vital few</text>`;
+  content += `<rect x="${marginL + 70}" y="${H - 14}" width="10" height="10" fill="#93c5fd" rx="1"/>`;
+  content += `<text x="${marginL + 83}" y="${H - 5}" fill="#374151" font-size="9" font-family="-apple-system,sans-serif">Useful many</text>`;
+  content += `<line x1="${marginL + 155}" y1="${H - 9}" x2="${marginL + 175}" y2="${H - 9}" stroke="#d97706" stroke-width="2"/>`;
+  content += `<circle cx="${marginL + 165}" cy="${H - 9}" r="3" fill="#d97706"/>`;
+  content += `<text x="${marginL + 178}" y="${H - 5}" fill="#374151" font-size="9" font-family="-apple-system,sans-serif">Cumulative %</text>`;
 
   svg.innerHTML = content;
 }
@@ -2876,7 +3370,7 @@ function buildExportEnvelope(includeA3Attachments = false) {
 
   const envelope = {
     gembaApp: 'rca',
-    appVersion: '1.2',
+    appVersion: '1.4',
     exportedAt: new Date().toISOString(),
     developer: 'David Clark',
     id: activeProject.id,
@@ -3023,7 +3517,7 @@ function showToast(message) {
   toast.id = 'toast-notification';
   toast.style.cssText = `
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-    background: #006172; color: white; padding: 12px 20px; border-radius: 8px;
+    background: #1a3a5c; color: white; padding: 12px 20px; border-radius: 8px;
     font-size: 0.875rem; font-weight: 600; z-index: 9999; max-width: 340px;
     text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     animation: fadeIn 0.2s ease;
@@ -3086,11 +3580,14 @@ function generateCoachingPrompt() {
     .map(cat => `${cat.label}: ${cat.causes.map(c => c.text).join(', ')}`)
     .join('\n');
 
-  // Summarise Why chains
+  // Summarise Why chains (v1.4: includes thereforeFlag values per step)
   const chainsSummary = activeProject.whyChains.map((ch, i) => {
     const steps = ch.steps.map((s, si) => {
       const evNote = s.evidence ? ` [Evidence: ${s.evidence.slice(0, 80)}]` : ' [No evidence recorded]';
-      return `  Why ${si + 1}: ${s.why || '(not answered)'}${evNote}`;
+      const flagNote = s.thereforeFlag === 'gap' ? ' [⚠ Logic gap flagged in Therefore review]'
+                     : s.thereforeFlag === 'ok'  ? ' [✓ Logic confirmed in Therefore review]'
+                     : '';
+      return `  Why ${si + 1}: ${s.why || '(not answered)'}${evNote}${flagNote}`;
     }).join('\n');
     const rcStatus = ch.validationStatus.toUpperCase();
     return `Chain ${i + 1} — Investigating: "${ch.causeLabel}"\n${steps}\n  Proposed root cause: ${ch.proposedRootCause || '(not stated)'}\n  Validation: ${rcStatus} — ${ch.validationRationale || '(no rationale)'}`;
@@ -3264,5 +3761,9 @@ if (document.readyState === 'loading') {
   init();
 }
 </script>
+
+<!-- PRINT VIEW (v1.4) — hidden on screen, populated by printRCA() -->
+<div id="print-view" style="display:none;" aria-hidden="true"></div>
+
 </body>
 </html>
