@@ -1,6 +1,12 @@
 {
   "items": [
     {
+      "app": "Gemba-SPC",
+      "version": "v1.0",
+      "date": "2026-05-11",
+      "summary": "Bug fix: phase limit inheritance corrected — Phase 2 and later phases now lock with the right limits. All phases show limit lines and labels on chart."
+    },
+    {
       "app": "Gemba-RCA",
       "version": "v1.4",
       "date": "2026-05-06",

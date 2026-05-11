@@ -621,7 +621,6 @@ table.data-table td.note-cell{max-width:180px;overflow:hidden;text-overflow:elli
     <div class="about-section"><div class="about-section-title">Part of the Gemba Suite</div><p>Free tools for lean methodology at the gemba. <a href="https://gembasuite.org" target="_blank" rel="noopener">gembasuite.org</a></p></div>
     <div class="about-section"><div class="about-section-title">Methodology &amp; Constants</div><p>XmR constants: 2.66 = 3/d&#8322; (genuine 3&sigma; limits), 3.268 = D&#8324; for span-2 mR. No patient-identifiable data collected. Process improvement tool only.</p></div>
     <div class="about-section"><div class="about-section-title">Licence</div><div class="about-licence">CC BY-NC-SA 4.0 &mdash; Free for all healthcare improvement purposes. Commercial repackaging, resale, or proprietary redistribution not permitted. Full terms: <a href="https://gembasuite.org/licence" target="_blank" rel="noopener">gembasuite.org/licence</a></div></div>
-    <div class="about-section"><div class="about-section-title">Disclaimer</div><p>These tools support process improvement and do not make clinical decisions or recommendations. They are not medical devices and are not regulated as such under MHRA or equivalent frameworks. All data is stored locally on your device. The tools are provided as-is, without warranty. You are responsible for exporting and backing up your data regularly.</p></div>
     <div class="about-section"><div class="about-section-title">Developer</div><p>David Clark &mdash; <a href="https://gembasuite.org" target="_blank" rel="noopener">gembasuite.org</a></p></div>
     <div class="modal-actions"><button class="btn btn-primary" onclick="closeModal('aboutModal')">Close</button></div>
   </div>
@@ -1147,10 +1146,9 @@ function renderChart() {
   });
   svg+=`<text x="12" y="${mrTop+C.MRH/2}" text-anchor="middle" fill="#3e484c" font-size="10" font-weight="600" transform="rotate(-90 12 ${mrTop+C.MRH/2})">mR</text>`;
 
-  // Phase limit lines (last 2 phases)
+  // Phase limit lines (all phases — older phases faded)
   const phases=currentProject.phases;
-  phases.slice(-2).forEach((phase,vi)=>{
-    const globalPi=phases.length-Math.min(phases.length,2)+vi;
+  phases.forEach((phase,globalPi)=>{
     let lims;
     if(phase.lockedAt&&phase.limits) lims=phase.limits;
     else if(globalPi>0&&phases[globalPi-1]&&phases[globalPi-1].limits) lims=phases[globalPi-1].limits;
@@ -1158,7 +1156,7 @@ function renderChart() {
     if(!lims) return;
     const s=phase.startIndex, e=phase.endIndex!==null?phase.endIndex:pts.length-1;
     const x1=px(Math.min(s,pts.length-1)), x2=px(Math.min(e,pts.length-1))+(phase.endIndex===null?C.MR:0);
-    const isOld=vi<Math.min(phases.length,2)-1;
+    const isOld=globalPi<phases.length-1;
     const op=isOld?0.35:1;
     const lw=isOld?1:1.5;
     // X-chart centreline
@@ -1179,15 +1177,13 @@ function renderChart() {
     // mR centreline + UCL (NO LCL on mR chart)
     svg+=`<line x1="${x1}" y1="${mrCY(lims.mRBar)}" x2="${x2}" y2="${mrCY(lims.mRBar)}" stroke="#3e484c" stroke-width="${lw}" opacity="${op}"/>`;
     svg+=`<line x1="${x1}" y1="${mrCY(lims.uclMR)}" x2="${x2}" y2="${mrCY(lims.uclMR)}" stroke="#b3261e" stroke-width="${lw}" stroke-dasharray="6,3" opacity="${op}"/>`;
-    // Labels (most recent phase only)
-    if(!isOld) {
-      const lx=Math.max(x1,C.ML)+3;
-      svg+=`<text x="${lx}" y="${xCY(lims.uclX)-4}" fill="#b3261e" font-size="9" font-family="monospace">UCL ${roundN(lims.uclX,2)}</text>`;
-      svg+=`<text x="${lx}" y="${xCY(lims.lclX)+10}" fill="#b3261e" font-size="9" font-family="monospace">LCL ${roundN(lims.lclX,2)}</text>`;
-      svg+=`<text x="${lx}" y="${xCY(lims.xBar)-4}" fill="#3e484c" font-size="9" font-family="monospace">X\u0305 ${roundN(lims.xBar,2)}</text>`;
-      svg+=`<text x="${lx}" y="${mrCY(lims.uclMR)-4}" fill="#b3261e" font-size="9" font-family="monospace">UCL ${roundN(lims.uclMR,2)}</text>`;
-      svg+=`<text x="${lx}" y="${mrCY(lims.mRBar)-4}" fill="#3e484c" font-size="9" font-family="monospace">m\u0305R ${roundN(lims.mRBar,2)}</text>`;
-    }
+    // Labels (all phases, faded on older phases to match line opacity)
+    const lx=Math.max(x1,C.ML)+3;
+    svg+=`<text x="${lx}" y="${xCY(lims.uclX)-4}" fill="#b3261e" font-size="9" font-family="monospace" opacity="${op}">UCL ${roundN(lims.uclX,2)}</text>`;
+    svg+=`<text x="${lx}" y="${xCY(lims.lclX)+10}" fill="#b3261e" font-size="9" font-family="monospace" opacity="${op}">LCL ${roundN(lims.lclX,2)}</text>`;
+    svg+=`<text x="${lx}" y="${xCY(lims.xBar)-4}" fill="#3e484c" font-size="9" font-family="monospace" opacity="${op}">X\u0305 ${roundN(lims.xBar,2)}</text>`;
+    svg+=`<text x="${lx}" y="${mrCY(lims.uclMR)-4}" fill="#b3261e" font-size="9" font-family="monospace" opacity="${op}">UCL ${roundN(lims.uclMR,2)}</text>`;
+    svg+=`<text x="${lx}" y="${mrCY(lims.mRBar)-4}" fill="#3e484c" font-size="9" font-family="monospace" opacity="${op}">m\u0305R ${roundN(lims.mRBar,2)}</text>`;
   });
 
   // Phase boundaries (vertical lines)
@@ -1452,19 +1448,24 @@ function editDP(id) {
 function lockLimits() {
   const pts=currentProject.dataPoints;
   if(pts.length<2){showInfo('Not enough data','Add at least 2 data points before locking limits.');return;}
-  const {activeLimits}=computeAll(currentProject);
-  if(!activeLimits){showInfo('Cannot lock','No valid limits to lock.');return;}
-  const ne=pts.filter(p=>!p.excluded).length;
+  // B1 FIX: compute limits from the current phase's own data window.
+  // computeAll().activeLimits returns the *previous* phase's locked limits for any
+  // open phase after Phase I — correct for monitoring display, wrong for locking.
+  const phases=currentProject.phases;
+  const currentPhase=phases[phases.length-1];
+  const phasePts=pts.slice(currentPhase.startIndex);
+  const phaseMRs=computeMRs(phasePts);
+  const phaseLimits=computeLimits(phasePts,phaseMRs);
+  if(!phaseLimits){showInfo('Cannot lock','No valid limits to lock.');return;}
+  const ne=phasePts.filter(p=>!p.excluded).length;
   const msg=ne<20
-    ?`Lock limits based on ${ne} data points?\n\nWheeler recommends at least 20 for stable limits. You can continue adding data in Phase II, but they will be evaluated against these limits.\n\nX\u0305 = ${roundN(activeLimits.xBar,3)}, UCL = ${roundN(activeLimits.uclX,3)}, LCL = ${roundN(activeLimits.lclX,3)}`
-    :`Lock current limits as your Phase II baseline?\n\nX\u0305 = ${roundN(activeLimits.xBar,3)}\nUCL = ${roundN(activeLimits.uclX,3)}, LCL = ${roundN(activeLimits.lclX,3)}\nm\u0305R = ${roundN(activeLimits.mRBar,3)}\n\nNew data will be monitored against these limits.`;
+    ?`Lock limits based on ${ne} data points?\n\nWheeler recommends at least 20 for stable limits. You can continue adding data in Phase II, but they will be evaluated against these limits.\n\nX\u0305 = ${roundN(phaseLimits.xBar,3)}, UCL = ${roundN(phaseLimits.uclX,3)}, LCL = ${roundN(phaseLimits.lclX,3)}`
+    :`Lock current limits as your Phase II baseline?\n\nX\u0305 = ${roundN(phaseLimits.xBar,3)}\nUCL = ${roundN(phaseLimits.uclX,3)}, LCL = ${roundN(phaseLimits.lclX,3)}\nm\u0305R = ${roundN(phaseLimits.mRBar,3)}\n\nNew data will be monitored against these limits.`;
   showConfirmModal('Lock Phase I Limits',msg,'Lock Limits',()=>{
-    const phases=currentProject.phases;
-    const last=phases[phases.length-1];
-    last.endIndex=pts.length-1;
-    last.limits={...activeLimits};
-    last.lockedAt=new Date().toISOString();
-    phases.push({id:genId('ph'),startIndex:pts.length,endIndex:null,limits:{...activeLimits},lockedAt:null});
+    currentPhase.endIndex=pts.length-1;
+    currentPhase.limits={...phaseLimits};
+    currentPhase.lockedAt=new Date().toISOString();
+    phases.push({id:genId('ph'),startIndex:pts.length,endIndex:null,limits:{...phaseLimits},lockedAt:null});
     saveCurrentProject();renderProjectView();
   });
 }
