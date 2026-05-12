@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--
   ╔══════════════════════════════════════════════════════════════════╗
-  ║  Gemba A3 — Structured Problem Solving Tool                    ║
+  ║  Gemba A3 — Structured Problem Solving Tool  v2.2             ║
   ║  Part of the Gemba Suite (gembasuite.org)                      ║
   ║                                                                ║
   ║  Created by David Clark                                        ║
@@ -38,7 +38,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Gemba A3 v1.1 — Structured Problem Solving</title>
+<title>Gemba A3 v2.2 — Structured Problem Solving</title>
 
 <!-- PWA Meta Tags -->
 <link rel="manifest" href="/a3/manifest.json">
@@ -258,6 +258,7 @@ body {
    ═══════════════════════════════════════ */
 .panel { display: none; padding: 20px; max-width: 900px; margin: 0 auto; }
 .panel.active { display: block; }
+.panel.panel-hidden { display: none !important; }
 
 /* ═══════════════════════════════════════
    CARDS
@@ -1268,6 +1269,195 @@ textarea { resize: vertical; min-height: 80px; }
 }
 
 /* ═══════════════════════════════════════
+   SYSTEMS LENS — EBC four-perspectives coaching overlay
+   ═══════════════════════════════════════ */
+
+/* ── Toggle row (sits below the A3 Details metadata bar) ── */
+.systems-lens-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  background: var(--surface-low);
+  border-bottom: 1px solid var(--grid-subtle);
+  flex-wrap: wrap;
+}
+.systems-lens-label {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.systems-lens-label .sl-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+  font-family: var(--font-display);
+}
+.systems-lens-label .sl-sub {
+  font-size: 10px;
+  color: var(--ink-tertiary);
+  font-weight: 400;
+}
+.systems-lens-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: 1.5px solid var(--grid);
+  border-radius: var(--radius-full);
+  background: var(--card);
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-secondary);
+  cursor: pointer;
+  min-height: 36px;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.systems-lens-toggle-btn.active {
+  border-color: var(--primary);
+  background: var(--primary-tint);
+  color: var(--on-primary-tint);
+}
+.systems-lens-toggle-btn .sl-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--grid);
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.systems-lens-toggle-btn.active .sl-dot {
+  background: var(--primary);
+}
+
+/* ── Per-section collapsible panel ── */
+.sl-panel {
+  display: none;  /* Hidden when Systems Lens is OFF */
+  margin-top: 12px;
+  border-left: 3px solid var(--primary);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  border: 1px solid var(--grid-subtle);
+  border-left: 3px solid var(--primary);
+  background: var(--navy-lt, var(--primary-tint));
+  background: #f0f6f8;
+  overflow: hidden;
+}
+.sl-panel.sl-visible {
+  display: block;
+}
+.sl-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  cursor: pointer;
+  user-select: none;
+  background: #e6f0f3;
+  border-bottom: 1px solid var(--grid-subtle);
+  min-height: 44px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.sl-panel-header:hover {
+  background: var(--primary-tint);
+}
+.sl-panel-header .sl-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.sl-panel-header .sl-heading {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--on-primary-tint);
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.sl-panel-chevron {
+  font-size: 11px;
+  color: var(--primary);
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+.sl-panel.sl-open .sl-panel-chevron {
+  transform: rotate(90deg);
+}
+.sl-panel-body {
+  display: none;
+  padding: 12px 14px 14px;
+}
+.sl-panel.sl-open .sl-panel-body {
+  display: block;
+}
+
+/* ── Individual perspective block ── */
+.sl-perspective {
+  margin-bottom: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--grid-subtle);
+}
+.sl-perspective:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+.sl-perspective-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 5px;
+}
+.sl-perspective-label .sl-dot-label {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.sl-perspective-label .sl-dot-label.sl-people  { background: #1565c0; }
+.sl-perspective-label .sl-dot-label.sl-systems { background: var(--primary); }
+.sl-perspective-label .sl-dot-label.sl-design  { background: #2e7d32; }
+.sl-perspective-label .sl-dot-label.sl-risk    { background: var(--accent-warm); }
+
+.sl-perspective-label strong {
+  font-size: 12px;
+  font-weight: 700;
+  font-family: var(--font-display);
+  color: var(--ink);
+}
+.sl-prompt-text {
+  font-size: 12px;
+  color: var(--ink-secondary);
+  font-style: italic;
+  line-height: 1.5;
+  margin-bottom: 6px;
+}
+.sl-textarea {
+  width: 100%;
+  min-height: 56px;
+  padding: 8px 10px;
+  border: 1px solid var(--grid);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 13px;
+  background: var(--card);
+  color: var(--ink);
+  resize: vertical;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+.sl-textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+.sl-textarea::placeholder {
+  color: var(--ink-tertiary);
+}
+
+/* ═══════════════════════════════════════
    MOBILE OVERRIDES
    ═══════════════════════════════════════ */
 @media (max-width: 640px) {
@@ -1291,7 +1481,7 @@ textarea { resize: vertical; min-height: 80px; }
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
     Gemba A3
     <span class="jp">問題解決</span>
-    <span style="font-size:10px;opacity:0.4;font-weight:400;margin-left:8px">v1.13</span>
+    <span style="font-size:10px;opacity:0.4;font-weight:400;margin-left:8px">v2.2</span>
     <span style="font-size:10px;opacity:0.35;font-weight:400;margin-left:8px">— David Clark</span>
     <span class="about-link" onclick="showAboutModal()">About & Licence</span>
   </h1>
@@ -1322,6 +1512,18 @@ textarea { resize: vertical; min-height: 80px; }
   <button onclick="switchTab('4c')" style="display:none;">⚡ 4C Response</button>
 </nav>
 
+<!-- Systems Lens toggle bar — sits outside all panels so visible on all tabs -->
+<div class="systems-lens-bar" id="systemsLensBar">
+  <div class="systems-lens-label">
+    <span class="sl-title">🔍 Systems Lens</span>
+    <span class="sl-sub">Explore People, Systems, Design and Risk perspectives</span>
+  </div>
+  <button class="systems-lens-toggle-btn" id="systemsLensToggleBtn" onclick="toggleSystemsLens()" title="Toggle Systems Lens coaching prompts">
+    <span class="sl-dot"></span>
+    <span id="systemsLensToggleTxt">Off</span>
+  </button>
+</div>
+
 <!-- ═══════════ PANEL: PLAN (Sections 1–5) ═══════════ -->
 <div id="panel-plan" class="panel active">
 
@@ -1341,6 +1543,7 @@ textarea { resize: vertical; min-height: 80px; }
         oninput="document.getElementById('a3Department').value=this.value;saveToLocal()">
     </div>
   </div>
+
 
   <!-- Section 1: Problem Statement -->
   <div class="section-card expanded" data-section="problemStatement" id="sec-problemStatement">
@@ -1382,6 +1585,36 @@ textarea { resize: vertical; min-height: 80px; }
           <p>✦ Does it fit your purpose, vision and values?</p>
         </div>
       </details>
+      <!-- Systems Lens panel (Section 1) -->
+      <div class="sl-panel" id="slPanel-problemStatement">
+        <div class="sl-panel-header" onclick="toggleSlPanel('problemStatement')">
+          <span class="sl-icon">🔍</span>
+          <span class="sl-heading">Systems Lens</span>
+          <span class="sl-panel-chevron">▶</span>
+        </div>
+        <div class="sl-panel-body">
+          <div class="sl-perspective">
+            <div class="sl-perspective-label"><span class="sl-dot-label sl-people"></span><strong>People</strong></div>
+            <p class="sl-prompt-text">Who experiences this problem, and who else is affected that isn't mentioned? Are there staff, patients, or other services bearing consequences that aren't visible from this workstation?</p>
+            <textarea class="sl-textarea" id="sl-problemStatement-people" placeholder="Your notes..." oninput="saveSlNote('problemStatement','people',this.value)"></textarea>
+          </div>
+          <div class="sl-perspective">
+            <div class="sl-perspective-label"><span class="sl-dot-label sl-systems"></span><strong>Systems</strong></div>
+            <p class="sl-prompt-text">Is this problem contained within one process, or does it cross organisational, departmental, or system boundaries? Where does the problem sit in the wider value stream?</p>
+            <textarea class="sl-textarea" id="sl-problemStatement-systems" placeholder="Your notes..." oninput="saveSlNote('problemStatement','systems',this.value)"></textarea>
+          </div>
+          <div class="sl-perspective">
+            <div class="sl-perspective-label"><span class="sl-dot-label sl-design"></span><strong>Design</strong></div>
+            <p class="sl-prompt-text">Was this problem designed in? Is it an inevitable consequence of how the process, workspace, or technology was originally set up?</p>
+            <textarea class="sl-textarea" id="sl-problemStatement-design" placeholder="Your notes..." oninput="saveSlNote('problemStatement','design',this.value)"></textarea>
+          </div>
+          <div class="sl-perspective">
+            <div class="sl-perspective-label"><span class="sl-dot-label sl-risk"></span><strong>Risk</strong></div>
+            <p class="sl-prompt-text">What is the patient safety risk if this problem continues? What is the risk of unintended consequences from intervening?</p>
+            <textarea class="sl-textarea" id="sl-problemStatement-risk" placeholder="Your notes..." oninput="saveSlNote('problemStatement','risk',this.value)"></textarea>
+          </div>
+        </div>
+      </div>
       <!-- Responder review -->
       <div class="responder-review">
         <input type="checkbox" id="reviewed-problemStatement" onchange="toggleResponderReview('problemStatement', this.checked)">
@@ -1437,6 +1670,36 @@ textarea { resize: vertical; min-height: 80px; }
           <p>✦ How do staff perceive this problem or feel about it?</p>
         </div>
       </details>
+      <!-- Systems Lens panel (Section 2) -->
+      <div class="sl-panel" id="slPanel-currentState">
+        <div class="sl-panel-header" onclick="toggleSlPanel('currentState')">
+          <span class="sl-icon">🔍</span>
+          <span class="sl-heading">Systems Lens</span>
+          <span class="sl-panel-chevron">▶</span>
+        </div>
+        <div class="sl-panel-body">
+          <div class="sl-perspective">
+            <div class="sl-perspective-label"><span class="sl-dot-label sl-people"></span><strong>People</strong></div>
+            <p class="sl-prompt-text">Whose knowledge about how the work actually happens hasn't been captured yet? Have you gone to the gemba and spoken to the people doing the work?</p>
+            <textarea class="sl-textarea" id="sl-currentState-people" placeholder="Your notes..." oninput="saveSlNote('currentState','people',this.value)"></textarea>
+          </div>
+          <div class="sl-perspective">
+            <div class="sl-perspective-label"><span class="sl-dot-label sl-systems"></span><strong>Systems</strong></div>
+            <p class="sl-prompt-text">What upstream inputs and downstream dependencies does this process have? If you fix this process, what happens to the processes it feeds into and receives from?</p>
+            <textarea class="sl-textarea" id="sl-currentState-systems" placeholder="Your notes..." oninput="saveSlNote('currentState','systems',this.value)"></textarea>
+          </div>
+          <div class="sl-perspective">
+            <div class="sl-perspective-label"><span class="sl-dot-label sl-design"></span><strong>Design</strong></div>
+            <p class="sl-prompt-text">Was this process deliberately designed, or did it evolve by accident? Are the physical layout, equipment, and information systems helping or hindering the work?</p>
+            <textarea class="sl-textarea" id="sl-currentState-design" placeholder="Your notes..." oninput="saveSlNote('currentState','design',this.value)"></textarea>
+          </div>
+          <div class="sl-perspective">
+            <div class="sl-perspective-label"><span class="sl-dot-label sl-risk"></span><strong>Risk</strong></div>
+            <p class="sl-prompt-text">What workarounds are people using to cope with the current state? What risks do those workarounds create that aren't being measured?</p>
+            <textarea class="sl-textarea" id="sl-currentState-risk" placeholder="Your notes..." oninput="saveSlNote('currentState','risk',this.value)"></textarea>
+          </div>
+        </div>
+      </div>
       <div class="responder-review">
         <input type="checkbox" id="reviewed-currentState" onchange="toggleResponderReview('currentState', this.checked)">
         <label style="text-transform:none;font-size:12px;color:var(--ink);letter-spacing:0;margin:0;cursor:pointer;" for="reviewed-currentState">Reviewed by responder</label>
@@ -1504,6 +1767,36 @@ textarea { resize: vertical; min-height: 80px; }
           <p>✦ Does achieving this goal resolve the problem?</p>
         </div>
       </details>
+      <!-- Systems Lens panel (Section 3) -->
+      <div class="sl-panel" id="slPanel-goal">
+        <div class="sl-panel-header" onclick="toggleSlPanel('goal')">
+          <span class="sl-icon">🔍</span>
+          <span class="sl-heading">Systems Lens</span>
+          <span class="sl-panel-chevron">▶</span>
+        </div>
+        <div class="sl-panel-body">
+          <div class="sl-perspective">
+            <div class="sl-perspective-label"><span class="sl-dot-label sl-people"></span><strong>People</strong></div>
+            <p class="sl-prompt-text">Who needs to agree that this is the right goal? Are the people who do the work involved in setting the target, or was it set for them?</p>
+            <textarea class="sl-textarea" id="sl-goal-people" placeholder="Your notes..." oninput="saveSlNote('goal','people',this.value)"></textarea>
+          </div>
+          <div class="sl-perspective">
+            <div class="sl-perspective-label"><span class="sl-dot-label sl-systems"></span><strong>Systems</strong></div>
+            <p class="sl-prompt-text">Does this goal optimise the whole system, or could it improve one part while making another worse? Have you checked for sub-optimisation?</p>
+            <textarea class="sl-textarea" id="sl-goal-systems" placeholder="Your notes..." oninput="saveSlNote('goal','systems',this.value)"></textarea>
+          </div>
+          <div class="sl-perspective">
+            <div class="sl-perspective-label"><span class="sl-dot-label sl-design"></span><strong>Design</strong></div>
+            <p class="sl-prompt-text">Does achieving this goal require redesigning the process, or just improving execution of the current design? If the design is the problem, an execution target won't fix it.</p>
+            <textarea class="sl-textarea" id="sl-goal-design" placeholder="Your notes..." oninput="saveSlNote('goal','design',this.value)"></textarea>
+          </div>
+          <div class="sl-perspective">
+            <div class="sl-perspective-label"><span class="sl-dot-label sl-risk"></span><strong>Risk</strong></div>
+            <p class="sl-prompt-text">What could go wrong if you hit this target? Are there unintended consequences of success that you haven't considered?</p>
+            <textarea class="sl-textarea" id="sl-goal-risk" placeholder="Your notes..." oninput="saveSlNote('goal','risk',this.value)"></textarea>
+          </div>
+        </div>
+      </div>
       <div class="responder-review">
         <input type="checkbox" id="reviewed-goal" onchange="toggleResponderReview('goal', this.checked)">
         <label style="text-transform:none;font-size:12px;color:var(--ink);letter-spacing:0;margin:0;cursor:pointer;" for="reviewed-goal">Reviewed by responder</label>
@@ -1622,6 +1915,36 @@ textarea { resize: vertical; min-height: 80px; }
           <p>✦ Check back — is your current state analysis in-depth enough?</p>
         </div>
       </details>
+      <!-- Systems Lens panel (Section 5) -->
+      <div class="sl-panel" id="slPanel-rootCauseAnalysis">
+        <div class="sl-panel-header" onclick="toggleSlPanel('rootCauseAnalysis')">
+          <span class="sl-icon">🔍</span>
+          <span class="sl-heading">Systems Lens</span>
+          <span class="sl-panel-chevron">▶</span>
+        </div>
+        <div class="sl-panel-body">
+          <div class="sl-perspective">
+            <div class="sl-perspective-label"><span class="sl-dot-label sl-people"></span><strong>People</strong></div>
+            <p class="sl-prompt-text">Human error is not a root cause. What factors in the system guide behaviour — selection, training, instructions, environment, workload? Is the individual adequately prepared and supervised for the work required by the system and process?</p>
+            <textarea class="sl-textarea" id="sl-rootCauseAnalysis-people" placeholder="Your notes..." oninput="saveSlNote('rootCauseAnalysis','people',this.value)"></textarea>
+          </div>
+          <div class="sl-perspective">
+            <div class="sl-perspective-label"><span class="sl-dot-label sl-systems"></span><strong>Systems</strong></div>
+            <p class="sl-prompt-text">Do any of the root causes originate outside your span of control — in another department, organisation, or regulatory requirement? If so, who owns that part of the system?</p>
+            <textarea class="sl-textarea" id="sl-rootCauseAnalysis-systems" placeholder="Your notes..." oninput="saveSlNote('rootCauseAnalysis','systems',this.value)"></textarea>
+          </div>
+          <div class="sl-perspective">
+            <div class="sl-perspective-label"><span class="sl-dot-label sl-design"></span><strong>Design</strong></div>
+            <p class="sl-prompt-text">Are any root causes traceable to decisions made when this process was originally designed or last changed? What assumptions were built into the design that are no longer valid?</p>
+            <textarea class="sl-textarea" id="sl-rootCauseAnalysis-design" placeholder="Your notes..." oninput="saveSlNote('rootCauseAnalysis','design',this.value)"></textarea>
+          </div>
+          <div class="sl-perspective">
+            <div class="sl-perspective-label"><span class="sl-dot-label sl-risk"></span><strong>Risk</strong></div>
+            <p class="sl-prompt-text">Which root cause, if left unaddressed, poses the greatest risk of harm? Are you prioritising by frequency or by severity?</p>
+            <textarea class="sl-textarea" id="sl-rootCauseAnalysis-risk" placeholder="Your notes..." oninput="saveSlNote('rootCauseAnalysis','risk',this.value)"></textarea>
+          </div>
+        </div>
+      </div>
       <div class="responder-review">
         <input type="checkbox" id="reviewed-rootCauseAnalysis" onchange="toggleResponderReview('rootCauseAnalysis', this.checked)">
         <label style="text-transform:none;font-size:12px;color:var(--ink);letter-spacing:0;margin:0;cursor:pointer;" for="reviewed-rootCauseAnalysis">Reviewed by responder</label>
@@ -1704,6 +2027,36 @@ textarea { resize: vertical; min-height: 80px; }
             <p>✦ Check back — do your countermeasures remove the problem?</p>
           </div>
         </details>
+        <!-- Systems Lens panel (Section 6) -->
+        <div class="sl-panel" id="slPanel-futureState">
+          <div class="sl-panel-header" onclick="toggleSlPanel('futureState')">
+            <span class="sl-icon">🔍</span>
+            <span class="sl-heading">Systems Lens</span>
+            <span class="sl-panel-chevron">▶</span>
+          </div>
+          <div class="sl-panel-body">
+            <div class="sl-perspective">
+              <div class="sl-perspective-label"><span class="sl-dot-label sl-people"></span><strong>People</strong></div>
+              <p class="sl-prompt-text">Do the people who will work in the new process have the skills, training, and support to succeed? What changes to roles, responsibilities, or ways of working are needed?</p>
+              <textarea class="sl-textarea" id="sl-futureState-people" placeholder="Your notes..." oninput="saveSlNote('futureState','people',this.value)"></textarea>
+            </div>
+            <div class="sl-perspective">
+              <div class="sl-perspective-label"><span class="sl-dot-label sl-systems"></span><strong>Systems</strong></div>
+              <p class="sl-prompt-text">Do your countermeasures address the system design, or are they compensating for a design you've left in place? Will the fix work if demand, staffing, or upstream inputs change?</p>
+              <textarea class="sl-textarea" id="sl-futureState-systems" placeholder="Your notes..." oninput="saveSlNote('futureState','systems',this.value)"></textarea>
+            </div>
+            <div class="sl-perspective">
+              <div class="sl-perspective-label"><span class="sl-dot-label sl-design"></span><strong>Design</strong></div>
+              <p class="sl-prompt-text">Are you designing out the failure mode, or adding a check to catch it? Error-proofing at source is more reliable than inspection after the fact.</p>
+              <textarea class="sl-textarea" id="sl-futureState-design" placeholder="Your notes..." oninput="saveSlNote('futureState','design',this.value)"></textarea>
+            </div>
+            <div class="sl-perspective">
+              <div class="sl-perspective-label"><span class="sl-dot-label sl-risk"></span><strong>Risk</strong></div>
+              <p class="sl-prompt-text">What new risks do your countermeasures introduce? Have you considered failure modes of the new process, not just the old one?</p>
+              <textarea class="sl-textarea" id="sl-futureState-risk" placeholder="Your notes..." oninput="saveSlNote('futureState','risk',this.value)"></textarea>
+            </div>
+          </div>
+        </div>
         <div class="responder-review">
           <input type="checkbox" id="reviewed-futureState" onchange="toggleResponderReview('futureState', this.checked)">
           <label style="text-transform:none;font-size:12px;color:var(--ink);letter-spacing:0;margin:0;cursor:pointer;" for="reviewed-futureState">Reviewed by responder</label>
@@ -1975,6 +2328,37 @@ textarea { resize: vertical; min-height: 80px; }
             <p>✦ How will the improvement be sustained (new standard work)?</p>
           </div>
         </details>
+        <!-- Systems Lens panel (Section 9) -->
+        <div class="sl-panel" id="slPanel-nextSteps">
+          <div class="sl-panel-header" onclick="toggleSlPanel('nextSteps')">
+            <span class="sl-icon">🔍</span>
+            <span class="sl-heading">Systems Lens</span>
+            <span class="sl-panel-chevron">▶</span>
+          </div>
+          <div class="sl-panel-body">
+            <div class="sl-perspective">
+              <div class="sl-perspective-label"><span class="sl-dot-label sl-people"></span><strong>People</strong></div>
+              <p class="sl-prompt-text">Who else in the wider system needs to know about what you've learned? Is there a mechanism to share this learning beyond your immediate team?</p>
+              <textarea class="sl-textarea" id="sl-nextSteps-people" placeholder="Your notes..." oninput="saveSlNote('nextSteps','people',this.value)"></textarea>
+            </div>
+            <div class="sl-perspective">
+              <div class="sl-perspective-label"><span class="sl-dot-label sl-systems"></span><strong>Systems</strong></div>
+              <p class="sl-prompt-text">Could the root causes you found here exist in other parts of the organisation? Is this a local fix or does it signal a systemic issue that needs addressing at a higher level?</p>
+              <textarea class="sl-textarea" id="sl-nextSteps-systems" placeholder="Your notes..." oninput="saveSlNote('nextSteps','systems',this.value)"></textarea>
+            </div>
+            <div class="sl-perspective">
+              <div class="sl-perspective-label"><span class="sl-dot-label sl-design"></span><strong>Design</strong></div>
+              <p class="sl-prompt-text">Does this improvement need to be designed into a standard to prevent the problem being reintroduced? Use <a href="/standardwork/" style="color:var(--primary);">Gemba Standard Work</a> to define and hold the new way of working so the change is built into the system, not dependent on memory.</p>
+              <textarea class="sl-textarea" id="sl-nextSteps-design" placeholder="Your notes..." oninput="saveSlNote('nextSteps','design',this.value)"></textarea>
+            </div>
+            <div class="sl-perspective">
+              <div class="sl-perspective-label"><span class="sl-dot-label sl-risk"></span><strong>Risk</strong></div>
+              <p class="sl-prompt-text">What are you going to monitor to make sure the improvement holds? What early warning signs would tell you the problem is returning or the fix is creating new problems?</p>
+              <textarea class="sl-textarea" id="sl-nextSteps-risk" placeholder="Your notes..." oninput="saveSlNote('nextSteps','risk',this.value)"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="responder-review">
           <input type="checkbox" id="reviewed-nextSteps" onchange="toggleResponderReview('nextSteps', this.checked)">
           <label style="text-transform:none;font-size:12px;color:var(--ink);letter-spacing:0;margin:0;cursor:pointer;" for="reviewed-nextSteps">Reviewed by responder</label>
           <span class="review-date" id="reviewDate-nextSteps"></span>
@@ -2098,11 +2482,6 @@ textarea { resize: vertical; min-height: 80px; }
     </div>
   </div>
 
-  <div class="fourc-escalate">
-    <strong>⚠ Recurring problem?</strong> If this issue keeps happening, it should be escalated to a Type 2 (Gap-from-Standard) A3 for deeper root cause analysis.
-    <br>
-    <button class="btn btn-small btn-primary" onclick="escalate4CtoA3()" style="margin-top:8px;">🔄 Convert to A3 — Escalate to Type 2</button>
-  </div>
 
 </div>
 
@@ -2110,7 +2489,7 @@ textarea { resize: vertical; min-height: 80px; }
 <div class="modal-overlay" id="classifyModal">
   <div class="modal classify-modal">
     <h2>🎯 What type of problem are you dealing with?</h2>
-    <p class="classify-subtitle">Art Smalley\u2019s Four Types of Problems — choose the right tool for the job. This cannot be changed once selected.</p>
+    <p class="classify-subtitle">Four Types of Problems (Art Smalley) — choose the right tool for the job. This cannot be changed once selected.</p>
 
     <div class="type-cards">
       <div class="type-card" onclick="selectProblemType('type1-4c')" id="typeCard-type1">
@@ -2165,7 +2544,7 @@ textarea { resize: vertical; min-height: 80px; }
 <!-- ═══════════ ABOUT & LICENCE MODAL ═══════════ -->
 <div class="modal-overlay" id="aboutModal">
   <div class="modal licence-modal">
-    <h2>Gemba A3 v1.1</h2>
+    <h2>Gemba A3 v2.2</h2>
     <span class="licence-badge">CC BY-NC-SA 4.0</span>
 
     <p>Structured A3 problem solving for healthcare teams.</p>
@@ -2187,11 +2566,6 @@ textarea { resize: vertical; min-height: 80px; }
     <p>These tools are free for <strong>all healthcare improvement purposes</strong>, including publicly funded quality improvement programmes such as those led by NHS England, Integrated Care Boards, or equivalent bodies. The NonCommercial restriction targets commercial resale, proprietary repackaging, and use as part of paid consultancy services. The tools themselves must always remain freely available to end users.</p>
 
     <p>Full licence terms and guidance: <a href="https://gembasuite.org/licence" target="_blank" rel="noopener">gembasuite.org/licence</a></p>
-
-
-    <h3>Disclaimer</h3>
-    <p>These tools support process improvement and do not make clinical decisions or recommendations. They are not medical devices and are not regulated as such under MHRA or equivalent frameworks.</p>
-    <p>All data is stored locally on your device. The tools are provided as-is, without warranty. You are responsible for exporting and backing up your data regularly.</p>
 
     <hr class="licence-divider">
 
@@ -2888,17 +3262,6 @@ textarea { resize: vertical; min-height: 80px; }
   color: var(--status-locked);
   margin-top: 4px;
 }
-.fourc-escalate {
-  background: var(--accent-warm-bg);
-  border: 1px solid var(--grid);
-  border-radius: var(--radius-md);
-  padding: 12px 16px;
-  font-size: 13px;
-  color: var(--accent-warm);
-  margin-top: 12px;
-}
-.fourc-escalate strong { color: var(--status-error); }
-
 /* ── Countermeasures list ── */
 .cm-item {
   background: white;
@@ -3461,7 +3824,16 @@ function createBlankA3() {
     },
     nemawashi: [],
     sections,
-    rightSideUnlocked: false
+    rightSideUnlocked: false,
+    systemsLensEnabled: false,
+    systemsLens: {
+      problemStatement:  { panelOpen: false, people: '', systems: '', design: '', risk: '' },
+      currentState:      { panelOpen: false, people: '', systems: '', design: '', risk: '' },
+      goal:              { panelOpen: false, people: '', systems: '', design: '', risk: '' },
+      rootCauseAnalysis: { panelOpen: false, people: '', systems: '', design: '', risk: '' },
+      futureState:       { panelOpen: false, people: '', systems: '', design: '', risk: '' },
+      nextSteps:         { panelOpen: false, people: '', systems: '', design: '', risk: '' }
+    }
   };
 }
 
@@ -3549,16 +3921,29 @@ function compressPhoto(file, callback) {
 
 function switchTab(tab) {
   document.querySelectorAll('.tab-bar button').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+
+  // Hide all panels with inline style — most reliable cross-browser approach
+  ['panel-plan', 'panel-dca', 'panel-meta', 'panel-4c'].forEach(pid => {
+    const p = document.getElementById(pid);
+    if (p) {
+      p.classList.remove('active');
+      p.classList.remove('panel-hidden');
+      p.style.setProperty('display', 'none', 'important');
+    }
+  });
 
   const tabMap = { plan: 0, dca: 1, meta: 2, '4c': 3 };
   const idx = tabMap[tab];
   if (idx !== undefined) {
-    document.querySelectorAll('.tab-bar button')[idx].classList.add('active');
+    const btn = document.querySelectorAll('.tab-bar button')[idx];
+    if (btn) btn.classList.add('active');
   }
   const panelId = tab === '4c' ? 'panel-4c' : 'panel-' + tab;
   const panel = document.getElementById(panelId);
-  if (panel) panel.classList.add('active');
+  if (panel) {
+    panel.style.removeProperty('display');
+    panel.classList.add('active');
+  }
 }
 
 // ═══════════════════════════════════════
@@ -5932,7 +6317,7 @@ function buildAppendixDocx(includePhotos) {
     meta_p(`Parent A3 ID: ${clean(meta.parentA3Id)}`);
   }
   blank();
-  p('This document is the full evidence record for the above A3. The single-page printed A3 necessarily truncates content; this record contains everything captured in the tool including revision history, memos, nemawashi log, and standardisation checklist. Generated by Gemba-A3 v1.1 — gembasuite.org. CC BY-NC-SA 4.0. David Clark.');
+  p('This document is the full evidence record for the above A3. The single-page printed A3 necessarily truncates content; this record contains everything captured in the tool including revision history, memos, nemawashi log, and standardisation checklist. Generated by Gemba-A3 v2.2 — gembasuite.org. CC BY-NC-SA 4.0.');
   blank();
 
   // ── SECTIONS ──
@@ -6108,8 +6493,7 @@ function buildAppendixDocx(includePhotos) {
 
   // ── FOOTER ──
   h1('Document Information');
-  meta_p(`Generated by: Gemba-A3 v1.1 — gembasuite.org`);
-  meta_p(`Developer: David Clark`);
+  meta_p(`Generated by: Gemba-A3 v2.2 — gembasuite.org`);
   meta_p(`Licence: CC BY-NC-SA 4.0`);
   meta_p(`Export date: ${exportDate}`);
   if (!includePhotos) {
@@ -6547,7 +6931,7 @@ function buildPrintContainer(format) {
 
   const footerHtml = `<div class="a3p-ftr">
     <span>${nwHtml}</span>
-    <span>David Clark &mdash; gembasuite.org | CC BY-NC-SA 4.0</span>
+    <span>gembasuite.org | CC BY-NC-SA 4.0</span>
     <span>Printed: ${new Date().toLocaleDateString('en-GB')}</span>
   </div>`;
 
@@ -6562,12 +6946,47 @@ function buildPrintContainer(format) {
     ${footerHtml}
   </div>`;
 
+  // ── Systems Lens print block ─────────────────────────────────────
+  // Include a compact SL section on page 2 when enabled and notes exist
+  let slPrintHtml = '';
+  if (a3Data.systemsLensEnabled) {
+    const slData = a3Data.systemsLens || {};
+    const perspLabels = { people: 'People', systems: 'Systems', design: 'Design', risk: 'Risk' };
+    const slSectionLabels = {
+      problemStatement: '1. Problem Statement',
+      currentState: '2. Current State',
+      goal: '3. Goal / Target',
+      rootCauseAnalysis: '5. Root Cause Analysis',
+      futureState: '6. Future State / Countermeasures',
+      nextSteps: '9. Next Steps'
+    };
+    let slRows = '';
+    const slKeys = ['problemStatement','currentState','goal','rootCauseAnalysis','futureState','nextSteps'];
+    slKeys.forEach(secKey => {
+      const sec = slData[secKey] || {};
+      const filledPersp = ['people','systems','design','risk'].filter(p => (sec[p]||'').trim().length > 0);
+      if (filledPersp.length === 0) return;
+      slRows += `<div style="margin-bottom:4px;"><div style="font-size:7px;font-weight:700;color:#1a1a2e;border-bottom:0.5px solid #d0d4d3;padding-bottom:1px;margin-bottom:2px;">${slSectionLabels[secKey]}</div>`;
+      filledPersp.forEach(p => {
+        slRows += `<div style="font-size:7px;margin-bottom:1px;"><strong style="color:#006172;">${perspLabels[p]}:</strong> ${esc(sec[p].trim())}</div>`;
+      });
+      slRows += '</div>';
+    });
+    if (slRows) {
+      slPrintHtml = `<div class="a3p-sec" style="border-color:#006172;">
+        <div class="a3p-sec-title" style="color:#006172;border-color:#006172;">🔍 Systems Lens — EBC Perspectives</div>
+        <div class="a3p-sec-body">${slRows}</div>
+      </div>`;
+    }
+  }
+
   const page2 = `<div class="a3-page">
     <div class="a3p-col-hdr">Do / Check / Act</div>
     ${sec('6','FUTURE STATE / COUNTERMEASURES', s6Html, s.futureState, true)}
     ${sec('7','ACTION PLAN', s7Html, s.actionPlan, false)}
     ${sec('8','RESULTS &amp; MEASURES', s8Html, s.resultsMeasures, false)}
     ${sec('9','NEXT STEPS', s9Html, s.nextSteps, false)}
+    ${slPrintHtml}
     ${footerHtml}
   </div>`;
 
@@ -6909,6 +7328,14 @@ function renderProjectSelect() {
   ).join('');
 }
 
+// Section keys that get Systems Lens panels (declared here so available at load time)
+const SL_SECTIONS = ['problemStatement', 'currentState', 'goal', 'rootCauseAnalysis', 'futureState', 'nextSteps'];
+
+// Default Systems Lens data shape for a section
+function createBlankSlSection() {
+  return { panelOpen: false, people: '', systems: '', design: '', risk: '' };
+}
+
 function saveCurrentProject() {
   if (!currentProjectId) return;
   a3Data.lastModifiedAt = new Date().toISOString();
@@ -6986,6 +7413,9 @@ let _saveTimer;
 function saveToLocal() {
   clearTimeout(_saveTimer);
   _saveTimer = setTimeout(saveCurrentProject, 1500);
+  if (typeof updateSectionCoachButtonVisibility === 'function') {
+    updateSectionCoachButtonVisibility();
+  }
 }
 
 function loadProject(id) {
@@ -6997,6 +7427,23 @@ function loadProject(id) {
   const data = getProjectData(id);
   if (data) {
     a3Data = data;
+    // ── Backward compatibility: old projects won't have Systems Lens fields ──
+    if (typeof a3Data.systemsLensEnabled === 'undefined') a3Data.systemsLensEnabled = false;
+    if (!a3Data.systemsLens) {
+      a3Data.systemsLens = {
+        problemStatement:  { panelOpen: false, people: '', systems: '', design: '', risk: '' },
+        currentState:      { panelOpen: false, people: '', systems: '', design: '', risk: '' },
+        goal:              { panelOpen: false, people: '', systems: '', design: '', risk: '' },
+        rootCauseAnalysis: { panelOpen: false, people: '', systems: '', design: '', risk: '' },
+        futureState:       { panelOpen: false, people: '', systems: '', design: '', risk: '' },
+        nextSteps:         { panelOpen: false, people: '', systems: '', design: '', risk: '' }
+      };
+    } else {
+      // Ensure each SL section has all expected keys
+      ['problemStatement','currentState','goal','rootCauseAnalysis','futureState','nextSteps'].forEach(k => {
+        if (!a3Data.systemsLens[k]) a3Data.systemsLens[k] = { panelOpen: false, people: '', systems: '', design: '', risk: '' };
+      });
+    }
   } else {
     a3Data = createBlankA3();
   }
@@ -7097,10 +7544,13 @@ function populateUIFromData() {
 
   // AI coach button visibility
   if (typeof updateSectionCoachButtonVisibility === 'function') updateSectionCoachButtonVisibility();
+
+  // Systems Lens — populate text areas and apply toggle state
+  populateSystemsLensFromData();
 }
 
 function newProject() {
-  if (currentProjectId) saveCurrentProject();
+  try { if (currentProjectId) saveCurrentProject(); } catch(e) { console.warn('newProject: saveCurrentProject failed', e); }
   // Show classification modal
   selectedProblemType = null;
   document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
@@ -7138,12 +7588,10 @@ function confirmClassification() {
   const list = getProjectList();
 
   if (selectedProblemType === 'type1-4c') {
-    // Create 4C project
     a3Data = createBlank4C();
     a3Data.title = title;
     list.unshift({ id, name: title, created: new Date().toISOString(), updated: new Date().toISOString(), projectType: '4c' });
   } else {
-    // Create A3 project (Type 2 or Type 3)
     a3Data = createBlankA3();
     a3Data.title = title;
     a3Data.metadata.problemType = selectedProblemType;
@@ -7151,17 +7599,15 @@ function confirmClassification() {
   }
 
   saveProjectList(list);
-  currentProjectId = id;
-  saveCurrentProject();
-  populateUIFromData();
-  renderProjectSelect();
-  applyProjectType();
+  // Write the project data to storage before calling loadProject,
+  // so getProjectData(id) finds it and a3Data.projectType is preserved intact
+  saveProjectData(id, a3Data);
+  try { localStorage.setItem('gemba_a3_last_project', id); } catch(e) {}
 
-  if (selectedProblemType === 'type1-4c') {
-    switchTab('4c');
-  } else {
-    switchTab('plan');
-  }
+  // loadProject is the single canonical path: handles compat guards,
+  // populateUIFromData, applyProjectType, renderProjectSelect in the right order
+  currentProjectId = id;
+  loadProject(id);
 }
 
 // ═══════════════════════════════════════
@@ -7183,9 +7629,18 @@ function applyProjectType() {
     tabBtns[3].style.display = is4C ? '' : 'none';
   }
 
+  // Systems Lens bar is irrelevant for 4C projects — hide it
+  const slBar = document.getElementById('systemsLensBar');
+  if (slBar) slBar.style.display = is4C ? 'none' : '';
+
   if (is4C) {
     switchTab('4c');
   } else {
+    // Ensure panel-4c is hidden and the Plan tab is shown for all A3 project types.
+    // switchTab hides all panels before activating the target — this is the definitive
+    // guard against panel-4c bleeding through when switching from a 4C project to a
+    // Type 2 or Type 3 A3 via loadProject (which does not independently call switchTab).
+    switchTab('plan');
     // Apply adaptive framing for Type 2 vs Type 3
     applyAdaptiveFraming();
   }
@@ -7388,44 +7843,6 @@ function render4CPhotos(cKey) {
   ).join('');
 }
 
-function escalate4CtoA3() {
-  showConfirmModal('⬆️ Escalate to A3', 'Convert this 4C to a Type 2 A3?\n\nThe 4C data will be carried into the Problem Statement and Current State sections of a new A3. The original 4C record will be kept.', 'Escalate', function() {
-    const fourCData = a3Data.fourC;
-    const title = a3Data.title;
-
-    // Create new A3 project
-    const id = generateProjectId();
-    const newA3 = createBlankA3();
-    newA3.title = title + ' — Escalated to A3';
-    newA3.metadata.problemType = 'type2-gap';
-
-    // Carry 4C data into sections
-    newA3.sections.problemStatement.content = fourCData.concern.text || '';
-    newA3.sections.currentState.content =
-      (fourCData.cause.text ? 'Direct cause identified in 4C: ' + fourCData.cause.text + '\n\n' : '') +
-      (fourCData.countermeasure.text ? 'Temporary countermeasure applied: ' + fourCData.countermeasure.text + '\n\n' : '') +
-      (fourCData.check.text ? 'Check outcome: ' + fourCData.check.text : '');
-
-    // Carry photos
-    ['concern', 'cause', 'countermeasure', 'check'].forEach(c => {
-      if (fourCData[c].photos) {
-        fourCData[c].photos.forEach(p => {
-          newA3.sections.problemStatement.photos.push(p);
-        });
-      }
-    });
-
-    const list = getProjectList();
-    list.unshift({ id, name: newA3.title, created: new Date().toISOString(), updated: new Date().toISOString(), projectType: 'a3' });
-    saveProjectList(list);
-    saveProjectData(id, newA3);
-
-    // Switch to the new A3
-    loadProject(id);
-    showInfoModal('✅ Escalated', '4C escalated to Type 2 A3. The original 4C record has been kept.');
-  });
-}
-
 function renameProject() {
   if (!currentProjectId) return;
   const list = getProjectList();
@@ -7547,6 +7964,112 @@ if ('serviceWorker' in navigator) {
       .then(reg => console.log('SW registered:', reg.scope))
       .catch(err => console.log('SW registration failed:', err));
   });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// SYSTEMS LENS — EBC four-perspectives coaching layer (v2.0)
+// ═══════════════════════════════════════════════════════════════════
+
+// ── Toggle the global Systems Lens on/off ─────────────────────────
+function toggleSystemsLens() {
+  a3Data.systemsLensEnabled = !a3Data.systemsLensEnabled;
+  applySystemsLensState();
+  saveToLocal();
+}
+
+// ── Apply current systemsLensEnabled state to DOM ─────────────────
+function applySystemsLensState() {
+  const enabled = !!(a3Data.systemsLensEnabled);
+  const btn = document.getElementById('systemsLensToggleBtn');
+  const txt = document.getElementById('systemsLensToggleTxt');
+  if (btn) {
+    btn.classList.toggle('active', enabled);
+  }
+  if (txt) {
+    txt.textContent = enabled ? 'On' : 'Off';
+  }
+  // Show/hide all section panels
+  SL_SECTIONS.forEach(secKey => {
+    const panel = document.getElementById('slPanel-' + secKey);
+    if (!panel) return;
+    panel.classList.toggle('sl-visible', enabled);
+  });
+}
+
+// ── Toggle a single panel's open/closed state ─────────────────────
+function toggleSlPanel(secKey) {
+  const slData = getSlSectionData(secKey);
+  slData.panelOpen = !slData.panelOpen;
+  applySlPanelState(secKey, slData.panelOpen);
+  saveToLocal();
+}
+
+// ── Apply a panel's open/closed state to the DOM ──────────────────
+function applySlPanelState(secKey, isOpen) {
+  const panel = document.getElementById('slPanel-' + secKey);
+  if (!panel) return;
+  panel.classList.toggle('sl-open', isOpen);
+}
+
+// ── Save a perspective note into a3Data ───────────────────────────
+function saveSlNote(secKey, perspective, value) {
+  const slData = getSlSectionData(secKey);
+  slData[perspective] = value;
+  saveToLocal();
+}
+
+// ── Get (or create) the sl data object for a section ──────────────
+function getSlSectionData(secKey) {
+  if (!a3Data.systemsLens) a3Data.systemsLens = {};
+  if (!a3Data.systemsLens[secKey]) {
+    a3Data.systemsLens[secKey] = createBlankSlSection();
+  }
+  return a3Data.systemsLens[secKey];
+}
+
+// ── Populate Systems Lens textarea values from a3Data ─────────────
+function populateSystemsLensFromData() {
+  const enabled = !!(a3Data.systemsLensEnabled);
+  const slData = a3Data.systemsLens || {};
+  SL_SECTIONS.forEach(secKey => {
+    const sec = slData[secKey] || createBlankSlSection();
+    ['people', 'systems', 'design', 'risk'].forEach(p => {
+      const el = document.getElementById('sl-' + secKey + '-' + p);
+      if (el) el.value = sec[p] || '';
+    });
+    applySlPanelState(secKey, !!(sec.panelOpen));
+  });
+  applySystemsLensState();
+}
+
+// ── Serialise Systems Lens data for the AI coach prompt ───────────
+function _serialiseSystemsLens() {
+  if (!a3Data.systemsLensEnabled) return '';
+  const slData = a3Data.systemsLens || {};
+  const perspLabels = { people: 'People', systems: 'Systems', design: 'Design', risk: 'Risk' };
+  const sectionLabels = {
+    problemStatement: 'Problem Statement',
+    currentState: 'Current State',
+    goal: 'Goal / Target',
+    rootCauseAnalysis: 'Root Cause Analysis',
+    futureState: 'Future State / Countermeasures',
+    nextSteps: 'Next Steps'
+  };
+  let out = '';
+  let hasContent = false;
+  SL_SECTIONS.forEach(secKey => {
+    const sec = slData[secKey] || {};
+    const perspectives = ['people', 'systems', 'design', 'risk'];
+    const filledPersp = perspectives.filter(p => (sec[p] || '').trim().length > 0);
+    if (filledPersp.length === 0) return;
+    hasContent = true;
+    out += `\n### ${sectionLabels[secKey]}\n`;
+    filledPersp.forEach(p => {
+      out += `- ${perspLabels[p]}: ${sec[p].trim()}\n`;
+    });
+  });
+  if (!hasContent) return '';
+  return `\n## Systems Lens Notes\n${out}`;
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -8008,7 +8531,29 @@ function generateA3CoachPrompt(opts) {
     if (memoBlock) parts.push(memoBlock);
   }
 
-  // 11. Photo reference
+  // 10. Pre-gate memo block (whole-A3 only)
+  if (type === 'whole') {
+    const memoBlock = _memoBlock();
+    if (memoBlock) parts.push(memoBlock);
+  }
+
+  // 11. Systems Lens notes (if enabled and populated)
+  if (type === 'whole') {
+    const slBlock = _serialiseSystemsLens();
+    if (slBlock) parts.push(`SYSTEMS LENS NOTES (EBC four perspectives — user's reflections):${slBlock}`);
+  } else if (type === 'section' && SL_SECTIONS.includes(sectionKey)) {
+    // Per-section: include just that section's SL notes if any
+    const slData = (a3Data.systemsLens || {})[sectionKey] || {};
+    const perspLabels = { people: 'People', systems: 'Systems', design: 'Design', risk: 'Risk' };
+    const filled = ['people','systems','design','risk'].filter(p => (slData[p] || '').trim().length > 0);
+    if (filled.length > 0 && a3Data.systemsLensEnabled) {
+      let slBlock = 'SYSTEMS LENS NOTES for this section (EBC four perspectives):\n';
+      filled.forEach(p => { slBlock += `- ${perspLabels[p]}: ${slData[p].trim()}\n`; });
+      parts.push(slBlock);
+    }
+  }
+
+  // 12. Photo reference
   if (selectedPhoto) {
     const label = selectedPhoto.sectionLabel || 'the A3';
     parts.push(`[PHOTO ATTACHED: From ${label}. Ask the user to describe what it shows and what drew their attention to it.]`);
@@ -8282,11 +8827,7 @@ function updateSectionCoachButtonVisibility() {
 }
 
 // ── Hook visibility update into save cycle ────────────────────────
-const _origSaveToLocal = saveToLocal;
-function saveToLocal() {
-  _origSaveToLocal();
-  updateSectionCoachButtonVisibility();
-}
+// Coach button visibility now integrated into saveToLocal directly
 
 // ── Initialise on load ────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
