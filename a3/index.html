@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--
   ╔══════════════════════════════════════════════════════════════════╗
-  ║  Gemba A3 — Structured Problem Solving Tool  v2.2             ║
+  ║  Gemba A3 — Structured Problem Solving Tool  v2.3             ║
   ║  Part of the Gemba Suite (gembasuite.org)                      ║
   ║                                                                ║
   ║  Created by David Clark                                        ║
@@ -38,7 +38,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Gemba A3 v2.2 — Structured Problem Solving</title>
+<title>Gemba A3 v2.3 — Structured Problem Solving</title>
 
 <!-- PWA Meta Tags -->
 <link rel="manifest" href="/a3/manifest.json">
@@ -1481,7 +1481,7 @@ textarea { resize: vertical; min-height: 80px; }
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
     Gemba A3
     <span class="jp">問題解決</span>
-    <span style="font-size:10px;opacity:0.4;font-weight:400;margin-left:8px">v2.2</span>
+    <span style="font-size:10px;opacity:0.4;font-weight:400;margin-left:8px">v2.3</span>
     <span style="font-size:10px;opacity:0.35;font-weight:400;margin-left:8px">— David Clark</span>
     <span class="about-link" onclick="showAboutModal()">About & Licence</span>
   </h1>
@@ -2174,12 +2174,13 @@ textarea { resize: vertical; min-height: 80px; }
           <div class="memo-review-note">These thoughts were jotted while the right side was locked. Review them as you work on this section.</div>
           <div class="memo-list" id="memoReviewList-resultsMeasures"></div>
         </div>
-        <div class="form-group">
-          <label>Results Summary</label>
-          <textarea id="content-resultsMeasures" placeholder="What happened? How do you know whether you achieved your goal? Include before/after data." rows="4" oninput="onSectionInput('resultsMeasures')"></textarea>
-          <div class="char-guide" id="charguide-resultsMeasures"></div>
-        </div>
-        <div class="form-row">
+        <!-- Panel grid (text, image, table) -->
+        <div class="panel-grid-container" id="panelGrid-resultsMeasures"></div>
+        <button class="add-panel-btn" onclick="openPanelTypePicker('resultsMeasures')">
+          ＋ Add Panel <span style="font-size:10px;opacity:0.6;">text · image · table</span>
+        </button>
+        <!-- Structured before/after and goal fields remain below the panel grid -->
+        <div class="form-row" style="margin-top:12px;">
           <div class="form-group">
             <label>Before (Baseline Data)</label>
             <textarea id="beforeData" placeholder="What was the measure before countermeasures? e.g. 5% error rate, 45min average wait" rows="3" style="min-height:60px;font-size:12px;" oninput="saveToLocal()"></textarea>
@@ -2201,12 +2202,6 @@ textarea { resize: vertical; min-height: 80px; }
           <button class="btn btn-outline btn-small" onclick="importEvidence('resultsMeasures')">📥 Import from Gemba app</button>
         </div>
         <div id="imports-resultsMeasures"></div>
-        <div class="form-group">
-          <label>Photos</label>
-          <div class="photo-drop" onclick="triggerPhotoUpload('resultsMeasures')">📷 Before/after photos</div>
-          <div class="photo-thumbs" id="photos-resultsMeasures"></div>
-          <input type="file" accept="image/*" style="display:none" id="photoInput-resultsMeasures" onchange="handlePhotoUpload(event, 'resultsMeasures')">
-        </div>
         <details class="checkpoint-panel">
           <summary>Checkpoint Questions</summary>
           <div class="checkpoint-questions">
@@ -2261,12 +2256,13 @@ textarea { resize: vertical; min-height: 80px; }
           <div class="memo-review-note">These thoughts were jotted while the right side was locked. Review them as you work on this section.</div>
           <div class="memo-list" id="memoReviewList-nextSteps"></div>
         </div>
-        <div class="form-group">
-          <label>Next Steps</label>
-          <textarea id="content-nextSteps" placeholder="What remains? Are there follow-up actions, handovers, or new A3s needed? Every new future state is a new current state." rows="4" oninput="onSectionInput('nextSteps')"></textarea>
-          <div class="char-guide" id="charguide-nextSteps"></div>
-        </div>
-        <div class="form-row">
+        <!-- Panel grid (text, image) -->
+        <div class="panel-grid-container" id="panelGrid-nextSteps"></div>
+        <button class="add-panel-btn" onclick="openPanelTypePicker('nextSteps')">
+          ＋ Add Panel <span style="font-size:10px;opacity:0.6;">text · image</span>
+        </button>
+        <!-- Structured follow-up fields remain below the panel grid -->
+        <div class="form-row" style="margin-top:12px;">
           <div class="form-group">
             <label>Handover To</label>
             <input type="text" id="handoverTo" placeholder="Who takes ownership next?" oninput="saveToLocal()">
@@ -2482,6 +2478,11 @@ textarea { resize: vertical; min-height: 80px; }
     </div>
   </div>
 
+  <div class="fourc-escalate">
+    <strong>⚠ Recurring problem?</strong> If this issue keeps happening, it should be escalated to a Type 2 (Gap-from-Standard) A3 for deeper root cause analysis.
+    <br>
+    <button class="btn btn-small btn-primary" onclick="escalate4CtoA3()" style="margin-top:8px;">🔄 Convert to A3 — Escalate to Type 2</button>
+  </div>
 
 </div>
 
@@ -2544,7 +2545,7 @@ textarea { resize: vertical; min-height: 80px; }
 <!-- ═══════════ ABOUT & LICENCE MODAL ═══════════ -->
 <div class="modal-overlay" id="aboutModal">
   <div class="modal licence-modal">
-    <h2>Gemba A3 v2.2</h2>
+    <h2>Gemba A3 v2.3</h2>
     <span class="licence-badge">CC BY-NC-SA 4.0</span>
 
     <p>Structured A3 problem solving for healthcare teams.</p>
@@ -3262,6 +3263,17 @@ textarea { resize: vertical; min-height: 80px; }
   color: var(--status-locked);
   margin-top: 4px;
 }
+.fourc-escalate {
+  background: var(--accent-warm-bg);
+  border: 1px solid var(--grid);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--accent-warm);
+  margin-top: 12px;
+}
+.fourc-escalate strong { color: var(--status-error); }
+
 /* ── Countermeasures list ── */
 .cm-item {
   background: white;
@@ -3785,8 +3797,10 @@ function createBlankA3() {
   sections.wasteIdentified.downtimeCategories = {};
   DOWNTIME.forEach(d => { sections.wasteIdentified.downtimeCategories[d.key] = { observed: false, evidence: '' }; });
   sections.wasteIdentified.paretoData = [];
-  sections.currentState.panels = [];   // configurable panel grid (Item 5)
-  sections.futureState.panels = [];    // configurable panel grid (Item 5)
+  sections.currentState.panels = [];      // configurable panel grid
+  sections.futureState.panels = [];       // configurable panel grid
+  sections.resultsMeasures.panels = [];   // configurable panel grid
+  sections.nextSteps.panels = [];         // configurable panel grid
   sections.rootCauseAnalysis.rootCauseValidation = '';
   sections.futureState.countermeasures = [];
   sections.actionPlan.actions = [];
@@ -4149,7 +4163,7 @@ function updateSectionPreview(sectionKey) {
   const el = document.getElementById('preview-' + sectionKey);
   if (!el) return;
   // Panel sections: derive preview from first text panel
-  const PANEL_SECTIONS = ['currentState', 'futureState'];
+  const PANEL_SECTIONS = ['currentState', 'futureState', 'resultsMeasures', 'nextSteps'];
   if (PANEL_SECTIONS.includes(sectionKey)) {
     const panels = a3Data.sections[sectionKey].panels || [];
     const firstText = panels.find(p => p.type === 'text' && p.content && p.content.trim());
@@ -4459,8 +4473,10 @@ function updateDowntimeEvidence(key, value) {
 
 // Panel types available per section
 const PANEL_TYPES = {
-  currentState:  ['text', 'image', 'table', 'pareto'],
-  futureState:   ['text', 'image']
+  currentState:    ['text', 'image', 'table', 'pareto'],
+  futureState:     ['text', 'image'],
+  resultsMeasures: ['text', 'image', 'table'],
+  nextSteps:       ['text', 'image']
 };
 
 const PANEL_TYPE_META = {
@@ -4514,9 +4530,13 @@ function openPanelTypePicker(sectionKey) {
   _pickerTargetSection = sectionKey;
   _pickerSelectedType = null;
   const types = PANEL_TYPES[sectionKey] || ['text', 'image'];
-  const hint = sectionKey === 'currentState'
-    ? 'Current State — choose what to add'
-    : 'Future State — choose what to add';
+  const SECTION_HINT_LABELS = {
+    currentState:    'Current State',
+    futureState:     'Future State / Countermeasures',
+    resultsMeasures: 'Results & Measures',
+    nextSteps:       'Next Steps'
+  };
+  const hint = (SECTION_HINT_LABELS[sectionKey] || 'Section') + ' — choose what to add';
   document.getElementById('panelPickerHint').textContent = hint;
   document.getElementById('panelTypeOptions').innerHTML = types.map(t => {
     const m = PANEL_TYPE_META[t];
@@ -6317,7 +6337,7 @@ function buildAppendixDocx(includePhotos) {
     meta_p(`Parent A3 ID: ${clean(meta.parentA3Id)}`);
   }
   blank();
-  p('This document is the full evidence record for the above A3. The single-page printed A3 necessarily truncates content; this record contains everything captured in the tool including revision history, memos, nemawashi log, and standardisation checklist. Generated by Gemba-A3 v2.2 — gembasuite.org. CC BY-NC-SA 4.0.');
+  p('This document is the full evidence record for the above A3. The single-page printed A3 necessarily truncates content; this record contains everything captured in the tool including revision history, memos, nemawashi log, and standardisation checklist. Generated by Gemba-A3 v2.3 — gembasuite.org. CC BY-NC-SA 4.0.');
   blank();
 
   // ── SECTIONS ──
@@ -6493,7 +6513,7 @@ function buildAppendixDocx(includePhotos) {
 
   // ── FOOTER ──
   h1('Document Information');
-  meta_p(`Generated by: Gemba-A3 v2.2 — gembasuite.org`);
+  meta_p(`Generated by: Gemba-A3 v2.3 — gembasuite.org`);
   meta_p(`Licence: CC BY-NC-SA 4.0`);
   meta_p(`Export date: ${exportDate}`);
   if (!includePhotos) {
@@ -6892,7 +6912,7 @@ function buildPrintContainer(format) {
   const gaLbl = { yes:'\u2713 Goal Achieved', partial:'\u26A0 Partially Achieved', no:'\u2717 Goal Not Achieved' };
   const goalHtml = s.resultsMeasures.goalAchieved
     ? `<span class="${gaCls[s.resultsMeasures.goalAchieved]||''}">${gaLbl[s.resultsMeasures.goalAchieved]||''}</span>` : '';
-  const s8Html = `<p>${esc(trunc(s.resultsMeasures.content, CHAR_LIMITS.resultsMeasures))}</p>` +
+  const s8Html = renderPanels(s.resultsMeasures.panels) +
     ((s.resultsMeasures.beforeData || s.resultsMeasures.afterData) ?
       `<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:2px;font-size:7px;">
         <div><strong>Before:</strong> ${esc(trunc(s.resultsMeasures.beforeData,80))}</div>
@@ -6903,7 +6923,7 @@ function buildPrintContainer(format) {
   const stdIt = s.nextSteps.standardisationItems || [];
   const showStd = (s.resultsMeasures.goalAchieved==='yes'||s.resultsMeasures.goalAchieved==='partial') && stdIt.length>0;
   const ragDot = (r) => { const c={green:'#43a047',amber:'#ffa726',red:'#e53935',none:'#d7dbda'}; return `<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${c[r||'none']};"></span>`; };
-  const s9Html = `<p>${esc(trunc(s.nextSteps.content, CHAR_LIMITS.nextSteps))}</p>` +
+  const s9Html = renderPanels(s.nextSteps.panels) +
     (s.nextSteps.handoverTo ? `<p style="font-size:7px;color:var(--ink-tertiary);">Handover: ${esc(s.nextSteps.handoverTo)}</p>` : '') +
     (s.nextSteps.followUpDate ? `<p style="font-size:7px;color:var(--ink-tertiary);">Follow-up: ${s.nextSteps.followUpDate}</p>` : '') +
     (s.nextSteps.newA3Required ? `<p style="font-size:7px;color:var(--status-error);font-weight:600;">\u2192 New A3 required</p>` : '') +
@@ -7505,8 +7525,12 @@ function populateUIFromData() {
   // Panel grids — migrate legacy data then render (Item 5)
   migratePanels('currentState');
   migratePanels('futureState');
+  migratePanels('resultsMeasures');
+  migratePanels('nextSteps');
   renderPanelGrid('currentState');
   renderPanelGrid('futureState');
+  renderPanelGrid('resultsMeasures');
+  renderPanelGrid('nextSteps');
 
   // Pareto data
   renderParetoRows();
@@ -7636,11 +7660,6 @@ function applyProjectType() {
   if (is4C) {
     switchTab('4c');
   } else {
-    // Ensure panel-4c is hidden and the Plan tab is shown for all A3 project types.
-    // switchTab hides all panels before activating the target — this is the definitive
-    // guard against panel-4c bleeding through when switching from a 4C project to a
-    // Type 2 or Type 3 A3 via loadProject (which does not independently call switchTab).
-    switchTab('plan');
     // Apply adaptive framing for Type 2 vs Type 3
     applyAdaptiveFraming();
   }
@@ -7841,6 +7860,44 @@ function render4CPhotos(cKey) {
   container.innerHTML = photos.map(p =>
     `<img src="${p.data}" style="width:52px;height:52px;object-fit:cover;border-radius:4px;border:1px solid var(--grid);" title="${formatDateTime(p.takenAt)}">`
   ).join('');
+}
+
+function escalate4CtoA3() {
+  showConfirmModal('⬆️ Escalate to A3', 'Convert this 4C to a Type 2 A3?\n\nThe 4C data will be carried into the Problem Statement and Current State sections of a new A3. The original 4C record will be kept.', 'Escalate', function() {
+    const fourCData = a3Data.fourC;
+    const title = a3Data.title;
+
+    // Create new A3 project
+    const id = generateProjectId();
+    const newA3 = createBlankA3();
+    newA3.title = title + ' — Escalated to A3';
+    newA3.metadata.problemType = 'type2-gap';
+
+    // Carry 4C data into sections
+    newA3.sections.problemStatement.content = fourCData.concern.text || '';
+    newA3.sections.currentState.content =
+      (fourCData.cause.text ? 'Direct cause identified in 4C: ' + fourCData.cause.text + '\n\n' : '') +
+      (fourCData.countermeasure.text ? 'Temporary countermeasure applied: ' + fourCData.countermeasure.text + '\n\n' : '') +
+      (fourCData.check.text ? 'Check outcome: ' + fourCData.check.text : '');
+
+    // Carry photos
+    ['concern', 'cause', 'countermeasure', 'check'].forEach(c => {
+      if (fourCData[c].photos) {
+        fourCData[c].photos.forEach(p => {
+          newA3.sections.problemStatement.photos.push(p);
+        });
+      }
+    });
+
+    const list = getProjectList();
+    list.unshift({ id, name: newA3.title, created: new Date().toISOString(), updated: new Date().toISOString(), projectType: 'a3' });
+    saveProjectList(list);
+    saveProjectData(id, newA3);
+
+    // Switch to the new A3
+    loadProject(id);
+    showInfoModal('✅ Escalated', '4C escalated to Type 2 A3. The original 4C record has been kept.');
+  });
 }
 
 function renameProject() {
@@ -8295,6 +8352,14 @@ function _serialiseSection(key) {
   }
 
   if (key === 'resultsMeasures') {
+    const panels = (sec.panels || []);
+    if (panels.length > 0) {
+      panels.forEach(p => {
+        if (p.type === 'text' && (p.content || '').trim()) out += `[Panel — Text]: ${p.content.trim()}\n`;
+        else if (p.type === 'image' && p.imageData) out += `[Panel — Image attached]\n`;
+        else if (p.type === 'table' && p.tableData && p.tableData.headers.length > 0) out += `[Panel — Data Table: ${p.tableData.headers.join(' | ')}]\n`;
+      });
+    }
     if ((sec.beforeData || '').trim()) out += `\nBefore data: ${sec.beforeData.trim()}\n`;
     if ((sec.afterData || '').trim()) out += `After data: ${sec.afterData.trim()}\n`;
     if (sec.goalAchieved !== null && sec.goalAchieved !== undefined) {
@@ -8303,6 +8368,13 @@ function _serialiseSection(key) {
   }
 
   if (key === 'nextSteps') {
+    const panels = (sec.panels || []);
+    if (panels.length > 0) {
+      panels.forEach(p => {
+        if (p.type === 'text' && (p.content || '').trim()) out += `[Panel — Text]: ${p.content.trim()}\n`;
+        else if (p.type === 'image' && p.imageData) out += `[Panel — Image attached]\n`;
+      });
+    }
     const items = sec.standardisationItems || [];
     const doneCount = items.filter(i => i.done).length;
     if (items.length > 0) out += `\nStandardisation: ${doneCount} complete / ${items.length} total\n`;
