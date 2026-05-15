@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--
   ╔══════════════════════════════════════════════════════════════════╗
-  ║  Gemba A3 — Structured Problem Solving Tool  v2.3             ║
+  ║  Gemba A3 — Structured Problem Solving Tool  v2.4             ║
   ║  Part of the Gemba Suite (gembasuite.org)                      ║
   ║                                                                ║
   ║  Created by David Clark                                        ║
@@ -38,7 +38,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Gemba A3 v2.3 — Structured Problem Solving</title>
+<title>Gemba A3 v2.4 — Structured Problem Solving</title>
 
 <!-- PWA Meta Tags -->
 <link rel="manifest" href="/a3/manifest.json">
@@ -1233,6 +1233,8 @@ textarea { resize: vertical; min-height: 80px; }
     color: #222;
     page-break-after: always;
     break-after: page;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
   .a3-page:last-child { page-break-after: avoid; break-after: avoid; }
   .a3p-sec { border: 1px solid #1a1a2e; margin-bottom: 5px; padding: 5px 7px; }
@@ -1481,7 +1483,7 @@ textarea { resize: vertical; min-height: 80px; }
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
     Gemba A3
     <span class="jp">問題解決</span>
-    <span style="font-size:10px;opacity:0.4;font-weight:400;margin-left:8px">v2.3</span>
+    <span style="font-size:10px;opacity:0.4;font-weight:400;margin-left:8px">v2.4</span>
     <span style="font-size:10px;opacity:0.35;font-weight:400;margin-left:8px">— David Clark</span>
     <span class="about-link" onclick="showAboutModal()">About & Licence</span>
   </h1>
@@ -2174,13 +2176,12 @@ textarea { resize: vertical; min-height: 80px; }
           <div class="memo-review-note">These thoughts were jotted while the right side was locked. Review them as you work on this section.</div>
           <div class="memo-list" id="memoReviewList-resultsMeasures"></div>
         </div>
-        <!-- Panel grid (text, image, table) -->
-        <div class="panel-grid-container" id="panelGrid-resultsMeasures"></div>
-        <button class="add-panel-btn" onclick="openPanelTypePicker('resultsMeasures')">
-          ＋ Add Panel <span style="font-size:10px;opacity:0.6;">text · image · table</span>
-        </button>
-        <!-- Structured before/after and goal fields remain below the panel grid -->
-        <div class="form-row" style="margin-top:12px;">
+        <div class="form-group">
+          <label>Results Summary</label>
+          <textarea id="content-resultsMeasures" placeholder="What happened? How do you know whether you achieved your goal? Include before/after data." rows="4" oninput="onSectionInput('resultsMeasures')"></textarea>
+          <div class="char-guide" id="charguide-resultsMeasures"></div>
+        </div>
+        <div class="form-row">
           <div class="form-group">
             <label>Before (Baseline Data)</label>
             <textarea id="beforeData" placeholder="What was the measure before countermeasures? e.g. 5% error rate, 45min average wait" rows="3" style="min-height:60px;font-size:12px;" oninput="saveToLocal()"></textarea>
@@ -2202,6 +2203,12 @@ textarea { resize: vertical; min-height: 80px; }
           <button class="btn btn-outline btn-small" onclick="importEvidence('resultsMeasures')">📥 Import from Gemba app</button>
         </div>
         <div id="imports-resultsMeasures"></div>
+        <div class="form-group">
+          <label>Photos</label>
+          <div class="photo-drop" onclick="triggerPhotoUpload('resultsMeasures')">📷 Before/after photos</div>
+          <div class="photo-thumbs" id="photos-resultsMeasures"></div>
+          <input type="file" accept="image/*" style="display:none" id="photoInput-resultsMeasures" onchange="handlePhotoUpload(event, 'resultsMeasures')">
+        </div>
         <details class="checkpoint-panel">
           <summary>Checkpoint Questions</summary>
           <div class="checkpoint-questions">
@@ -2256,13 +2263,12 @@ textarea { resize: vertical; min-height: 80px; }
           <div class="memo-review-note">These thoughts were jotted while the right side was locked. Review them as you work on this section.</div>
           <div class="memo-list" id="memoReviewList-nextSteps"></div>
         </div>
-        <!-- Panel grid (text, image) -->
-        <div class="panel-grid-container" id="panelGrid-nextSteps"></div>
-        <button class="add-panel-btn" onclick="openPanelTypePicker('nextSteps')">
-          ＋ Add Panel <span style="font-size:10px;opacity:0.6;">text · image</span>
-        </button>
-        <!-- Structured follow-up fields remain below the panel grid -->
-        <div class="form-row" style="margin-top:12px;">
+        <div class="form-group">
+          <label>Next Steps</label>
+          <textarea id="content-nextSteps" placeholder="What remains? Are there follow-up actions, handovers, or new A3s needed? Every new future state is a new current state." rows="4" oninput="onSectionInput('nextSteps')"></textarea>
+          <div class="char-guide" id="charguide-nextSteps"></div>
+        </div>
+        <div class="form-row">
           <div class="form-group">
             <label>Handover To</label>
             <input type="text" id="handoverTo" placeholder="Who takes ownership next?" oninput="saveToLocal()">
@@ -2545,7 +2551,7 @@ textarea { resize: vertical; min-height: 80px; }
 <!-- ═══════════ ABOUT & LICENCE MODAL ═══════════ -->
 <div class="modal-overlay" id="aboutModal">
   <div class="modal licence-modal">
-    <h2>Gemba A3 v2.3</h2>
+    <h2>Gemba A3 v2.4</h2>
     <span class="licence-badge">CC BY-NC-SA 4.0</span>
 
     <p>Structured A3 problem solving for healthcare teams.</p>
@@ -3797,10 +3803,8 @@ function createBlankA3() {
   sections.wasteIdentified.downtimeCategories = {};
   DOWNTIME.forEach(d => { sections.wasteIdentified.downtimeCategories[d.key] = { observed: false, evidence: '' }; });
   sections.wasteIdentified.paretoData = [];
-  sections.currentState.panels = [];      // configurable panel grid
-  sections.futureState.panels = [];       // configurable panel grid
-  sections.resultsMeasures.panels = [];   // configurable panel grid
-  sections.nextSteps.panels = [];         // configurable panel grid
+  sections.currentState.panels = [];   // configurable panel grid (Item 5)
+  sections.futureState.panels = [];    // configurable panel grid (Item 5)
   sections.rootCauseAnalysis.rootCauseValidation = '';
   sections.futureState.countermeasures = [];
   sections.actionPlan.actions = [];
@@ -4163,7 +4167,7 @@ function updateSectionPreview(sectionKey) {
   const el = document.getElementById('preview-' + sectionKey);
   if (!el) return;
   // Panel sections: derive preview from first text panel
-  const PANEL_SECTIONS = ['currentState', 'futureState', 'resultsMeasures', 'nextSteps'];
+  const PANEL_SECTIONS = ['currentState', 'futureState'];
   if (PANEL_SECTIONS.includes(sectionKey)) {
     const panels = a3Data.sections[sectionKey].panels || [];
     const firstText = panels.find(p => p.type === 'text' && p.content && p.content.trim());
@@ -4473,10 +4477,8 @@ function updateDowntimeEvidence(key, value) {
 
 // Panel types available per section
 const PANEL_TYPES = {
-  currentState:    ['text', 'image', 'table', 'pareto'],
-  futureState:     ['text', 'image'],
-  resultsMeasures: ['text', 'image', 'table'],
-  nextSteps:       ['text', 'image']
+  currentState:  ['text', 'image', 'table', 'pareto'],
+  futureState:   ['text', 'image']
 };
 
 const PANEL_TYPE_META = {
@@ -4530,13 +4532,9 @@ function openPanelTypePicker(sectionKey) {
   _pickerTargetSection = sectionKey;
   _pickerSelectedType = null;
   const types = PANEL_TYPES[sectionKey] || ['text', 'image'];
-  const SECTION_HINT_LABELS = {
-    currentState:    'Current State',
-    futureState:     'Future State / Countermeasures',
-    resultsMeasures: 'Results & Measures',
-    nextSteps:       'Next Steps'
-  };
-  const hint = (SECTION_HINT_LABELS[sectionKey] || 'Section') + ' — choose what to add';
+  const hint = sectionKey === 'currentState'
+    ? 'Current State — choose what to add'
+    : 'Future State — choose what to add';
   document.getElementById('panelPickerHint').textContent = hint;
   document.getElementById('panelTypeOptions').innerHTML = types.map(t => {
     const m = PANEL_TYPE_META[t];
@@ -6337,7 +6335,7 @@ function buildAppendixDocx(includePhotos) {
     meta_p(`Parent A3 ID: ${clean(meta.parentA3Id)}`);
   }
   blank();
-  p('This document is the full evidence record for the above A3. The single-page printed A3 necessarily truncates content; this record contains everything captured in the tool including revision history, memos, nemawashi log, and standardisation checklist. Generated by Gemba-A3 v2.3 — gembasuite.org. CC BY-NC-SA 4.0.');
+  p('This document is the full evidence record for the above A3. The single-page printed A3 necessarily truncates content; this record contains everything captured in the tool including revision history, memos, nemawashi log, and standardisation checklist. Generated by Gemba-A3 v2.4 — gembasuite.org. CC BY-NC-SA 4.0.');
   blank();
 
   // ── SECTIONS ──
@@ -6513,7 +6511,7 @@ function buildAppendixDocx(includePhotos) {
 
   // ── FOOTER ──
   h1('Document Information');
-  meta_p(`Generated by: Gemba-A3 v2.3 — gembasuite.org`);
+  meta_p(`Generated by: Gemba-A3 v2.4 — gembasuite.org`);
   meta_p(`Licence: CC BY-NC-SA 4.0`);
   meta_p(`Export date: ${exportDate}`);
   if (!includePhotos) {
@@ -6813,16 +6811,25 @@ function buildPrintContainer(format) {
       let cum=0; const vital=[];
       for (const p of pd) { cum+=p.frequency; vital.push(p.category); if(cum/total>=0.8) break; }
       const maxF = pd[0].frequency;
-      const bars = pd.map(p => {
+      // Use SVG rects — <div> backgrounds are suppressed by Chrome PDF renderer
+      // without print-color-adjust:exact, but SVG fill always renders in PDF.
+      const ROW_H = 9, LABEL_W = 56, BAR_MAX = 62, GAP = 3, VAL_W = 28;
+      const svgW = LABEL_W + GAP + BAR_MAX + GAP + VAL_W;
+      const svgH = pd.length * ROW_H;
+      let cumRun = 0;
+      const rowsSvg = pd.map((p, i) => {
         const isV = vital.includes(p.category);
-        const w = Math.round((p.frequency/maxF)*60);
-        const cumPct = ((pd.slice(0,pd.indexOf(p)+1).reduce((s,x)=>s+x.frequency,0))/total*100).toFixed(0);
-        return `<div style="display:flex;align-items:center;gap:3px;margin-bottom:1px;">` +
-          `<div style="width:55px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:6px;">${esc(p.category)}</div>` +
-          `<div style="width:${w}px;height:6px;background:${isV?'var(--status-error)':'var(--primary)'};border-radius:1px;"></div>` +
-          `<span style="font-size:5.5px;color:var(--ink-tertiary);">${p.frequency} (${cumPct}%)</span></div>`;
+        cumRun += p.frequency;
+        const cumPct = ((cumRun / total) * 100).toFixed(0);
+        const bw = Math.round((p.frequency / maxF) * BAR_MAX);
+        const y = i * ROW_H;
+        const label = p.category.length > 9 ? p.category.substring(0,8)+'\u2026' : p.category;
+        return `<text x="${LABEL_W}" y="${y+7}" text-anchor="end" font-family="sans-serif" font-size="5.5" fill="#333">${esc(label)}</text>` +
+          `<rect x="${LABEL_W+GAP}" y="${y+1}" width="${bw}" height="6" fill="${isV?'#ba1a1a':'#006172'}" rx="1"/>` +
+          `<text x="${LABEL_W+GAP+BAR_MAX+GAP}" y="${y+7}" font-family="sans-serif" font-size="5" fill="#767676">${p.frequency} (${cumPct}%)</text>`;
       }).join('');
-      return `<div>${bars}<div style="font-size:6px;color:var(--status-error);margin-top:2px;">Vital few: ${vital.join(', ')}</div></div>`;
+      return `<svg xmlns="http://www.w3.org/2000/svg" width="${svgW}" height="${svgH}" style="display:block;overflow:visible;">${rowsSvg}</svg>` +
+        `<div style="font-size:6px;color:#ba1a1a;margin-top:2px;">Vital few: ${vital.join(', ')}</div>`;
     }
     return '';
   };
@@ -6870,14 +6877,23 @@ function buildPrintContainer(format) {
     let c4=0; const v4=[];
     for (const p of pd4) { c4+=p.frequency; v4.push(p.category); if(c4/tot4>=0.8) break; }
     const mF4 = pd4[0].frequency;
-    pareto4 = '<div style="margin-top:3px;">' + pd4.map(p => {
+    // Use SVG rects — <div> backgrounds are suppressed by Chrome PDF renderer.
+    const ROW4 = 8, LW4 = 50, BM4 = 55, GP4 = 2, VW4 = 22;
+    const sw4 = LW4 + GP4 + BM4 + GP4 + VW4;
+    const sh4 = pd4.length * ROW4;
+    let cr4 = 0;
+    const rows4 = pd4.map((p, i) => {
       const isV = v4.includes(p.category);
-      const w = Math.round((p.frequency/mF4)*55);
-      return `<div style="display:flex;align-items:center;gap:2px;margin-bottom:1px;font-size:6px;">` +
-        `<div style="width:48px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(p.category)}</div>` +
-        `<div style="width:${w}px;height:5px;background:${isV?'var(--status-error)':'var(--primary)'};border-radius:1px;"></div>` +
-        `<span style="color:var(--ink-tertiary);">${p.frequency}</span></div>`;
-    }).join('') + `<div style="font-size:6px;color:var(--status-error);margin-top:1px;">Vital few: ${v4.join(', ')}</div></div>`;
+      cr4 += p.frequency;
+      const bw = Math.round((p.frequency / mF4) * BM4);
+      const y = i * ROW4;
+      const lbl = p.category.length > 8 ? p.category.substring(0,7)+'\u2026' : p.category;
+      return `<text x="${LW4}" y="${y+6}" text-anchor="end" font-family="sans-serif" font-size="5" fill="#333">${esc(lbl)}</text>` +
+        `<rect x="${LW4+GP4}" y="${y+1}" width="${bw}" height="5" fill="${isV?'#ba1a1a':'#006172'}" rx="1"/>` +
+        `<text x="${LW4+GP4+BM4+GP4}" y="${y+6}" font-family="sans-serif" font-size="5" fill="#767676">${p.frequency}</text>`;
+    }).join('');
+    pareto4 = `<div style="margin-top:3px;"><svg xmlns="http://www.w3.org/2000/svg" width="${sw4}" height="${sh4}" style="display:block;overflow:visible;">${rows4}</svg>` +
+      `<div style="font-size:6px;color:#ba1a1a;margin-top:1px;">Vital few: ${v4.join(', ')}</div></div>`;
   }
   const s4Html = `<p>${esc(trunc(s.wasteIdentified.content, CHAR_LIMITS.wasteIdentified))}</p>` +
     (wasteBadges ? `<div style="margin-top:2px;">${wasteBadges}</div>` : '') + pareto4;
@@ -6912,7 +6928,7 @@ function buildPrintContainer(format) {
   const gaLbl = { yes:'\u2713 Goal Achieved', partial:'\u26A0 Partially Achieved', no:'\u2717 Goal Not Achieved' };
   const goalHtml = s.resultsMeasures.goalAchieved
     ? `<span class="${gaCls[s.resultsMeasures.goalAchieved]||''}">${gaLbl[s.resultsMeasures.goalAchieved]||''}</span>` : '';
-  const s8Html = renderPanels(s.resultsMeasures.panels) +
+  const s8Html = `<p>${esc(trunc(s.resultsMeasures.content, CHAR_LIMITS.resultsMeasures))}</p>` +
     ((s.resultsMeasures.beforeData || s.resultsMeasures.afterData) ?
       `<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:2px;font-size:7px;">
         <div><strong>Before:</strong> ${esc(trunc(s.resultsMeasures.beforeData,80))}</div>
@@ -6923,7 +6939,7 @@ function buildPrintContainer(format) {
   const stdIt = s.nextSteps.standardisationItems || [];
   const showStd = (s.resultsMeasures.goalAchieved==='yes'||s.resultsMeasures.goalAchieved==='partial') && stdIt.length>0;
   const ragDot = (r) => { const c={green:'#43a047',amber:'#ffa726',red:'#e53935',none:'#d7dbda'}; return `<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${c[r||'none']};"></span>`; };
-  const s9Html = renderPanels(s.nextSteps.panels) +
+  const s9Html = `<p>${esc(trunc(s.nextSteps.content, CHAR_LIMITS.nextSteps))}</p>` +
     (s.nextSteps.handoverTo ? `<p style="font-size:7px;color:var(--ink-tertiary);">Handover: ${esc(s.nextSteps.handoverTo)}</p>` : '') +
     (s.nextSteps.followUpDate ? `<p style="font-size:7px;color:var(--ink-tertiary);">Follow-up: ${s.nextSteps.followUpDate}</p>` : '') +
     (s.nextSteps.newA3Required ? `<p style="font-size:7px;color:var(--status-error);font-weight:600;">\u2192 New A3 required</p>` : '') +
@@ -7525,12 +7541,8 @@ function populateUIFromData() {
   // Panel grids — migrate legacy data then render (Item 5)
   migratePanels('currentState');
   migratePanels('futureState');
-  migratePanels('resultsMeasures');
-  migratePanels('nextSteps');
   renderPanelGrid('currentState');
   renderPanelGrid('futureState');
-  renderPanelGrid('resultsMeasures');
-  renderPanelGrid('nextSteps');
 
   // Pareto data
   renderParetoRows();
@@ -8352,14 +8364,6 @@ function _serialiseSection(key) {
   }
 
   if (key === 'resultsMeasures') {
-    const panels = (sec.panels || []);
-    if (panels.length > 0) {
-      panels.forEach(p => {
-        if (p.type === 'text' && (p.content || '').trim()) out += `[Panel — Text]: ${p.content.trim()}\n`;
-        else if (p.type === 'image' && p.imageData) out += `[Panel — Image attached]\n`;
-        else if (p.type === 'table' && p.tableData && p.tableData.headers.length > 0) out += `[Panel — Data Table: ${p.tableData.headers.join(' | ')}]\n`;
-      });
-    }
     if ((sec.beforeData || '').trim()) out += `\nBefore data: ${sec.beforeData.trim()}\n`;
     if ((sec.afterData || '').trim()) out += `After data: ${sec.afterData.trim()}\n`;
     if (sec.goalAchieved !== null && sec.goalAchieved !== undefined) {
@@ -8368,13 +8372,6 @@ function _serialiseSection(key) {
   }
 
   if (key === 'nextSteps') {
-    const panels = (sec.panels || []);
-    if (panels.length > 0) {
-      panels.forEach(p => {
-        if (p.type === 'text' && (p.content || '').trim()) out += `[Panel — Text]: ${p.content.trim()}\n`;
-        else if (p.type === 'image' && p.imageData) out += `[Panel — Image attached]\n`;
-      });
-    }
     const items = sec.standardisationItems || [];
     const doneCount = items.filter(i => i.done).length;
     if (items.length > 0) out += `\nStandardisation: ${doneCount} complete / ${items.length} total\n`;
