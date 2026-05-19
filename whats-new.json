@@ -2,21 +2,21 @@
   "items": [
     {
       "app": "Gemba-A3",
-      "version": "v2.4b",
-      "date": "2026-05-16",
-      "summary": "Panel grid extended to sections 8 (Results & Measures) and 9 (Next Steps) \u2014 add half/full-width text, image, and table panels; section 8 includes a dedicated before/after table panel. Pareto charts now render correctly in print-to-PDF including Chrome. 4C panel display bug fixed."
+      "version": "v2.5",
+      "date": "2026-05-19",
+      "summary": "Panel grid extended to sections 8 (Results & Measures) and 9 (Next Steps) — add half/full-width text, image, and table panels; section 8 includes a dedicated before/after table panel. Pareto charts now render correctly in print-to-PDF including Chrome. 4C panel display bug fixed."
     },
     {
       "app": "Gemba-SPC",
       "version": "v1.0",
       "date": "2026-05-11",
-      "summary": "Bug fix: phase limit inheritance corrected \u2014 Phase 2 and later phases now lock with the right limits. All phases show limit lines and labels on chart."
+      "summary": "Bug fix: phase limit inheritance corrected — Phase 2 and later phases now lock with the right limits. All phases show limit lines and labels on chart."
     },
     {
       "app": "Gemba-RCA",
       "version": "v1.4",
       "date": "2026-05-06",
-      "summary": "Therefore Validation \u2014 check the logic of your Why chain by reading it bottom-up; flag logic gaps per pair. Evidence completeness indicator in the export panel. Print / Save as PDF \u2014 generate a one-page governance-ready summary."
+      "summary": "Therefore Validation — check the logic of your Why chain by reading it bottom-up; flag logic gaps per pair. Evidence completeness indicator in the export panel. Print / Save as PDF — generate a one-page governance-ready summary."
     },
     {
       "app": "Gemba-VSM",
@@ -40,7 +40,7 @@
       "app": "All apps",
       "version": "",
       "date": "2026-04-18",
-      "summary": "Disclaimer and governance update across all apps and the licence page \u2014 clarifying medical device status, data storage, and liability."
+      "summary": "Disclaimer and governance update across all apps and the licence page — clarifying medical device status, data storage, and liability."
     }
   ]
 }
