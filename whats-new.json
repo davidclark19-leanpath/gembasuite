@@ -2,9 +2,9 @@
   "items": [
     {
       "app": "Gemba-A3",
-      "version": "v2.5",
+      "version": "v2.5a",
       "date": "2026-05-19",
-      "summary": "Panel grid extended to sections 8 (Results & Measures) and 9 (Next Steps) — add half/full-width text, image, and table panels; section 8 includes a dedicated before/after table panel. Pareto charts now render correctly in print-to-PDF including Chrome. 4C panel display bug fixed."
+      "summary": "Panel grid in sections 8 and 9, before/after table panel in section 8, Pareto PDF fix (Chrome). Bug fix: AI coaching prompt now correctly reports action plan completion status (RAG and PDCA phase) and lists each action individually with owner, due date, RAG, and PDCA phase."
     },
     {
       "app": "Gemba-SPC",
