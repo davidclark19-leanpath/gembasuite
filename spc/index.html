@@ -1,14 +1,15 @@
-<!-- Gemba-SPC v1.0 — Process Behaviour Charts
+<!-- Gemba-SPC v1.1 — Process Behaviour Charts
      Part of the Gemba Suite — gembasuite.org
      © David Clark — CC BY-NC-SA 4.0
-     No patient-identifiable data. Process improvement tool only. -->
+     No patient-identifiable data. Process improvement tool only.
+     v1.1 — System Behaviour Chart upgrade: specification band, capability verdict, interventions (progressive disclosure). -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#181c1c">
-  <title>Gemba-SPC — Process Behaviour Charts</title>
+  <title>Gemba-SPC v1.2 — Process Behaviour Charts</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -123,7 +124,43 @@ svg{display:block}
 .signal-item.amber{background:var(--signal-amber-bg);border-color:#e8cf80;color:var(--signal-amber)}
 .signal-export-btn{margin-left:auto;font-size:11px;background:none;border:1px solid;border-radius:var(--radius-sm);padding:2px 8px;cursor:pointer;font-family:var(--font-body);color:inherit}
 
-/* DATA TABLE */
+/* SE SECTION — Specification & Capability (SBC v1.1) */
+.se-section{background:var(--card);border:1px solid var(--grid-subtle);border-radius:var(--radius-md);box-shadow:var(--shadow-sm);margin-bottom:var(--space-4);overflow:hidden}
+.se-header{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-5);cursor:pointer;min-height:44px;user-select:none;background:var(--surface-low)}
+.se-header:hover{background:var(--surface-high)}
+.se-header-arrow{font-size:12px;color:var(--ink-tertiary);transition:transform 0.15s ease;flex-shrink:0}
+.se-header-arrow.open{transform:rotate(90deg)}
+.se-header-title{font-family:var(--font-display);font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:var(--ink-secondary);flex:1}
+.se-body{padding:var(--space-4) var(--space-5);display:none;flex-direction:column;gap:var(--space-4)}
+.se-body.open{display:flex}
+.se-subtitle{font-size:12px;color:var(--ink-tertiary);margin-bottom:var(--space-2)}
+.se-row{display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap}
+.se-label{font-size:13px;font-weight:600;color:var(--ink);min-width:80px}
+.se-input{border:1px solid var(--grid);border-radius:var(--radius-sm);padding:var(--space-2) var(--space-3);font-size:13px;min-height:44px;background:var(--card);color:var(--ink);flex:1;min-width:100px}
+.se-input:focus{outline:2px solid var(--primary);outline-offset:1px}
+.se-input-wide{flex:2;min-width:160px}
+.se-helper{font-size:11px;color:var(--ink-tertiary);margin-top:2px}
+.se-divider{border:none;border-top:1px solid var(--grid-subtle);margin:0}
+/* Capability verdict badges */
+.se-verdict{display:inline-flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-4);border-radius:var(--radius-full);font-size:13px;font-weight:700}
+.se-verdict.capable{background:var(--status-success-bg);color:var(--status-success)}
+.se-verdict.marginal{background:var(--status-warning-bg);color:var(--status-warning)}
+.se-verdict.notCapable{background:var(--status-error-bg);color:var(--status-error)}
+.se-verdict.unknown{background:var(--surface-low);color:var(--ink-tertiary)}
+.se-unstable-banner{background:var(--status-warning-bg);border:1px solid #e8cf80;border-radius:var(--radius-sm);padding:var(--space-2) var(--space-3);font-size:12px;color:var(--status-warning);font-weight:600}
+.se-design-prompt{font-size:12px;color:var(--ink-secondary);font-style:italic;margin-top:var(--space-2)}
+.se-stat{font-size:13px;color:var(--ink-secondary)}
+/* Intervention rows */
+.se-iv-list{display:flex;flex-direction:column;gap:var(--space-2)}
+.se-iv-row{display:flex;align-items:center;gap:var(--space-3);background:var(--surface-low);border-radius:var(--radius-sm);padding:var(--space-2) var(--space-3);font-size:13px}
+.se-iv-row.orphan{border:1px solid var(--status-warning-bg);background:var(--status-warning-bg)}
+.se-iv-label{flex:1;color:var(--ink)}
+.se-iv-meta{font-size:11px;color:var(--ink-tertiary);white-space:nowrap}
+.se-iv-btns{display:flex;gap:var(--space-2);margin-left:var(--space-2)}
+.se-add-btn{align-self:flex-start;background:none;border:1px dashed var(--primary);color:var(--primary);border-radius:var(--radius-sm);padding:var(--space-2) var(--space-4);font-size:13px;min-height:44px;cursor:pointer;font-family:var(--font-body)}
+.se-add-btn:hover{background:var(--primary-tint)}
+
+
 .data-card{background:var(--card);border:1px solid var(--grid-subtle);border-radius:var(--radius-md);box-shadow:var(--shadow-sm);margin-bottom:var(--space-4);overflow:hidden}
 .data-card-header{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-4) var(--space-5);border-bottom:1px solid var(--grid-subtle)}
 .data-card-title{font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--ink)}
@@ -362,6 +399,7 @@ table.data-table td.note-cell{max-width:180px;overflow:hidden;text-overflow:elli
       </div>
     </div>
     <div id="signalsSummary" class="signals-summary"></div>
+    <div id="seSection"></div>
     <div class="data-card">
       <div class="data-card-header">
         <div class="data-card-title">Data Points</div>
@@ -374,6 +412,35 @@ table.data-table td.note-cell{max-width:180px;overflow:hidden;text-overflow:elli
         </table>
       </div>
       <div id="tableEmpty" class="table-empty">No data points yet &mdash; add some above</div>
+    </div>
+  </div>
+</div>
+
+<!-- Intervention Add/Edit Modal -->
+<div class="modal-overlay" id="interventionModal">
+  <div class="modal">
+    <div class="modal-title" id="ivModalTitle">Add Intervention</div>
+    <div style="display:flex;flex-direction:column;gap:var(--space-4);margin-bottom:var(--space-5)">
+      <div>
+        <label style="font-size:13px;font-weight:600;color:var(--ink);display:block;margin-bottom:6px">Anchor point <span style="color:var(--status-error)">*</span></label>
+        <select id="ivPointSelect" class="se-input" style="width:100%">
+          <option value="">— select a data point —</option>
+        </select>
+        <div class="se-helper">The intervention is anchored to this data point's position on the chart.</div>
+      </div>
+      <div>
+        <label style="font-size:13px;font-weight:600;color:var(--ink);display:block;margin-bottom:6px">Description <span style="color:var(--status-error)">*</span></label>
+        <input type="text" id="ivLabel" class="se-input" style="width:100%" placeholder="e.g. Pooled-pull redesign implemented" maxlength="120">
+      </div>
+      <div>
+        <label style="font-size:13px;font-weight:600;color:var(--ink);display:block;margin-bottom:6px">Date (optional)</label>
+        <input type="text" id="ivDate" class="se-input" style="width:100%" placeholder="e.g. 14 Sep 2024" maxlength="40">
+        <div class="se-helper">Free text — shown in the chart label if provided.</div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('interventionModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveIntervention()">Save</button>
     </div>
   </div>
 </div>
@@ -616,8 +683,9 @@ table.data-table td.note-cell{max-width:180px;overflow:hidden;text-overflow:elli
 <div class="modal-overlay" id="aboutModal">
   <div class="modal">
     <div class="modal-title">Gemba-SPC</div>
-    <div class="about-version-badge">v1.0</div>
+    <div class="about-version-badge">v1.2</div>
     <div class="about-section"><div class="about-section-title">About</div><p>Process Behaviour Charts (XmR) built for NHS healthcare improvement teams. Follows Donald Wheeler's methodology for understanding process variation &mdash; distinguishing common cause from special cause.</p></div>
+    <div class="about-section"><div class="about-section-title">What's new in v1.2</div><p>Capability verdict is now spread-driven (classified by process variation vs specification, not the mean's position). Processes previously shown as 'marginal' with wide variation may now correctly show 'not capable'. Capability on an unstable process is flagged as provisional.</p></div>
     <div class="about-section"><div class="about-section-title">Part of the Gemba Suite</div><p>Free tools for lean methodology at the gemba. <a href="https://gembasuite.org" target="_blank" rel="noopener">gembasuite.org</a></p></div>
     <div class="about-section"><div class="about-section-title">Methodology &amp; Constants</div><p>XmR constants: 2.66 = 3/d&#8322; (genuine 3&sigma; limits), 3.268 = D&#8324; for span-2 mR. No patient-identifiable data collected. Process improvement tool only.</p></div>
     <div class="about-section"><div class="about-section-title">Licence</div><div class="about-licence">CC BY-NC-SA 4.0 &mdash; Free for all healthcare improvement purposes. Commercial repackaging, resale, or proprietary redistribution not permitted. Full terms: <a href="https://gembasuite.org/licence" target="_blank" rel="noopener">gembasuite.org/licence</a></div></div>
@@ -642,7 +710,7 @@ const SIGMA1_M    = 0.887;  // (1/3) × 2.66 — 1σ in mR units
 const SIGMA15_M   = 1.33;   // (1.5/3) × 2.66 — 1.5σ *** NOT 2σ ***
 const SIGMA2_M    = 1.773;  // (2/3) × 2.66 — 2σ in mR units
 
-const APP_VERSION  = '1.0';
+const APP_VERSION  = '1.2';
 const LS_KEY_LIST  = 'gemba_spc_projects';
 const LS_KEY_PFX   = 'gemba_spc_p_';
 
@@ -692,10 +760,31 @@ function createNewProject(name) {
   return {
     id:genId('spc'), name:name||'New Chart', createdAt:now, updatedAt:now,
     metadata:{metricDescription:'',unit:'',workArea:'',author:'',organisation:''},
-    config:{zoneTestsDisabled:false,extendedRulesEnabled:false,showZoneLines:false},
+    config:{zoneTestsDisabled:false,extendedRulesEnabled:false,showZoneLines:false,showSpecBand:true,seSectionOpen:false},
+    specification:{enabled:false,upper:null,lower:null,label:''},
+    interventions:[],
     dataPoints:[],
     phases:[{id:genId('ph'),startIndex:0,endIndex:null,limits:null,lockedAt:null}]
   };
+}
+
+function createIntervention(pointId,label,date,kind) {
+  return {
+    id:genId('iv'),
+    pointId:pointId||'',
+    label:label||'',
+    date:date||'',
+    kind:kind||'change'
+  };
+}
+
+/** Backward-compat: ensure pre-v1.1 projects have new fields defaulted. */
+function applyProjectDefaults(p) {
+  if(!p.specification) p.specification={enabled:false,upper:null,lower:null,label:''};
+  if(!Array.isArray(p.interventions)) p.interventions=[];
+  if(p.config.showSpecBand===undefined) p.config.showSpecBand=true;
+  if(p.config.seSectionOpen===undefined) p.config.seSectionOpen=false;
+  return p;
 }
 
 function saveCurrentProject() {
@@ -725,6 +814,7 @@ function showProjectListScreen() {
 function showProjectViewScreen(id) {
   const p=getProjectData(id);
   if(!p){showProjectListScreen();return;}
+  applyProjectDefaults(p);
   currentProjectId=id; currentProject=p;
   document.getElementById('screenProjectList').classList.remove('active');
   document.getElementById('screenProject').classList.add('active');
@@ -841,7 +931,81 @@ function computeLimits(pts,mrs) {
   return {xBar, mRBar, uclX:xBar+XMR_E2*mRBar, lclX:xBar-XMR_E2*mRBar, uclMR:XMR_D4*mRBar};
 }
 
-// ── Detection Rules ──
+// ═══════════════════════════════════════
+// CAPABILITY ENGINE (SBC v1.1)
+// Empirical conformance only — no distributional assumption.
+// Uses the chart's own sigma = mRBar / 1.128 (d₂).
+// Do NOT compute Cp/Cpk — that would reintroduce normality.
+// ═══════════════════════════════════════
+function computeCapability(activeLimits, specification, flags, pts) {
+  const result = {
+    applicable: false, stable: false,
+    verdict: 'unknown', pctOutside: 0, breachCount: 0,
+    sigmaToUpper: null, sigmaToLower: null, nearestSigma: null
+  };
+
+  // Applicable only when spec has at least one bound and limits exist
+  if (!activeLimits || !specification || !specification.enabled) return result;
+  if (specification.upper === null && specification.lower === null) return result;
+  result.applicable = true;
+
+  // Stability: any Rule-1 signal → unstable
+  const hasRule1 = flags.some(f => f.includes('rule1'));
+  result.stable = !hasRule1;
+
+  // Sigma = mRBar / d₂ (same sigma the chart uses for limits)
+  const sigma = activeLimits.mRBar / 1.128;
+
+  // Empirical breach count (non-excluded points outside any active bound)
+  const inclPts = pts.filter(p => !p.excluded);
+  let breachCount = 0;
+  inclPts.forEach(p => {
+    const aboveUpper = specification.upper !== null && p.value > specification.upper;
+    const belowLower = specification.lower !== null && p.value < specification.lower;
+    if (aboveUpper || belowLower) breachCount++;
+  });
+  result.breachCount = breachCount;
+  result.pctOutside = inclPts.length > 0 ? Math.round((breachCount / inclPts.length) * 1000) / 10 : 0;
+
+  // Sigma-distance: how far are the process limits from the spec bounds?
+  // sigmaToUpper = (upper - UCL) / sigma  → +ve = UCL inside spec (headroom)
+  // sigmaToLower = (LCL - lower) / sigma  → +ve = LCL inside spec (headroom)
+  if (specification.upper !== null && sigma > 0) {
+    result.sigmaToUpper = (specification.upper - activeLimits.uclX) / sigma;
+  }
+  if (specification.lower !== null && sigma > 0) {
+    result.sigmaToLower = (activeLimits.lclX - specification.lower) / sigma;
+  }
+
+  // nearestSigma: signed distance to the binding (closest) bound, in sigma units
+  const dists = [];
+  if (result.sigmaToUpper !== null) dists.push(result.sigmaToUpper);
+  if (result.sigmaToLower !== null) dists.push(result.sigmaToLower);
+  if (dists.length > 0) result.nearestSigma = Math.min(...dists);
+
+  // Verdict logic — SPREAD-DRIVEN (v1.2)
+  // Driven by nearestSigma (computed above): signed sigma-distance from the binding
+  // process limit to its spec bound. +ve = limit inside spec (headroom); -ve = limit
+  // has breached past the bound, magnitude = how far past, in sigma units.
+  //   capable:    nearestSigma >= 0        (both limits inside spec; inclusive)
+  //   marginal:   -1 <= nearestSigma < 0   (binding limit breaches by up to 1 sigma)
+  //   notCapable: nearestSigma < -1        (binding limit breaches by more than 1 sigma)
+  // Verdict no longer depends on xBar position: a mean inside spec with a large limit
+  // breach is correctly notCapable. Boundary inclusive (nearestSigma === 0 -> capable).
+  const MARGINAL_SIGMA_BAND = 1.0;   // documented convention (see user guide), not a Wheeler constant
+
+  if (result.nearestSigma === null) {
+    result.verdict = 'unknown';
+  } else if (result.nearestSigma >= 0) {
+    result.verdict = 'capable';
+  } else if (result.nearestSigma >= -MARGINAL_SIGMA_BAND) {
+    result.verdict = 'marginal';
+  } else {
+    result.verdict = 'notCapable';
+  }
+
+  return result;
+}
 
 /** Rule 1: any point outside UCL or LCL → 'rule1' */
 function applyRule1(pts,limits,offset,allFlags) {
@@ -1110,6 +1274,12 @@ function renderChart() {
   if(activeLimits){
     xMn=Math.min(xMn,activeLimits.lclX); xMx=Math.max(xMx,activeLimits.uclX);
   }
+  // §6.1 Fold spec bounds into Y-range BEFORE xCY is derived — critical for "not capable" case
+  const spec=currentProject.specification;
+  if(spec&&spec.enabled) {
+    if(spec.upper!==null&&spec.upper!==undefined) { xMn=Math.min(xMn,spec.upper); xMx=Math.max(xMx,spec.upper); }
+    if(spec.lower!==null&&spec.lower!==undefined) { xMn=Math.min(xMn,spec.lower); xMx=Math.max(xMx,spec.lower); }
+  }
   const xPad=Math.max((xMx-xMn)*0.15,0.1);
   xMn-=xPad; xMx+=xPad;
   if(xMn===xMx){xMn-=1;xMx+=1;}
@@ -1127,7 +1297,25 @@ function renderChart() {
   svg+=`<rect x="${C.ML}" y="${xTop}" width="${innerW}" height="${C.XH}" fill="#ffffff"/>`;
   svg+=`<rect x="${C.ML}" y="${mrTop}" width="${innerW}" height="${C.MRH}" fill="#ffffff"/>`;
 
-  // Y-axis grid + labels for X-chart
+  // §6.2 Spec band — draw EARLY, behind gridlines, limits, and data
+  // Spec = voice of the customer. Green filled band (NOT red, NOT dashed — categorically distinct from control limits)
+  if(spec&&spec.enabled&&cfg.showSpecBand&&(spec.upper!==null||spec.lower!==null)) {
+    const yTopVal=spec.upper!==null?spec.upper:xMx;
+    const yBotVal=spec.lower!==null?spec.lower:xMn;
+    const yTop2=xCY(yTopVal), yBot2=xCY(yBotVal);
+    svg+=`<rect x="${C.ML}" y="${Math.min(yTop2,yBot2)}" width="${innerW}" height="${Math.abs(yBot2-yTop2)}" fill="#2e7d32" opacity="0.07"/>`;
+    // Edge lines: solid thin green — distinct from red dashed control limits
+    if(spec.upper!==null) {
+      svg+=`<line x1="${C.ML}" y1="${xCY(spec.upper)}" x2="${C.ML+innerW}" y2="${xCY(spec.upper)}" stroke="#2e7d32" stroke-width="1" opacity="0.55"/>`;
+      const specULbl=spec.label?`Spec (${esc(spec.label.length>18?spec.label.slice(0,18)+'\u2026':spec.label)}) \u2264 ${roundN(spec.upper,3)}`:`Spec \u2264 ${roundN(spec.upper,3)}`;
+      svg+=`<text x="${C.ML+innerW-2}" y="${xCY(spec.upper)-3}" text-anchor="end" fill="#2e7d32" font-size="9" font-family="ui-monospace,'SF Mono',Consolas,monospace" opacity="0.85">${specULbl}</text>`;
+    }
+    if(spec.lower!==null) {
+      svg+=`<line x1="${C.ML}" y1="${xCY(spec.lower)}" x2="${C.ML+innerW}" y2="${xCY(spec.lower)}" stroke="#2e7d32" stroke-width="1" opacity="0.55"/>`;
+      const specLLbl=spec.label?`Spec (${esc(spec.label.length>18?spec.label.slice(0,18)+'\u2026':spec.label)}) \u2265 ${roundN(spec.lower,3)}`:`Spec \u2265 ${roundN(spec.lower,3)}`;
+      svg+=`<text x="${C.ML+innerW-2}" y="${xCY(spec.lower)+10}" text-anchor="end" fill="#2e7d32" font-size="9" font-family="ui-monospace,'SF Mono',Consolas,monospace" opacity="0.85">${specLLbl}</text>`;
+    }
+  }
   niceTicks(xMn,xMx,6).forEach(v=>{
     if(v<xMn||v>xMx) return;
     const y=xCY(v);
@@ -1146,9 +1334,10 @@ function renderChart() {
   });
   svg+=`<text x="12" y="${mrTop+C.MRH/2}" text-anchor="middle" fill="#3e484c" font-size="10" font-weight="600" transform="rotate(-90 12 ${mrTop+C.MRH/2})">mR</text>`;
 
-  // Phase limit lines (all phases — older phases faded)
+  // Phase limit lines (last 2 phases)
   const phases=currentProject.phases;
-  phases.forEach((phase,globalPi)=>{
+  phases.slice(-2).forEach((phase,vi)=>{
+    const globalPi=phases.length-Math.min(phases.length,2)+vi;
     let lims;
     if(phase.lockedAt&&phase.limits) lims=phase.limits;
     else if(globalPi>0&&phases[globalPi-1]&&phases[globalPi-1].limits) lims=phases[globalPi-1].limits;
@@ -1156,7 +1345,7 @@ function renderChart() {
     if(!lims) return;
     const s=phase.startIndex, e=phase.endIndex!==null?phase.endIndex:pts.length-1;
     const x1=px(Math.min(s,pts.length-1)), x2=px(Math.min(e,pts.length-1))+(phase.endIndex===null?C.MR:0);
-    const isOld=globalPi<phases.length-1;
+    const isOld=vi<Math.min(phases.length,2)-1;
     const op=isOld?0.35:1;
     const lw=isOld?1:1.5;
     // X-chart centreline
@@ -1177,13 +1366,15 @@ function renderChart() {
     // mR centreline + UCL (NO LCL on mR chart)
     svg+=`<line x1="${x1}" y1="${mrCY(lims.mRBar)}" x2="${x2}" y2="${mrCY(lims.mRBar)}" stroke="#3e484c" stroke-width="${lw}" opacity="${op}"/>`;
     svg+=`<line x1="${x1}" y1="${mrCY(lims.uclMR)}" x2="${x2}" y2="${mrCY(lims.uclMR)}" stroke="#b3261e" stroke-width="${lw}" stroke-dasharray="6,3" opacity="${op}"/>`;
-    // Labels (all phases, faded on older phases to match line opacity)
-    const lx=Math.max(x1,C.ML)+3;
-    svg+=`<text x="${lx}" y="${xCY(lims.uclX)-4}" fill="#b3261e" font-size="9" font-family="monospace" opacity="${op}">UCL ${roundN(lims.uclX,2)}</text>`;
-    svg+=`<text x="${lx}" y="${xCY(lims.lclX)+10}" fill="#b3261e" font-size="9" font-family="monospace" opacity="${op}">LCL ${roundN(lims.lclX,2)}</text>`;
-    svg+=`<text x="${lx}" y="${xCY(lims.xBar)-4}" fill="#3e484c" font-size="9" font-family="monospace" opacity="${op}">X\u0305 ${roundN(lims.xBar,2)}</text>`;
-    svg+=`<text x="${lx}" y="${mrCY(lims.uclMR)-4}" fill="#b3261e" font-size="9" font-family="monospace" opacity="${op}">UCL ${roundN(lims.uclMR,2)}</text>`;
-    svg+=`<text x="${lx}" y="${mrCY(lims.mRBar)-4}" fill="#3e484c" font-size="9" font-family="monospace" opacity="${op}">m\u0305R ${roundN(lims.mRBar,2)}</text>`;
+    // Labels (most recent phase only)
+    if(!isOld) {
+      const lx=Math.max(x1,C.ML)+3;
+      svg+=`<text x="${lx}" y="${xCY(lims.uclX)-4}" fill="#b3261e" font-size="9" font-family="monospace">UCL ${roundN(lims.uclX,2)}</text>`;
+      svg+=`<text x="${lx}" y="${xCY(lims.lclX)+10}" fill="#b3261e" font-size="9" font-family="monospace">LCL ${roundN(lims.lclX,2)}</text>`;
+      svg+=`<text x="${lx}" y="${xCY(lims.xBar)-4}" fill="#3e484c" font-size="9" font-family="monospace">X\u0305 ${roundN(lims.xBar,2)}</text>`;
+      svg+=`<text x="${lx}" y="${mrCY(lims.uclMR)-4}" fill="#b3261e" font-size="9" font-family="monospace">UCL ${roundN(lims.uclMR,2)}</text>`;
+      svg+=`<text x="${lx}" y="${mrCY(lims.mRBar)-4}" fill="#3e484c" font-size="9" font-family="monospace">m\u0305R ${roundN(lims.mRBar,2)}</text>`;
+    }
   });
 
   // Phase boundaries (vertical lines)
@@ -1195,7 +1386,28 @@ function renderChart() {
     svg+=`<text x="${bx+4}" y="${xTop+14}" fill="#007c91" font-size="10" font-weight="600">P${pi+1}</text>`;
   });
 
-  // X-chart: data polyline (break at excluded)
+  // §6.3 Intervention verticals — same event language as phase boundaries (navy)
+  {
+    const idxById={};
+    pts.forEach((p,i)=>{ idxById[p.id]=i; });
+    const phaseStartIdx=new Set(phases.slice(1).map(ph=>ph.startIndex));
+    (currentProject.interventions||[]).forEach(iv=>{
+      const i=idxById[iv.pointId];
+      if(i===undefined) return; // orphaned — skip render, keep data
+      const ix=px(i);
+      const collides=phaseStartIdx.has(i);
+      // Single vertical: if colliding with a phase boundary, that vertical already exists — just add stacked label
+      if(!collides) {
+        svg+=`<line x1="${ix}" y1="${xTop}" x2="${ix}" y2="${mrTop+C.MRH}" stroke="#007c91" stroke-width="1.25" opacity="0.85"/>`;
+      }
+      const labelTxt=iv.date?`${iv.label} \u2014 ${iv.date}`:iv.label;
+      const d=labelTxt.length>22?labelTxt.slice(0,22)+'\u2026':labelTxt;
+      const labelY=collides?xTop+28:xTop+14;
+      svg+=`<g transform="translate(${ix+4},${labelY})"><text fill="#007c91" font-size="9" font-weight="600">\u25b8 ${esc(d)}</text></g>`;
+    });
+  }
+
+
   let seg=[];
   pts.forEach((p,i)=>{
     if(p.excluded){if(seg.length>1){svg+=`<polyline points="${seg.join(' ')}" fill="none" stroke="#006172" stroke-width="1.75" stroke-linejoin="round"/>`;}seg=[];}
@@ -1349,6 +1561,41 @@ function renderPrintHeader() {
   const el=document.getElementById('printHeader');
   if(!activeLimits){el.innerHTML='';return;}
   const sigN=flags.filter(f=>f.length>0).length;
+
+  // SBC: capability verdict block (only when spec enabled)
+  const spec=currentProject.specification;
+  let capBlock='';
+  if(spec&&spec.enabled&&(spec.upper!==null||spec.lower!==null)) {
+    const cap=computeCapability(activeLimits,spec,flags,pts);
+    if(cap.applicable) {
+      const vLabels={capable:'Capable',marginal:'Marginal',notCapable:'Not capable',unknown:'Insufficient data'};
+      const vColors={capable:'#2e7d32',marginal:'#856404',notCapable:'#ba1a1a',unknown:'#6e797c'};
+      const vc=vColors[cap.verdict]||'#6e797c';
+      const vl=vLabels[cap.verdict]||'Unknown';
+      const provisionalNote=!cap.stable?'<div style="font-size:10px;color:#856404;margin-top:2px">Provisional — process not yet predictable</div>':'';
+      capBlock=`<div class="print-stats" style="margin-top:8px;border-top:1px solid #e0e3e2;padding-top:8px">
+        <div class="print-stat"><div class="print-stat-label">Specification</div><div class="print-stat-value" style="font-size:11px">${esc(spec.label||'Set')}</div></div>
+        <div class="print-stat"><div class="print-stat-label">Capability</div><div class="print-stat-value" style="color:${vc}">${vl}</div>${provisionalNote}</div>
+        <div class="print-stat"><div class="print-stat-label">Outside spec</div><div class="print-stat-value">${cap.breachCount}/${pts.filter(p=>!p.excluded).length} (${cap.pctOutside}%)</div></div>
+        ${cap.nearestSigma!==null?`<div class="print-stat"><div class="print-stat-label">\u03c3 to bound</div><div class="print-stat-value">${roundN(cap.nearestSigma,2)}\u03c3</div></div>`:''}
+      </div>`;
+    }
+  }
+
+  // SBC: interventions list (only when any exist)
+  const ivs=currentProject.interventions||[];
+  const idxById={};
+  pts.forEach((p,i)=>{idxById[p.id]=i;});
+  const ivValid=ivs.filter(iv=>idxById[iv.pointId]!==undefined);
+  let ivBlock='';
+  if(ivValid.length>0) {
+    ivBlock=`<div style="margin-top:8px;border-top:1px solid #e0e3e2;padding-top:6px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#3e484c;margin-bottom:4px">Interventions</div>`+
+      ivValid.map(iv=>{
+        const pt=pts[idxById[iv.pointId]];
+        return `<div style="font-size:11px;color:#3e484c;margin-bottom:2px">${esc(pt?pt.label:'?')} \u2014 ${esc(iv.label)}${iv.date?' ('+esc(iv.date)+')':''}</div>`;
+      }).join('')+'</div>';
+  }
+
   el.innerHTML=`<div class="chart-print-title">${esc(currentProject.name)}${meta.metricDescription?' \u2014 '+esc(meta.metricDescription):''}</div>
   <div class="chart-print-meta">Process Behaviour Chart (XmR) \u00b7 ${dr}${meta.workArea?' \u00b7 '+esc(meta.workArea):''}</div>
   <div class="print-stats">
@@ -1358,7 +1605,7 @@ function renderPrintHeader() {
     <div class="print-stat"><div class="print-stat-label">LCL</div><div class="print-stat-value">${roundN(activeLimits.lclX,3)}</div></div>
     <div class="print-stat"><div class="print-stat-label">Points</div><div class="print-stat-value">${pts.length}</div></div>
     <div class="print-stat"><div class="print-stat-label">Signals</div><div class="print-stat-value">${sigN}</div></div>
-  </div>
+  </div>${capBlock}${ivBlock}
   <div class="print-footer">Gemba-SPC v${APP_VERSION} \u00b7 gembasuite.org \u00b7 Process behaviour chart \u2014 Donald Wheeler methodology \u00b7 ${new Date().toLocaleDateString('en-GB')}</div>`;
 }
 
@@ -1369,9 +1616,201 @@ function renderProjectView() {
   renderValidationWarnings();
   renderChart();
   renderSignalsSummary();
+  renderSESection();
   renderDataTable();
   renderPrintHeader();
 }
+
+// ═══════════════════════════════════════
+// SE SECTION — Specification & Capability (SBC v1.1)
+// ═══════════════════════════════════════
+let _ivEditId = null; // id of intervention being edited, or null for add
+
+function toggleSESection() {
+  if(!currentProject) return;
+  currentProject.config.seSectionOpen = !currentProject.config.seSectionOpen;
+  saveCurrentProject();
+  renderSESection();
+}
+
+function renderSESection() {
+  const el = document.getElementById('seSection');
+  if(!el||!currentProject) return;
+  const cfg = currentProject.config;
+  const spec = currentProject.specification;
+  const ivs = currentProject.interventions || [];
+  const {flags, activeLimits} = computeAll(currentProject);
+  const pts = currentProject.dataPoints;
+  const isOpen = !!cfg.seSectionOpen;
+
+  // Capability panel content
+  let capabilityHtml = '';
+  if(spec.enabled && (spec.upper !== null || spec.lower !== null)) {
+    const cap = computeCapability(activeLimits, spec, flags, pts);
+    if(cap.applicable) {
+      const vLabels = {capable:'✓ Capable',marginal:'⚠ Marginal',notCapable:'✕ Not capable',unknown:'Insufficient data'};
+      const vClass = cap.verdict;
+      capabilityHtml += `<div style="display:flex;flex-direction:column;gap:var(--space-2)">`;
+      if(!cap.stable) capabilityHtml += `<div class="se-unstable-banner">⚠ This process is unstable, so this rating is provisional. Bring it into statistical control first — capability can only be relied on for a predictable process.</div>`;
+      capabilityHtml += `<div><span class="se-verdict ${vClass}">${vLabels[cap.verdict]||'Unknown'}</span></div>`;
+      if(cap.verdict==='notCapable'||cap.verdict==='marginal') {
+        capabilityHtml += `<div class="se-design-prompt">A stable process that cannot meet its requirement needs a <strong>design change</strong>, not tighter monitoring.</div>`;
+      }
+      capabilityHtml += `<div class="se-stat">${cap.breachCount} of ${pts.filter(p=>!p.excluded).length} points outside specification (${cap.pctOutside}%).</div>`;
+      if(cap.nearestSigma !== null) {
+        const dir = cap.nearestSigma >= 0 ? 'inside' : 'outside';
+        capabilityHtml += `<div class="se-stat">Process limits are ${Math.abs(roundN(cap.nearestSigma,2))}&sigma; ${dir} the nearest specification bound.</div>`;
+      }
+      capabilityHtml += `</div>`;
+    } else {
+      capabilityHtml = `<div class="se-stat" style="color:var(--ink-tertiary)">Not enough data to compute capability — add more data points first.</div>`;
+    }
+  }
+
+  // Intervention list
+  const idxById = {};
+  pts.forEach((p,i) => { idxById[p.id] = i; });
+  const ivHtml = ivs.length > 0 ? ivs.map(iv => {
+    const i = idxById[iv.pointId];
+    const isOrphan = i === undefined;
+    const anchor = !isOrphan ? esc(pts[i].label) : '⚠ Anchor point deleted';
+    const dateTxt = iv.date ? ` — ${esc(iv.date)}` : '';
+    return `<div class="se-iv-row${isOrphan?' orphan':''}">
+      <div class="se-iv-label">${esc(iv.label)}${dateTxt}</div>
+      <div class="se-iv-meta">@ ${anchor}</div>
+      <div class="se-iv-btns">
+        <button class="btn btn-secondary btn-sm" onclick="openEditIntervention('${esc(iv.id)}')">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteIntervention('${esc(iv.id)}')">Remove</button>
+      </div>
+    </div>`;
+  }).join('') : '<div class="se-stat" style="color:var(--ink-tertiary)">No interventions recorded.</div>';
+
+  const hasSpec = spec.enabled && (spec.upper !== null || spec.lower !== null);
+
+  el.innerHTML = `<div class="se-section">
+    <div class="se-header" onclick="toggleSESection()">
+      <span class="se-header-arrow${isOpen?' open':''}">▶</span>
+      <span class="se-header-title">Specification &amp; capability — systems-engineering view</span>
+    </div>
+    <div class="se-body${isOpen?' open':''}">
+      <div class="se-subtitle">Optional. Compares your process against a required performance level (the voice of the customer). Not a control limit.</div>
+      <hr class="se-divider">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:var(--space-3)">Specification (voice of the customer)</div>
+        <div class="se-row" style="margin-bottom:var(--space-2)">
+          <span class="se-label">Enabled</span>
+          <label class="toggle"><input type="checkbox" id="specEnabled" ${spec.enabled?'checked':''} onchange="onSpecChange()"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
+        </div>
+        <div class="se-row" style="margin-bottom:var(--space-2)">
+          <span class="se-label">Label</span>
+          <input type="text" id="specLabel" class="se-input se-input-wide" value="${esc(spec.label||'')}" placeholder="e.g. 4-hour target 95%, TAT SLA 7 days" maxlength="80" oninput="onSpecChange()">
+        </div>
+        <div class="se-row" style="margin-bottom:var(--space-2)">
+          <span class="se-label">Upper bound</span>
+          <input type="number" id="specUpper" class="se-input" inputmode="decimal" value="${spec.upper!==null&&spec.upper!==undefined?spec.upper:''}" placeholder="blank = none" oninput="onSpecChange()">
+          <span class="se-label">Lower bound</span>
+          <input type="number" id="specLower" class="se-input" inputmode="decimal" value="${spec.lower!==null&&spec.lower!==undefined?spec.lower:''}" placeholder="blank = none" oninput="onSpecChange()">
+        </div>
+        <div class="se-helper">Leave a bound blank for a one-sided specification. These are requirements, not control limits — do not react to common-cause variation just because it approaches a bound.</div>
+        ${hasSpec?`<div class="se-row" style="margin-top:var(--space-2)"><span class="se-label" style="font-size:12px">Show band</span><label class="toggle"><input type="checkbox" id="specShowBand" ${cfg.showSpecBand?'checked':''} onchange="onShowBandChange()"><span class="toggle-track"></span><span class="toggle-thumb"></span></label></div>`:''}
+      </div>
+      ${hasSpec&&capabilityHtml?`<hr class="se-divider"><div><div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:var(--space-3)">Capability verdict</div>${capabilityHtml}</div>`:''}
+      <hr class="se-divider">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:var(--space-3)">Interventions (deliberate process changes)</div>
+        <div class="se-iv-list">${ivHtml}</div>
+        ${pts.length>0?`<button class="se-add-btn" onclick="openAddIntervention()">+ Add intervention</button>`:'<div class="se-helper">Add data points before recording interventions.</div>'}
+      </div>
+    </div>
+  </div>`;
+}
+
+function onSpecChange() {
+  if(!currentProject) return;
+  const spec = currentProject.specification;
+  spec.enabled = document.getElementById('specEnabled').checked;
+  spec.label = document.getElementById('specLabel').value.trim();
+  const u = parseFloat(document.getElementById('specUpper').value);
+  const l = parseFloat(document.getElementById('specLower').value);
+  spec.upper = isNaN(u) ? null : u;
+  spec.lower = isNaN(l) ? null : l;
+  saveCurrentProject();
+  // Re-render chart (for spec band) and SE section (for capability)
+  renderChart();
+  renderSESection();
+  renderPrintHeader();
+}
+
+function onShowBandChange() {
+  if(!currentProject) return;
+  currentProject.config.showSpecBand = document.getElementById('specShowBand').checked;
+  saveCurrentProject();
+  renderChart();
+}
+
+function openAddIntervention() {
+  if(!currentProject) return;
+  _ivEditId = null;
+  document.getElementById('ivModalTitle').textContent = 'Add Intervention';
+  document.getElementById('ivLabel').value = '';
+  document.getElementById('ivDate').value = '';
+  _populateIvPointSelect(null);
+  showModal('interventionModal');
+  setTimeout(() => document.getElementById('ivLabel').focus(), 150);
+}
+
+function openEditIntervention(id) {
+  if(!currentProject) return;
+  const iv = (currentProject.interventions||[]).find(x => x.id === id);
+  if(!iv) return;
+  _ivEditId = id;
+  document.getElementById('ivModalTitle').textContent = 'Edit Intervention';
+  document.getElementById('ivLabel').value = iv.label;
+  document.getElementById('ivDate').value = iv.date || '';
+  _populateIvPointSelect(iv.pointId);
+  showModal('interventionModal');
+  setTimeout(() => document.getElementById('ivLabel').focus(), 150);
+}
+
+function _populateIvPointSelect(selectedPointId) {
+  const sel = document.getElementById('ivPointSelect');
+  const pts = currentProject.dataPoints;
+  sel.innerHTML = '<option value="">— select a data point —</option>' +
+    pts.map(p => `<option value="${esc(p.id)}"${p.id===selectedPointId?' selected':''}>${esc(p.label)}: ${roundN(p.value,3)}</option>`).join('');
+}
+
+function saveIntervention() {
+  if(!currentProject) return;
+  const pointId = document.getElementById('ivPointSelect').value;
+  const label = document.getElementById('ivLabel').value.trim();
+  const date = document.getElementById('ivDate').value.trim();
+  if(!pointId) { showInfo('Anchor required','Please select the data point this intervention is anchored to.'); return; }
+  if(!label) { showInfo('Description required','Please enter a description for this intervention.'); return; }
+  if(!currentProject.interventions) currentProject.interventions = [];
+  if(_ivEditId) {
+    const iv = currentProject.interventions.find(x => x.id === _ivEditId);
+    if(iv) { iv.pointId = pointId; iv.label = label; iv.date = date; }
+  } else {
+    currentProject.interventions.push(createIntervention(pointId, label, date, 'change'));
+  }
+  _ivEditId = null;
+  saveCurrentProject();
+  closeModal('interventionModal');
+  renderChart();
+  renderSESection();
+}
+
+function deleteIntervention(id) {
+  if(!currentProject) return;
+  showConfirmModal('Remove intervention','Remove this intervention marker? This cannot be undone.','Remove', () => {
+    currentProject.interventions = (currentProject.interventions||[]).filter(x => x.id !== id);
+    saveCurrentProject();
+    renderChart();
+    renderSESection();
+  });
+}
+
+
 
 function renderMetricDesc() {
   const desc=currentProject.metadata.metricDescription||'';
@@ -1448,24 +1887,19 @@ function editDP(id) {
 function lockLimits() {
   const pts=currentProject.dataPoints;
   if(pts.length<2){showInfo('Not enough data','Add at least 2 data points before locking limits.');return;}
-  // B1 FIX: compute limits from the current phase's own data window.
-  // computeAll().activeLimits returns the *previous* phase's locked limits for any
-  // open phase after Phase I — correct for monitoring display, wrong for locking.
-  const phases=currentProject.phases;
-  const currentPhase=phases[phases.length-1];
-  const phasePts=pts.slice(currentPhase.startIndex);
-  const phaseMRs=computeMRs(phasePts);
-  const phaseLimits=computeLimits(phasePts,phaseMRs);
-  if(!phaseLimits){showInfo('Cannot lock','No valid limits to lock.');return;}
-  const ne=phasePts.filter(p=>!p.excluded).length;
+  const {activeLimits}=computeAll(currentProject);
+  if(!activeLimits){showInfo('Cannot lock','No valid limits to lock.');return;}
+  const ne=pts.filter(p=>!p.excluded).length;
   const msg=ne<20
-    ?`Lock limits based on ${ne} data points?\n\nWheeler recommends at least 20 for stable limits. You can continue adding data in Phase II, but they will be evaluated against these limits.\n\nX\u0305 = ${roundN(phaseLimits.xBar,3)}, UCL = ${roundN(phaseLimits.uclX,3)}, LCL = ${roundN(phaseLimits.lclX,3)}`
-    :`Lock current limits as your Phase II baseline?\n\nX\u0305 = ${roundN(phaseLimits.xBar,3)}\nUCL = ${roundN(phaseLimits.uclX,3)}, LCL = ${roundN(phaseLimits.lclX,3)}\nm\u0305R = ${roundN(phaseLimits.mRBar,3)}\n\nNew data will be monitored against these limits.`;
+    ?`Lock limits based on ${ne} data points?\n\nWheeler recommends at least 20 for stable limits. You can continue adding data in Phase II, but they will be evaluated against these limits.\n\nX\u0305 = ${roundN(activeLimits.xBar,3)}, UCL = ${roundN(activeLimits.uclX,3)}, LCL = ${roundN(activeLimits.lclX,3)}`
+    :`Lock current limits as your Phase II baseline?\n\nX\u0305 = ${roundN(activeLimits.xBar,3)}\nUCL = ${roundN(activeLimits.uclX,3)}, LCL = ${roundN(activeLimits.lclX,3)}\nm\u0305R = ${roundN(activeLimits.mRBar,3)}\n\nNew data will be monitored against these limits.`;
   showConfirmModal('Lock Phase I Limits',msg,'Lock Limits',()=>{
-    currentPhase.endIndex=pts.length-1;
-    currentPhase.limits={...phaseLimits};
-    currentPhase.lockedAt=new Date().toISOString();
-    phases.push({id:genId('ph'),startIndex:pts.length,endIndex:null,limits:{...phaseLimits},lockedAt:null});
+    const phases=currentProject.phases;
+    const last=phases[phases.length-1];
+    last.endIndex=pts.length-1;
+    last.limits={...activeLimits};
+    last.lockedAt=new Date().toISOString();
+    phases.push({id:genId('ph'),startIndex:pts.length,endIndex:null,limits:{...activeLimits},lockedAt:null});
     saveCurrentProject();renderProjectView();
   });
 }
@@ -1658,8 +2092,11 @@ function processGembaImport(json) {
       const np=createNewProject(json.context&&json.context.projectName?json.context.projectName:'Imported Chart');
       if(pl.dataPoints) np.dataPoints=pl.dataPoints;
       if(pl.phases) np.phases=pl.phases;
-      if(pl.config) np.config=pl.config;
+      if(pl.config) np.config={...np.config,...pl.config};
       if(pl.metadata) np.metadata=pl.metadata;
+      if(pl.specification) np.specification=pl.specification;
+      if(Array.isArray(pl.interventions)) np.interventions=pl.interventions;
+      applyProjectDefaults(np);
       saveProjectData(np.id,np);
       const list=getProjectList();
       list.unshift({id:np.id,name:np.name,created:np.createdAt,updated:np.updatedAt});
@@ -1737,8 +2174,11 @@ function buildGembaEnvelope(payload,context) {
 }
 
 function exportJSON() {
+  const {flags,activeLimits}=computeAll(currentProject);
+  const cap=computeCapability(activeLimits,currentProject.specification,flags,currentProject.dataPoints);
   const env=buildGembaEnvelope(
-    {dataPoints:currentProject.dataPoints,phases:currentProject.phases,config:currentProject.config,metadata:currentProject.metadata},
+    {dataPoints:currentProject.dataPoints,phases:currentProject.phases,config:currentProject.config,metadata:currentProject.metadata,
+     specification:currentProject.specification,capability:cap,interventions:currentProject.interventions},
     {metricDescription:currentProject.metadata.metricDescription,chartType:'xmr',author:currentProject.metadata.author,organisation:currentProject.metadata.organisation,workArea:currentProject.metadata.workArea}
   );
   dlFile(env,`gemba-spc-${safeName(currentProject.name)}-${todayISO()}.json`,'application/json');
@@ -1760,8 +2200,9 @@ function exportForA3() {
   if(!activeLimits){showInfo('No limits','No limits calculated yet.');return;}
   const pts=currentProject.dataPoints;
   const signals=flags.map((f,i)=>f.length?{label:pts[i].label,value:pts[i].value,rules:f}:null).filter(Boolean);
+  const cap=computeCapability(activeLimits,currentProject.specification,flags,pts);
   const env=buildGembaEnvelope(
-    {chartSVG:getCurrentSVG(),statistics:{xBar:activeLimits.xBar,mRBar:activeLimits.mRBar,uclX:activeLimits.uclX,lclX:activeLimits.lclX,uclMR:activeLimits.uclMR},signals,dataPointCount:pts.length,dateRange:pts.length>=2?`${pts[0].label} to ${pts[pts.length-1].label}`:'',metadata:currentProject.metadata},
+    {chartSVG:getCurrentSVG(),statistics:{xBar:activeLimits.xBar,mRBar:activeLimits.mRBar,uclX:activeLimits.uclX,lclX:activeLimits.lclX,uclMR:activeLimits.uclMR},signals,dataPointCount:pts.length,dateRange:pts.length>=2?`${pts[0].label} to ${pts[pts.length-1].label}`:'',metadata:currentProject.metadata,specification:currentProject.specification,capability:cap,interventions:currentProject.interventions},
     {metricDescription:currentProject.metadata.metricDescription,exportType:'for-a3'}
   );
   dlFile(env,`gemba-spc-for-a3-${safeName(currentProject.name)}-${todayISO()}.json`,'application/json');
@@ -1790,8 +2231,14 @@ function exportRCAForPoint(idx) {
   const pt=pts[idx];
   const ctx=pts.slice(Math.max(0,idx-5),Math.min(pts.length,idx+6));
   const ctxMRs=mrs.slice(Math.max(0,idx-5),Math.min(pts.length,idx+6));
+  const cap=computeCapability(activeLimits,currentProject.specification,flags,pts);
+  // Include interventions near the flagged point (±5 points)
+  const nearIvs=(currentProject.interventions||[]).filter(iv=>{
+    const i=pts.findIndex(p=>p.id===iv.pointId);
+    return i>=0&&Math.abs(i-idx)<=5;
+  });
   const env=buildGembaEnvelope(
-    {signal:{label:pt.label,value:pt.value,rules:flags[idx]},context:ctx.map((p,i)=>{const offset=Math.max(0,idx-5);return{label:p.label,value:p.value,mR:mrs[offset+i]?mrs[offset+i].value:null};}),limits:activeLimits,chartSVG:getCurrentSVG(),metadata:currentProject.metadata},
+    {signal:{label:pt.label,value:pt.value,rules:flags[idx]},context:ctx.map((p,i)=>{const offset=Math.max(0,idx-5);return{label:p.label,value:p.value,mR:mrs[offset+i]?mrs[offset+i].value:null};}),limits:activeLimits,chartSVG:getCurrentSVG(),metadata:currentProject.metadata,specification:currentProject.specification,capability:cap,nearbyInterventions:nearIvs},
     {metricDescription:currentProject.metadata.metricDescription,exportType:'for-rca'}
   );
   dlFile(env,`gemba-spc-for-rca-${safeName(pt.label)}-${todayISO()}.json`,'application/json');
@@ -1863,6 +2310,37 @@ Note: UCL = X\u0305 + 2.66\u00d7m\u0305R (2.66 = 3/d\u2082 = genuine 3\u03c3 lim
 
   let sigs=signals?`\nACTIVE SIGNALS\n${signals}\n`:'\nNo signals detected.\n';
 
+  // SBC extension: specification, capability, interventions — only when spec is enabled
+  let sbcBlock = '';
+  const spec = currentProject.specification;
+  if(spec && spec.enabled && (spec.upper !== null || spec.lower !== null)) {
+    const cap = computeCapability(activeLimits, spec, flags, pts);
+    sbcBlock += `\nSPECIFICATION (voice of the customer — NOT a control limit)\n`;
+    sbcBlock += `Upper: ${spec.upper !== null ? spec.upper : 'none'}   Lower: ${spec.lower !== null ? spec.lower : 'none'}   Label: ${spec.label || 'not set'}\n`;
+    sbcBlock += `\nCAPABILITY ASSESSMENT (empirical, no distributional assumption)\n`;
+    if(cap.applicable) {
+      sbcBlock += `Verdict: ${cap.verdict}\n`;
+      if(!cap.stable) sbcBlock += `WARNING — process is not yet predictable; capability assessment is provisional.\n`;
+      sbcBlock += `Points outside specification: ${cap.breachCount} of ${pts.filter(p=>!p.excluded).length} (${cap.pctOutside}%)\n`;
+      if(cap.nearestSigma !== null) sbcBlock += `Distance from process limits to nearest spec bound: ${roundN(cap.nearestSigma,2)}\u03c3\n`;
+    } else {
+      sbcBlock += `Verdict: insufficient data\n`;
+    }
+    const ivs = (currentProject.interventions||[]).filter(iv => {
+      const idx = pts.findIndex(p=>p.id===iv.pointId);
+      return idx >= 0;
+    });
+    if(ivs.length > 0) {
+      sbcBlock += `\nINTERVENTIONS (deliberate process changes)\n`;
+      ivs.forEach(iv => {
+        const pt = pts.find(p=>p.id===iv.pointId);
+        sbcBlock += `  - ${pt?pt.label:'?'} \u2014 ${iv.label}${iv.date?' \u2014 '+iv.date:''}\n`;
+      });
+    } else {
+      sbcBlock += `\nINTERVENTIONS: none recorded\n`;
+    }
+  }
+
   let data=`\nDATA SERIES${isCopilot?' (last 20 points)':''}\n${dataBlock}\n`;
 
   let coaching='';
@@ -1890,14 +2368,18 @@ The person is learning to use process behaviour charts. Please:
 - Do not make clinical judgements about the data content.
 - Do not invent data or trends not present in the series.
 - Do not recommend tightening or loosening limits without process evidence.
-- If you are uncertain about something, say so clearly.\n`;
+- If you are uncertain about something, say so clearly.
+- Specification limits are the VOICE OF THE CUSTOMER (an imposed requirement) and must NEVER be confused with control limits, which are the VOICE OF THE PROCESS (derived from the data).
+- Never recommend changing control limits to meet a specification.
+- A process that is STABLE but NOT CAPABLE (predictable, yet failing its specification) requires a DESIGN CHANGE to the process, not tampering with individual points or tightening monitoring.
+- Reacting to common-cause variation because a point is near a specification bound is tampering and makes the process worse.\n`;
 
   const closing=`\nPLEASE PROVIDE
 1. Signal assessment: which signals (if any) warrant investigation, and why
 2. Process stability judgement: is this a predictable process?
 3. Recommended next actions for the team\n`;
 
-  return `${roleFrame}${context}${stats}${sigs}${data}${coaching}${guardrails}${closing}`;
+  return `${roleFrame}${context}${stats}${sigs}${sbcBlock}${data}${coaching}${guardrails}${closing}`;
 }
 
 function copyCoachingPrompt() {

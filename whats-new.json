@@ -1,6 +1,12 @@
 {
   "items": [
     {
+      "app": "Gemba-SPC",
+      "version": "v1.2",
+      "date": "2026-05-22",
+      "summary": "Capability verdict is now spread-driven — classified by where the process limits sit relative to specification, not the mean's position. Capability on an unstable process is now flagged as provisional."
+    },
+    {
       "app": "Gemba-A3",
       "version": "v2.5a",
       "date": "2026-05-19",
