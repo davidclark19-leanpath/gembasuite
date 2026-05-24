@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#181c1c">
+<title>Process Behaviour Charts with Gemba-SPC — Gemba Suite</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+      --ink: #181c1c; --ink-secondary: #3e484c; --ink-tertiary: #6e797c;
+      --paper: #f7faf9; --card: #ffffff; --surface-low: #f1f4f3;
+      --surface-high: #e6e9e8; --grid: #bec8cc; --grid-subtle: #e0e3e2;
+      --primary: #006172; --primary-container: #007c91; --primary-tint: #c4e5ef;
+      --primary-tint-strong: #79d3ea; --on-primary: #ffffff; --on-primary-tint: #004e5c;
+      --accent-warm: #854a10; --accent-warm-container: #a26227; --accent-warm-bg: #ffdcc3; --on-accent-warm: #ffffff;
+      --status-error: #ba1a1a; --status-error-bg: #ffdad6;
+      --shadow-sm: 0 1px 3px rgba(24,28,28,0.06); --shadow-md: 0 2px 8px rgba(24,28,28,0.08);
+      --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px; --radius-full: 9999px;
+      --font-display: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+      --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); font-size: 15px; line-height: 1.7; color: var(--ink); background: var(--paper); min-height: 100vh; display: flex; flex-direction: column; }
+    /* Header */
+    header { background: var(--ink); position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow-sm); }
+    .header-inner { max-width: 860px; margin: 0 auto; padding: 0 var(--space-5); height: 56px; display: flex; align-items: center; gap: var(--space-4); }
+    .back-link { color: var(--primary-tint); text-decoration: none; font-size: 13px; font-weight: 600; opacity: 0.85; transition: opacity 0.15s; }
+    .back-link:hover { opacity: 1; }
+    .header-divider { width: 1px; height: 20px; background: rgba(255,255,255,0.2); }
+    .site-name { color: var(--on-primary); font-family: var(--font-display); font-size: 16px; font-weight: 700; letter-spacing: 0.18em; flex: 1; }
+    /* Hero */
+    .page-hero { background: var(--primary); color: var(--on-primary); padding: var(--space-10) var(--space-5) var(--space-8); }
+    .page-hero .container { max-width: 860px; margin: 0 auto; }
+    .hero-label { font-size: 11px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: var(--primary-tint); margin-bottom: var(--space-3); }
+    .page-hero h1 { font-family: var(--font-display); font-size: clamp(24px, 5vw, 34px); font-weight: 800; letter-spacing: -0.3px; line-height: 1.15; color: var(--on-primary); margin-bottom: var(--space-3); }
+    .hero-meta { font-size: 14px; color: rgba(255,255,255,0.75); margin-bottom: var(--space-3); }
+    .page-hero p.hero-desc { font-size: 15px; line-height: 1.6; color: rgba(255,255,255,0.85); max-width: 580px; }
+    /* Layout */
+    .page-layout { max-width: 860px; margin: 0 auto; padding: var(--space-8) var(--space-5); display: flex; gap: var(--space-8); align-items: flex-start; flex: 1; width: 100%; }
+    /* TOC */
+    .toc { position: sticky; top: 72px; width: 185px; flex-shrink: 0; background: var(--card); border: 1px solid var(--grid-subtle); border-radius: var(--radius-md); padding: var(--space-4); box-shadow: var(--shadow-sm); }
+    .toc-title { font-size: 10px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: var(--ink-tertiary); margin-bottom: var(--space-3); display: block; }
+    .toc ol { list-style: none; }
+    .toc li { margin-bottom: 2px; display: flex; align-items: baseline; gap: 6px; }
+    .toc-num { font-size: 11px; font-weight: 700; color: var(--primary-container); min-width: 16px; }
+    .toc a { display: block; font-size: 12px; line-height: 1.4; color: var(--ink-secondary); text-decoration: none; padding: 3px 6px 3px 0; border-radius: var(--radius-sm); transition: color 0.12s; flex: 1; }
+    .toc a:hover { color: var(--primary); }
+    /* Main */
+    main { flex: 1; min-width: 0; }
+    /* Sections */
+    .guide-section { margin-bottom: var(--space-8); scroll-margin-top: 72px; }
+    .section-header { display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-5); border-bottom: 2px solid var(--primary-tint); padding-bottom: var(--space-3); }
+    .section-num-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px; border-radius: var(--radius-full); flex-shrink: 0;
+      background: var(--primary-container); color: var(--on-primary);
+      font-family: var(--font-display); font-size: 14px; font-weight: 700;
+    }
+    .section-header h2 { font-family: var(--font-display); font-size: 20px; font-weight: 700; letter-spacing: -0.1px; color: var(--primary); }
+    h3 { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--ink); margin: var(--space-6) 0 var(--space-3); }
+    h4 { font-family: var(--font-body); font-size: 14px; font-weight: 600; color: var(--ink); margin: var(--space-4) 0 var(--space-2); }
+    p { color: var(--ink-secondary); margin-bottom: var(--space-4); line-height: 1.7; }
+    p:last-child { margin-bottom: 0; }
+    strong { color: var(--ink); font-weight: 600; }
+    ul, ol { padding-left: var(--space-6); margin-bottom: var(--space-4); color: var(--ink-secondary); }
+    li { margin-bottom: var(--space-2); line-height: 1.6; }
+    /* Callouts */
+    .callout { border-left: 4px solid; border-radius: var(--radius-md); padding: var(--space-4) var(--space-5); margin: var(--space-5) 0; }
+    .callout-label { font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: var(--space-2); display: block; }
+    .callout p { font-size: 14px; line-height: 1.65; margin-bottom: 0; }
+    .callout p + p { margin-top: var(--space-3); }
+    .callout-tip { background: var(--primary-tint); border-color: var(--primary); }
+    .callout-tip .callout-label { color: var(--on-primary-tint); }
+    .callout-tip p { color: var(--on-primary-tint); }
+    .callout-remember { background: var(--accent-warm-bg); border-color: var(--accent-warm); }
+    .callout-remember .callout-label { color: var(--accent-warm); }
+    .callout-remember p { color: #5a2c00; }
+    .callout-important { background: var(--status-error-bg); border-color: var(--status-error); }
+    .callout-important .callout-label { color: var(--status-error); }
+    .callout-important p { color: #6b0000; }
+    .callout-offline { background: var(--surface-low); border-color: var(--ink-secondary); }
+    .callout-offline .callout-label { color: var(--ink-secondary); }
+    .callout-offline p { color: var(--ink-secondary); }
+    /* Under the bonnet — practitioner / systems-engineering depth */
+    .callout-bonnet { background: var(--surface-low); border-color: var(--primary-container); }
+    .callout-bonnet .callout-label { color: var(--primary-container); }
+    .callout-bonnet p { color: var(--ink-secondary); }
+    .callout-bonnet code { font-family: ui-monospace, 'SF Mono', 'Cascadia Code', Consolas, monospace; font-size: 12.5px; background: var(--surface-high); padding: 1px 5px; border-radius: var(--radius-sm); color: var(--ink); }
+    /* Verdict chips (reference, matches app) */
+    .verdict-key { display: flex; flex-wrap: wrap; gap: var(--space-3); margin: var(--space-4) 0; }
+    .verdict-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; padding: 4px 12px; border-radius: var(--radius-full); }
+    .verdict-capable { background: #d4edda; color: #2e7d32; }
+    .verdict-marginal { background: #fff3cd; color: #856404; }
+    .verdict-notcapable { background: var(--status-error-bg); color: var(--status-error); }
+    /* Tables */
+    .data-table { width: 100%; border-collapse: collapse; margin: var(--space-4) 0; font-size: 13px; }
+    .data-table th { background: var(--surface-high); color: var(--ink-secondary); font-size: 11px; font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; padding: 8px 10px; text-align: left; border-bottom: 2px solid var(--grid); }
+    .data-table td { padding: 8px 10px; border-bottom: 1px solid var(--grid-subtle); vertical-align: top; line-height: 1.55; }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table td:first-child { font-weight: 600; color: var(--ink); }
+    .data-table tr:nth-child(even) td { background: var(--surface-low); }
+    /* Download link */
+    .download-link { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--primary); text-decoration: none; font-size: 14px; font-weight: 600; padding: var(--space-2) var(--space-4); border: 1px solid var(--primary); border-radius: var(--radius-sm); transition: background 0.12s, color 0.12s; margin-bottom: var(--space-6); }
+    .download-link:hover { background: var(--primary); color: var(--on-primary); }
+    /* Install blocks */
+    .install-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin: var(--space-4) 0; }
+    .install-block { background: var(--surface-low); border: 1px solid var(--grid-subtle); border-radius: var(--radius-md); padding: var(--space-4); }
+    .install-block h4 { font-size: 13px; font-weight: 700; color: var(--ink); margin: 0 0 var(--space-3); }
+    .install-block ol { margin: 0; padding-left: var(--space-5); font-size: 13px; line-height: 1.6; }
+    .install-block li { margin-bottom: var(--space-2); }
+    /* Closing callout */
+    .closing-callout { background: var(--surface-low); border: 1px solid var(--grid-subtle); border-radius: var(--radius-md); padding: var(--space-5); text-align: center; margin-top: var(--space-8); }
+    .closing-callout .closing-motto { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--primary); margin-bottom: var(--space-3); font-style: italic; }
+    .closing-callout p { font-size: 14px; color: var(--ink-secondary); font-style: italic; }
+    /* Footer */
+    footer { background: var(--ink); color: rgba(255,255,255,0.55); padding: var(--space-6) var(--space-5); font-size: 13px; margin-top: auto; }
+    .footer-inner { max-width: 860px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3); }
+    .footer-inner a { color: var(--primary-tint); text-decoration: none; }
+    .footer-licence { font-size: 12px; opacity: 0.7; }
+    @media (max-width: 680px) {
+      .page-layout { flex-direction: column; }
+      .toc { position: static; width: 100%; }
+      .install-grid { grid-template-columns: 1fr; }
+      .section-header h2 { font-size: 17px; }
+    }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="/guide/" class="back-link">← Guides</a>
+    <div class="header-divider"></div>
+    <span class="site-name">GEMBA SUITE</span>
+  </div>
+</header>
+
+<div class="page-hero">
+  <div class="container">
+    <p class="hero-label">Full Guide · Process Behaviour Charts</p>
+    <h1>Process Behaviour Charts<br>with Gemba-SPC</h1>
+    <p class="hero-meta">v1.2 · May 2026 · David Clark</p>
+    <p class="hero-desc">A practical guide to XmR charts and signal detection using Donald Wheeler&#x2019;s methodology. Written for two readers at once &mdash; the service manager who needs to read a chart and act on it, and the systems engineer or lean practitioner who wants the method&#x2019;s internals. Covers a complete walkthrough of Gemba-SPC v1.2.</p>
+  </div>
+</div>
+
+<div class="page-layout">
+
+  <nav class="toc" aria-label="Contents">
+    <span class="toc-title">Contents</span>
+    <ol>
+      <li><span class="toc-num">1</span><a href="#s1">Overview</a></li>
+      <li><span class="toc-num">2</span><a href="#s2">Understanding Process Behaviour Charts</a></li>
+      <li><span class="toc-num">3</span><a href="#s3">Common Cause &amp; Special Cause Variation</a></li>
+      <li><span class="toc-num">4</span><a href="#s4">How to Use an XmR Chart</a></li>
+      <li><span class="toc-num">5</span><a href="#s5">Installing Gemba-SPC</a></li>
+      <li><span class="toc-num">6</span><a href="#s6">Entering Your Data</a></li>
+      <li><span class="toc-num">7</span><a href="#s7">Phase I and Phase II</a></li>
+      <li><span class="toc-num">8</span><a href="#s8">Signal Detection Rules</a></li>
+      <li><span class="toc-num">9</span><a href="#s9">Specification and Capability</a></li>
+      <li><span class="toc-num">10</span><a href="#s10">Exporting to A3 and RCA</a></li>
+      <li><span class="toc-num">11</span><a href="#s11">AI Coaching Export</a></li>
+      <li><span class="toc-num">12</span><a href="#s12">Saving, Exporting &amp; Importing</a></li>
+      <li><span class="toc-num">13</span><a href="#s13">References &amp; Further Reading</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+    <!-- When the SPC guide DOCX is deployed at /guide/spc/, uncomment:
+    <a href="Process_Behaviour_Charts_with_Gemba_SPC_v1_2.docx" class="download-link" download>&#x2193; Download as Word document</a>
+    -->
+
+    <!-- Section 1 -->
+    <div class="guide-section" id="s1">
+      <div class="section-header">
+        <span class="section-num-badge">1</span>
+        <h2>Overview</h2>
+      </div>
+<p>This guide introduces process behaviour charts and walks you through using Gemba-SPC v1.2 to turn a column of numbers into a picture you can act on. A process behaviour chart answers one question better than any table or dashboard: <strong>is this variation normal for this process, or is something genuinely different happening?</strong></p>
+<p>That question matters because most management of healthcare data gets it wrong. A turnaround time creeps up one week and a meeting is called. A complaint count drops and someone takes the credit. Most of the time, neither the rise nor the fall meant anything &mdash; it was the ordinary, routine variation every process produces. Reacting to it wastes effort and often makes things worse. The chart tells you when a number is worth your attention and when it is not.</p>
+<h3>Who is this guide for?</h3>
+<p>Two readers. The first is the <strong>service manager</strong> reading a chart day to day &mdash; turnaround times, vacant slots, complaints, incidents, DNAs &mdash; who needs to know what the chart is telling them and what to do about it. The second is the <strong>systems engineer or experienced lean practitioner</strong> who wants the method&#x2019;s internals: the constants, the detection logic, the capability rules. No prior SPC experience is required to follow the main text.</p>
+<h3>Reading this guide</h3>
+<p>The main text is written for everyone. Throughout, you will find boxes labelled <strong>&#x25B8; Under the bonnet</strong> &mdash; these hold the technical depth for engineers and practitioners: formulae, constants, and the reasoning behind design choices. If you are here to read a chart and act on it, skip those boxes and nothing is lost. If you want to know exactly how the numbers are produced, they are where the detail lives.</p>
+<h3>What you will learn</h3>
+<ul>
+<li>How to read a process behaviour chart and what its three lines mean</li>
+<li>How to tell a genuine signal from ordinary noise</li>
+<li>The two mistakes every chart is designed to prevent</li>
+<li>The difference between Phase I (building understanding) and Phase II (monitoring)</li>
+<li>What each detection rule flags &mdash; and the one rule that is misread everywhere</li>
+<li>What capability tells you about meeting a target &mdash; and what it deliberately does not</li>
+<li>How to export a signal to Gemba-A3 or Gemba-RCA for investigation</li>
+<li>How to use the AI Lean Sensei coaching export for guided reflection</li>
+<li>How to install, save, and export your charts</li>
+</ul>
+<div class="callout callout-tip"><span class="callout-label">Tip</span><p>When you first open Gemba-SPC it loads an example chart &mdash; histopathology daily turnaround time &mdash; so you can explore the chart, the rules, and the capability view before entering your own data.</p></div>
+    </div>
+
+    <!-- Section 2 -->
+    <div class="guide-section" id="s2">
+      <div class="section-header">
+        <span class="section-num-badge">2</span>
+        <h2>Understanding Process Behaviour Charts</h2>
+      </div>
+<h3>What a process behaviour chart is</h3>
+<p>A process behaviour chart &mdash; also called a control chart or an XmR chart &mdash; is a running record of one measure over time, with three extra lines drawn on it: a centre line through the middle of your data, and an upper and a lower <strong>natural process limit</strong> above and below it. The points are your actual measurements in time order. The three lines are calculated from those measurements.</p>
+<p>The single most important thing to understand &mdash; and the thing managers most often get wrong &mdash; is this: <strong>the limits are not targets, and they are not your SLA.</strong> They are calculated from what your process actually does, not from what you or anyone else wants it to do. They describe the voice of the process: the range of values this process will routinely produce as long as nothing fundamental changes.</p>
+<h3>Why XmR, and not the charts you may have seen before</h3>
+<p>There are many kinds of control chart. Most of the textbook ones assume you collect data in subgroups &mdash; five measurements every hour, say &mdash; and were designed for high-volume manufacturing. Healthcare data rarely looks like that. You usually get one number at a time: one turnaround time per day, one complaint count per week, one vacancy figure per month.</p>
+<p>The XmR chart (X for the individual values, mR for the moving range between them) is built for exactly this &mdash; individual values arriving one at a time. It is the right tool for almost everything a service manager tracks, and it is the only chart type Gemba-SPC produces, on purpose.</p>
+<h3>What &#x201C;a predictable process&#x201D; means</h3>
+<p>When all your points fall inside the limits with no unusual patterns, the process is <strong>predictable</strong> (the older term is &#x201C;in statistical control&#x201D;). Predictable does not mean good, and it does not mean meeting target. It means the process is stable enough that you can forecast its future: it will keep producing values in roughly this range until something changes it. A predictable process that misses its target every day is still predictable &mdash; you just have reliable evidence that the <em>system</em> needs to change, not the day-to-day effort.</p>
+<div class="callout callout-bonnet"><span class="callout-label">&#x25B8; Under the bonnet</span><p>The limits are <code>X&#x0304; &#xB1; 2.66 &#xD7; m&#x0304;R</code>, where <code>X&#x0304;</code> is the mean of the individual values and <code>m&#x0304;R</code> is the mean of the span-2 moving ranges. The factor 2.66 is <code>3 / d&#x2082;</code> with <code>d&#x2082; = 1.128</code> for a moving range of two &mdash; so these are genuine <strong>3-sigma natural process limits</strong>, not an approximation. The chart&#x2019;s sigma is <code>&#x3C3; = m&#x0304;R / 1.128</code>, and the upper limit on the moving-range chart uses <code>D&#x2084; = 3.268</code>.</p><p>These are 3&#x3C3; <em>process</em> limits derived empirically from the data &mdash; not confidence intervals, and they carry <strong>no assumption of normality</strong>. Wheeler&#x2019;s point is that the three-sigma distance is an economic filter that works for any distribution, not a probability statement that depends on one.</p></div>
+    </div>
+
+    <!-- Section 3 -->
+    <div class="guide-section" id="s3">
+      <div class="section-header">
+        <span class="section-num-badge">3</span>
+        <h2>Common Cause and Special Cause Variation</h2>
+      </div>
+<p>Every process varies. The whole of statistical process control rests on telling apart two kinds of variation, and responding to each correctly.</p>
+<p><strong>Common cause variation</strong> &mdash; the ordinary, routine variation the system produces day in, day out. It comes from the countless small things that are always slightly different: which staff are on, how full the in-tray is, the mix of cases. No single one of them is &#x201C;the reason&#x201D; for any particular day&#x2019;s value. This is the noise.</p>
+<p><strong>Special cause variation</strong> &mdash; a signal that something outside the usual run of the system has acted on the process. A new analyser. A staff shortage that week. A change in how cases are booked. Something specific, findable, and worth investigating. This is the signal.</p>
+<h3>The two mistakes</h3>
+<p>A process behaviour chart exists to stop you making either of two opposite mistakes. Both are common, and both are expensive.</p>
+<p><strong>Mistake one &mdash; tampering.</strong> Reacting to common-cause noise as if every up-tick were a problem to be explained and fixed. Asking &#x201C;why was Tuesday worse than Monday?&#x201D; when Tuesday was simply ordinary variation. Tampering wastes time chasing ghosts, and &mdash; because the &#x201C;fixes&#x201D; are aimed at causes that were never there &mdash; it usually makes the process <em>more</em> variable, not less.</p>
+<p><strong>Mistake two &mdash; missing a signal.</strong> Treating a genuine special cause as if it were noise, and letting it pass unexamined. Something real changed your process and you missed the chance to learn from it &mdash; to lock in an improvement, or to stop a deterioration before it embeds.</p>
+<p>The chart draws the line between the two for you. A point inside the limits with no unusual pattern is almost certainly common cause &mdash; leave the individual day alone. A point that breaks a detection rule is a signal &mdash; investigate it while the trail is warm.</p>
+<h3>The correct response to each</h3>
+<p>This is where the chart changes how you manage. When variation is common cause, the only way to improve is to <strong>change the system</strong> &mdash; the layout, the staffing model, the booking rules. Reacting to individual days achieves nothing. When variation is special cause, you do the opposite: <strong>investigate that specific point</strong>, find what was different, and act on the finding.</p>
+<p>Most &#x201C;performance management by exception&#x201D; in the NHS &mdash; demanding an explanation for every month that moved the wrong way &mdash; is tampering. It treats common-cause noise as if each wobble had a special cause. The chart is the antidote: it shows you, with evidence, which months actually warrant a question.</p>
+<div class="callout callout-bonnet"><span class="callout-label">&#x25B8; Under the bonnet</span><p>The dividing line between the two responses is not a judgement call or a threshold someone picked &mdash; it is the natural process limits, computed from the data itself. This is the core of Walter Shewhart&#x2019;s original insight and W. Edwards Deming&#x2019;s lifelong argument: the two errors are asymmetric and unavoidable in principle, so the only sound strategy is to minimise their <em>combined</em> economic cost. The three-sigma limits are deliberately set wide enough that you almost never tamper, while staying tight enough to catch signals that matter. &#x201C;No process is random&#x201D;: common-cause variation has causes too, but they are systemic and many, and the only economic way to reduce them is to change the system, not to interrogate single points.</p></div>
+<div class="callout callout-remember"><span class="callout-label">Remember</span><p>Do not tamper. Common-cause variation calls for a change to the system, never a reaction to a single point. If a value sits inside the limits with no signal, the honest answer to &#x201C;why was it like that?&#x201D; is &#x201C;that is what this process does.&#x201D;</p></div>
+    </div>
+
+    <!-- Section 4 -->
+    <div class="guide-section" id="s4">
+      <div class="section-header">
+        <span class="section-num-badge">4</span>
+        <h2>How to Use an XmR Chart</h2>
+      </div>
+<p>This section describes the method. Sections 6 to 9 show how to do each step in Gemba-SPC v1.2.</p>
+<h3>Step 1: Choose one measure that matters</h3>
+<p>Pick a single measure that reflects something you care about and that can be counted consistently: daily turnaround time, weekly complaints, monthly vacancies. One measure per chart. If you cannot define exactly how it is counted, fix that before you start &mdash; an inconsistent measure produces a meaningless chart.</p>
+<h3>Step 2: Collect baseline data in time order</h3>
+<p>Gather your measurements in the order they occurred. Aim for around 20 points to establish a trustworthy baseline. You can start with fewer &mdash; the chart will draw from two points &mdash; but the limits will be provisional until you have enough history.</p>
+<h3>Step 3: Let the app compute the limits</h3>
+<p>You never set the limits yourself. Enter the data and Gemba-SPC calculates the centre line and the natural process limits from your numbers. This is non-negotiable: limits come from the process, not from a target.</p>
+<h3>Step 4: Lock the baseline</h3>
+<p>Once you have a stable stretch of baseline data, lock the limits (this is the move from Phase I to Phase II &mdash; see Section 7). From this point on, new data is judged against the limits your baseline established, rather than constantly recalculating them.</p>
+<h3>Step 5: Read the chart against the detection rules</h3>
+<p>With limits in place, read each new point against the detection rules (Section 8). The app flags signals for you. A flagged point is an invitation to investigate; an unflagged point is routine.</p>
+<h3>Step 6: Investigate signals, leave common cause alone</h3>
+<p>When a point is flagged, go and find out what was different about that point &mdash; at the gemba, with the people who were there. When points are not flagged, resist the urge to explain them. That restraint is the discipline the chart teaches.</p>
+<h3>Step 7: Record interventions on the chart</h3>
+<p>When you deliberately change the process, record an intervention at the point it took effect. The chart then shows cause and effect honestly: you can see whether the change actually moved the process, rather than guessing.</p>
+<h3>Step 8: Recalculate only when the process has genuinely changed</h3>
+<p>Recompute limits only after a deliberate, sustained change to the process &mdash; a real redesign, not a run of values you happen to dislike. Recalculating to chase a number you do not like is just a slower form of tampering.</p>
+<div class="callout callout-remember"><span class="callout-label">Remember</span><p>Let the data determine the limits. The limits come from the process, never from a target or a wish. The moment you set a limit by hand to match an SLA, you have stopped doing SPC.</p></div>
+    </div>
+
+    <!-- Section 5 -->
+    <div class="guide-section" id="s5">
+      <div class="section-header">
+        <span class="section-num-badge">5</span>
+        <h2>Installing Gemba-SPC on Your Device</h2>
+      </div>
+<p>Gemba-SPC is a Progressive Web App (PWA). It runs in your browser and can be installed on your phone or tablet for full-screen, offline use. No app store required.</p>
+<p><strong>What you need to get started:</strong> A phone or computer with a modern browser and internet access. Open https://gembasuite.org/spc in your browser.</p>
+<div class="install-grid">
+  <div class="install-block">
+    <h4>Install on Android</h4>
+    <ol type="1">
+      <li><strong>Open Chrome.</strong> Navigate to the Gemba-SPC URL.</li>
+      <li><strong>Install the app.</strong> Tap the install banner, or the three-dot menu (&#x22EE;) &#x2192; &#x201C;Install app&#x201D;.</li>
+      <li><strong>Launch.</strong> The icon appears on your home screen and opens full-screen.</li>
+    </ol>
+  </div>
+  <div class="install-block">
+    <h4>Install on iPhone / iPad</h4>
+    <ol type="1">
+      <li><strong>Open Safari.</strong> Installation works only in Safari, not Chrome on iOS.</li>
+      <li><strong>Add to Home Screen.</strong> Share button &#x2192; &#x201C;Add to Home Screen&#x201D; &#x2192; Add.</li>
+      <li><strong>Launch.</strong> The icon appears on your home screen and launches full-screen.</li>
+    </ol>
+  </div>
+</div>
+<div class="callout callout-offline"><span class="callout-label">Offline Use</span><p>After installing, the app works offline. Load it once with internet access to cache the files, then use it anywhere even without signal. Always export your data as JSON after a session &mdash; browser storage can be cleared if the phone runs low on space, and data cannot be recovered once it is gone.</p></div>
+    </div>
+
+    <!-- Section 6 -->
+    <div class="guide-section" id="s6">
+      <div class="section-header">
+        <span class="section-num-badge">6</span>
+        <h2>Using Gemba-SPC &mdash; Entering Your Data</h2>
+      </div>
+<p>Gemba-SPC is a single screen. You add data points, the chart draws itself, and the signals, statistics, and capability view update as you go. The project bar at the top &#x2014; <strong>Your Charts</strong> &#x2014; lets you keep several charts side by side.</p>
+<h3>The data entry form</h3>
+<p>Add one measurement at a time using three fields:</p>
+<table class="data-table"><thead><tr><th>Field</th><th>What to capture</th></tr></thead><tbody>
+<tr><td><strong>Label</strong></td><td>A date or sequence label for the point, in time order (the form suggests YYYY-MM-DD). This becomes the point&#x2019;s position along the bottom of the chart.</td></tr>
+<tr><td><strong>Value</strong></td><td>The measurement itself &mdash; a single number. Decimals are allowed.</td></tr>
+<tr><td><strong>Note</strong></td><td>Optional. Context for that point (e.g. &#x201C;new analyser online&#x201D;, &#x201C;two BMS off sick&#x201D;). Notes travel with the data into exports and the coaching prompt.</td></tr>
+</tbody></table>
+<p>Add the point and it appears on the chart immediately. You need at least two points before the chart can draw moving ranges and limits.</p>
+<h3>The data table</h3>
+<p>Below the chart, a table lists every point in order. Flagged signal points are highlighted; excluded points (see Section 7) are dimmed so you can see they are still recorded but not contributing to the limits.</p>
+<h3>CSV import</h3>
+<p>If you already have data in a spreadsheet, you do not have to retype it. Use the import option to paste two columns &#x2014; <code>date,value</code> &#x2014; or load a CSV file. The app shows a preview so you can check the columns mapped correctly before you confirm.</p>
+<h3>Chart details</h3>
+<p>Open the chart details to record what the chart is about: metric description, unit of measurement, work area or department, author, and organisation. These details print on the chart and travel into your exports, so a colleague opening the file later knows exactly what they are looking at.</p>
+<div class="callout callout-tip"><span class="callout-label">Tip</span><p>Below about 20 points the app tells you, in plain words, that the limits are provisional. Keep adding data &#x2014; the limits firm up as your baseline grows, and you can lock them once the process looks settled.</p></div>
+    </div>
+
+    <!-- Section 7 -->
+    <div class="guide-section" id="s7">
+      <div class="section-header">
+        <span class="section-num-badge">7</span>
+        <h2>Phase I and Phase II</h2>
+      </div>
+<p>Every process behaviour chart has two phases, and knowing which one you are in is the difference between learning about your process and merely watching numbers go by.</p>
+<p><strong>Phase I &mdash; building understanding.</strong> You are collecting baseline data and working out what the process normally does. The limits are still being calculated from the data in front of you, and they shift as you add points. This is the learning phase.</p>
+<p><strong>Phase II &mdash; monitoring.</strong> You know what the process does. The limits are now fixed, and each new point is judged against them. This is the watching phase &mdash; the one where the chart earns its keep, telling you when something has genuinely changed.</p>
+<h3>Locking limits &mdash; the boundary between the two</h3>
+<p>The move from Phase I to Phase II happens when you <strong>lock the limits</strong>. The app freezes the current centre line and natural process limits as your baseline; from then on, new points are evaluated against those fixed limits rather than recalculating them every time. The chart shows a Phase I / Phase II banner so you always know where you stand.</p>
+<p>A chart that is never locked is never really monitoring &mdash; it just recomputes the goalposts every time a point is added, so a genuine shift gets quietly absorbed into the limits instead of standing out as a signal. If you want the chart to catch change, you have to commit to a baseline.</p>
+<h3>When to recalculate</h3>
+<p>Recalculate the limits only after a deliberate, sustained change to the process &mdash; a real redesign you have made on purpose. Do not recalculate because a run of points drifted in a direction you dislike; that drift may be exactly the signal you built the chart to catch.</p>
+<h3>Point exclusion</h3>
+<p>Sometimes a single value reflects something that was genuinely a one-off and not part of the process you are studying &mdash; an analyser fault, a bank holiday, a data-entry error. You can exclude such a point so it no longer contributes to the limits. Excluding a point requires a <strong>mandatory reason note</strong>: the app will not let you exclude silently. Excluded points stay visible on the chart, dimmed, so the record remains honest.</p>
+<p>Exclusion is a tool for removing things that are not part of the process &mdash; not for tidying away signals you would rather not explain. Excluding inconvenient points to flatten the chart is tampering with the evidence, and the mandatory reason note exists to make you pause and justify it.</p>
+<div class="callout callout-bonnet"><span class="callout-label">&#x25B8; Under the bonnet</span><p>Wheeler recommends roughly <strong>20 points</strong> before trusting the limits, because <code>m&#x0304;R</code> &mdash; and therefore sigma &mdash; is estimated with too much uncertainty from a handful of moving ranges; the limits computed from fewer points can be materially wrong. The app surfaces this with a provisional-limits warning below 20 non-excluded points.</p><p>Two mechanics worth knowing: detection rules evaluate <strong>within a phase only</strong> &mdash; a run is never counted across a lock boundary, because the two phases describe different baselines. And an excluded point <strong>breaks runs</strong> and is removed from both <code>X&#x0304;</code> and any moving range that touches it, so exclusion genuinely takes the point out of the limit calculation rather than just hiding it.</p></div>
+<div class="callout callout-tip"><span class="callout-label">Tip</span><p>When you make a deliberate change, record an <strong>intervention</strong> anchored to the point where it took effect. The chart then shows the before and after honestly &mdash; the single most useful thing you can do to prove (or disprove) that a change worked.</p></div>
+    </div>
+
+    <!-- Section 8 -->
+    <div class="guide-section" id="s8">
+      <div class="section-header">
+        <span class="section-num-badge">8</span>
+        <h2>Signal Detection Rules</h2>
+      </div>
+<p>A detection rule is a pattern that is very unlikely to occur by chance in a stable process &mdash; so when you see it, the process probably changed. Gemba-SPC applies three rules by default, drawn from Donald Wheeler&#x2019;s methodology.</p>
+<table class="data-table"><thead><tr><th>Rule</th><th>What it flags</th><th>Plain meaning</th></tr></thead><tbody>
+<tr><td><strong>Rule 1</strong></td><td>A single point beyond a natural process limit</td><td>A clear, unmistakable signal &mdash; investigate this point</td></tr>
+<tr><td><strong>Rule 2</strong></td><td>A run of 8 or more points on the same side of the centre line</td><td>The process has shifted to a new level</td></tr>
+<tr><td><strong>Rule 3</strong></td><td>3 out of 4 points beyond 1.5&#x3C3; on the same side</td><td>An emerging shift, caught early</td></tr>
+</tbody></table>
+<h3>Extended rules (optional)</h3>
+<p>Two further rules, E1 and E2, are available but switched <strong>off by default</strong>. They make the chart more sensitive &mdash; catching smaller shifts sooner &mdash; at the cost of more false alarms. Turn them on only if you understand that trade-off. E1 flags 2 of 3 points beyond 2&#x3C3; on the same side; E2 flags 4 of 5 points beyond 1&#x3C3; on the same side.</p>
+<h3>The one rule that is misread everywhere</h3>
+<p>Rule 3&#x2019;s threshold is <strong>1.5&#x3C3;</strong>, calculated as <code>X&#x0304; &#xB1; 1.33 &#xD7; m&#x0304;R</code>. It is <strong>not</strong> 2&#x3C3;. Many SPC tools and many practitioners describe the &#x201C;3 of 4&#x201D; rule as a two-sigma rule, and they are wrong. If you have used another tool, this is the detail most likely to trip you up &mdash; Gemba-SPC uses the correct 1.5&#x3C3; threshold throughout.</p>
+<h3>No lower limit on the moving-range chart</h3>
+<p>The chart below the main one is the moving-range chart, which tracks how much the process jumps from one point to the next. It has an upper limit but <strong>no lower limit</strong>, and that is correct, not an omission. A very small moving range is not a problem &mdash; it means the process ran exceptionally consistently, which is exactly what you want. Only unusually <em>large</em> moving ranges signal instability worth investigating.</p>
+<div class="callout callout-bonnet"><span class="callout-label">&#x25B8; Under the bonnet</span><p>The same-side zone thresholds are expressed in moving-range units: <strong>1&#x3C3; = 0.887 &#xD7; m&#x0304;R</strong>, <strong>1.5&#x3C3; = 1.33 &#xD7; m&#x0304;R</strong>, <strong>2&#x3C3; = 1.773 &#xD7; m&#x0304;R</strong> (each is the sigma multiple &#xD7; the 2.66 limit factor &#xF7; 3). The moving-range chart&#x2019;s upper limit is <code>D&#x2084; &#xD7; m&#x0304;R</code> with <code>D&#x2084; = 3.268</code>; there is no <code>D&#x2083;</code> lower limit for a span-2 moving range, which is the formal reason the mR chart has no lower bound.</p><p>Why only three rules by default? Every rule you add increases sensitivity but also the false-alarm rate on a stable process. Wheeler&#x2019;s three are the long-established balance &mdash; enough to catch shifts that matter without crying wolf. The extended rules exist for practitioners who knowingly want earlier detection in a specific context.</p></div>
+<div class="callout callout-remember"><span class="callout-label">Remember</span><p>A signal is an invitation to learn, not a verdict on a person. When the chart flags a point, the question is &#x201C;what changed in the system?&#x201D; &mdash; never &#x201C;who is to blame?&#x201D;</p></div>
+    </div>
+
+    <!-- Section 9 -->
+    <div class="guide-section" id="s9">
+      <div class="section-header">
+        <span class="section-num-badge">9</span>
+        <h2>Specification and Capability</h2>
+      </div>
+<p>Stability and capability are two different questions, and confusing them is one of the most common errors in SPC. The chart itself answers the first: <em>is the process predictable?</em> Capability answers a second, separate question: <em>does the predictable process meet what the customer needs?</em> Gemba-SPC keeps this in an optional, collapsible <strong>Specification &amp; capability</strong> view so the two are never muddled.</p>
+<p>The distinction comes down to two voices. Your natural process limits are the <strong>voice of the process</strong> &mdash; what it actually does. A specification is the <strong>voice of the customer</strong> &mdash; what it needs to do (the SLA, the target, the clinical requirement). They are different lines on the chart, and they answer different questions. A process can be perfectly predictable and still fail its specification every day.</p>
+<h3>Setting a specification</h3>
+<p>Enable the specification, then set an upper bound, a lower bound, or both, with a label (e.g. &#x201C;TAT SLA 7 days&#x201D;). You can overlay the specification band on the chart to see, at a glance, how the process sits against the requirement. The specification is never a control limit and never affects where the natural process limits fall.</p>
+<h3>Reading the verdict</h3>
+<p>When a specification is set, the app gives a plain-language capability verdict:</p>
+<div class="verdict-key">
+  <span class="verdict-chip verdict-capable">&#x2713; Capable</span>
+  <span class="verdict-chip verdict-marginal">&#x26A0; Marginal</span>
+  <span class="verdict-chip verdict-notcapable">&#x2715; Not capable</span>
+</div>
+<ul>
+<li><strong>Capable</strong> &mdash; the process variation fits inside the requirement.</li>
+<li><strong>Marginal</strong> &mdash; the variation slightly breaches the requirement.</li>
+<li><strong>Not capable</strong> &mdash; the variation falls substantially outside the requirement.</li>
+</ul>
+<p>Beneath the verdict, the app shows an explanation line in concrete terms &mdash; how many of your points actually fell outside the specification, and what percentage that is. This is the gemba-facing evidence behind the verdict.</p>
+<h3>Stability comes first</h3>
+<p>If the process is not yet predictable, the verdict still appears, but with an unmissable banner telling you it is <strong>provisional</strong>. The reason is fundamental: capability is a prediction about future performance, and an unstable process has no predictable future to make a prediction about. Bring the process into statistical control first; only then can a capability rating be relied on. Gemba-SPC shows the verdict with a caveat rather than hiding it, so a manager keeps useful operational information while being told plainly not to trust it yet.</p>
+<h3>What to do about a poor verdict</h3>
+<p>If a <em>stable</em> process is marginal or not capable, the answer is a <strong>design change</strong>, not tighter monitoring. The process is doing exactly what it is built to do; it simply is not built to meet the requirement. No amount of watching the chart harder will close that gap &mdash; the system has to change. The app states this directly when the verdict warrants it.</p>
+<div class="callout callout-bonnet"><span class="callout-label">&#x25B8; Under the bonnet</span><p><strong>The verdict is spread-driven, not mean-driven.</strong> Gemba-SPC v1.2 classifies capability by where the <em>full natural process limits</em> sit relative to the specification &mdash; specifically the signed sigma-distance from the binding process limit to its nearest spec bound &mdash; not by where the mean sits. The consequence matters: a process whose mean is comfortably inside specification but whose variation is wide is correctly rated <strong>not capable</strong>, because a large share of its output falls outside the requirement. (This corrects earlier behaviour where such a process could read &#x201C;marginal&#x201D; on the strength of its mean alone.)</p><p><strong>The 1&#x3C3; marginal band is a documented convention, not a Wheeler constant.</strong> The rule is: if the binding process limit breaches its spec bound by up to 1&#x3C3;, the verdict is <em>marginal</em>; beyond 1&#x3C3;, it is <em>not capable</em>. This single threshold is a deliberate judgement, stated openly so you can see it and challenge it. If field experience suggests it mislabels real processes, it is a one-constant change &mdash; feedback is genuinely wanted.</p><p><strong>The boundary comparison is inclusive by deliberate choice.</strong> A process limit sitting exactly on the spec bound counts as capable. Safety margin belongs in the headroom between the limit and the bound &mdash; in where you set the specification &mdash; not in the comparison operator.</p><p><strong>Stability precedes capability.</strong> The provisional banner on an unstable process is intentional and reflects Wheeler&#x2019;s doctrine: capability is undefined for an unpredictable process. The empirical percentage-outside figure is shown as an explanation but does <em>not</em> drive the verdict &mdash; so the rating will not flip merely because you added more points, only because the process&#x2019;s spread genuinely changed.</p></div>
+<div class="callout callout-important"><span class="callout-label">Important</span><p>Capability compares your process against a requirement. It never sets or moves your control limits. The natural process limits always come from the data &mdash; never from a target, an SLA, or a specification.</p></div>
+    </div>
+
+    <!-- Section 10 -->
+    <div class="guide-section" id="s10">
+      <div class="section-header">
+        <span class="section-num-badge">10</span>
+        <h2>Exporting to Gemba-A3 and Gemba-RCA</h2>
+      </div>
+<p>A signal on a chart is the start of an investigation, not the end. Gemba-SPC hands its findings straight to the other tools in the suite so a signal becomes a properly worked problem.</p>
+<h3>Export for Gemba-A3</h3>
+<p>This packages the whole chart &mdash; the chart image, the statistics, the detected signals, the specification and capability verdict, and any recorded interventions &mdash; and routes it into Gemba-A3&#x2019;s results and measures evidence. Use it when a signal has become an improvement project and you want the chart as evidence in a structured A3.</p>
+<h3>Export for Gemba-RCA &mdash; select signal</h3>
+<p>This packages a <strong>single flagged point</strong> together with its surrounding context: the neighbouring values, the limits in force, and any interventions nearby. It lands in Gemba-RCA as the problem to investigate. Use it when one specific event is what you want to get to the bottom of.</p>
+<h3>Download chart SVG</h3>
+<p>Download the chart as a scalable vector image for reports, board papers, and presentations &mdash; it stays crisp at any size.</p>
+<div class="callout callout-tip"><span class="callout-label">Tip</span><p>When you want a root-cause investigation of one event, export that specific signal point to RCA &mdash; not the whole chart. The single-signal export carries exactly the context an RCA needs and nothing that would distract from it.</p></div>
+    </div>
+
+    <!-- Section 11 -->
+    <div class="guide-section" id="s11">
+      <div class="section-header">
+        <span class="section-num-badge">11</span>
+        <h2>AI Lean Sensei Coaching Export</h2>
+      </div>
+<p>Gemba-SPC can generate a structured coaching prompt from your chart. Copy it into a free AI assistant (Microsoft Copilot, Claude, or Google Gemini) for guided reflection on what your chart is telling you and how to respond.</p>
+<h3>How it works</h3>
+<p>Open the <strong>AI Coach</strong> option, choose a coaching tier and your AI platform, then preview and copy the prompt &mdash; or download it as a .txt file. The prompt carries your chart&#x2019;s statistics, signals, specification, and context so the assistant can coach against your actual data.</p>
+<h3>Coaching tiers</h3>
+<table class="data-table"><thead><tr><th>Tier</th><th>Who and how</th></tr></thead><tbody>
+<tr><td><strong>&#x1F94B; Practitioner</strong></td><td>Experienced practitioner who can already read charts. Peer-level, lean and SPC terms used freely, with a concise data-quality briefing.</td></tr>
+<tr><td><strong>&#x1F4CB; Facilitator</strong></td><td>Team leader with some SPC knowledge. Guided reflection with concepts explained and Socratic questioning that walks through the signals.</td></tr>
+</tbody></table>
+<h3>AI assistant</h3>
+<p>Choose the platform you have access to &mdash; <strong>Microsoft Copilot</strong> (often available on NHS accounts), <strong>Claude</strong>, or <strong>Google Gemini</strong>. The prompt is tailored to read well in whichever you pick.</p>
+<h3>Core principles</h3>
+<p>The coaching prompt is built on the same principles that run through the whole suite:</p>
+<ul>
+<li>Respect for people &mdash; workarounds are intelligent responses to broken systems, not rule-breaking</li>
+<li>Observe multiple operators &mdash; one person&#x2019;s method is not the process</li>
+<li>Observe across conditions &mdash; different times, workloads, and shifts</li>
+<li>The first session is never the last &mdash; incomplete data is normal</li>
+<li>Good enough to start team dialogue &mdash; work that sits unshared is inventory waste</li>
+<li>No measure, no do &mdash; challenge anything that cannot be measured</li>
+<li>Do not tamper &mdash; common-cause variation requires system-level change, not individual correction</li>
+</ul>
+<div class="callout callout-important"><span class="callout-label">Important</span><p>The AI is instructed to coach, not solve. It will never suggest solutions or countermeasures &mdash; those must come from the people who do the work. It will never critique individuals &mdash; problems belong to the process, not people. It will never make clinical or patient-safety judgements. And it will never recommend tightening or loosening your limits &mdash; limits come from the data, never from targets or specifications.</p></div>
+    </div>
+
+    <!-- Section 12 -->
+    <div class="guide-section" id="s12">
+      <div class="section-header">
+        <span class="section-num-badge">12</span>
+        <h2>Saving, Exporting &amp; Importing</h2>
+      </div>
+<h3>Project management</h3>
+<p>The <strong>Your Charts</strong> bar at the top manages multiple charts. Create a new chart, rename it, switch between charts, or delete one you no longer need. Each chart stores its own data, phases, limits, exclusions, specification, and interventions independently. Data auto-saves as you work.</p>
+<div class="callout callout-important"><span class="callout-label">Important</span><p>Browser storage can be cleared by your phone if storage runs low. Always export JSON after completing a session. The JSON file is your permanent backup. If you have not exported, you have not saved.</p></div>
+<h3>JSON export &mdash; back up your data</h3>
+<p>Click <strong>JSON</strong> to download a complete backup of the chart: every data point, the phases and any locked limits, excluded points with their reason notes, the specification, recorded interventions, and the chart metadata. Re-import it on any device to pick up exactly where you left off.</p>
+<p><strong>When to export:</strong> After every session. Before switching devices. Before clearing your browser. Before deleting any chart.</p>
+<h3>CSV export</h3>
+<p>Export the chart&#x2019;s data as a CSV file for use in a spreadsheet or for sharing the underlying numbers.</p>
+<h3>Chart SVG</h3>
+<p>Download the chart as a scalable vector image for reports and presentations.</p>
+<h3>Importing</h3>
+<p>Use <strong>Import</strong> to load a previously exported JSON file. Importing always creates a new chart &mdash; it never overwrites existing data. Charts saved by earlier versions of Gemba-SPC load correctly; older charts are upgraded as they open.</p>
+    </div>
+
+    <!-- Section 13 -->
+    <div class="guide-section" id="s13">
+      <div class="section-header">
+        <span class="section-num-badge">13</span>
+        <h2>References &amp; Further Reading</h2>
+      </div>
+<h3>Further Reading</h3>
+<p><em>Wheeler, D. &#x201C;Understanding Variation: The Key to Managing Chaos.&#x201D;</em> The clearest available statement of why the signal-versus-noise distinction is the heart of good management. The methodology Gemba-SPC implements.</p>
+<p><em>Wheeler, D. &amp; Chambers, D. &#x201C;Understanding Statistical Process Control.&#x201D;</em> The definitive technical reference for process behaviour charts, including the XmR constants used in this tool.</p>
+<p><em>NHS Improvement Diagnostic Team. &#x201C;Bringing Lean to Life &mdash; Making Processes Flow in Healthcare.&#x201D;</em> The lean healthcare methodology that underpins the Gemba Suite.</p>
+<p><em>Womack, J. &amp; Jones, D. &#x201C;Lean Thinking.&#x201D;</em> The foundational text on lean principles.</p>
+<h3>Online Resources</h3>
+<p><strong>Lean Enterprise Institute (LEI)</strong> &mdash; www.lean.org</p>
+<p><strong>Lean Enterprise Academy</strong> &mdash; www.leanuk.org</p>
+    </div>
+
+    <div class="closing-callout">
+      <div class="closing-motto">Go See &middot; Ask Why &middot; Respect People</div>
+      <p>Gemba-SPC was created to help teams see their processes clearly, distinguish signal from noise, and act on facts rather than react to variation.</p>
+    </div>
+
+    <p style="font-size:12px; color:var(--ink-tertiary); margin-top:var(--space-6); line-height:1.6;">&#xA9; 2024&#x2013;2026 David Clark. Licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0). These tools and guides are free for all healthcare improvement purposes. The NonCommercial restriction targets commercial resale, proprietary repackaging, and use as part of paid consultancy services. Full terms: gembasuite.org/licence</p>
+
+  </main>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div><strong>Gemba Suite</strong> &mdash; <a href="https://gembasuite.org/">gembasuite.org</a> &mdash; <a href="/feedback/">Feedback</a></div>
+    <div class="footer-licence">CC BY-NC-SA 4.0 &middot; No patient data collected</div>
+  </div>
+</footer>
+
+</body>
+</html>
