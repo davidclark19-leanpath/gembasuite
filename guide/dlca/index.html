@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#181c1c">
+<title>Demand, Load & Capacity Analysis with Gemba-DLCA — Gemba Suite</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:               #181c1c;
+  --ink-secondary:     #3e484c;
+  --ink-tertiary:      #6e797c;
+  --paper:             #f7faf9;
+  --card:              #ffffff;
+  --surface-low:       #f1f4f3;
+  --surface-high:      #e6e9e8;
+  --grid:              #bec8cc;
+  --grid-subtle:       #e0e3e2;
+  --primary:           #006172;
+  --primary-container: #007c91;
+  --primary-tint:      #c4e5ef;
+  --primary-tint-strong:#79d3ea;
+  --on-primary:        #ffffff;
+  --on-primary-tint:   #004e5c;
+  --accent-warm:       #854a10;
+  --accent-warm-bg:    #ffdcc3;
+  --status-success:    #2e7d32;
+  --status-success-bg: #d4edda;
+  --status-warning:    #856404;
+  --status-warning-bg: #fff3cd;
+  --status-error:      #ba1a1a;
+  --status-error-bg:   #ffdad6;
+  --shadow-sm:         0 1px 3px rgba(24,28,28,0.06);
+  --shadow-md:         0 2px 8px rgba(24,28,28,0.08);
+  --radius-sm:         4px;
+  --radius-md:         8px;
+  --radius-lg:         12px;
+  --font-display:      'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-body:         'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;
+  --space-5:20px;--space-6:24px;--space-8:32px;--space-10:40px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.65;
+  font-size: 15px;
+}
+
+/* ── Site header ── */
+.site-header {
+  background: var(--ink);
+  padding: var(--space-3) var(--space-6);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+.site-wordmark {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.22em;
+  color: var(--primary-tint);
+  text-decoration: none;
+  text-transform: uppercase;
+}
+.back-link {
+  font-size: 12px;
+  color: var(--ink-tertiary);
+  text-decoration: none;
+  margin-left: auto;
+}
+.back-link:hover { color: var(--primary-tint); }
+
+/* ── Guide hero ── */
+.guide-hero {
+  background: var(--ink);
+  color: var(--on-primary);
+  padding: var(--space-8) var(--space-6) var(--space-10);
+  border-bottom: 3px solid var(--primary);
+}
+.guide-type {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--primary-tint);
+  margin-bottom: var(--space-3);
+}
+.guide-hero h1 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(26px, 5vw, 40px);
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+  margin-bottom: var(--space-3);
+}
+.guide-hero h1 em {
+  font-style: normal;
+  color: var(--primary-tint-strong);
+}
+.guide-meta {
+  font-size: 12px;
+  color: var(--ink-tertiary);
+  margin-bottom: var(--space-6);
+}
+.guide-intro {
+  font-size: 16px;
+  line-height: 1.65;
+  color: rgba(255,255,255,0.82);
+  max-width: 640px;
+}
+
+/* ── Layout ── */
+.guide-layout {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-6);
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: var(--space-8);
+  align-items: start;
+}
+
+/* ── Contents nav ── */
+.contents-nav {
+  position: sticky;
+  top: var(--space-6);
+}
+.contents-nav h2 {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--ink-tertiary);
+  margin-bottom: var(--space-3);
+}
+.contents-nav ol {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.contents-nav li a {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  font-size: 12px;
+  color: var(--ink-secondary);
+  text-decoration: none;
+  padding: 5px var(--space-2);
+  border-radius: var(--radius-sm);
+  transition: background 0.1s, color 0.1s;
+}
+.contents-nav li a:hover {
+  background: var(--surface-high);
+  color: var(--primary);
+}
+.contents-nav li a .num {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 10px;
+  color: var(--primary);
+  min-width: 16px;
+}
+
+/* ── Guide content ── */
+.guide-content section {
+  margin-bottom: var(--space-10);
+  scroll-margin-top: var(--space-6);
+}
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+.section-num {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--primary-container);
+  color: var(--on-primary);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.guide-content h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--primary);
+  line-height: 1.25;
+}
+.guide-content h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--ink);
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-3);
+}
+.guide-content p {
+  color: var(--ink-secondary);
+  margin-bottom: var(--space-4);
+  max-width: 620px;
+}
+.guide-content p:last-child { margin-bottom: 0; }
+.guide-content strong { color: var(--ink); }
+
+/* ── Callout boxes ── */
+.callout {
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-5);
+  margin: var(--space-5) 0;
+  display: flex;
+  gap: var(--space-3);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.callout-icon { flex-shrink: 0; font-size: 18px; line-height: 1.3; }
+.callout-body { flex: 1; }
+.callout-body strong { display: block; margin-bottom: 4px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.4px; }
+.callout.tip { background: var(--primary-tint); color: var(--on-primary-tint); }
+.callout.tip strong { color: var(--on-primary-tint); }
+.callout.warning { background: var(--status-warning-bg); color: var(--status-warning); }
+.callout.warning strong { color: var(--status-warning); }
+.callout.bonnet { background: var(--surface-low); border: 1px solid var(--grid-subtle); color: var(--ink-secondary); }
+.callout.bonnet strong { color: var(--ink); }
+
+/* ── Steps ── */
+.steps {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: var(--space-5) 0;
+}
+.step {
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-start;
+}
+.step-num {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--on-primary);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+}
+.step-text {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--ink-secondary);
+}
+.step-text strong { color: var(--ink); }
+
+/* ── Results table ── */
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: var(--space-5) 0;
+  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.results-table thead tr {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+.results-table th {
+  padding: 10px 12px;
+  text-align: left;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+}
+.results-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--grid-subtle);
+  color: var(--ink-secondary);
+  vertical-align: top;
+}
+.results-table tbody tr:last-child td { border-bottom: none; }
+.results-table tbody tr:nth-child(even) td { background: var(--surface-low); }
+.results-table td strong { color: var(--ink); }
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--radius-full, 9999px);
+  white-space: nowrap;
+}
+.badge-green { background: var(--status-success-bg); color: var(--status-success); }
+.badge-red   { background: var(--status-error-bg); color: var(--status-error); }
+.badge-equip { background: var(--primary-tint); color: var(--on-primary-tint); }
+.gap-neg { color: var(--status-error); font-weight: 600; }
+.gap-pos { color: var(--status-success); font-weight: 600; }
+
+/* ── Constraint card ── */
+.constraint-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-4);
+  margin: var(--space-5) 0;
+}
+.constraint-card {
+  background: var(--card);
+  border: 1px solid var(--grid-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-sm);
+}
+.constraint-card-icon { font-size: 22px; margin-bottom: var(--space-2); }
+.constraint-card-label {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--ink);
+  margin-bottom: var(--space-1);
+}
+.constraint-card-desc {
+  font-size: 12px;
+  color: var(--ink-tertiary);
+  line-height: 1.5;
+}
+
+/* ── Footer ── */
+.site-footer {
+  border-top: 1px solid var(--grid-subtle);
+  padding: var(--space-6);
+  text-align: center;
+  font-size: 12px;
+  color: var(--ink-tertiary);
+  margin-top: var(--space-10);
+}
+.site-footer a { color: var(--primary); text-decoration: none; }
+
+/* ── Mobile ── */
+@media (max-width: 680px) {
+  .guide-layout {
+    grid-template-columns: 1fr;
+    padding: var(--space-5) var(--space-4);
+  }
+  .contents-nav { position: static; }
+  .guide-hero { padding: var(--space-6) var(--space-4) var(--space-8); }
+  .results-table { font-size: 11px; }
+  .results-table th, .results-table td { padding: 8px; }
+  .constraint-cards { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="site-wordmark" href="https://gembasuite.org">Gemba Suite</a>
+  <a class="back-link" href="https://gembasuite.org/guide/">← Guides</a>
+</header>
+
+<div class="guide-hero">
+  <div class="guide-type">Full Guide · Demand, Load &amp; Capacity Analysis</div>
+  <h1>Demand, Load &amp; Capacity Analysis<br>with <em>Gemba-DLCA</em></h1>
+  <div class="guide-meta">v0.75 · Beta · May 2026 · David Clark</div>
+  <p class="guide-intro">A practical guide to modelling capacity and demand in NHS laboratory services. Covers cut-up and dissection planning, bench and staff constraint analysis, and skill-mix routing for mixed-grade teams.</p>
+</div>
+
+<div class="guide-layout">
+
+  <nav class="contents-nav">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#s1"><span class="num">1</span>What this tool does</a></li>
+      <li><a href="#s2"><span class="num">2</span>Getting started</a></li>
+      <li><a href="#s3"><span class="num">3</span>Setting up your process</a></li>
+      <li><a href="#s4"><span class="num">4</span>Entering demand</a></li>
+      <li><a href="#s5"><span class="num">5</span>Reading the results</a></li>
+      <li><a href="#s6"><span class="num">6</span>Skill-mix routing</a></li>
+      <li><a href="#s7"><span class="num">7</span>Saving and exporting</a></li>
+    </ol>
+  </nav>
+
+  <main class="guide-content">
+
+    <!-- SECTION 1 -->
+    <section id="s1">
+      <div class="section-label">
+        <div class="section-num">1</div>
+        <h2>What this tool does</h2>
+      </div>
+
+      <p>Gemba-DLCA tells you whether your lab has enough capacity to meet demand — and if not, exactly what is the limiting factor. Is it the number of cut-up benches? The number of Band 6 staff? The consultant sessions? The tool compares demand against every constraint simultaneously and names the binding one.</p>
+
+      <p>This is the question most capacity planning gets wrong. A spreadsheet that adds up total hours available and compares to total hours needed will tell you that you have enough. DLCA shows you that your Band 6 staff are at 124% utilisation handling simple and multispecimen biopsies, even though total staff hours across all grades look fine on paper. The problem is invisible until you separate the grades.</p>
+
+      <p>The tool is designed for NHS laboratory teams. It handles realistic lab structures: multiple benches running different session patterns, staff across multiple grades doing different types of work, rework loops from failed dissections, and variation across weeks.</p>
+
+      <div class="callout tip">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <strong>Beta note</strong>
+          This is an early version focused on the cut-up and dissection step. The engine handles the full pathway, but the beta test scenarios and demo data are scoped to cut-up. Extend to other steps as you get familiar with the tool.
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section id="s2">
+      <div class="section-label">
+        <div class="section-num">2</div>
+        <h2>Getting started</h2>
+      </div>
+
+      <p>The app runs entirely in your browser. Nothing is installed, and no data leaves your device. Open the link you were sent and the app loads directly.</p>
+
+      <ol class="steps">
+        <li class="step">
+          <div class="step-num">1</div>
+          <div class="step-text"><strong>Load the demo scenario.</strong> Click <strong>Template</strong> in the top bar and select <em>Histopathology Standard</em>. This gives you a working cut-up model with four case types, two benches, and three staff grades to explore before entering your own data.</div>
+        </li>
+        <li class="step">
+          <div class="step-num">2</div>
+          <div class="step-text"><strong>Go to Tab 3 — Calculations</strong> and click <em>Calculate</em>. The results table appears immediately. Look at the <strong>Constraint</strong> column — it tells you what is limiting capacity at each step in each period.</div>
+        </li>
+        <li class="step">
+          <div class="step-num">3</div>
+          <div class="step-text"><strong>Try changing something.</strong> Go back to Tab 2 — Demand &amp; Capacity and increase the Band 6 funded posts from 2 to 4. Recalculate. Watch the constraint change.</div>
+        </li>
+        <li class="step">
+          <div class="step-num">4</div>
+          <div class="step-text"><strong>Export your work</strong> using the <em>Export</em> button. This saves a JSON file you can reload later or share with a colleague.</div>
+        </li>
+      </ol>
+
+      <div class="callout tip">
+        <span class="callout-icon">📱</span>
+        <div class="callout-body">
+          <strong>Works on mobile</strong>
+          The app is designed for phone and tablet use. On an iPhone or iPad, open in Safari and tap Share → Add to Home Screen for offline access.
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section id="s3">
+      <div class="section-label">
+        <div class="section-num">3</div>
+        <h2>Setting up your process</h2>
+      </div>
+
+      <p>Tab 1 — Process Map is where you define the structure of your pathway. For a cut-up focused model you need four things: a swim lane, a process step, staff pools, and an equipment pool.</p>
+
+      <h3>Swim lanes</h3>
+      <p>A swim lane represents a functional area — Cut-up &amp; Dissection, Processing &amp; Microtomy, Reporting. For a focused cut-up model, one swim lane is enough.</p>
+
+      <h3>Process steps</h3>
+      <p>A step is one activity within a swim lane — for example, <em>Cut-up / Dissection</em>. Each step has a processing time (in minutes per case, at the default case type), a unit tier (Cases or Blocks), and optionally an equipment pool assigned to it.</p>
+
+      <h3>Staff pools</h3>
+      <p>Define one pool per grade or staff group. For cut-up you typically have three: Band 6 BMS, Band 7 Advanced Practitioner, and Consultant Pathologist. Each pool has a number of funded posts and contracted hours per week. The engine calculates available capacity from funded posts, contracted hours, and any absence entered.</p>
+
+      <h3>Equipment pools (benches)</h3>
+      <p>An equipment pool represents your cut-up benches. Add a workstation for each bench. For each workstation, define a weekly session schedule — which days it runs, what time sessions start, how long each session is, and the changeover time between sessions. The engine calculates available bench-hours from these sessions, accounting for unplanned downtime.</p>
+
+      <div class="callout bonnet">
+        <span class="callout-icon">▸</span>
+        <div class="callout-body">
+          <strong>Under the bonnet — how bench capacity is calculated</strong>
+          For each session: usable time = (session duration − changeover) × (1 − downtime%). Bench capacity = sum of usable time across all sessions and all workstations in the pool, converted to hours. This is then compared against the demand in hours at the step. If demand exceeds bench capacity, the bench is the binding constraint regardless of how many staff are available.
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section id="s4">
+      <div class="section-label">
+        <div class="section-num">4</div>
+        <h2>Entering demand</h2>
+      </div>
+
+      <p>Tab 2 — Demand &amp; Capacity is where you enter what arrives at your lab. The demand model has three parts: case types, case volumes, and absence.</p>
+
+      <h3>Case types</h3>
+      <p>Define the types of specimen your lab receives — for example, simple biopsy, multispecimen biopsy, simple resection, complex resection. For each case type you set a processing time override at the cut-up step (how many minutes a dissection takes for that complexity), and a blocks-per-case multiplier for downstream steps.</p>
+
+      <h3>Case volumes</h3>
+      <p>Enter how many cases of each type arrive per week, for each period you want to model. Four weeks is a typical starting point. The tool calculates total load in hours by multiplying case volumes by processing times and summing across case types.</p>
+
+      <h3>Absence</h3>
+      <p>For each staff pool, you can enter planned absence for each period — annual leave, training, sickness. The engine deducts this from available capacity to give you a realistic picture of what's actually in the building.</p>
+
+      <div class="callout warning">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body">
+          <strong>No patient data</strong>
+          Enter case volumes only — not patient names, dates of birth, NHS numbers, or any other identifiable information. This tool models process capacity, not patients.
+        </div>
+      </div>
+
+      <h3>Daily demand profiles</h3>
+      <p>For any period, you can optionally enable a daily demand profile. This replaces the weekly volume table for that period with a case type × day grid — letting you model a specific week where, for example, a Saturday endoscopy list generates extra simple biopsies arriving on Monday. Enter average and maximum values per case type per day. The weekly total becomes the sum of daily entries. The gap chart shows an amber peak demand line when maximum values exceed the average.</p>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section id="s5">
+      <div class="section-label">
+        <div class="section-num">5</div>
+        <h2>Reading the results</h2>
+      </div>
+
+      <p>Tab 3 — Calculations shows the results table after you click Calculate. Each row is one process step in one period. Here is what each column means:</p>
+
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th>Column</th>
+            <th>What it means</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Value Demand (h)</strong></td>
+            <td>Hours of work that adds value — the actual dissection time, excluding rework.</td>
+          </tr>
+          <tr>
+            <td><strong>Failure Demand (h)</strong></td>
+            <td>Hours consumed by rework — re-dissection of cases that failed first time. Shown in amber when non-zero.</td>
+          </tr>
+          <tr>
+            <td><strong>Total Load (h)</strong></td>
+            <td>Total hours of demand at this step in this period. Value demand + failure demand.</td>
+          </tr>
+          <tr>
+            <td><strong>Estab. Cap. (h)</strong></td>
+            <td>Establishment capacity — total hours from funded posts at contracted hours, before absence.</td>
+          </tr>
+          <tr>
+            <td><strong>Avail. Cap. (h)</strong></td>
+            <td>Available capacity after absence deductions. When skill-mix routing is active, this shows the binding pool's capacity with a sub-label identifying which pool and how many hours.</td>
+          </tr>
+          <tr>
+            <td><strong>Gap (h)</strong></td>
+            <td>Available capacity minus demand. <span class="gap-pos">Positive = headroom</span>. <span class="gap-neg">Negative = overloaded</span>. When skill-mix routing is active, this reflects the binding pool's own gap, not the total step gap.</td>
+          </tr>
+          <tr>
+            <td><strong>Utilisation</strong></td>
+            <td>Demand as a percentage of available capacity. Over 100% means the step cannot meet demand in the time available.</td>
+          </tr>
+          <tr>
+            <td><strong>Constraint</strong></td>
+            <td>What is limiting capacity at this step. See below.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>The constraint column</h3>
+
+      <p>This is the most important column in the table. It tells you what is actually limiting your capacity at each step in each period — and it names the specific pool when skill-mix routing is active.</p>
+
+      <div class="constraint-cards">
+        <div class="constraint-card">
+          <div class="constraint-card-icon">🟢</div>
+          <div class="constraint-card-label"><span class="badge badge-green">None</span></div>
+          <div class="constraint-card-desc">Demand is within capacity. Neither bench nor staff is the limiting factor this period.</div>
+        </div>
+        <div class="constraint-card">
+          <div class="constraint-card-icon">⚙️</div>
+          <div class="constraint-card-label"><span class="badge badge-equip">⚙ Equipment</span></div>
+          <div class="constraint-card-desc">Bench capacity is the bottleneck. You have the staff hours, but not enough physical bench time to process the demand. Adding staff won't help — you need more bench sessions.</div>
+        </div>
+        <div class="constraint-card">
+          <div class="constraint-card-icon">👥</div>
+          <div class="constraint-card-label"><span class="badge badge-red">👥 Staff · Band 6</span></div>
+          <div class="constraint-card-desc">A specific staff pool is the bottleneck. The name of the binding pool appears next to the badge. Benches are available — the constraint is who can do the work.</div>
+        </div>
+      </div>
+
+      <div class="callout bonnet">
+        <span class="callout-icon">▸</span>
+        <div class="callout-body">
+          <strong>Under the bonnet — how the binding constraint is determined</strong>
+          The engine computes two ceilings: staff available capacity (funded posts × contracted hours − absence, divided across steps the pool serves) and bench capacity (sum of usable session minutes ÷ 60). Available capacity = min(staff, bench). If demand exceeds this minimum, the constraint is whichever ceiling is lower. When skill-mix routing is active, each pool is evaluated against only its routed case types — so Band 6 is compared against simple and multispecimen biopsy demand only, not the full step demand.
+        </div>
+      </div>
+
+      <h3>The gap chart</h3>
+      <p>Tab 4 — Gap Chart shows demand and capacity over time for each step. The red line is average demand. The green line is available capacity. Where red is above green, you're over capacity. An amber dashed line appears when daily peak demand figures have been entered, showing the worst-case week.</p>
+
+      <h3>The diagnostic</h3>
+      <p>Tab 5 — Diagnostic summarises the findings in plain language — which steps are binding in which periods, and which constraint type is responsible. This is useful for sharing findings with colleagues who haven't been through the numbers.</p>
+    </section>
+
+    <!-- SECTION 6 -->
+    <section id="s6">
+      <div class="section-label">
+        <div class="section-num">6</div>
+        <h2>Skill-mix routing</h2>
+      </div>
+
+      <p>In a real cut-up room, not every dissector does every case. Band 6 BMS handle simple and multispecimen biopsies. Band 7 Advanced Practitioners take on more complex resections. Consultants handle the most complex cases and provide oversight.</p>
+
+      <p>Without skill-mix routing, the tool would add all staff hours together and compare against total demand — and it would tell you everything is fine, because total hours look adequate. The problem is invisible. Band 6 staff are running at 124% of their capacity on their cases, even though the consultants have headroom. That's the constraint — and it's the one that matters for the actual queue.</p>
+
+      <p>Skill-mix routing makes this visible. Here's how to set it up:</p>
+
+      <ol class="steps">
+        <li class="step">
+          <div class="step-num">1</div>
+          <div class="step-text"><strong>Assign all three pools to the cut-up step</strong> in Tab 1. Tick Band 6, Band 7, and Consultant in the step's pool assignment panel.</div>
+        </li>
+        <li class="step">
+          <div class="step-num">2</div>
+          <div class="step-text"><strong>Expand the routing panel under each pool.</strong> You'll see checkboxes for each case type. Tick the case types that pool handles.</div>
+        </li>
+        <li class="step">
+          <div class="step-num">3</div>
+          <div class="step-text"><strong>Typical routing for histopathology cut-up:</strong> Band 6 → types 1 and 2 (simple biopsy, multispecimen biopsy). Band 7 → type 3 (simple resection). Consultant → type 4 (complex resection).</div>
+        </li>
+        <li class="step">
+          <div class="step-num">4</div>
+          <div class="step-text"><strong>Recalculate.</strong> The results table now shows the binding pool in the Constraint badge — for example, <em>👥 Staff · Band 6</em>. The gap and utilisation figures reflect that pool's own position against its own cases.</div>
+        </li>
+      </ol>
+
+      <div class="callout tip">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <strong>What the numbers mean with routing active</strong>
+          If Band 6 has 2 funded posts at 37.5h = 75h available, and their cases (241 simple biopsies × 4 min + 385 multispecimen × 12 min) generate 93h of demand, the gap is −18h and utilisation is 124%. That's the number to act on. Adding more consultants won't help — they can't do Band 6 cases.
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 7 -->
+    <section id="s7">
+      <div class="section-label">
+        <div class="section-num">7</div>
+        <h2>Saving and exporting</h2>
+      </div>
+
+      <p>Your data is saved automatically in your browser after every change. Close the tab and come back — everything is still there. This only works in the same browser on the same device.</p>
+
+      <h3>JSON export</h3>
+      <p>Click <strong>Export</strong> to save a complete copy of your project as a JSON file. This is your portable backup. You can reload it on any device using the <strong>Import</strong> button, share it with a colleague, or send it to David Clark for review.</p>
+
+      <h3>New project</h3>
+      <p>Click <strong>Template → New blank project</strong> to start from scratch. You'll be asked to confirm before your current data is cleared. Export first if you want to keep a copy.</p>
+
+      <h3>Templates</h3>
+      <p>The Histopathology Standard template gives you a pre-built cut-up model as a starting point. Load it, adjust the case volumes and staffing to match your lab, and it becomes your model.</p>
+
+      <div class="callout tip">
+        <span class="callout-icon">🔒</span>
+        <div class="callout-body">
+          <strong>Data stays on your device</strong>
+          Nothing is sent to a server. Your data exists only in your browser's local storage until you export it. Clearing browser data or site data will permanently delete it — export regularly.
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer class="site-footer">
+  <a href="https://gembasuite.org">gembasuite.org</a> · David Clark ·
+  <a href="https://gembasuite.org/licence">CC BY-NC-SA 4.0</a> · Free for healthcare improvement · No patient data
+</footer>
+
+</body>
+</html>
