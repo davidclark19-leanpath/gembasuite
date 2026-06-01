@@ -442,7 +442,7 @@ body {
       <ol class="steps">
         <li class="step">
           <div class="step-num">1</div>
-          <div class="step-text"><strong>Load the demo scenario.</strong> Click <strong>Template</strong> in the top bar and select <em>Histopathology Standard</em>. This gives you a working cut-up model with four case types, two benches, and three staff grades to explore before entering your own data.</div>
+          <div class="step-text"><strong>Load a demo scenario.</strong> Click <strong>Import</strong> in the top bar and select one of the two demo JSON files you were sent. <em>dlca-demo-bench-binds.json</em> shows a scenario where the benches are the binding constraint. <em>dlca-demo-staff-binds-skillmix.json</em> shows skill-mix routing with Band 6 as the binding constraint. Start with bench-binds.</div>
         </li>
         <li class="step">
           <div class="step-num">2</div>
@@ -632,7 +632,7 @@ body {
       <ol class="steps">
         <li class="step">
           <div class="step-num">1</div>
-          <div class="step-text"><strong>Assign all three pools to the cut-up step</strong> in Tab 1. Tick Band 6, Band 7, and Consultant in the step's pool assignment panel.</div>
+          <div class="step-text"><strong>Assign all three pools to the cut-up step</strong> in Tab 1. Tick Band 6 BMS, Band 7 Advanced Practitioner, and Consultant Pathologist in the step's pool assignment panel.</div>
         </li>
         <li class="step">
           <div class="step-num">2</div>
@@ -672,8 +672,12 @@ body {
       <h3>New project</h3>
       <p>Click <strong>Template → New blank project</strong> to start from scratch. You'll be asked to confirm before your current data is cleared. Export first if you want to keep a copy.</p>
 
-      <h3>Templates</h3>
-      <p>The Histopathology Standard template gives you a pre-built cut-up model as a starting point. Load it, adjust the case volumes and staffing to match your lab, and it becomes your model.</p>
+      <h3>Demo scenario files</h3>
+      <p>Two JSON scenario files are included with this beta. Load them using the <strong>Import</strong> button.</p>
+      <p><strong>dlca-demo-bench-binds.json</strong> — a single cut-up step with two benches and generous staff. The bench is the binding constraint at every period. Use this to understand what Equipment binding looks like.</p>
+      <p><strong>dlca-demo-staff-binds-skillmix.json</strong> — the same cut-up step with skill-mix routing active. Band 6 BMS handle simple and multispecimen biopsies, Band 7 APs handle simple resections, Consultants handle complex resections. Band 6 is undersized for their case load and shows as the binding constraint.</p>
+      <h3>Saving your own templates</h3>
+      <p>Once you have built a project that reflects your lab, save it as a template using <strong>Template → save as template</strong>. You can reload it any time using <strong>Template → Browse saved templates</strong>.</p>
 
       <div class="callout tip">
         <span class="callout-icon">🔒</span>
