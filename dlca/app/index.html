@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<!-- Gemba-DLCA v0.79 — Demand and Capacity Analyser
+<!-- Gemba-DLCA v0.79a — Demand and Capacity Analyser
      Author: David Clark — gembasuite.org
      Licence: CC BY-NC-SA 4.0
      Built: 2026-05-21
-     Changes v0.79: Migration guard — detects and clears stale bundled template state on load without affecting user-entered data; safe for all future versions. v0.78: Histopathology Standard bundled template removed for beta — use Import to load scenario JSON files; template picker shows import hint when no saved templates exist. v0.77: Band 7 Advanced Practitioner added to Histopathology Standard template (2 posts, 37.5h). v0.76: Histopathology Standard template pre-loaded with demand data (4 weeks, 4 case types); Grossing/Cut-up step unitTier fixed t2→t1 (resolves tier mismatch warning on Dissection benches). v0.75: (4 weeks, 4 case types). v0.75: Gap and utilisation reflect binding pool's own load vs own capacity when skill-mix routing active — removes misleading inflated gap figure. v0.74: Skill-mix routing — case types assignable to specific staff pools per step; binding pool named in constraint badge. v0.73: Daily demand profile redesigned as period-level (one grid per period, replaces weekly volumes for all steps); weekly table locks when active; avg + peak per case type per day. v0.72: Daily profile per-case-type × per-day grid (superseded). — per-case-type × per-day grid with avg + peak; all steps eligible; weekly total = sum of daily entries; peak demand line on gap chart. v0.71: Bug fixes — bench constraint engine (calcEquipmentCapacityForStep), openModal undefined
+     Changes v0.79a: Pre-demo typo fixes — case type symbols corrected ≥→≤; downtime help text updated to practical range; UI help text grammar fixes. v0.79: Migration guard — detects and clears stale bundled template state on load without affecting user-entered data; safe for all future versions. v0.78: Histopathology Standard bundled template removed for beta — use Import to load scenario JSON files; template picker shows import hint when no saved templates exist. v0.77: Band 7 Advanced Practitioner added to Histopathology Standard template (2 posts, 37.5h). v0.76: Histopathology Standard template pre-loaded with demand data (4 weeks, 4 case types); Grossing/Cut-up step unitTier fixed t2→t1 (resolves tier mismatch warning on Dissection benches). v0.75: (4 weeks, 4 case types). v0.75: Gap and utilisation reflect binding pool's own load vs own capacity when skill-mix routing active — removes misleading inflated gap figure. v0.74: Skill-mix routing — case types assignable to specific staff pools per step; binding pool named in constraint badge. v0.73: Daily demand profile redesigned as period-level (one grid per period, replaces weekly volumes for all steps); weekly table locks when active; avg + peak per case type per day. v0.72: Daily profile per-case-type × per-day grid (superseded). — per-case-type × per-day grid with avg + peak; all steps eligible; weekly total = sum of daily entries; peak demand line on gap chart. v0.71: Bug fixes — bench constraint engine (calcEquipmentCapacityForStep), openModal undefined
      flagging in results table and 4D diagnostic (G2); session editor overlay panel — absolute
      positioned, no fixed (G3); work pattern inputs widened to 60px 7-column grid (G4);
      changeover inclusive within session duration, HH:MM–HH:MM pill display, overlap detection (G5).
@@ -14,7 +14,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="description" content="Gemba-DLCA: Demand, load and capacity analysis for NHS lean improvement teams.">
 <meta name="theme-color" content="#181c1c">
-<title>Gemba-DLCA v0.79 — Demand &amp; Capacity Analyser</title>
+<title>Gemba-DLCA v0.79a — Demand &amp; Capacity Analyser</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -880,7 +880,7 @@ input, select, textarea { font-family: inherit; font-size: 14px; color: var(--in
     </svg>
   </div>
   <div class="app-title">Gemba-DLCA</div>
-  <div class="app-version">v0.79</div>
+  <div class="app-version">v0.79a</div>
   <div class="project-name-wrap">
     <div class="project-name-label">Project</div>
     <input class="project-name-input" id="projectNameInput" placeholder="Untitled project"
@@ -1058,7 +1058,7 @@ input, select, textarea { font-family: inherit; font-size: 14px; color: var(--in
       <div class="section-num">A</div>
       <div>
         <div class="section-title">Time Periods</div>
-        <div class="form-help">Define the weeks or periods you want to analyse. Enter at least two to reveal demand variation.</div>
+        <div class="form-help">Define the weeks or periods you want to analyse. Enter at least two periods to reveal demand variation.</div>
       </div>
       <div style="margin-left:auto">
         <button class="btn btn-secondary btn-sm" onclick="addPeriod()">+ Add Period</button>
@@ -1417,7 +1417,7 @@ function migrateState(s) {
   });
   // v0.6: backfill staffDetail on resource pools
   if (s.pools) s.pools.forEach(p => { if (!p.staffDetail) p.staffDetail = []; });
-  // v0.79: period-level dailyDemandProfile — migrate old step-keyed format
+  // v0.79a: period-level dailyDemandProfile — migrate old step-keyed format
   if (s.periods) s.periods.forEach(p => {
     if (!p.dailyAbsence) p.dailyAbsence = {};
     // Migrate: old format was dailyDemandProfile[stepId][day]{avg,max}
@@ -1467,7 +1467,7 @@ function migrateState(s) {
     // Migrate single poolId → poolIds array (ENH-01 migration)
     if (!st.poolIds) st.poolIds = st.poolId ? [st.poolId] : [];
     if (!st.equipmentPoolIds) st.equipmentPoolIds = [];
-    if (!st.poolRouting) st.poolRouting = {}; // v0.79: { [caseTypeId]: poolId | null }
+    if (!st.poolRouting) st.poolRouting = {}; // v0.79a: { [caseTypeId]: poolId | null }
   });
   if (!('templateSource' in s)) s.templateSource = null;
   return s;
@@ -1480,14 +1480,14 @@ function load() {
       const loaded = JSON.parse(raw);
       state = migrateState(loaded);
 
-      // v0.79 migration guard: if the saved state was loaded from a bundled
+      // v0.79a migration guard: if the saved state was loaded from a bundled
       // template that no longer exists in this version, reset to blank.
       // This protects users who opened an older version that had the
       // Histopathology Standard template — their browser has stale state
       // from that template. We detect it by checking templateSource against
       // the current BUNDLED_TEMPLATES list. User-saved templates and
       // user-entered data are unaffected.
-      // v0.79: migration guard — clear stale removed bundled template state
+      // v0.79a: migration guard — clear stale removed bundled template state
       // Hardcoded to avoid hoisting issue (BUNDLED_TEMPLATES defined later in file)
       if (state.templateSource && ['Histopathology Standard'].includes(state.templateSource)) {
         console.info('Gemba-DLCA: clearing stale bundled template state (' + state.templateSource + ')');
@@ -1745,7 +1745,7 @@ function addStep() {
     id, name: '', laneId: state.lanes[0]?.id || '',
     poolIds: state.pools[0]?.id ? [state.pools[0].id] : [],
     equipmentPoolIds: [],
-    poolRouting: {}, // v0.79: case type → pool routing
+    poolRouting: {}, // v0.79a: case type → pool routing
     automated: false, reworkTarget: null, reworkRate: 0, eventMarker: '', processingTime: 30,
     unitTier: 't1'
   });
@@ -1798,7 +1798,7 @@ function toggleStepPool(stepId, poolId, checked) {
 }
 
 function setPoolRouting(stepId, caseTypeId, poolId, checked) {
-  // v0.79: assign a specific pool to handle a specific case type at this step
+  // v0.79a: assign a specific pool to handle a specific case type at this step
   const s = state.steps.find(st => st.id === stepId);
   if (!s) return;
   if (!s.poolRouting) s.poolRouting = {};
@@ -1828,7 +1828,7 @@ function renderSteps() {
   }
 
   c.innerHTML = state.steps.map((s, idx) => {
-    // v0.79: pool checkboxes with per-case-type routing
+    // v0.79a: pool checkboxes with per-case-type routing
     const hasCaseTypes = state.caseTypes.length > 0;
     const poolCheckboxes = state.pools.length
       ? state.pools.map(p => {
@@ -2792,7 +2792,7 @@ function renderWsCard(ep, ws) {
         <input class="form-input" type="number" min="0" max="50" value="${ws.unplannedDowntimePct}"
           style="width:60px;"
           onchange="updateBench('${ep.id}','${ws.id}','unplannedDowntimePct',this.value);renderEquipmentPools()"
-          title="Fault, maintenance, deep clean. Default 5% if unknown.">
+          title="Fault, maintenance, deep clean. Typically 5–10% for lab equipment — adjust to reflect your maintenance records.">
       </div>
       <button class="btn btn-secondary btn-sm" onclick="toggleRepPanel('${ws.id}')">${repBtnLabel}</button>
       ${delConfirmHtml}
@@ -3187,7 +3187,7 @@ function renderDemandInputs() {
   const thStyle = 'text-align:left;padding:6px 10px;background:var(--surface-low);border-bottom:1px solid var(--grid);font-size:11px;font-weight:600;color:var(--ink-secondary);text-transform:uppercase;white-space:nowrap;';
   const tdStyle = 'padding:5px 10px;border-bottom:1px solid var(--grid-subtle);';
 
-  // v0.79: period-level daily profile — one grid per period, all steps use it
+  // v0.79a: period-level daily profile — one grid per period, all steps use it
 
   // Build daily profile section per period
   const dailyProfileHtml = state.periods.map(period => {
@@ -3287,7 +3287,7 @@ function renderDemandInputs() {
           ${state.caseTypes.map(ct => `<tr>
             <td style="${tdStyle}font-weight:500;">${escHtml(ct.name)}</td>
             ${state.periods.map(p => {
-              // v0.79: lock cell when period daily profile is enabled
+              // v0.79a: lock cell when period daily profile is enabled
               const locked = !!(p.dailyDemandProfile && p.dailyDemandProfile.enabled);
               const dailySum = locked
                 ? DAYS.reduce((s,d) => s + (p.dailyDemandProfile.days?.[d]?.caseTypes?.[ct.id]?.avg || 0), 0)
@@ -3357,7 +3357,7 @@ function toggleDailyProfileSection(periodId) {
 }
 
 function togglePeriodDailyProfile(periodId, on) {
-  // v0.79: period-level toggle — applies to all steps
+  // v0.79a: period-level toggle — applies to all steps
   const period = state.periods.find(p => p.id === periodId);
   if (!period) return;
   if (!period.dailyDemandProfile || typeof period.dailyDemandProfile.enabled === 'undefined') {
@@ -3384,7 +3384,7 @@ function togglePeriodDailyProfile(periodId, on) {
 }
 
 function setDailyDemand(periodId, day, caseTypeId, metric, value) {
-  // v0.79: period-level — no stepId
+  // v0.79a: period-level — no stepId
   const period = state.periods.find(p => p.id === periodId);
   if (!period || !period.dailyDemandProfile) return;
   const days = period.dailyDemandProfile.days;
@@ -3396,7 +3396,7 @@ function setDailyDemand(periodId, day, caseTypeId, metric, value) {
 }
 
 function updateDailyProfileTotals(period) {
-  // v0.79: refresh period-level totals
+  // v0.79a: refresh period-level totals
   const days = (period.dailyDemandProfile || {}).days || {};
   const avgEl = document.getElementById('daily-avg-total-' + period.id);
   const peakEl = document.getElementById('daily-peak-total-' + period.id);
@@ -3419,12 +3419,12 @@ function calcDailyProfileTotal(days, mode) {
 }
 
 function calcDailyDemandWeeklyTotal(period) {
-  // v0.79: period-level
+  // v0.79a: period-level
   const days = (period.dailyDemandProfile || {}).days || {};
   return calcDailyProfileTotal(days, 'avg');
 }
 
-// v0.79: toggleDayMixOverride and setDayMixProportion removed — case mix now entered directly as counts per case type per day
+// v0.79a: toggleDayMixOverride and setDayMixProportion removed — case mix now entered directly as counts per case type per day
 
 function updateDemandTotals() {
   // BUG-03 FIX: update tfoot totals in-place without full re-render
@@ -3538,7 +3538,7 @@ function renderExternalDemandTypes() {
 
 /* Calculated volume per step per period using tier-based derivation + named external demand */
 function calcStepVolumes() {
-  // v0.79: when daily profile is enabled for a step+period, daily case-type counts
+  // v0.79a: when daily profile is enabled for a step+period, daily case-type counts
   // replace the weekly case-type volume inputs for that step.
   // Returns { volume, load, peakLoad, byCase } per step per period.
   const result = {};
@@ -3550,7 +3550,7 @@ function calcStepVolumes() {
       let totalPeakLoad = 0;
       const byCase = [];
 
-      // v0.79: period-level daily profile
+      // v0.79a: period-level daily profile
       const usesDaily = !!(period.dailyDemandProfile && period.dailyDemandProfile.enabled);
       const days = usesDaily ? ((period.dailyDemandProfile || {}).days || {}) : null;
 
@@ -3605,7 +3605,7 @@ function calcStepVolumes() {
         }
       });
 
-      // v0.79: compute load per pool using skill-mix routing
+      // v0.79a: compute load per pool using skill-mix routing
       const loadByPool = {};
       const unroutedLoad = { avg: 0, peak: 0 };
       byCase.forEach(bc => {
@@ -3761,7 +3761,7 @@ function setAbsence(poolId, periodId, field, value) {
    STEP 3 — CALCULATIONS (equipment constraint integration)
    ============================================================ */
 function getStepStaffCapacity(step, periodId, loadByPool) {
-  // v0.79: when skill-mix routing is active, find the pool with the worst utilisation
+  // v0.79a: when skill-mix routing is active, find the pool with the worst utilisation
   // Returns { estabCap, availCap, bindingPoolName } in hours
   const poolIds = step.poolIds || (step.poolId ? [step.poolId] : []);
   let estabCap = 0, availCap = 0;
@@ -3780,7 +3780,7 @@ function getStepStaffCapacity(step, periodId, loadByPool) {
     estabCap += thisEstab;
     availCap += thisAvail;
 
-    // v0.79: track which pool is most over capacity (for skill-mix binding constraint name)
+    // v0.79a: track which pool is most over capacity (for skill-mix binding constraint name)
     if (loadByPool && loadByPool[pid] && thisAvail > 0) {
       const util = loadByPool[pid].avg / thisAvail;
       if (util > worstUtil) { worstUtil = util; bindingPoolName = pool.name; }
@@ -3805,7 +3805,7 @@ function runCalculations() {
       const failureDemand = valueDemand * (step.reworkRate || 0);
       const totalLoad = valueDemand + failureDemand;
 
-      // Staff capacity (v0.79: skill-mix routing aware)
+      // Staff capacity (v0.79a: skill-mix routing aware)
       const { estabCap, availCap: staffAvailCap, bindingPoolName } = getStepStaffCapacity(step, period.id, derived.loadByPool);
 
       // Equipment capacity (hours) — Infinity if no equipment pools assigned
@@ -3815,7 +3815,7 @@ function runCalculations() {
       // Effective available capacity: min(staff, equipment)
       const availCap = hasEquipConstraint ? Math.min(staffAvailCap, equipCapHours) : staffAvailCap;
 
-      // v0.79: when skill-mix routing is active, gap and utilisation reflect
+      // v0.79a: when skill-mix routing is active, gap and utilisation reflect
       // the binding pool's own load vs its own capacity — not total step load.
       // This gives the manager the meaningful number: how short is the bottleneck
       // pool on its own cases (e.g. Band 6: -18h) not an inflated total (-191h).
@@ -3882,7 +3882,7 @@ function runCalculations() {
 }
 
 function constraintBadge(type, bindingPoolName) {
-  // v0.79: show pool name in Staff badge when skill-mix routing is active
+  // v0.79a: show pool name in Staff badge when skill-mix routing is active
   const poolLabel = bindingPoolName ? ` · ${bindingPoolName.split(' ').slice(0,2).join(' ')}` : '';
   if (type === 'Equipment') return `<span class="badge badge-equip">⚙ Equipment</span>`;
   if (type === 'Staff')     return `<span class="badge badge-red" title="${bindingPoolName||'Staff'}">👥 Staff${poolLabel}</span>`;
@@ -4000,7 +4000,7 @@ function renderCalcResults() {
         let worstDay = null; let worstGap = 0; let deficitCount = 0;
         DAYS.forEach((day, di) => {
           const avg = (profile[day]||{}).avg || 0;
-          const dayMix = null; // v0.79: case mix entered as counts — no percentage override
+          const dayMix = null; // v0.79a: case mix entered as counts — no percentage override
           const cap = (ep.workstations||[]).reduce((sum, ws) =>
             sum + (ws.schedule[day]||[]).reduce((s, session) =>
               s + calcSessionThroughput(session, ws, ep, dayMix).cases, 0), 0);
@@ -4394,7 +4394,7 @@ function renderDiagnostic() {
       let worstDay = null; let worstGap = 0;
       DAYS.forEach((day, di) => {
         const avg = (profile[day]||{}).avg || 0;
-        const dayMix = null; // v0.79: case mix entered as counts — no percentage override
+        const dayMix = null; // v0.79a: case mix entered as counts — no percentage override
         const cap = (ep.workstations||[]).reduce((sum, ws) =>
           sum + (ws.schedule[day]||[]).reduce((s, session) =>
             s + calcSessionThroughput(session, ws, ep, dayMix).cases, 0), 0);
@@ -4548,7 +4548,7 @@ function renderDailyCapacityCard() {
     // G1: resolve day mix override from dailyDemandProfile for accurate capacity calculation
     function getSessionCapacity(day, profile) {
       if (!ep) return 0;
-      const dayMix = null; // v0.79: case mix entered as counts per case type — no percentage override
+      const dayMix = null; // v0.79a: case mix entered as counts per case type — no percentage override
       return (ep.workstations||[]).reduce((sum, ws) => {
         return sum + (ws.schedule[day]||[]).reduce((s, session) => {
           const t = calcSessionThroughput(session, ws, ep, dayMix);
@@ -4641,7 +4641,7 @@ function renderDailyCapacityCard() {
       if (!(period.dailyDemandProfile||{}).enabled) return;
       const profile = (period.dailyDemandProfile||{}).days || {};
       DAYS.forEach((day, di) => {
-        const dayMix = null; // v0.79: case mix entered as counts — no percentage override
+        const dayMix = null; // v0.79a: case mix entered as counts — no percentage override
         const cap = ep ? (ep.workstations||[]).reduce((sum, ws) =>
           sum + (ws.schedule[day]||[]).reduce((s, session) => s + calcSessionThroughput(session, ws, ep, dayMix).cases, 0), 0) : 0;
         const avg = Object.values((profile[day]||{}).caseTypes||{}).reduce((s,e)=>s+(e.avg||0),0);
@@ -4781,7 +4781,7 @@ function doImport() {
    TEMPLATE SYSTEM
    ============================================================ */
 const BUNDLED_TEMPLATES = [];
-// v0.79: bundled Histopathology Standard template removed for beta.
+// v0.79a: bundled Histopathology Standard template removed for beta.
 // Use the Import button to load scenario JSON files instead.
 
 function makeBenchSchedule(sessionDefs) {
@@ -4940,7 +4940,7 @@ function applyTemplate(config) {
   state.tiers = config.tiers || { t1:{name:'Primary unit',enabled:true}, t2:{name:'Secondary unit',enabled:false}, t3:{name:'Tertiary unit',enabled:false} };
   state.caseTypes = config.caseTypes || [];
   state.externalDemandTypes = [];
-  // v0.79: use pre-loaded demand and periods from template if present
+  // v0.79a: use pre-loaded demand and periods from template if present
   state.demand = config.demand || { caseTypeVolumes: {}, externalDemand: {} };
   state.periods = config.periods || [];
   state.absence = config.absence || {};
@@ -5097,7 +5097,7 @@ function updateProjectName(value) {
   state.projectName = value;
   save();
   // keep page title in sync
-  document.title = value ? `${value} — Gemba-DLCA v0.79` : 'Gemba-DLCA v0.79 — Demand & Capacity Analyser';
+  document.title = value ? `${value} — Gemba-DLCA v0.79a` : 'Gemba-DLCA v0.79a — Demand & Capacity Analyser';
 }
 
 function syncProjectNameInput() {
