@@ -1,6 +1,12 @@
 {
   "items": [
     {
+      "app": "Gemba-A3",
+      "version": "v2.6",
+      "date": "2026-06-03",
+      "summary": "SIPOC panel added to Current State and Future State — scope the process before diving into the grasp."
+    },
+    {
       "app": "Gemba-SPC",
       "version": "v1.2",
       "date": "2026-05-22",

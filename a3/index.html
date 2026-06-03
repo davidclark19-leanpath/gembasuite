@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--
   ╔══════════════════════════════════════════════════════════════════╗
-  ║  Gemba A3 — Structured Problem Solving Tool  v2.5a            ║
+  ║  Gemba A3 — Structured Problem Solving Tool  v2.6             ║
   ║  Part of the Gemba Suite (gembasuite.org)                      ║
   ║                                                                ║
   ║  Created by David Clark                                        ║
@@ -38,7 +38,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Gemba A3 v2.5a — Structured Problem Solving</title>
+<title>Gemba A3 v2.6 — Structured Problem Solving</title>
 
 <!-- PWA Meta Tags -->
 <link rel="manifest" href="/a3/manifest.json">
@@ -87,16 +87,20 @@
   --on-accent-warm:     #ffffff;
 
   /* ── Status ── */
+  /* v2.6 fix: these five tokens were self-referential in v2.5a (e.g.
+     --status-warning: var(--status-warning);) so the declarations dropped
+     silently wherever they were used. Repaired with real values, mirroring
+     the error family and the print amber (#fef3cd) already in the file. */
   --status-success:     #2e7d32;
-  --status-success-bg:  var(--status-success-bg);
-  --status-warning:     var(--status-warning);
-  --status-warning-bg:  var(--status-warning-bg);
+  --status-success-bg:  #d8f0da;
+  --status-warning:     #8a5000;
+  --status-warning-bg:  #fef3cd;
   --status-error:       #ba1a1a;
   --status-error-bg:    #ffdad6;
   --status-locked:      #9e9e9e;
-  --status-locked-bg:   var(--status-locked-bg);
+  --status-locked-bg:   #ececec;
   --status-draft:       #6e797c;
-  --status-draft-bg:    var(--status-draft-bg);
+  --status-draft-bg:    #eef0f0;
 
   /* ── Shadows ── */
   --shadow-sm:          0 1px 3px rgba(24,28,28,0.06);
@@ -1139,6 +1143,205 @@ textarea { resize: vertical; min-height: 80px; }
 }
 .panel-pareto-body .pareto-row input[type="text"] { flex: 2; }
 .panel-pareto-body .pareto-row input[type="number"] { flex: 1; max-width: 80px; }
+
+/* ===== SIPOC PANEL ===== */
+/* Five visually-uniform cards (no five-colour rainbow). Differentiation is by
+   order and letter badge, which is how SIPOC is read: S-I-P-O-C, left to right. */
+.sipoc-body { font-size: 13px; }
+.sipoc-title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+.sipoc-title-row label {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 11px;
+  color: var(--primary);
+  white-space: nowrap;
+}
+.sipoc-title-input {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--touch-min, 44px);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--grid);
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--ink);
+  background: var(--card);
+}
+.sipoc-title-input:focus { outline: none; border-color: var(--primary); }
+
+/* Fill-order hint — informational note. No blue token exists in this app, so
+   the suite's primary (teal) tint is used as the informational surface. */
+.sipoc-hint {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+  background: var(--primary-tint);
+  color: var(--on-primary-tint);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  font-size: 12px;
+  line-height: 1.4;
+  margin-bottom: var(--space-3);
+}
+.sipoc-hint .sipoc-hint-icon { flex-shrink: 0; font-weight: 700; }
+
+/* Stacked collapsible cards */
+.sipoc-cards { display: flex; flex-direction: column; gap: var(--space-2); }
+.sipoc-card {
+  border: 1px solid var(--grid-subtle);
+  border-radius: var(--radius-md);
+  background: var(--card);
+  overflow: hidden;
+}
+.sipoc-card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: var(--touch-min, 44px);
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-low);
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+}
+.sipoc-card-header:hover { background: var(--surface-high); }
+.sipoc-letter {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-sm);
+  background: var(--primary-tint);
+  color: var(--primary);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 14px;
+}
+.sipoc-card-name {
+  flex: 1;
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 12px;
+  color: var(--primary);
+}
+.sipoc-count {
+  flex-shrink: 0;
+  font-size: 12px;
+  color: var(--ink-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+.sipoc-chevron {
+  flex-shrink: 0;
+  color: var(--ink-tertiary);
+  font-size: 12px;
+  transition: transform 0.15s;
+}
+.sipoc-card.open .sipoc-chevron { transform: rotate(90deg); }
+.sipoc-card-body { padding: var(--space-3); display: flex; flex-direction: column; gap: var(--space-2); }
+.sipoc-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.sipoc-row-num {
+  flex-shrink: 0;
+  width: 18px;
+  text-align: right;
+  font-size: 12px;
+  color: var(--ink-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+.sipoc-row-input {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--touch-min, 44px);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--grid);
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--ink);
+  background: var(--card);
+}
+.sipoc-row-input:focus { outline: none; border-color: var(--primary); }
+.sipoc-row-del {
+  flex-shrink: 0;
+  width: var(--touch-min, 44px);
+  height: var(--touch-min, 44px);
+  border: 1px solid var(--grid-subtle);
+  border-radius: var(--radius-md);
+  background: var(--card);
+  color: var(--status-error);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+.sipoc-row-del:hover { background: var(--status-error-bg); border-color: var(--status-error); }
+.sipoc-add-row {
+  align-self: flex-start;
+  min-height: var(--touch-min, 44px);
+  padding: var(--space-2) var(--space-3);
+  border: 1px dashed var(--grid);
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--primary);
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+.sipoc-add-row:hover { border-color: var(--primary); background: var(--primary-tint); }
+
+/* Process-length guard — soft amber warning, never blocks input */
+.sipoc-guard {
+  margin-top: var(--space-1);
+  background: var(--status-warning-bg);
+  color: var(--status-warning);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* Gemba-verification toggle — green when observed, amber when assumed */
+.sipoc-verify {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: var(--touch-min, 44px);
+  margin-top: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--status-warning);
+  border-radius: var(--radius-md);
+  background: var(--status-warning-bg);
+  color: var(--status-warning);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+}
+.sipoc-verify.verified {
+  border-color: var(--status-success);
+  background: var(--status-success-bg);
+  color: var(--status-success);
+}
+.sipoc-verify .sipoc-verify-mark { flex-shrink: 0; font-size: 15px; }
+
 /* Add panel picker button */
 .add-panel-btn {
   display: flex;
@@ -1483,7 +1686,7 @@ textarea { resize: vertical; min-height: 80px; }
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
     Gemba A3
     <span class="jp">問題解決</span>
-    <span style="font-size:10px;opacity:0.4;font-weight:400;margin-left:8px">v2.5a</span>
+    <span style="font-size:10px;opacity:0.4;font-weight:400;margin-left:8px">v2.6</span>
     <span style="font-size:10px;opacity:0.35;font-weight:400;margin-left:8px">— David Clark</span>
     <span class="about-link" onclick="showAboutModal()">About & Licence</span>
   </h1>
@@ -2547,7 +2750,7 @@ textarea { resize: vertical; min-height: 80px; }
 <!-- ═══════════ ABOUT & LICENCE MODAL ═══════════ -->
 <div class="modal-overlay" id="aboutModal">
   <div class="modal licence-modal">
-    <h2>Gemba A3 v2.5a</h2>
+    <h2>Gemba A3 v2.6</h2>
     <span class="licence-badge">CC BY-NC-SA 4.0</span>
 
     <p>Structured A3 problem solving for healthcare teams.</p>
@@ -4475,8 +4678,8 @@ function updateDowntimeEvidence(key, value) {
 
 // Panel types available per section
 const PANEL_TYPES = {
-  currentState:    ['text', 'image', 'table', 'pareto'],
-  futureState:     ['text', 'image'],
+  currentState:    ['text', 'image', 'table', 'pareto', 'sipoc'],
+  futureState:     ['text', 'image', 'sipoc'],
   resultsMeasures: ['text', 'image', 'table'],
   nextSteps:       ['text', 'image']
 };
@@ -4485,7 +4688,8 @@ const PANEL_TYPE_META = {
   text:   { icon: '📝', label: 'Text Block',   desc: 'Narrative / observation notes' },
   image:  { icon: '🖼️', label: 'Image Block',  desc: 'Photo, VSM map, diagram' },
   table:  { icon: '📊', label: 'Data Table',   desc: 'Rows and columns of data' },
-  pareto: { icon: '📈', label: 'Pareto Chart', desc: 'Vital few analysis' }
+  pareto: { icon: '📈', label: 'Pareto Chart', desc: 'Vital few analysis' },
+  sipoc:  { icon: '▦', label: 'SIPOC',        desc: 'Scope the process (S-I-P-O-C)' }
 };
 
 const PANEL_CHAR_LIMIT = 400; // per text panel, advisory
@@ -4495,6 +4699,12 @@ let _pickerSelectedType = null;
 
 // ── Create blank panel ──────────────────────────────────────────────
 function createBlankPanel(type, order, width) {
+  if (type === 'sipoc') {
+    const p = createSipocPanel();
+    p.order = order;
+    p.width = width || 'full';
+    return p;
+  }
   return {
     id: generateUUID(),
     type,
@@ -4511,6 +4721,42 @@ function createBlankPanel(type, order, width) {
     paretoData: []
   };
 }
+
+// ── Create SIPOC panel ──────────────────────────────────────────────
+// SIPOC scopes a process at the framing stage: Suppliers, Inputs, Process,
+// Outputs, Customers. It bounds the process and names the customer — it is a
+// scoping aid, not a substitute for the gemba grasp of the actual condition,
+// nor for a VSM (hence the gemba-verification flag and the Process-length guard).
+function createSipocPanel() {
+  return {
+    id: generateUUID(),
+    type: 'sipoc',
+    order: 0,                 // set by caller, as with other panels
+    width: 'full',            // inherits the half/full plumbing; full by default
+    title: '',                // the process being scoped, free text
+    suppliers: [],            // arrays of { id, text }
+    inputs:    [],
+    process:   [],            // 4–7 high-level steps
+    outputs:   [],
+    customers: [],
+    verifiedAtGemba: false,   // gemba-verification flag
+    openCard: null            // which card is expanded ('suppliers'…'customers') or null
+  };
+}
+
+// Rows are stored as { id, text } objects so a remove control can target a
+// stable id rather than an array index that shifts as rows are added/removed.
+function createSipocRow(text) {
+  return { id: generateUUID(), text: text || '' };
+}
+
+const SIPOC_COLUMNS = [
+  { key: 'suppliers', letter: 'S', label: 'Suppliers' },
+  { key: 'inputs',    letter: 'I', label: 'Inputs'    },
+  { key: 'process',   letter: 'P', label: 'Process'   },
+  { key: 'outputs',   letter: 'O', label: 'Outputs'   },
+  { key: 'customers', letter: 'C', label: 'Customers' }
+];
 
 // ── Backward-compat migration ────────────────────────────────────────
 // Called from populateUIFromData. If a section has no panels array yet,
@@ -4607,7 +4853,11 @@ function deletePanel(sectionKey, panelId) {
     (panel.type === 'text' && panel.content && panel.content.trim()) ||
     (panel.type === 'image' && panel.imageData) ||
     (panel.type === 'table' && panel.tableData.rows.some(r => r.some(c => c))) ||
-    (panel.type === 'pareto' && panel.paretoData.length > 0)
+    (panel.type === 'pareto' && panel.paretoData.length > 0) ||
+    (panel.type === 'sipoc' && (
+      (panel.title || '').trim() ||
+      SIPOC_COLUMNS.some(c => (panel[c.key] || []).some(r => (typeof r === 'string' ? r : r.text || '').trim()))
+    ))
   );
   function doDelete() {
     a3Data.sections[sectionKey].panels = panels.filter(p => p.id !== panelId);
@@ -4959,6 +5209,8 @@ function renderPanelGrid(sectionKey) {
             placeholder="Chart caption (optional)"
             onchange="updatePanelField('${sectionKey}','${panel.id}','caption',this.value)">
         </div>`;
+    } else if (panel.type === 'sipoc') {
+      bodyHtml = renderSipocPanel(panel, sectionKey);
     }
 
     return `<div class="panel-block panel-${panel.width || 'full'}" id="panel-${panel.id}">${headerHtml}${bodyHtml}</div>`;
@@ -4966,6 +5218,158 @@ function renderPanelGrid(sectionKey) {
 
   // After rendering, trigger Pareto charts for any pareto panels
   panels.filter(p => p.type === 'pareto').forEach(p => renderPanelParetoChart(p, p.id));
+}
+
+// ═══════════════════════════════════════
+// SIPOC PANEL
+// ═══════════════════════════════════════
+
+// Coerce a column to an array of { id, text } objects. Old/hand-edited data
+// may hold plain strings; nothing in the wild has sipoc panels yet, but this
+// keeps the render defensive.
+function sipocColumn(panel, key) {
+  const arr = panel[key];
+  if (!Array.isArray(arr)) return [];
+  return arr.map(r => (typeof r === 'string') ? { id: generateUUID(), text: r } : r);
+}
+
+function renderSipocPanel(panel, sectionKey) {
+  const sk = sectionKey;
+  const pid = panel.id;
+
+  const cardsHtml = SIPOC_COLUMNS.map(col => {
+    const rows = sipocColumn(panel, col.key);
+    const isOpen = panel.openCard === col.key;
+    let bodyHtml = '';
+    if (isOpen) {
+      const rowsHtml = rows.map((r, i) => `
+        <div class="sipoc-row">
+          <span class="sipoc-row-num">${i + 1}.</span>
+          <input class="sipoc-row-input" type="text" value="${escHtml(r.text || '')}"
+            placeholder="${escHtml(col.label.replace(/s$/, ''))}…"
+            onchange="updateSipocRow('${sk}','${pid}','${col.key}','${r.id}',this.value)">
+          <button class="sipoc-row-del" onclick="removeSipocRow('${sk}','${pid}','${col.key}','${r.id}')" title="Remove">×</button>
+        </div>`).join('');
+      // Process-length guard sits beneath the Process card only
+      const guardHtml = (col.key === 'process' && rows.length > 7)
+        ? `<div class="sipoc-guard">SIPOC's Process column is deliberately high-level — keep it to about 4–7 steps. If it's sprawling, this may be a job for a VSM.</div>`
+        : '';
+      bodyHtml = `
+        <div class="sipoc-card-body">
+          ${rowsHtml}
+          <button class="sipoc-add-row" onclick="addSipocRow('${sk}','${pid}','${col.key}')">＋ add ${escHtml(col.label.replace(/s$/, '').toLowerCase())}</button>
+          ${guardHtml}
+        </div>`;
+    }
+    return `
+      <div class="sipoc-card${isOpen ? ' open' : ''}">
+        <button class="sipoc-card-header" onclick="toggleSipocCard('${sk}','${pid}','${col.key}')"
+          aria-expanded="${isOpen ? 'true' : 'false'}">
+          <span class="sipoc-letter">${col.letter}</span>
+          <span class="sipoc-card-name">${escHtml(col.label)}</span>
+          <span class="sipoc-count">(${rows.length})</span>
+          <span class="sipoc-chevron">▸</span>
+        </button>
+        ${bodyHtml}
+      </div>`;
+  }).join('');
+
+  const verified = !!panel.verifiedAtGemba;
+  const verifyHtml = `
+    <button class="sipoc-verify${verified ? ' verified' : ''}" onclick="toggleSipocVerified('${sk}','${pid}')">
+      <span class="sipoc-verify-mark">${verified ? '✓' : '⚑'}</span>
+      <span>${verified ? 'Observed at gemba' : 'Assumed — not yet verified at gemba'}</span>
+    </button>`;
+
+  return `
+    <div class="panel-block-body sipoc-body">
+      <div class="sipoc-title-row">
+        <label>Process scoped</label>
+        <input class="sipoc-title-input" type="text" value="${escHtml(panel.title || '')}"
+          placeholder="e.g. Specimen reception → authorisation"
+          onchange="setSipocTitle('${sk}','${pid}',this.value)">
+      </div>
+      <div class="sipoc-hint">
+        <span class="sipoc-hint-icon">ⓘ</span>
+        <span>Tip: start with Customers and Outputs, then work back (customer-back thinking). Cards still read S-I-P-O-C.</span>
+      </div>
+      <div class="sipoc-cards">${cardsHtml}</div>
+      ${verifyHtml}
+    </div>`;
+}
+
+function findSipocPanel(sectionKey, panelId) {
+  return (a3Data.sections[sectionKey].panels || []).find(p => p.id === panelId && p.type === 'sipoc');
+}
+
+function setSipocTitle(sectionKey, panelId, value) {
+  const panel = findSipocPanel(sectionKey, panelId);
+  if (!panel) return;
+  panel.title = value;
+  refreshSectionPreview(sectionKey);
+  saveToLocal();
+}
+
+function toggleSipocCard(sectionKey, panelId, column) {
+  const panel = findSipocPanel(sectionKey, panelId);
+  if (!panel) return;
+  // Open state lives on the data object (expandable-panel pattern), not the DOM
+  panel.openCard = (panel.openCard === column) ? null : column;
+  saveToLocal();
+  renderPanelGrid(sectionKey);
+}
+
+function addSipocRow(sectionKey, panelId, column) {
+  const panel = findSipocPanel(sectionKey, panelId);
+  if (!panel) return;
+  if (!Array.isArray(panel[column])) panel[column] = [];
+  panel[column] = sipocColumn(panel, column); // normalise any legacy strings
+  panel[column].push(createSipocRow(''));
+  panel.openCard = column; // keep the card open after adding
+  saveToLocal();
+  renderPanelGrid(sectionKey);
+}
+
+function removeSipocRow(sectionKey, panelId, column, rowId) {
+  const panel = findSipocPanel(sectionKey, panelId);
+  if (!panel) return;
+  panel[column] = sipocColumn(panel, column).filter(r => r.id !== rowId);
+  panel.openCard = column;
+  refreshSectionPreview(sectionKey);
+  saveToLocal();
+  renderPanelGrid(sectionKey);
+}
+
+function updateSipocRow(sectionKey, panelId, column, rowId, value) {
+  const panel = findSipocPanel(sectionKey, panelId);
+  if (!panel) return;
+  panel[column] = sipocColumn(panel, column);
+  const row = panel[column].find(r => r.id === rowId);
+  if (row) row.text = value;
+  saveToLocal();
+}
+
+function toggleSipocVerified(sectionKey, panelId) {
+  const panel = findSipocPanel(sectionKey, panelId);
+  if (!panel) return;
+  panel.verifiedAtGemba = !panel.verifiedAtGemba;
+  saveToLocal();
+  renderPanelGrid(sectionKey);
+}
+
+// Section-preview fallback: prefer the first text panel, else the first SIPOC
+// panel's title, else "SIPOC — N steps" — consistent with how non-text panels
+// generate a preview line.
+function refreshSectionPreview(sectionKey) {
+  const panels = a3Data.sections[sectionKey].panels || [];
+  const firstText = panels.find(p => p.type === 'text' && (p.content || '').trim());
+  if (firstText) { updateSectionPreviewText(sectionKey, firstText.content.trim()); return; }
+  const firstSipoc = panels.find(p => p.type === 'sipoc');
+  if (firstSipoc) {
+    const title = (firstSipoc.title || '').trim();
+    const steps = sipocColumn(firstSipoc, 'process').filter(r => (r.text || '').trim()).length;
+    updateSectionPreviewText(sectionKey, title || ('SIPOC — ' + steps + ' steps'));
+  }
 }
 
 // ═══════════════════════════════════════
@@ -6339,7 +6743,7 @@ function buildAppendixDocx(includePhotos) {
     meta_p(`Parent A3 ID: ${clean(meta.parentA3Id)}`);
   }
   blank();
-  p('This document is the full evidence record for the above A3. The single-page printed A3 necessarily truncates content; this record contains everything captured in the tool including revision history, memos, nemawashi log, and standardisation checklist. Generated by Gemba-A3 v2.5a — gembasuite.org. CC BY-NC-SA 4.0.');
+  p('This document is the full evidence record for the above A3. The single-page printed A3 necessarily truncates content; this record contains everything captured in the tool including revision history, memos, nemawashi log, and standardisation checklist. Generated by Gemba-A3 v2.6 — gembasuite.org. CC BY-NC-SA 4.0.');
   blank();
 
   // ── SECTIONS ──
@@ -6515,7 +6919,7 @@ function buildAppendixDocx(includePhotos) {
 
   // ── FOOTER ──
   h1('Document Information');
-  meta_p(`Generated by: Gemba-A3 v2.5a — gembasuite.org`);
+  meta_p(`Generated by: Gemba-A3 v2.6 — gembasuite.org`);
   meta_p(`Licence: CC BY-NC-SA 4.0`);
   meta_p(`Export date: ${exportDate}`);
   if (!includePhotos) {
@@ -6834,6 +7238,30 @@ function buildPrintContainer(format) {
       }).join('');
       return `<svg xmlns="http://www.w3.org/2000/svg" width="${svgW}" height="${svgH}" style="display:block;overflow:visible;">${rowsSvg}</svg>` +
         `<div style="font-size:6px;color:#ba1a1a;margin-top:2px;">Vital few: ${vital.join(', ')}</div>`;
+    } else if (panel.type === 'sipoc') {
+      // Edit stacked, print tabular. Reuses the standard .a3p-tbl coloured-header
+      // pattern. Columns are S-I-P-O-C; rows aligned by index where present.
+      const colsArr = SIPOC_COLUMNS.map(c => ({
+        label: c.label,
+        rows: (Array.isArray(panel[c.key]) ? panel[c.key] : [])
+          .map(r => (typeof r === 'string' ? r : (r && r.text) || ''))
+          .filter(t => (t || '').trim())
+      }));
+      const hasAny = colsArr.some(c => c.rows.length) || (panel.title || '').trim();
+      if (!hasAny) return '';
+      const maxRows = Math.max(1, ...colsArr.map(c => c.rows.length));
+      const hcells = colsArr.map(c => `<th>${esc(c.label)}</th>`).join('');
+      let brows = '';
+      for (let i = 0; i < maxRows; i++) {
+        brows += '<tr>' + colsArr.map(c => `<td>${esc(c.rows[i] || '')}</td>`).join('') + '</tr>';
+      }
+      const verified = !!panel.verifiedAtGemba;
+      const caption = (panel.title || '').trim()
+        ? `<div style="font-size:7px;font-weight:600;color:#006172;margin-bottom:1px;">SIPOC: ${esc(panel.title.trim())}</div>` : '';
+      const marker = `<div style="font-size:6px;color:${verified ? '#2e7d32' : '#8a5000'};margin-top:1px;">${verified ? '✓ Observed at gemba' : '⚑ Assumed — not yet verified at gemba'}</div>`;
+      return caption +
+        `<table class="a3p-tbl"><thead><tr>${hcells}</tr></thead><tbody>${brows}</tbody></table>` +
+        marker;
     }
     return '';
   };
@@ -8318,6 +8746,21 @@ function _serialiseSection(key) {
           out += `[Panel — Data Table: ${p.headers.join(' | ')}]\n`;
         } else if (p.type === 'pareto' && (p.rows || []).length > 0) {
           out += `[Panel — Pareto chart with ${p.rows.length} categories]\n`;
+        } else if (p.type === 'sipoc') {
+          const colText = (key) => (Array.isArray(p[key]) ? p[key] : [])
+            .map(r => (typeof r === 'string' ? r : (r && r.text) || ''))
+            .filter(t => (t || '').trim());
+          const sup = colText('suppliers'), inp = colText('inputs'), proc = colText('process'),
+                outp = colText('outputs'), cust = colText('customers');
+          if ((p.title || '').trim() || sup.length || inp.length || proc.length || outp.length || cust.length) {
+            const marker = p.verifiedAtGemba ? '(Observed at gemba)' : '(Assumed — not yet verified at gemba)';
+            out += `[Panel — SIPOC${(p.title || '').trim() ? ': ' + p.title.trim() : ''}]  ${marker}\n`;
+            if (sup.length)  out += `Suppliers: ${sup.join('; ')}\n`;
+            if (inp.length)  out += `Inputs: ${inp.join('; ')}\n`;
+            if (proc.length) out += `Process: ${proc.join(' → ')}\n`;
+            if (outp.length) out += `Outputs: ${outp.join('; ')}\n`;
+            if (cust.length) out += `Customers: ${cust.join('; ')}\n`;
+          }
         }
       });
     }
