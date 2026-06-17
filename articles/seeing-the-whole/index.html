@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seeing the Whole — Gemba Suite</title>
+<meta name="description" content="Why a local improvement can be a system loss, and how a leader in the middle changes a system they cannot redesign.">
+<meta name="theme-color" content="#006172">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════
+   Seeing the Whole — Gemba Suite Article
+   gembasuite.org/articles/seeing-the-whole
+   David Clark — gembasuite.org
+   CC BY-NC-SA 4.0
+   ═══════════════════════════════════════ */
+
+:root {
+  --ink:                #181c1c;
+  --ink-secondary:      #3e484c;
+  --ink-tertiary:       #6e797c;
+  --paper:              #f7faf9;
+  --card:               #ffffff;
+  --surface-low:        #f1f4f3;
+  --surface-high:       #e6e9e8;
+  --grid:               #bec8cc;
+  --grid-subtle:        #e0e3e2;
+  --primary:            #006172;
+  --primary-container:  #007c91;
+  --primary-tint:       #c4e5ef;
+  --on-primary:         #ffffff;
+  --on-primary-tint:    #004e5c;
+  --accent-warm:        #854a10;
+  --accent-warm-container: #a26227;
+  --accent-warm-bg:     #ffdcc3;
+  --on-accent-warm:     #ffffff;
+  --status-success:     #2e7d32;
+  --status-success-bg:  #d4edda;
+  --shadow-sm:          0 1px 3px rgba(24,28,28,0.06);
+  --shadow-md:          0 2px 8px rgba(24,28,28,0.08);
+  --radius-sm:          4px;
+  --radius-md:          8px;
+  --radius-lg:          12px;
+  --font-display:       'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-body:          'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --space-2:            8px;
+  --space-3:            12px;
+  --space-4:            16px;
+  --space-6:            24px;
+  --space-8:            32px;
+  --space-10:           40px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Header ── */
+.site-header {
+  background: var(--ink);
+  padding: 14px var(--space-6);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+.site-header-inner {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.site-header a {
+  color: var(--on-primary);
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.2px;
+}
+.site-header .back-link {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 13px;
+  opacity: 0.8;
+  transition: opacity 0.15s ease;
+}
+.site-header .back-link:hover { opacity: 1; }
+
+/* ── Article ── */
+.guide-article {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-6) 80px;
+}
+
+/* ── Hero ── */
+.guide-hero {
+  margin-bottom: var(--space-10);
+}
+.guide-hero .badge {
+  display: inline-block;
+  background: var(--primary-tint);
+  color: var(--on-primary-tint);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  margin-bottom: var(--space-3);
+}
+.guide-hero h1 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(28px, 5vw, 38px);
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+  color: var(--ink);
+  margin-bottom: var(--space-3);
+}
+.guide-hero .subtitle {
+  font-size: 17px;
+  color: var(--ink-secondary);
+  line-height: 1.55;
+  max-width: 580px;
+}
+
+/* ── Section headings ── */
+h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1.25;
+  letter-spacing: -0.3px;
+  color: var(--primary);
+  margin-top: 48px;
+  margin-bottom: var(--space-4);
+}
+h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 17px;
+  line-height: 1.35;
+  color: var(--ink);
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-3);
+}
+
+p { margin-bottom: var(--space-4); }
+
+/* ── Emphasis ── */
+strong { font-weight: 600; }
+em { font-style: italic; }
+a { color: var(--primary); }
+
+/* ── Footer ── */
+.guide-footer {
+  max-width: 720px;
+  margin: 48px auto 0;
+  padding: var(--space-6);
+  border-top: 1px solid var(--grid-subtle);
+  text-align: center;
+  font-size: 13px;
+  color: var(--ink-tertiary);
+  line-height: 1.6;
+}
+.guide-footer a { color: var(--primary); text-decoration: none; }
+.guide-footer a:hover { text-decoration: underline; }
+
+/* ── Article additions ── */
+hr.section-rule {
+  border: none;
+  border-top: 1px solid var(--grid-subtle);
+  margin: var(--space-8) 0;
+}
+ul.further-reading {
+  list-style: disc;
+  padding-left: var(--space-8);
+  margin: var(--space-4) 0 var(--space-6);
+}
+ul.further-reading li {
+  margin-bottom: var(--space-3);
+  font-size: 15px;
+  color: var(--ink-secondary);
+  line-height: 1.55;
+}
+.article-attribution {
+  font-size: 14px;
+  color: var(--ink-tertiary);
+  line-height: 1.7;
+}
+.article-attribution a { color: var(--primary); text-decoration: none; }
+.article-attribution a:hover { text-decoration: underline; }
+
+/* ── Figure / diagram ── */
+figure {
+  margin: var(--space-8) 0;
+  text-align: center;
+}
+figure img {
+  max-width: 760px;
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+figcaption {
+  font-size: 14px;
+  color: var(--ink-tertiary);
+  font-style: italic;
+  margin-top: var(--space-3);
+  line-height: 1.55;
+  max-width: 580px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-header-inner">
+    <a href="https://gembasuite.org">Gemba Suite</a>
+    <a href="https://gembasuite.org/resources/" class="back-link">&larr; Resources</a>
+  </div>
+</header>
+
+<article class="guide-article">
+
+  <section class="guide-hero">
+    <span class="badge">Article</span>
+    <h1>Seeing the Whole</h1>
+    <p class="subtitle">Why a local improvement can be a system loss, and how a leader in the middle changes a system they cannot redesign.</p>
+  </section>
+
+  <p>A laboratory cuts its turnaround time for completing its daily work. The team is pleased, but the improvement was bought by batching specimens a different way, and the section upstream is now flooded at four o'clock every afternoon. The local performance improved. The system did not.</p>
+
+  <p>This is one of the most common and most demoralising experiences in improvement work, and it has a name. It is sub-optimisation, or point optimisation: improving one part of a system in a way that damages the whole. It is what happens when you change a process without seeing the system it belongs to.</p>
+
+  <h2>The check on the companion piece</h2>
+
+  <p>The companion piece to this one, <em><a href="/articles/leading-lean-from-the-middle/">Leading Lean from the Middle</a></em>, argued that a leader without a mandate should expand their Circle of Influence by delivering value and earning credibility. This piece is the necessary check on that idea.</p>
+
+  <p>If you expand your influence by exporting your problems to the process next door, you have not delivered value. You have moved a cost out of your own sight. The win collapses, and your credibility collapses with it.</p>
+
+  <p>The companion piece describes credibility as a bank of goodwill: it fills only through small, regular deposits, and it can never be topped up with one grand gesture. A system-positive improvement is a deposit. A local win that exports its waste to a neighbour is the opposite, the single careless spend that drains the account in a fortnight, because the moment the neighbour notices, every claim you make afterwards is discounted. Presenting it as a success is also a quiet failure of integrity, which is why seeing the whole is in the end as much a matter of honesty as of technique. So seeing the whole is not an academic nicety. It is how you make sure the value you deliver is real enough to last, and therefore how you actually grow your circle rather than borrowing against it.</p>
+
+  <h2>Seeing the whole without owning the whole</h2>
+
+  <p>Here is the difficulty. Seeing the whole sounds like it requires authority over the whole, which is exactly what a leader in the middle does not have. You cannot redesign a patient pathway that crosses three organisations. You cannot rebuild the hospital. So what does "see the whole system" actually mean for someone who can only act on a part of it?</p>
+
+  <p>It means this. The systems view is a way of seeing, not a mandate to redesign everything. You use it to understand where your part connects to the rest, where a change of yours will land on someone else, which of your constraints are genuinely fixed and which you have only assumed are fixed, and who you need to bring with you before you act. You act locally. You think system-wide. The thinking is what keeps the acting honest.</p>
+
+  <h2>A framework built for exactly this</h2>
+
+  <p>There is a framework built for exactly this, and part of its value is that it comes from outside Lean. In 2017 the Royal Academy of Engineering, working with the Royal College of Physicians and the Academy of Medical Sciences, published <em>Engineering Better Care</em>, a systems approach to designing and improving health and care. It was led by Professor John Clarkson at the University of Cambridge. Its central idea is that improving a complex service well means looking at it through four complementary perspectives at the same time.</p>
+
+  <p><strong>People</strong> — how individuals, teams and organisations actually interact, including the patients and carers, not the idealised versions in a policy document.</p>
+
+  <p><strong>Systems</strong> — the fact that you are working inside a set of interconnected technical and human parts, where a change in one place produces effects in another, often after a delay and often out of your sight.</p>
+
+  <p><strong>Design</strong> — the discipline of identifying the right problem first, generating several possible solutions, and refining them, rather than reaching for the first fix that comes to hand.</p>
+
+  <p><strong>Risk</strong> — asking what could go wrong, what a change might break elsewhere, and how you would know if it did. A fifth perspective, management, is often added to cover the running of the improvement itself.</p>
+
+  <figure>
+    <img src="ebc-four-perspectives.svg" alt="Engineering Better Care shown as four perspectives, People, Systems, Design and Risk, arranged around a single service redesign at the centre. Each perspective carries its core activities: People (identify, locate, situate), Systems (understand, organise, integrate), Design (explore, create, evaluate) and Risk (examine, assess, improve). Adapted from the Royal Academy of Engineering's 2017 framework.">
+    <figcaption>The four perspectives brought to bear on one redesign at the same time. Adapted from Engineering Better Care, Royal Academy of Engineering, 2017.</figcaption>
+  </figure>
+
+  <p>None of these four is a Lean tool, and that is the point. <em>Engineering Better Care</em> is the systems-thinking lens that sits underneath the Lean tools and stops them being used naively. It carries a quiet advantage for a leader in the middle, too. It is the work of three Royal bodies, and it speaks a language that boards, clinicians and regulators already respect. When you frame your improvement in its terms, you are speaking the establishment's own language back to it, which is useful when you are trying to expand your influence upward.</p>
+
+  <h2>Most of the variation is the system</h2>
+
+  <p>The systems view also changes how you read a problem. W. Edwards Deming spent a career making one point that most organisations still resist: the great majority of the variation you see in a process is built into the system, not caused by the individual people working inside it. If you treat ordinary, system-level variation as if it were a string of individual failures, you will spend your life chasing noise, blaming good people, and tampering with a process until it gets worse.</p>
+
+  <p>The skill is to tell the difference between common-cause variation, the ordinary background hum of a stable system, and a special cause, a genuine signal that something has changed. That distinction is a systems judgement before it is a statistical one.</p>
+
+  <p>It is also why problems are friends, not enemies. A problem is rarely evidence of a bad person. It is usually the system showing you where it is broken. The systems view is what lets you read it that way.</p>
+
+  <h2>Where the tools come in</h2>
+
+  <p>The tools at <a href="https://gembasuite.org">gembasuite.org</a> are built to keep this discipline in front of you while you work, rather than in a textbook you read once and forget.</p>
+
+  <p><strong>Gemba-VSM</strong> maps the whole flow rather than a single step, so the place where your change will land on a neighbour is visible before you make it.</p>
+
+  <p><strong>Gemba-A3</strong> carries a Systems Lens built directly on the <em>Engineering Better Care</em> perspectives: People, Systems, Design and Risk. It asks, in plain words, whether your goal improves the whole system or just one part of it, and whether you have checked for sub-optimisation. The question is built into the page, so it is hard to skip.</p>
+
+  <p><strong>Gemba-SPC</strong> uses Donald Wheeler's process behaviour charts, which exist precisely to separate common-cause variation from real signals, so that you act on the system when it is the system, and on the event when it is genuinely an event.</p>
+
+  <p>The tools do not make the systems judgement for you. They put it where you cannot avoid it.</p>
+
+  <h2>A word of caution</h2>
+
+  <p>A word of caution about <em>Engineering Better Care</em>, because its strength is also its risk. It is a framework for designing systems, and its natural register is ambitious and whole-system. For a leader in the middle, that ambition can tip back into the redesign fantasy that the companion piece warned against, the belief that you ought to be re-architecting the whole enterprise. Resist that. Use the four perspectives to see clearly, then act on the part that is actually yours.</p>
+
+  <p>See the whole, act on your part, and never export your waste to a neighbour. That sentence is most of the discipline.</p>
+
+  <h2>In short</h2>
+
+  <p>Improvement that holds is improvement that was system-aware from the start. It is also, not by coincidence, the kind of improvement that fills the bank of goodwill rather than draining it, and so expands a leader's influence rather than borrowing against it.</p>
+
+  <p>Change what is yours to change. But look up first, and see the whole field before you till your corner of it.</p>
+
+  <hr class="section-rule">
+
+  <h3>Further reading</h3>
+
+  <ul class="further-reading">
+    <li>Royal Academy of Engineering, Royal College of Physicians and Academy of Medical Sciences, <em>Engineering Better Care: a systems approach to health and care design and continuous improvement</em> (2017).</li>
+    <li>W. Edwards Deming, <em>Out of the Crisis</em> (1986) — on system variation and the limits of blaming the individual.</li>
+    <li>Donald J. Wheeler, <em>Understanding Variation: the key to managing chaos</em> — common-cause and special-cause variation in plain terms.</li>
+  </ul>
+
+  <hr class="section-rule">
+
+  <p class="article-attribution">
+    David Clark &bull; <a href="https://gembasuite.org">gembasuite.org</a> &bull; June 2026<br>
+    &copy; 2024&ndash;2026 David Clark. Licensed under <a href="https://gembasuite.org/licence">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)</a>. Free for all healthcare improvement purposes.
+  </p>
+
+</article>
+
+<footer class="guide-footer">
+  <strong>Gemba Suite</strong> — David Clark — <a href="https://gembasuite.org">gembasuite.org</a><br>
+  <a href="https://gembasuite.org/licence">CC BY-NC-SA 4.0</a> · Free for healthcare improvement
+</footer>
+
+</body>
+</html>

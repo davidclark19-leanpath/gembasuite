@@ -9,12 +9,24 @@
       "source": "Gemba Suite"
     },
     {
-      "title": "Articles from the author — coming soon",
-      "url": "",
-      "description": "Writing on lean in healthcare, digital pathology, and AI-assisted improvement. Published via Substack — link to follow.",
-      "badge": "Own writing",
-      "badge_type": "soon",
-      "source": ""
+      "title": "Leading Lean from the Middle",
+      "url": "/articles/leading-lean-from-the-middle/",
+      "description": "Why a Lean transformation does not have to wait for the chief executive, and how a leader in the middle of an NHS organisation can start, sustain and spread it from within their own circle of influence.",
+      "badge": "Article",
+      "badge_type": "live",
+      "source": "David Clark",
+      "date": "2026-06-17",
+      "author": "David Clark"
+    },
+    {
+      "title": "Seeing the Whole",
+      "url": "/articles/seeing-the-whole/",
+      "description": "Why a local improvement can be a system loss, how the Engineering Better Care four perspectives help a leader see the whole system they cannot redesign, and how to improve a part without exporting waste to a neighbour.",
+      "badge": "Article",
+      "badge_type": "live",
+      "source": "David Clark",
+      "date": "2026-06-17",
+      "author": "David Clark"
     }
   ],
   "websites": [
@@ -44,6 +56,13 @@
       "url": "https://www.ihi.org/",
       "description": "Global leader in healthcare improvement science — frameworks, tools, and learning resources for quality and patient safety.",
       "badge": "Organisation",
+      "badge_type": "org"
+    },
+    {
+      "title": "Improving Improvement — Engineering Better Care Toolkit",
+      "url": "https://www.iitoolkit.com/improvement/ebc.html",
+      "description": "A practical, question-based toolkit applying the Engineering Better Care systems approach — people, systems, design, risk and management — to health and care design and continuous improvement. Developed from the Royal Academy of Engineering report by the University of Cambridge Engineering Design Centre with the RCP, RCoA, the Academy of Medical Sciences and the Health Foundation.",
+      "badge": "Toolkit",
       "badge_type": "org"
     },
     {

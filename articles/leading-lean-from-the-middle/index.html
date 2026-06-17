@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leading Lean from the Middle — Gemba Suite</title>
+<meta name="description" content="How to start, sustain and spread Lean when the people above you have not yet changed the way they lead.">
+<meta name="theme-color" content="#006172">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════
+   Leading Lean from the Middle — Gemba Suite Article
+   gembasuite.org/articles/leading-lean-from-the-middle
+   David Clark — gembasuite.org
+   CC BY-NC-SA 4.0
+   ═══════════════════════════════════════ */
+
+:root {
+  --ink:                #181c1c;
+  --ink-secondary:      #3e484c;
+  --ink-tertiary:       #6e797c;
+  --paper:              #f7faf9;
+  --card:               #ffffff;
+  --surface-low:        #f1f4f3;
+  --surface-high:       #e6e9e8;
+  --grid:               #bec8cc;
+  --grid-subtle:        #e0e3e2;
+  --primary:            #006172;
+  --primary-container:  #007c91;
+  --primary-tint:       #c4e5ef;
+  --on-primary:         #ffffff;
+  --on-primary-tint:    #004e5c;
+  --accent-warm:        #854a10;
+  --accent-warm-container: #a26227;
+  --accent-warm-bg:     #ffdcc3;
+  --on-accent-warm:     #ffffff;
+  --status-success:     #2e7d32;
+  --status-success-bg:  #d4edda;
+  --shadow-sm:          0 1px 3px rgba(24,28,28,0.06);
+  --shadow-md:          0 2px 8px rgba(24,28,28,0.08);
+  --radius-sm:          4px;
+  --radius-md:          8px;
+  --radius-lg:          12px;
+  --font-display:       'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-body:          'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --space-2:            8px;
+  --space-3:            12px;
+  --space-4:            16px;
+  --space-6:            24px;
+  --space-8:            32px;
+  --space-10:           40px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Header ── */
+.site-header {
+  background: var(--ink);
+  padding: 14px var(--space-6);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+.site-header-inner {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.site-header a {
+  color: var(--on-primary);
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.2px;
+}
+.site-header .back-link {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 13px;
+  opacity: 0.8;
+  transition: opacity 0.15s ease;
+}
+.site-header .back-link:hover { opacity: 1; }
+
+/* ── Article ── */
+.guide-article {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-6) 80px;
+}
+
+/* ── Hero ── */
+.guide-hero {
+  margin-bottom: var(--space-10);
+}
+.guide-hero .badge {
+  display: inline-block;
+  background: var(--primary-tint);
+  color: var(--on-primary-tint);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  margin-bottom: var(--space-3);
+}
+.guide-hero h1 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(28px, 5vw, 38px);
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+  color: var(--ink);
+  margin-bottom: var(--space-3);
+}
+.guide-hero .subtitle {
+  font-size: 17px;
+  color: var(--ink-secondary);
+  line-height: 1.55;
+  max-width: 580px;
+}
+
+/* ── Section headings ── */
+h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1.25;
+  letter-spacing: -0.3px;
+  color: var(--primary);
+  margin-top: 48px;
+  margin-bottom: var(--space-4);
+}
+h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 17px;
+  line-height: 1.35;
+  color: var(--ink);
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-3);
+}
+
+p { margin-bottom: var(--space-4); }
+
+/* ── Emphasis ── */
+strong { font-weight: 600; }
+em { font-style: italic; }
+a { color: var(--primary); }
+
+/* ── Footer ── */
+.guide-footer {
+  max-width: 720px;
+  margin: 48px auto 0;
+  padding: var(--space-6);
+  border-top: 1px solid var(--grid-subtle);
+  text-align: center;
+  font-size: 13px;
+  color: var(--ink-tertiary);
+  line-height: 1.6;
+}
+.guide-footer a { color: var(--primary); text-decoration: none; }
+.guide-footer a:hover { text-decoration: underline; }
+
+/* ── Article additions ── */
+hr.section-rule {
+  border: none;
+  border-top: 1px solid var(--grid-subtle);
+  margin: var(--space-8) 0;
+}
+ul.further-reading {
+  list-style: disc;
+  padding-left: var(--space-8);
+  margin: var(--space-4) 0 var(--space-6);
+}
+ul.further-reading li {
+  margin-bottom: var(--space-3);
+  font-size: 15px;
+  color: var(--ink-secondary);
+  line-height: 1.55;
+}
+.article-attribution {
+  font-size: 14px;
+  color: var(--ink-tertiary);
+  line-height: 1.7;
+}
+.article-attribution a { color: var(--primary); text-decoration: none; }
+.article-attribution a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-header-inner">
+    <a href="https://gembasuite.org">Gemba Suite</a>
+    <a href="https://gembasuite.org/resources/" class="back-link">&larr; Resources</a>
+  </div>
+</header>
+
+<article class="guide-article">
+
+  <section class="guide-hero">
+    <span class="badge">Article</span>
+    <h1>Leading Lean from the Middle</h1>
+    <p class="subtitle">How to start, sustain and spread Lean when the people above you have not yet changed the way they lead.</p>
+  </section>
+
+  <p>Some years ago, as clinical director of Path Links, a network NHS pathology service serving five hospitals in Lincolnshire, I came across Lean for the first time, applied to laboratory medicine. I contacted the laboratory in the United States that was using it, learned more, and became convinced it would work in histopathology, where our own lab was struggling to meet demand. I had no authority to mandate any of this. What I could do was make the case, and I persuaded the Trust to let us spend pathology modernisation grant funding on a training consultancy to teach us Lean. With their help, our team set out to redesign how specimens flowed through the lab. We were given no extra staff and no new building. We went to see the work, mapped it, found where the time and the errors were hiding, and changed the process. Laboratory turnaround time fell by 45 per cent. Labelling errors fell by 98 per cent. Staffing did not increase. The results were later published in a peer-reviewed journal.</p>
+
+  <p>I did not run the trust. I was a leader in the middle of it.</p>
+
+  <p>I begin there because there is a piece of received wisdom about Lean that the story appears to contradict. The conventional view is that for a Lean transformation to last, the people at the very top have to change how they lead. They have to go to the gemba, the workplace where the work actually happens, respect the people who do that work, solve problems by understanding the system rather than blaming individuals, and align the whole organisation behind delivering value to the patient. The Lean Enterprise Institute is explicit that leadership behaviour and the management system are not optional extras bolted onto a set of tools. They are the part that makes everything else hold.</p>
+
+  <p>That view is right, and I am not going to argue with it. The trouble is what it implies. It implies that if you are not the chief executive, and your chief executive has not had a conversion to Toyota thinking, there is nothing useful you can do until they do. In the NHS, where a hospital chief executive's tenure is measured in a small number of years and the daily pressures rarely leave room for a philosophical shift in how they lead, that is a long wait. Possibly a permanent one.</p>
+
+  <p>So here is the question this piece is about. If you lead a department, a laboratory, a ward or a pathway, somewhere in the middle of a large organisation, and the transformation from the top is not coming, what can you actually do?</p>
+
+  <h2>Two circles</h2>
+
+  <p>The most useful way I know to frame the answer comes from Stephen Covey. Covey described two circles. The Circle of Concern holds everything you care about. Some of it is your responsibility: the quality of your work, the morale of your team, the outcomes for your patients. Some of it is outside your control: the funding settlement, the estate, the IT strategy, whether the board understands flow. The Circle of Influence holds the smaller set of things you can actually affect. Reactive people spend their energy worrying about the things they cannot change, and their influence shrinks. Proactive people spend their energy on what they can change, and something useful happens: the circle grows.</p>
+
+  <p>That is the whole strategy for leading Lean from the middle. You do not start by trying to change the organisation. You start by changing what is already yours to change. And you expand from there, not by being granted authority, but by delivering value that earns it.</p>
+
+  <h2>The bank of goodwill</h2>
+
+  <p>Credibility is what turns the Circle of Influence from an idea into something that grows, so it is worth being precise about how it behaves. It helps to picture it as a bank of goodwill. Covey called it the emotional bank account, and the principle is the same. Every time you do what you said you would, deliver a result you can show, or treat a problem as a thing to fix rather than a person to blame, you make a deposit. The trust in the account goes up, and with it the room you have to act.</p>
+
+  <p>The account has two awkward properties, and a leader in the middle has to understand both.</p>
+
+  <p>The first is that it only takes small, regular deposits. You cannot make one large deposit and have it count. A grand launch, a glossy strategy, a promise of transformation: none of these is credible, because credibility is not something you announce, it is something you accumulate. The account is built one kept promise at a time.</p>
+
+  <p>The second is that the account drains far faster than it fills. Months of patient deposits can be wiped out in a fortnight by spending your credibility unwisely: by overclaiming a result, by a change that blows up in someone else's area, by asking the team to do something you would not do yourself. The asymmetry is unforgiving. Patience builds the balance slowly. A single careless act empties it.</p>
+
+  <p>This is why leading from the middle is necessarily incremental. You are not waiting for permission, and you are not staging a revolution. You are making deposit after deposit, each one small enough to be believed, until the balance is large enough to spend on something bigger.</p>
+
+  <h2>The one trait you cannot fake</h2>
+
+  <p>If credibility is the account, integrity is what stops you emptying it. For a leader in the middle this is not one virtue among several, it is the precondition for the rest. You have no positional authority to fall back on. All you have is the trust you have banked, and integrity is what keeps you from spending it unwisely. Every careless spend that drains the account is, underneath, a small failure of integrity. Overclaiming a result is a dishonesty. Exporting your waste to a neighbour and calling it a win is a dishonesty. Asking the team to do what you would not do yourself is a dishonesty. The account drains through character long before it drains through technique.</p>
+
+  <p>Warren Buffett puts it more bluntly. He has said that when hiring he looks for three things, integrity, intelligence and energy, and that without the first, the other two will kill you. The logic is worth sitting with, because it runs against instinct. The real danger is not the unintelligent, idle leader. It is the clever, energetic one who lacks integrity, because they are more capable of doing harm and far more persuasive while they do it. A leader who is good at gaming a target or dressing up a local win does more damage than one who is not, precisely because they are good at it. Intelligence and energy decide how much you can spend from the account. Integrity decides whether the spending is honest. Lose it, and the other two empty the bank faster.</p>
+
+  <h2>What is already in your circle</h2>
+
+  <p>For a leader in the middle, the Circle of Influence is larger than it first looks.</p>
+
+  <p>You control how you behave, which is where every Lean culture actually starts. You control whether you go and see the work for yourself instead of managing it from a report. You control whether your team has standard work, visual management and an honest way to measure what matters. You control whether a problem in your area is treated as a broken standard to fix or a person to blame. And you control whether the people who do the work are asked what they see, listened to, and acted upon. Every department has someone who already knows the real problems and has the beginnings of the solutions. Whether they are asked is inside your circle.</p>
+
+  <p>None of that requires permission from above.</p>
+
+  <h2>The cultivator, not the commander</h2>
+
+  <p>It helps to think of the role less as a commander and more as a cultivator. You cannot control the weather, the organisational climate you happen to work inside. You can till your own ground, plant something, watch for the green shoots, and protect them while they take root. A cultivator does not wait for a perfect season. They work the ground they have, in the conditions they have.</p>
+
+  <h2>An honest word about the limits</h2>
+
+  <p>I want to be honest about the limits of this, because pretending they do not exist would not help you.</p>
+
+  <p>The strongest, best-documented Lean transformations in healthcare, Virginia Mason and ThedaCare among them, did have a genuinely converted chief executive. Leading from the middle is harder to sustain than leading from the top, and it has a well-known failure mode: the island of excellence. A team improves remarkably, becomes locally famous, and then the leader moves on, and within a year the gains have quietly reverted, because the improvement lived in one person rather than in the system and the people around it.</p>
+
+  <p>So if you lead from the middle, sustainability is your central problem from day one, not an afterthought. The work is to build capability in your team rather than dependence on you. To write down and standardise what works, so it survives your absence. And to expand your circle deliberately, by bringing the next process, the next manager, the next sceptic along with evidence rather than enthusiasm. You are not only improving a process. You are trying to make the improvement outlive you.</p>
+
+  <h2>Where the tools come in</h2>
+
+  <p>This is where the tools at <a href="https://gembasuite.org">gembasuite.org</a> are built for you specifically. Almost every design decision in the suite, made originally for information governance and simplicity, turns out to be exactly what a leader without resources needs. The tools are single files that run in a browser. They need no server, no IT project, no procurement, no licence fee and no login. They work offline, on the phone in your pocket, at the bench. You can map a value stream with your team on a Monday morning and have something worth showing by Friday, without asking anyone's permission to begin.</p>
+
+  <p>What that gives you is the one currency that actually expands a Circle of Influence in a sceptical organisation: facts. A value stream map that shows where the time really goes. A process behaviour chart that separates a real signal from ordinary noise. An A3 that lays out a problem, the evidence and a tested countermeasure on a single page a busy director can read in two minutes. You change the minds above you not by arguing about Lean, but by showing them what you found, and what changed when you acted on it. Ask why, with facts. Each of those is a small, believable deposit in the bank of goodwill, and they compound.</p>
+
+  <p>The tools will not do the leadership for you. They lower the cost of starting and they supply the evidence, but going to see the work, asking good questions, building consensus before you change anything, and protecting your team while they learn, that is still yours to do. A team that adopts the software and skips the behaviour has bought a clipboard, not a culture.</p>
+
+  <h2>One trap before you go</h2>
+
+  <p>There is one trap in the idea of expanding your circle that deserves its own discussion. It is possible to improve your own area by quietly pushing the problem onto the process next door, sending them your waiting, your rework, your unevenness. That looks like a win. It is not. You have not expanded your influence, you have borrowed it from a neighbour who will eventually notice, and your credibility goes backwards. This is the careless spend that empties the bank of goodwill in a fortnight: the moment the neighbour notices, every claim you make afterwards is quietly discounted. Avoiding that trap means seeing the whole system you sit inside, even though you only ever act on a part of it. That is the subject of the companion piece, <em><a href="/articles/seeing-the-whole/">Seeing the Whole</a></em>.</p>
+
+  <p>For now, the point is simpler. You do not need the chief executive to change first. You need to be proactive inside the circle you already have, deliver value that is real enough to show, and let the circle grow from there.</p>
+
+  <p>Start where you stand. Work the ground you have.</p>
+
+  <hr class="section-rule">
+
+  <h3>Further reading</h3>
+
+  <ul class="further-reading">
+    <li>Stephen R. Covey, <em>The 7 Habits of Highly Effective People</em> (1989) — the source of the Circle of Influence and Circle of Concern.</li>
+    <li>James Womack and Daniel Jones, <em>Lean Thinking</em> — the five principles of Lean.</li>
+    <li>Jeffrey Liker, <em>The Toyota Way</em> — the management philosophy behind the Toyota Production System.</li>
+    <li>Lean Enterprise Institute, <a href="https://www.lean.org/">lean.org</a> — on leadership behaviour and the management system as part of transformation, not an extra.</li>
+    <li>David Clark, "Quality Improvement in Basic Histotechnology: The Lean Approach," <em>Virchows Archiv</em> (2015) — the peer-reviewed account of the Path Links histopathology work described at the start of this piece.</li>
+  </ul>
+
+  <hr class="section-rule">
+
+  <p class="article-attribution">
+    David Clark &bull; <a href="https://gembasuite.org">gembasuite.org</a> &bull; June 2026<br>
+    &copy; 2024&ndash;2026 David Clark. Licensed under <a href="https://gembasuite.org/licence">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)</a>. Free for all healthcare improvement purposes.
+  </p>
+
+</article>
+
+<footer class="guide-footer">
+  <strong>Gemba Suite</strong> — David Clark — <a href="https://gembasuite.org">gembasuite.org</a><br>
+  <a href="https://gembasuite.org/licence">CC BY-NC-SA 4.0</a> · Free for healthcare improvement
+</footer>
+
+</body>
+</html>

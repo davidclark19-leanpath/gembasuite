@@ -1,6 +1,12 @@
 {
   "items": [
     {
+      "app": "Learning Resources",
+      "version": "",
+      "date": "2026-06-17",
+      "summary": "Two new articles published: Leading Lean from the Middle, and Seeing the Whole."
+    },
+    {
       "app": "Gemba-A3",
       "version": "v2.6",
       "date": "2026-06-03",
