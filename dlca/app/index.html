@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<!-- Gemba-DLCA v0.79a — Demand and Capacity Analyser
+<!-- Gemba-DLCA v0.79c — Demand and Capacity Analyser
      Author: David Clark — gembasuite.org
      Licence: CC BY-NC-SA 4.0
-     Built: 2026-05-21
-     Changes v0.79a: Pre-demo typo fixes — case type symbols corrected ≥→≤; downtime help text updated to practical range; UI help text grammar fixes. v0.79: Migration guard — detects and clears stale bundled template state on load without affecting user-entered data; safe for all future versions. v0.78: Histopathology Standard bundled template removed for beta — use Import to load scenario JSON files; template picker shows import hint when no saved templates exist. v0.77: Band 7 Advanced Practitioner added to Histopathology Standard template (2 posts, 37.5h). v0.76: Histopathology Standard template pre-loaded with demand data (4 weeks, 4 case types); Grossing/Cut-up step unitTier fixed t2→t1 (resolves tier mismatch warning on Dissection benches). v0.75: (4 weeks, 4 case types). v0.75: Gap and utilisation reflect binding pool's own load vs own capacity when skill-mix routing active — removes misleading inflated gap figure. v0.74: Skill-mix routing — case types assignable to specific staff pools per step; binding pool named in constraint badge. v0.73: Daily demand profile redesigned as period-level (one grid per period, replaces weekly volumes for all steps); weekly table locks when active; avg + peak per case type per day. v0.72: Daily profile per-case-type × per-day grid (superseded). — per-case-type × per-day grid with avg + peak; all steps eligible; weekly total = sum of daily entries; peak demand line on gap chart. v0.71: Bug fixes — bench constraint engine (calcEquipmentCapacityForStep), openModal undefined
+     Built: 2026-10-16
+     Changes v0.79c: Step 5 crash fixed where the daily-binding check read the pre-v0.73 step-keyed profile; daily-binding flag in results table now reads period-level case-type counts; instrument capacity converted to hours using the period's weighted load per unit (respects case-type processing time overrides) with step default as fallback; one-more-instrument diagnostic restricted to instrument pools and valued in the same hours; rework can target the same step (rescan/repeat); undefined CSS tokens (--border, --surface, --amber) and classes (callout-red, callout-info) defined.
+     Changes v0.79b: Instrument pools now constrain assigned steps (were returning zero capacity); equipment tier-mismatch detection restored. v0.79a: Pre-demo typo fixes — case type symbols corrected ≥→≤; downtime help text updated to practical range; UI help text grammar fixes. v0.79: Migration guard — detects and clears stale bundled template state on load without affecting user-entered data; safe for all future versions. v0.78: Histopathology Standard bundled template removed for beta — use Import to load scenario JSON files; template picker shows import hint when no saved templates exist. v0.77: Band 7 Advanced Practitioner added to Histopathology Standard template (2 posts, 37.5h). v0.76: Histopathology Standard template pre-loaded with demand data (4 weeks, 4 case types); Grossing/Cut-up step unitTier fixed t2→t1 (resolves tier mismatch warning on Dissection benches). v0.75: (4 weeks, 4 case types). v0.75: Gap and utilisation reflect binding pool's own load vs own capacity when skill-mix routing active — removes misleading inflated gap figure. v0.74: Skill-mix routing — case types assignable to specific staff pools per step; binding pool named in constraint badge. v0.73: Daily demand profile redesigned as period-level (one grid per period, replaces weekly volumes for all steps); weekly table locks when active; avg + peak per case type per day. v0.72: Daily profile per-case-type × per-day grid (superseded). — per-case-type × per-day grid with avg + peak; all steps eligible; weekly total = sum of daily entries; peak demand line on gap chart. v0.71: Bug fixes — bench constraint engine (calcEquipmentCapacityForStep), openModal undefined
      flagging in results table and 4D diagnostic (G2); session editor overlay panel — absolute
      positioned, no fixed (G3); work pattern inputs widened to 60px 7-column grid (G4);
      changeover inclusive within session duration, HH:MM–HH:MM pill display, overlap detection (G5).
@@ -14,7 +15,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="description" content="Gemba-DLCA: Demand, load and capacity analysis for NHS lean improvement teams.">
 <meta name="theme-color" content="#181c1c">
-<title>Gemba-DLCA v0.79a — Demand &amp; Capacity Analyser</title>
+<title>Gemba-DLCA v0.79c — Demand &amp; Capacity Analyser</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -52,6 +53,10 @@
   --status-error-bg:    #ffdad6;
   --equip-color:        #4a4a8a;
   --equip-bg:           #ededf8;
+  /* v0.79c: aliases for tokens referenced but previously undefined */
+  --border:          var(--grid-subtle);
+  --surface:         var(--surface-low);
+  --amber:           var(--status-warning);
   --shadow-sm:       0 1px 3px rgba(24,28,28,0.06);
   --shadow-md:       0 2px 8px rgba(24,28,28,0.10);
   --shadow-lg:       0 4px 16px rgba(24,28,28,0.12);
@@ -666,6 +671,8 @@ input, select, textarea { font-family: inherit; font-size: 14px; color: var(--in
 .callout-teal { background: var(--primary-tint); color: var(--on-primary-tint); }
 .callout-amber { background: var(--accent-warm-bg); color: var(--accent-warm); }
 .callout-equip { background: var(--equip-bg); color: var(--equip-color); }
+.callout-red { background: var(--status-error-bg); color: var(--status-error); }
+.callout-info { background: var(--primary-tint); color: var(--on-primary-tint); }
 .callout-icon { font-size: 16px; flex-shrink: 0; }
 /* ── Modal ── */
 .modal-overlay {
@@ -880,7 +887,7 @@ input, select, textarea { font-family: inherit; font-size: 14px; color: var(--in
     </svg>
   </div>
   <div class="app-title">Gemba-DLCA</div>
-  <div class="app-version">v0.79a</div>
+  <div class="app-version">v0.79c</div>
   <div class="project-name-wrap">
     <div class="project-name-label">Project</div>
     <input class="project-name-input" id="projectNameInput" placeholder="Untitled project"
@@ -1868,7 +1875,7 @@ function renderSteps() {
             <input type="checkbox" ${(s.equipmentPoolIds||[]).includes(ep.id) ? 'checked' : ''}
               onchange="toggleStepEquipmentPool('${s.id}','${ep.id}',this.checked)">
             <span>${escHtml(ep.name)}</span>
-            ${mismatch ? `<span class="badge badge-amber" style="font-size:9px;padding:1px 5px;" title="Pool processes ${escHtml(epTierName)}s but step operates at ${escHtml(stepTierName)} tier — excluded from capacity calculation">⚠ Tier mismatch</span>` : ''}
+            ${mismatch ? `<span class="badge badge-amber" style="font-size:9px;padding:1px 5px;" title="Pool processes ${escHtml(epTierName)}s but step operates at ${escHtml(stepTierName)} tier — check this pool is correctly assigned">⚠ Tier mismatch</span>` : ''}
           </label>`;
         }).join('')
       : '<span class="pool-select-empty">Define equipment pools in Section F to enable equipment capacity constraints</span>';
@@ -1927,7 +1934,7 @@ function renderSteps() {
             <label class="form-label">Rework to step</label>
             <select class="form-select" onchange="updateStep('${s.id}','reworkTarget',this.value)">
               <option value="">— none —</option>
-              ${state.steps.filter(x=>x.id!==s.id).map(x=>`<option value="${x.id}"${x.id===s.reworkTarget?' selected':''}>${escHtml(x.name||'Unnamed')}</option>`).join('')}
+              ${state.steps.map(x=>`<option value="${x.id}"${x.id===s.reworkTarget?' selected':''}>${escHtml(x.id===s.id?'Same step (repeat, e.g. rescan)':(x.name||'Unnamed'))}</option>`).join('')}
             </select>
           </div>
           <div class="form-group">
@@ -2535,36 +2542,64 @@ function calcEquipmentPoolCapacity(ep) {
   return (ep.unitCount || 1) * runs * (ep.throughputPerRun || 1);
 }
 
-function getEquipmentTierMismatches(step) { return []; } // deprecated in v0.5
+function getEquipmentTierMismatches(step) {
+  const stepTier = step.unitTier || 't1';
+  const out = [];
+  (step.equipmentPoolIds || []).forEach(epId => {
+    const ep = state.equipmentPools.find(x => x.id === epId);
+    if (!ep) return;
+    const epTier = ep.unitTier || 't1';
+    if (epTier !== stepTier) out.push({ ep, step });
+  });
+  return out;
+}
 
-function calcEquipmentCapacityForStep(step) {
-  // Returns total usable bench-hours per week for all equipment pools assigned to this step.
+function calcEquipmentCapacityForStep(step, periodId, hoursPerUnit) {
+  // Returns total usable capacity hours per week for all equipment pools assigned to this step.
   // Units match totalLoad (hours) so Math.min(staffAvailCap, equipCapHours) is valid.
-  // Bench capacity = sum over all workstations and sessions of:
-  //   (duration − changeover) × (1 − downtime%) ÷ 60
-  // This is the physical time available on the bench, independent of case mix.
+  // Workstation pools: sum over all workstations and sessions of
+  //   (duration − changeover) × (1 − downtime%) ÷ 60 — the physical bench-time available,
+  //   independent of case mix.
+  // Instrument pools: units/period (calcEquipmentPoolCapacity) converted to hours via
+  //   step.processingTime, matching the conversion already used in the 4D equipResolvable
+  //   diagnostic. Instrument capacity does not vary by period (periodAvailableHours is a
+  //   pool constant); periodId is accepted for signature stability but unused here.
   // If no equipment pools are assigned, returns Infinity (staff-only step, no bench ceiling).
   const epIds = step.equipmentPoolIds || [];
   if (!epIds.length) return Infinity;
 
-  let totalUsableMins = 0;
+  let totalHours = 0;
+  // v0.79c: prefer the period's weighted load-hours per unit (respects case-type processing
+  // time overrides, e.g. longer scan times for large-tissue slides); fall back to step default.
+  const procHrsPerUnit = (hoursPerUnit != null && isFinite(hoursPerUnit) && hoursPerUnit > 0)
+    ? hoursPerUnit : (step.processingTime || 15) / 60;
+
   epIds.forEach(epId => {
     const ep = state.equipmentPools.find(x => x.id === epId);
-    if (!ep || ep.poolType !== 'workstation') return;
-    (ep.workstations || []).forEach(ws => {
-      const downtime = (ws.unplannedDowntimePct || 0) / 100;
-      DAYS.forEach(day => {
-        (ws.schedule[day] || []).forEach(session => {
-          const dur = getEffectiveSessionDuration(session, ws, ep);
-          const co = getEffectiveChangeover(session, ws, ep);
-          const usable = Math.max(0, dur - co) * (1 - downtime);
-          totalUsableMins += usable;
+    if (!ep) return;
+
+    if (ep.poolType === 'workstation') {
+      let totalUsableMins = 0;
+      (ep.workstations || []).forEach(ws => {
+        const downtime = (ws.unplannedDowntimePct || 0) / 100;
+        DAYS.forEach(day => {
+          (ws.schedule[day] || []).forEach(session => {
+            const dur = getEffectiveSessionDuration(session, ws, ep);
+            const co = getEffectiveChangeover(session, ws, ep);
+            const usable = Math.max(0, dur - co) * (1 - downtime);
+            totalUsableMins += usable;
+          });
         });
       });
-    });
+      totalHours += totalUsableMins / 60;
+    } else {
+      // Instrument pool: units/period converted to hours via this step's processing time.
+      const units = calcEquipmentPoolCapacity(ep);
+      totalHours += units * procHrsPerUnit;
+    }
   });
 
-  return totalUsableMins / 60;
+  return totalHours;
 }
 
 // ── Render ────────────────────────────────────────────────────
@@ -3809,7 +3844,8 @@ function runCalculations() {
       const { estabCap, availCap: staffAvailCap, bindingPoolName } = getStepStaffCapacity(step, period.id, derived.loadByPool);
 
       // Equipment capacity (hours) — Infinity if no equipment pools assigned
-      const equipCapHours = calcEquipmentCapacityForStep(step, period.id);
+      const hoursPerUnit = derived.volume > 0 ? derived.load / derived.volume : null;
+      const equipCapHours = calcEquipmentCapacityForStep(step, period.id, hoursPerUnit);
       const hasEquipConstraint = (step.equipmentPoolIds||[]).length > 0;
 
       // Effective available capacity: min(staff, equipment)
@@ -3872,6 +3908,7 @@ function runCalculations() {
         constraintType,
         hasEquipConstraint,
         staffAvailCap,
+        hoursPerUnit,
         equipCapHours: hasEquipConstraint ? equipCapHours : null,
         bindingPoolName: constraintType === 'Staff' ? (bindingPoolName || null) : null
       });
@@ -3999,7 +4036,7 @@ function renderCalcResults() {
         const profile = period.dailyDemandProfile.days || {};
         let worstDay = null; let worstGap = 0; let deficitCount = 0;
         DAYS.forEach((day, di) => {
-          const avg = (profile[day]||{}).avg || 0;
+          const avg = Object.values(((profile[day]||{}).caseTypes)||{}).reduce((s, e) => s + (e.avg || 0), 0);
           const dayMix = null; // v0.79a: case mix entered as counts — no percentage override
           const cap = (ep.workstations||[]).reduce((sum, ws) =>
             sum + (ws.schedule[day]||[]).reduce((s, session) =>
@@ -4280,7 +4317,7 @@ function renderDiagnostic() {
     const mismatchLines = allMismatches.map(({ ep, step }) => {
       const epTierName = state.tiers[ep.unitTier || 't1']?.name || (ep.unitTier || 't1');
       const stepTierName = state.tiers[step.unitTier || 't1']?.name || (step.unitTier || 't1');
-      return `<li><strong>${escHtml(ep.name)}</strong> (processes ${escHtml(epTierName)}s) assigned to <strong>${escHtml(step.name || 'Unnamed')}</strong> (operates at ${escHtml(stepTierName)} tier) — pool excluded from capacity calculation</li>`;
+      return `<li><strong>${escHtml(ep.name)}</strong> (processes ${escHtml(epTierName)}s) assigned to <strong>${escHtml(step.name || 'Unnamed')}</strong> (operates at ${escHtml(stepTierName)} tier) — tier mismatch, check this pool is correctly assigned</li>`;
     }).join('');
     el.innerHTML = `<div class="callout callout-amber" style="margin-bottom:var(--space-4);">
       <span class="callout-icon">⚠</span>
@@ -4308,15 +4345,14 @@ function renderDiagnostic() {
     if (!stepResults.length) return;
     (step.equipmentPoolIds||[]).forEach(epid => {
       const ep = state.equipmentPools.find(x => x.id === epid);
-      if (!ep) return;
-      const epPlus1 = { ...ep, unitCount: (ep.unitCount||1) + 1 };
-      const newCapUnits = calcEquipmentPoolCapacity(epPlus1, epPlus1.periodAvailableHours);
-      const otherUnits = (step.equipmentPoolIds||[]).filter(id => id !== epid).reduce((s, id) => {
-        const e2 = state.equipmentPools.find(x => x.id === id);
-        return s + (e2 ? calcEquipmentPoolCapacity(e2, e2.periodAvailableHours) : 0);
-      }, 0);
-      const newTotalCapHours = (newCapUnits + otherUnits) * (step.processingTime / 60);
-      const wouldResolve = stepResults.every(r => r.totalLoad <= newTotalCapHours);
+      // v0.79c: instrument pools only (adding a 'unit' to a workstation pool is undefined),
+      // and the extra unit is valued in the same load-equivalent hours as the step's capacity.
+      if (!ep || ep.poolType !== 'instrument') return;
+      const perUnitCap = calcEquipmentPoolCapacity(ep) / (ep.unitCount || 1);
+      const wouldResolve = stepResults.every(r => {
+        const hpu = r.hoursPerUnit || (step.processingTime || 15) / 60;
+        return r.totalLoad <= (r.equipCapHours || 0) + perUnitCap * hpu;
+      });
       if (wouldResolve) {
         const key = step.id + '-' + epid;
         if (!equipResolvable.find(x => x.key === key)) {
@@ -4390,10 +4426,10 @@ function renderDiagnostic() {
       const ep = state.equipmentPools.find(x =>
         x.poolType === 'workstation' && (step.equipmentPoolIds||[]).includes(x.id));
       if (!ep || !(period.dailyDemandProfile || {}).enabled) return;
-      const profile = period.dailyDemandProfile[step.id];
+      const profile = period.dailyDemandProfile.days || {};
       let worstDay = null; let worstGap = 0;
       DAYS.forEach((day, di) => {
-        const avg = (profile[day]||{}).avg || 0;
+        const avg = Object.values(((profile[day]||{}).caseTypes)||{}).reduce((s, e) => s + (e.avg || 0), 0);
         const dayMix = null; // v0.79a: case mix entered as counts — no percentage override
         const cap = (ep.workstations||[]).reduce((sum, ws) =>
           sum + (ws.schedule[day]||[]).reduce((s, session) =>
@@ -4683,7 +4719,7 @@ function renderDailyCapacityCard() {
 function exportData() {
   const envelope = {
     gembaApp: 'Gemba-DLCA',
-    appVersion: '0.7',
+    appVersion: '0.79c',
     exportedAt: new Date().toISOString(),
     payload: state
   };
@@ -5097,7 +5133,7 @@ function updateProjectName(value) {
   state.projectName = value;
   save();
   // keep page title in sync
-  document.title = value ? `${value} — Gemba-DLCA v0.79a` : 'Gemba-DLCA v0.79a — Demand & Capacity Analyser';
+  document.title = value ? `${value} — Gemba-DLCA v0.79c` : 'Gemba-DLCA v0.79c — Demand & Capacity Analyser';
 }
 
 function syncProjectNameInput() {
