@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<!--
+  Gemba-Histo Flow v0.10 (preview)
+  Histopathology improvement channel for the Gemba Suite: Pack 1, flow and turnaround.
+  Specimen journey map with downloadable template, and XmR turnaround tracker.
+  Pack 3 of 3. Previous: Gemba-Histo Queues and Gemba-Histo Capacity.
+  Split from Gemba-Histo v0.7.
+  gembasuite.org | Licence: CC BY-NC-SA 4.0
+  Client-side only. No patient data. Nothing leaves the browser.
+  Deploy path: /histopathology/flow/index.html
+  Edit mode: open with #edit on the end of the address, or press Ctrl+Shift+E (Cmd+Shift+E on a Mac).
+-->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Gemba-Histo Flow v0.10</title>
+<meta name="description" content="Why histology queues grow: animated lessons and a turnaround tracker for histopathology services. Runs entirely in your browser.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Public+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   CSS CUSTOM PROPERTIES - Gemba Suite Design System
+   ============================================================ */
+:root {
+  --color-navy: #006172;
+  --color-navy-lt: #e8f0f2;
+  --color-white: #ffffff;
+  --color-grey-100: #f6f8f9;
+  --color-grey-200: #e3e8eb;
+  --color-grey-300: #cfd6da;
+  --color-grey-400: #a9b3b9;
+  --color-grey-500: #7d888f;
+  --color-grey-600: #5c666d;
+  --color-grey-700: #434b51;
+  --color-grey-800: #1f2629;
+  --color-green: #1e7b4a;
+  --color-green-lt: #e6f4ec;
+  --color-red: #b42318;
+  --color-red-lt: #fdecea;
+  --color-amber: #b25e09;
+  --color-amber-lt: #fdf3e3;
+  --color-blue: #1d5fa8;
+  --color-blue-lt: #e8f0fb;
+
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+
+  --touch-min: 44px;
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-head: 'Public Sans', 'Inter', system-ui, sans-serif;
+}
+
+/* ============================================================
+   BASE / RESET
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--color-grey-800);
+  background: var(--color-grey-100);
+}
+h1, h2, h3 { font-family: var(--font-head); line-height: 1.2; margin: 0; }
+p { margin: 0 0 var(--space-md); }
+a { color: var(--color-navy); }
+button, input, textarea { font: inherit; }
+
+/* ============================================================
+   LAYOUT - header, main, footer
+   ============================================================ */
+.site-header {
+  background: var(--color-navy);
+  color: var(--color-white);
+}
+.site-header .inner {
+  max-width: 880px; margin: 0 auto;
+  padding: var(--space-md);
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-md);
+}
+.brand { font-family: var(--font-head); font-weight: 800; letter-spacing: 0.02em; color: var(--color-white); text-decoration: none; }
+.brand span { font-weight: 600; opacity: 0.85; }
+.tag-preview {
+  font-family: var(--font-head); font-weight: 800; font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.05em;
+  background: var(--color-white); color: var(--color-navy);
+  padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-sm);
+}
+main { max-width: 880px; margin: 0 auto; padding: var(--space-lg) var(--space-md) var(--space-2xl); }
+.hero h1 { font-size: 30px; font-weight: 800; color: var(--color-navy); margin-bottom: var(--space-sm); }
+.hero p { font-size: 17px; color: var(--color-grey-700); max-width: 680px; }
+.privacy-note {
+  display: flex; gap: var(--space-sm); align-items: flex-start;
+  background: var(--color-green-lt); color: var(--color-green);
+  border-radius: var(--radius-md); padding: var(--space-sm) var(--space-md);
+  font-size: 14px; font-weight: 500; margin-bottom: var(--space-lg);
+}
+.label {
+  font-family: var(--font-head); font-weight: 800; font-size: 12px;
+  text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-grey-600);
+}
+.site-footer { max-width: 880px; margin: 0 auto; padding: 0 var(--space-md) var(--space-2xl); font-size: 13px; color: var(--color-grey-600); }
+
+/* ============================================================
+   CARDS AND LESSON SECTIONS
+   ============================================================ */
+.card {
+  background: var(--color-white);
+  border: 1px solid var(--color-grey-200);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  margin-bottom: var(--space-lg);
+}
+.lesson-head { display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-sm); }
+.step-num {
+  flex: 0 0 auto; width: 32px; height: 32px; border-radius: 50%;
+  background: var(--color-navy); color: var(--color-white);
+  display: grid; place-items: center;
+  font-family: var(--font-head); font-weight: 800;
+}
+.lesson-head h2 { font-size: 21px; font-weight: 700; }
+.lesson-setup { color: var(--color-grey-700); }
+.section-divider { margin: var(--space-2xl) 0 var(--space-md); }
+.section-divider h2 { font-size: 22px; font-weight: 800; color: var(--color-navy); margin-top: var(--space-xs); }
+
+/* ============================================================
+   CONTROLS - segmented toggles, buttons, sliders
+   ============================================================ */
+.controls { display: flex; flex-wrap: wrap; gap: var(--space-md); align-items: flex-end; margin-bottom: var(--space-md); }
+.control-group { display: flex; flex-direction: column; gap: var(--space-xs); }
+.seg { display: inline-flex; border: 1px solid var(--color-grey-300); border-radius: var(--radius-md); overflow: hidden; }
+.seg button {
+  min-height: var(--touch-min); padding: 0 var(--space-md);
+  background: var(--color-white); color: var(--color-grey-700);
+  border: 0; border-right: 1px solid var(--color-grey-300); cursor: pointer; font-weight: 500;
+}
+.seg button:last-child { border-right: 0; }
+.seg button.active { background: var(--color-navy-lt); color: var(--color-navy); font-weight: 600; }
+.btn {
+  min-height: var(--touch-min); padding: 0 var(--space-md);
+  border-radius: var(--radius-md); border: 1px solid var(--color-grey-300);
+  background: var(--color-white); color: var(--color-grey-800);
+  font-weight: 600; cursor: pointer;
+}
+.btn-primary { background: var(--color-navy); border-color: var(--color-navy); color: var(--color-white); }
+.btn:focus-visible, .seg button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 3px solid var(--color-blue); outline-offset: 2px; }
+.slider-wrap { display: flex; align-items: center; gap: var(--space-sm); min-height: var(--touch-min); }
+.slider-wrap input[type=range] { width: 200px; accent-color: var(--color-navy); min-height: var(--touch-min); }
+.slider-val { font-family: var(--font-head); font-weight: 800; font-size: 20px; color: var(--color-navy); min-width: 56px; }
+
+/* ============================================================
+   SIMULATION CANVAS AND STATS
+   ============================================================ */
+.sim-canvas, .chart-canvas {
+  display: block; width: 100%;
+  background: var(--color-grey-100);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-md);
+}
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-sm); margin-bottom: var(--space-md); }
+.stat { background: var(--color-grey-100); border-radius: var(--radius-md); padding: var(--space-sm) var(--space-md); }
+.stat .v { font-family: var(--font-head); font-weight: 800; font-size: 22px; color: var(--color-grey-800); }
+.stat .k { font-size: 12px; color: var(--color-grey-600); }
+.stat.hl { background: var(--color-navy-lt); }
+.stat.hl .v { color: var(--color-navy); }
+.legend { display: flex; flex-wrap: wrap; gap: var(--space-md); font-size: 13px; color: var(--color-grey-600); margin: calc(-1 * var(--space-sm)) 0 var(--space-md); }
+.legend i { display: inline-block; width: 18px; height: 3px; vertical-align: middle; margin-right: var(--space-xs); border-radius: 2px; }
+.legend i.dash { background: repeating-linear-gradient(90deg, currentColor 0 4px, transparent 4px 7px); height: 2px; }
+
+/* ============================================================
+   EXPLAINER AND TRY-THIS
+   ============================================================ */
+.explainer { border-top: 1px solid var(--color-grey-200); padding-top: var(--space-md); }
+.explainer p:last-child { margin-bottom: 0; }
+.try {
+  margin-top: var(--space-md);
+  background: var(--color-amber-lt); color: var(--color-grey-800);
+  border-left: 4px solid var(--color-amber);
+  border-radius: var(--radius-sm); padding: var(--space-sm) var(--space-md); font-size: 15px;
+}
+.try strong { color: var(--color-amber); }
+.dynamic-line { font-weight: 600; color: var(--color-navy); }
+
+/* ============================================================
+   LESSON 4 - DAILY CARRY-OVER
+   ============================================================ */
+.toggle-row { display: flex; flex-wrap: wrap; gap: var(--space-sm); }
+.toggle-btn {
+  min-height: var(--touch-min); padding: 0 var(--space-md);
+  border-radius: var(--radius-md); border: 1px solid var(--color-grey-300);
+  background: var(--color-white); color: var(--color-grey-700); font-weight: 500; cursor: pointer;
+}
+.toggle-btn[aria-pressed="true"] { border-color: var(--color-green); background: var(--color-green-lt); color: var(--color-green); font-weight: 600; }
+.toggle-btn[aria-pressed="true"]::before { content: "\2713  "; }
+.toggle-btn:focus-visible { outline: 3px solid var(--color-blue); outline-offset: 2px; }
+.longrun { background: var(--color-navy-lt); border-radius: var(--radius-md); padding: var(--space-sm) var(--space-md); font-size: 15px; margin-bottom: var(--space-md); }
+
+/* ============================================================
+   PACK 1 - SPECIMEN JOURNEY TABLE
+   ============================================================ */
+.journey { width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: var(--space-md); }
+.journey th { text-align: left; font-family: var(--font-head); font-weight: 800; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-grey-600); padding: var(--space-sm); border-bottom: 2px solid var(--color-grey-200); }
+.journey td { padding: var(--space-sm); border-bottom: 1px solid var(--color-grey-200); vertical-align: top; }
+.journey td:first-child { color: var(--color-grey-500); font-weight: 600; width: 28px; }
+.kind { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px var(--space-sm); border-radius: var(--radius-sm); }
+.kind-process { background: var(--color-blue-lt); color: var(--color-blue); }
+.kind-batch { background: var(--color-amber-lt); color: var(--color-amber); }
+.kind-queue { background: var(--color-red-lt); color: var(--color-red); }
+.table-scroll { overflow-x: auto; }
+
+/* ============================================================
+   PACK 1 - TURNAROUND TRACKER
+   ============================================================ */
+.tat-grid { display: grid; grid-template-columns: minmax(0, 260px) minmax(0, 1fr); gap: var(--space-lg); }
+@media (max-width: 720px) { .tat-grid { grid-template-columns: 1fr; } }
+.tat-input textarea {
+  width: 100%; min-height: 260px; resize: vertical;
+  font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 14px;
+  border: 1px solid var(--color-grey-300); border-radius: var(--radius-md); padding: var(--space-sm);
+}
+.target-row { display: flex; align-items: center; gap: var(--space-sm); margin: var(--space-sm) 0; }
+.target-row input { width: 80px; min-height: var(--touch-min); border: 1px solid var(--color-grey-300); border-radius: var(--radius-md); padding: 0 var(--space-sm); }
+.btn-row { display: flex; flex-wrap: wrap; gap: var(--space-sm); margin-top: var(--space-sm); }
+.msg { border-radius: var(--radius-md); padding: var(--space-sm) var(--space-md); font-size: 14px; margin-bottom: var(--space-sm); }
+.msg-error { background: var(--color-red-lt); color: var(--color-red); }
+.msg-warn { background: var(--color-amber-lt); color: var(--color-amber); }
+.msg-ok { background: var(--color-green-lt); color: var(--color-green); }
+.msg-info { background: var(--color-blue-lt); color: var(--color-blue); }
+.tat-chart svg { width: 100%; height: auto; display: block; background: var(--color-grey-100); border-radius: var(--radius-md); }
+.verdict { font-size: 15px; }
+.verdict strong { color: var(--color-navy); }
+.hint { font-size: 13px; color: var(--color-grey-600); }
+
+/* ============================================================
+   CROSS-LINK CARDS
+   ============================================================ */
+.next-card { display: flex; flex-wrap: wrap; gap: var(--space-md); align-items: center; justify-content: space-between; border-left: 4px solid var(--color-navy); }
+.next-card p { margin: 0; max-width: 560px; }
+a.btn { display: inline-flex; align-items: center; text-decoration: none; }
+
+/* ============================================================
+   FACILITATOR NOTES
+   ============================================================ */
+details.facilitator summary {
+  cursor: pointer; min-height: var(--touch-min); display: flex; align-items: center;
+  font-family: var(--font-head); font-weight: 700; color: var(--color-navy);
+}
+details.facilitator ol { padding-left: var(--space-lg); }
+details.facilitator li { margin-bottom: var(--space-sm); }
+
+/* ============================================================
+   EDIT MODE (author only: #edit or Ctrl/Cmd+Shift+E)
+   ============================================================ */
+body.editing [data-editable] { outline: 1px dashed var(--color-blue); outline-offset: 2px; border-radius: var(--radius-sm); cursor: text; }
+body.editing [data-editable]:focus { outline: 2px solid var(--color-blue); background: var(--color-blue-lt); }
+body.editing { padding-bottom: 96px; }
+.edit-bar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+  background: var(--color-grey-800); color: var(--color-white);
+  padding: var(--space-sm) var(--space-md);
+  display: flex; flex-wrap: wrap; gap: var(--space-sm); align-items: center; justify-content: center;
+  font-size: 14px;
+}
+.edit-bar .btn { border-color: var(--color-grey-600); }
+.edit-bar .edit-status { min-width: 160px; color: var(--color-grey-300); }
+
+/* ============================================================
+   PRINT
+   ============================================================ */
+@media print {
+  .controls, .btn-row, .tat-input textarea { display: none; }
+  .card { break-inside: avoid; border-color: var(--color-grey-300); }
+  body { background: var(--color-white); }
+}
+
+/* ============================================================
+   REVIEW BANNER (draft review copy only)
+   ============================================================ */
+.review-banner { background: #fdf3e3; border-bottom: 1px solid #f0d9b5; color: #1f2629; font-family: 'Inter', system-ui, sans-serif; font-size: 14px; }
+.review-banner .rb-inner { max-width: 880px; margin: 0 auto; padding: 8px 16px; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; }
+.review-banner strong { color: #b25e09; }
+.review-banner .rb-toggle { min-height: 44px; padding: 0 16px; border-radius: 6px; border: 1px solid #b25e09; background: #ffffff; color: #b25e09; font: inherit; font-weight: 600; cursor: pointer; }
+.review-banner .rb-panel { max-width: 880px; margin: 0 auto; padding: 0 16px 12px; display: none; }
+.review-banner.open .rb-panel { display: block; }
+.review-banner textarea { width: 100%; min-height: 110px; padding: 8px; border: 1px solid #cfd6da; border-radius: 6px; font: inherit; resize: vertical; box-sizing: border-box; }
+.review-banner input[type=text] { width: 100%; max-width: 360px; min-height: 44px; padding: 0 8px; border: 1px solid #cfd6da; border-radius: 6px; font: inherit; box-sizing: border-box; }
+.review-banner .rb-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
+.review-banner .rb-send { min-height: 44px; padding: 0 16px; border-radius: 6px; border: 0; background: #006172; color: #ffffff; font: inherit; font-weight: 600; cursor: pointer; }
+.review-banner .rb-note { font-size: 13px; color: #5c666d; margin: 8px 0 0; }
+.review-banner .rb-status { font-weight: 600; }
+@media print { .review-banner { display: none; } }
+</style>
+</head>
+<body>
+<div class="review-banner" id="review-banner">
+  <div class="rb-inner">
+    <span><strong>Draft for colleague review.</strong> Please don't circulate yet. Any comments welcome, however brief.</span>
+    <button type="button" class="rb-toggle" id="rb-toggle" aria-expanded="false" aria-controls="rb-panel">Add a comment</button>
+  </div>
+  <div class="rb-panel" id="rb-panel">
+    <label for="rb-text" style="position:absolute;left:-9999px">Your comment on this page</label>
+    <textarea id="rb-text" placeholder="What works, what doesn't, what's wrong or missing? Anything at all."></textarea>
+    <div class="rb-row">
+      <label for="rb-name" style="position:absolute;left:-9999px">Your name (optional)</label>
+      <input type="text" id="rb-name" placeholder="Your name (optional)">
+      <button type="button" class="rb-send" id="rb-send">Send comment</button>
+      <span class="rb-status" id="rb-status" aria-live="polite"></span>
+    </div>
+    <p class="rb-note">This comment box is the only part of the page that sends anything, and comments go to David Clark only. Please don't include patient details. Want to reword the text itself? Press Ctrl+Shift+E (Cmd+Shift+E on a Mac), edit any outlined text, download the edited page and email it back to whoever sent you this link.</p>
+  </div>
+</div>
+<script>
+(function () {
+  var PAGE = 'Pack 3, Flow and turnaround';
+  var URL_ = 'https://script.google.com/macros/s/AKfycbxr7o-fxL4MIQX-1KO9WfFRlp6aQrAfewCKU9G1Ittnoh3wpNQMZuoEUB4G3p3Javnh/exec';
+  var box = document.getElementById('review-banner');
+  var tog = document.getElementById('rb-toggle');
+  tog.addEventListener('click', function () {
+    var open = box.classList.toggle('open');
+    tog.setAttribute('aria-expanded', String(open));
+    if (open) document.getElementById('rb-text').focus();
+  });
+  document.getElementById('rb-send').addEventListener('click', function () {
+    var text = document.getElementById('rb-text').value.trim();
+    var name = document.getElementById('rb-name').value.trim();
+    var status = document.getElementById('rb-status');
+    if (!text) { status.textContent = 'Please write a comment first.'; return; }
+    var btn = this; btn.disabled = true; status.textContent = 'Sending...';
+    var detail = (name ? 'From: ' + name + '\n' : '') + 'Page: ' + PAGE + '\n\n' + text;
+    var payload = {
+      timestamp: new Date().toISOString(), feedback_category: 'guide',
+      setting: '', role: '', experience_level: '', discovery: 'Colleague recommendation',
+      app_name: '', app_feedback_type: '', app_device: '', app_severity: '', app_detail: '',
+      guide_name: 'Gemba-Histo draft review: ' + PAGE, guide_feedback_type: 'Draft review comment', guide_detail: detail,
+      site_feedback_type: '', site_detail: '', method_feedback_type: '', method_detail: '', general_detail: '',
+      satisfaction: '', recommend: '', contact_ok: 'No', email: ''
+    };
+    fetch(URL_, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+      .then(function () { status.textContent = 'Thank you, sent.'; document.getElementById('rb-text').value = ''; btn.disabled = false; })
+      .catch(function () { status.textContent = 'Could not send. Please check your connection and try again.'; btn.disabled = false; });
+  });
+})();
+</script>
+
+
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="../">Gemba Suite <span>· Histopathology</span></a>
+    <span class="tag-preview">Preview v0.10</span>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>Where does the time go?</h1>
+    <p>Two tools for looking at your own histopathology service: a specimen journey map for finding where work waits, and a turnaround tracker that shows whether your current system can meet its target. About fifteen minutes to run as a group session.</p>
+  </section>
+
+  <div class="privacy-note" role="note">
+    <span aria-hidden="true">✓</span>
+    <span>Everything runs in your browser. No patient data is used or stored, and nothing is sent anywhere.</span>
+  </div>
+
+  <section class="card next-card">
+    <p><strong>New to these ideas?</strong> Why histology queues grow explains why work waits, and Demand and capacity shows what leave and sickness do to a team's real capacity. Both make the tracker easier to read.</p>
+    <span class="btn-row" style="margin-top:0"><a class="btn" href="../queues/">Why histology queues grow</a><a class="btn" href="../capacity/">Demand and capacity</a></span>
+  </section>
+
+  <!-- ======================= PACK 1 ======================= -->
+
+  <section class="card" id="journey" aria-labelledby="journey-title">
+    <h3 id="journey-title" class="label" style="margin-bottom:var(--space-sm)">The specimen journey, and where waits hide</h3>
+    <p>Turnaround is almost all waiting, not work. A specimen typically spends a few hours being worked on across a journey of several days. Use this map as a starting point for a value stream walk: record the actual work time and wait time at each step in your own lab.</p>
+    <div class="table-scroll">
+      <table class="journey">
+        <thead><tr><th>#</th><th>Step</th><th>Type</th><th>Where waits commonly hide</th></tr></thead>
+        <tbody id="journey-body"></tbody>
+      </table>
+    </div>
+    <div class="btn-row">
+      <button type="button" class="btn btn-primary" id="btn-pack">Download journey template (JSON)</button>
+    </div>
+    <p class="hint" style="margin-top:var(--space-sm)">Work and wait times in the template are left blank on purpose. Fill them from observation, not from memory.</p>
+  </section>
+
+  <section class="card" id="tat" aria-labelledby="tat-title">
+    <h3 id="tat-title" class="label" style="margin-bottom:var(--space-sm)">Turnaround against your target</h3>
+    <p>Paste your weekly percentage of cases reported within 10 days, oldest first. Twenty or more weeks gives a useful picture. The chart shows the natural process limits: the range your current system will produce week to week without any change to how it works.</p>
+
+    <div class="tat-grid">
+      <div class="tat-input">
+        <label class="label" for="tat-text">Weekly data</label>
+        <p class="hint" style="margin:var(--space-xs) 0">One week per line, as <code>label, percent</code> or just <code>percent</code>. Labels must be a week number or a date (Wk 3, 2026-W14, 14/10/2026); anything else is refused. Aggregated figures only.</p>
+        <textarea id="tat-text" spellcheck="false" placeholder="Wk 1, 86&#10;Wk 2, 89&#10;Wk 3, 84"></textarea>
+        <div class="target-row">
+          <label class="label" for="tat-target">Target %</label>
+          <input type="number" id="tat-target" min="0" max="100" step="0.5" value="98">
+        </div>
+        <div class="btn-row">
+          <button type="button" class="btn" id="btn-example">Load illustrative data</button>
+          <button type="button" class="btn" id="btn-clear">Clear</button>
+        </div>
+        <div class="btn-row">
+          <button type="button" class="btn" id="btn-export">Export JSON</button>
+          <button type="button" class="btn" id="btn-import">Import JSON</button>
+          <input type="file" id="file-import" accept="application/json,.json" hidden>
+        </div>
+      </div>
+      <div>
+        <div id="tat-messages"></div>
+        <div class="tat-chart" id="tat-chart"></div>
+        <div class="verdict" id="tat-verdict"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= FACILITATOR ======================= -->
+  <section class="card">
+    <details class="facilitator">
+      <summary>For facilitators: a 15-minute running order</summary>
+      <ol>
+        <li><strong>0 to 3 minutes.</strong> Frame the question: "A specimen is worked on for a few hours across a journey of several days. Where does the rest of the time go?"</li>
+        <li><strong>3 to 7 minutes.</strong> Walk the specimen journey table. Ask which steps are batches and which are queues in the room's own labs, and where they think the longest wait is.</li>
+        <li><strong>7 to 11 minutes.</strong> Load the illustrative data in the tracker. Read the limits and the verdict together: a target above the upper limit is a design problem, not an effort problem.</li>
+        <li><strong>11 to 13 minutes.</strong> If someone has brought real weekly figures, paste them in and discuss which points are signals and which are ordinary noise.</li>
+        <li><strong>13 to 15 minutes.</strong> The ask: before the next meeting, record actual work and wait times at three steps of your own journey using the template, and plot your last 20 or more weeks of turnaround.</li>
+      </ol>
+      <p class="hint">The tracker uses an XmR chart (natural process limits at the mean plus or minus 2.66 times the average moving range). It is a pragmatic choice for weekly percentages; where weekly case numbers are small or vary a lot, a p-chart is stricter.</p>
+    </details>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <p>Gemba-Histo Flow v0.10 preview · Part of the <a href="/">Gemba Suite</a> · <a href="/licence/">CC BY-NC-SA 4.0</a></p>
+  <p>The tracker shows how your current process behaves; it does not explain why. Use it alongside the specimen journey and the people who do the work.</p>
+</footer>
+
+<script>
+/* ============================================================
+   0. PRISTINE COPY FOR EDIT MODE
+   Captured before any script changes the page, so a saved copy
+   contains the original markup plus only the author's text edits.
+   ============================================================ */
+const PRISTINE_HTML = (function () {
+  let out = '';
+  document.childNodes.forEach(n => {
+    if (n.nodeType === Node.DOCUMENT_TYPE_NODE) out += '<!DOCTYPE html>\n';
+    else if (n.nodeType === Node.COMMENT_NODE) out += '<!--' + n.data + '-->\n';
+    else if (n.nodeType === Node.ELEMENT_NODE) out += n.outerHTML;
+  });
+  return out;
+})();
+
+/* ============================================================
+   1. CONSTANTS AND STATE
+   ============================================================ */
+const TS = 1;                              // mean time to report one case (one "case-time")
+const SPEEDS = { normal: 6, fast: 40 };    // case-times simulated per real second
+const LS_KEY = 'gemba-histo-tat';
+const MAX_HIST = 600;
+const STATS_INTERVAL_MS = 150;
+
+const lessons = {};
+let lastFrame = null;
+let lastStats = 0;
+let saveTimer = null;
+
+const JOURNEY = [
+  { step: 'Specimen receipt and booking-in', kind: 'process', wait: 'Peaks after clinics and theatre lists; specimens wait for booking before anything else can start.' },
+  { step: 'Cut-up (grossing)', kind: 'process', wait: 'Afternoon arrivals that miss cut-up wait until the next day.' },
+  { step: 'Tissue processing', kind: 'batch', wait: 'Usually an overnight batch. Everything waits for the run, whatever time it arrived.' },
+  { step: 'Embedding', kind: 'process', wait: 'Morning surge as the overnight batch lands all at once.' },
+  { step: 'Microtomy', kind: 'process', wait: 'Often the lab bottleneck; queues build behind it when staffing dips.' },
+  { step: 'Staining and coverslipping', kind: 'batch', wait: 'Racks wait to be filled before a run starts.' },
+  { step: 'Scanning', kind: 'batch', wait: 'Slides batched by tray or trolley round; scanner queues in digital labs.' },
+  { step: 'Slide QC', kind: 'process', wait: 'Slides wait for a quality check before release to the pathologist; a failed slide loops back to microtomy.' },
+  { step: 'Case allocation', kind: 'queue', wait: 'The most invisible wait: cases sit unallocated, or allocated to someone on leave.' },
+  { step: 'Reporting', kind: 'process', wait: 'Usually the system constraint. Why histology queues grow, lessons 2 and 3, show why.' },
+  { step: 'Further work (levels, special stains, IHC)', kind: 'queue', wait: 'A loop back into the lab that restarts the queueing cycle for the case.' },
+  { step: 'Authorisation and report release', kind: 'process', wait: 'Cases waiting for sign-off, typing or MDT timing.' }
+];
+
+const EXAMPLE_TAT = [86, 89, 84, 91, 87, 85, 90, 88, 83, 87, 92, 86, 84, 89, 88, 90, 85, 87, 91, 86];
+
+/* ============================================================
+   2. UTILITY FUNCTIONS
+   ============================================================ */
+function escHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+function cssVar(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+function fmt(n, d = 1) { return Number.isFinite(n) ? n.toFixed(d) : '-'; }
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+function randomSeed() { return Math.floor(Math.random() * 1e9); }
+function downloadJson(obj, filename) {
+  const blob = new Blob([JSON.stringify(obj, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+function colours() {
+  return {
+    navy: cssVar('--color-navy'), navyLt: cssVar('--color-navy-lt'),
+    red: cssVar('--color-red'), amber: cssVar('--color-amber'),
+    g200: cssVar('--color-grey-200'), g300: cssVar('--color-grey-300'),
+    g500: cssVar('--color-grey-500'), g600: cssVar('--color-grey-600'), g800: cssVar('--color-grey-800'),
+    white: cssVar('--color-white')
+  };
+}
+
+/* ============================================================
+   3. QUEUEING MODEL - streams, stations, theory
+   ============================================================ */
+// A stream of cases: arrival times and report times, generated lazily from a seed
+// so that several stations can consume the identical sequence (common random numbers).
+function createStream(seed, lambda, arrVar, svcVar) {
+  const rnd = mulberry32(seed);
+  const jobs = [];
+  let t = 0;
+  return {
+    get(i) {
+      while (jobs.length <= i) {
+        const gap = arrVar ? -Math.log(1 - rnd()) / lambda : 1 / lambda;
+        const svc = svcVar ? -Math.log(1 - rnd()) * TS : TS;
+        t += gap;
+        jobs.push({ arr: t, svc });
+      }
+      return jobs[i];
+    }
+  };
+}
+function singleSource(stream) {
+  let i = 0;
+  return { peek: () => stream.get(i), take: () => stream.get(i++) };
+}
+function mergedSource(a, b) {
+  let ia = 0, ib = 0;
+  return {
+    peek() { const x = a.get(ia), y = b.get(ib); return x.arr <= y.arr ? x : y; },
+    take() { const x = a.get(ia), y = b.get(ib); if (x.arr <= y.arr) { ia++; return x; } ib++; return y; }
+  };
+}
+function createStation(source, servers) {
+  return { source, t: 0, queue: [], servers: new Array(servers).fill(null), started: 0, done: 0, waitSum: 0, busyTime: 0 };
+}
+function startIfFree(st) {
+  for (let i = 0; i < st.servers.length; i++) {
+    if (!st.servers[i] && st.queue.length) {
+      const job = st.queue.shift();
+      st.waitSum += st.t - job.arr;
+      st.started++;
+      st.servers[i] = { fin: st.t + job.svc };
+    }
+  }
+}
+function moveClock(st, to) {
+  const busy = st.servers.reduce((n, s) => n + (s ? 1 : 0), 0);
+  st.busyTime += busy * (to - st.t);
+  st.t = to;
+}
+function advance(st, toT) {
+  for (;;) {
+    const nextArr = st.source.peek().arr;
+    let nextFin = Infinity, fi = -1;
+    for (let i = 0; i < st.servers.length; i++) {
+      const s = st.servers[i];
+      if (s && s.fin < nextFin) { nextFin = s.fin; fi = i; }
+    }
+    const tNext = Math.min(nextArr, nextFin);
+    if (tNext > toT) break;
+    moveClock(st, tNext);
+    if (nextFin <= nextArr) {
+      st.servers[fi] = null;
+      st.done++;
+    } else {
+      st.queue.push(st.source.take());
+    }
+    startIfFree(st);
+  }
+  moveClock(st, toT);
+}
+function avgWait(...sts) {
+  const n = sts.reduce((a, s) => a + s.started, 0);
+  return n ? sts.reduce((a, s) => a + s.waitSum, 0) / n : 0;
+}
+function utilisation(st) { return st.t > 0 ? st.busyTime / (st.t * st.servers.length) : 0; }
+
+// Kingman form: exact for M/M/1 and M/D/1 (Pollaczek-Khinchine) and D/D/1; D/M/1 uses dm1Wait instead
+function kingman(rho, ca2, cs2) { return rho / (1 - rho) * (ca2 + cs2) / 2 * TS; }
+// D/M/1 exact mean wait: sigma solves sigma = exp(-(1 - sigma) / rho)
+function dm1Wait(rho) {
+  let s = 0.5;
+  for (let i = 0; i < 200; i++) s = Math.exp(-(1 - s) / rho);
+  return s / (1 - s) * TS;
+}
+// Erlang C mean wait in queue for c servers, per-server utilisation rho, exponential times
+function erlangCWait(c, rho) {
+  const a = c * rho;
+  let sum = 0, term = 1;
+  for (let k = 0; k < c; k++) { if (k > 0) term *= a / k; sum += term; }
+  const last = term * a / c / (1 - rho);   // a^c / c! / (1 - rho)
+  const pWait = last / (sum + last);
+  return pWait * TS / (c * (1 - rho));
+}
+
+/* ============================================================
+   4. LESSON FACTORIES
+   ============================================================ */
+function createLesson(id, cfg) {
+  const L = Object.assign({ id, playing: false, speed: 'normal', seed: 12345, simT: 0, hist: [], step: 0.5, nextSample: 0.5 }, cfg);
+  L.reset = function (newSeed) {
+    if (newSeed) L.seed = randomSeed();
+    L.stations = L.build(L.seed);
+    L.simT = 0; L.hist = []; L.step = 0.5; L.nextSample = 0.5;
+  };
+  L.reset(false);
+  lessons[id] = L;
+  return L;
+}
+
+function initLessons() {
+  createLesson('variation', {
+    state: { arrVar: 0, svcVar: 0 },
+    rho: 0.9,
+    build(seed) {
+      const s = createStream(seed, this.rho, !!this.state.arrVar, !!this.state.svcVar);
+      return [createStation(singleSource(s), 1)];
+    },
+    theory() {
+      if (this.state.arrVar === 0 && this.state.svcVar === 1) return [dm1Wait(this.rho)];   // exact D/M/1
+      return [kingman(this.rho, this.state.arrVar, this.state.svcVar)];                      // exact for M/M/1, M/D/1, D/D/1
+    },
+    theoryExact() { return true; },
+    sample() { return [avgWait(this.stations[0])]; },
+    labels: ['Reporting bench']
+  });
+
+  createLesson('utilisation', {
+    rho: 0.8,
+    build(seed) { return [createStation(singleSource(createStream(seed, this.rho, true, true)), 1)]; },
+    theory() { return [kingman(this.rho, 1, 1)]; },
+    sample() { return [avgWait(this.stations[0])]; },
+    labels: ['Reporting bench']
+  });
+
+  createLesson('pooling', {
+    rho: 0.85,
+    build(seed) {
+      const a = createStream(seed, this.rho, true, true);
+      const b = createStream(seed + 7919, this.rho, true, true);
+      return [
+        createStation(singleSource(a), 1),
+        createStation(singleSource(b), 1),
+        createStation(mergedSource(a, b), 2)
+      ];
+    },
+    theory() { return [kingman(this.rho, 1, 1), erlangCWait(2, this.rho)]; },
+    sample() { return [avgWait(this.stations[0], this.stations[1]), avgWait(this.stations[2])]; },
+    labels: ['Trust A: one pathologist, own queue', 'Trust B: one pathologist, own queue', 'Shared: two pathologists, one queue']
+  });
+}
+
+/* ============================================================
+   4b. LESSON 4 - DAILY CARRY-OVER MODEL
+   Capacity is a percentage of what the full team (everyone in)
+   can do in a day. The workload slider is set against that full
+   establishment, so absence takes capacity away and the real
+   utilisation of the staff present rises.
+   Absence has two parts:
+   - planned leave and training, taken in whole-week blocks; if
+     not rostered, it clusters in school-holiday weeks;
+   - sickness, in spells averaging SICK_SPELL days.
+   Each person is independent, so absences compound.
+   Every day draws the same number of random values whatever the
+   settings, so toggling a countermeasure compares the same days.
+   ============================================================ */
+const DAILY_WEEKDAY = [1.18, 1.0, 0.96, 0.94, 0.92];   // Mon to Fri, mean 1.0
+const DAILY_CV = [0.04, 0.10, 0.18];                     // low, realistic, high
+const DAILY_WINDOW = 65;                                  // one quarter of working days
+const DAILY_SPEEDS = { normal: 3, fast: 15 };             // working days per second
+const DAILY_LONGRUN = 100000;                             // working days in the long-run summary
+const SICK_SPELL = 3;                                     // mean length of a sickness spell, working days
+const HOLIDAY_WEEKS = [6, 12];                            // school-holiday weeks in each 13-week quarter
+const HOLIDAY_FACTOR = 2.5;                               // leave is this much likelier in those weeks
+const OTHER_FACTOR = (13 - HOLIDAY_FACTOR * HOLIDAY_WEEKS.length) / (13 - HOLIDAY_WEEKS.length);
+
+const daily = {
+  opts: { U: 80, leave: 0.12, sick: 0.04, team: 5, demVar: 1, level: false, flex: false, roster: false, cover: false },
+  seed: 2026, playing: false, speed: 'normal', acc: 0, model: null, days: []
+};
+
+function createDailyModel(seed, o) {
+  const rnd = mulberry32(seed);
+  const gauss = () => { let u = 0; while (!u) u = rnd(); const v = rnd(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); };
+  const T = o.team;
+  const unit = 100 / T;
+  const M = o.U;                                 // mean daily demand, % of full-team capacity
+  const W = o.level ? [1, 1, 1, 1, 1] : DAILY_WEEKDAY;
+  const cv = DAILY_CV[o.demVar] * (o.level ? 0.5 : 1);
+  const s = Math.min(o.sick, 0.5);
+  const sickStart = s / (SICK_SPELL * (1 - s));  // gives a long-run sick fraction of s
+  const sickEnd = 1 / SICK_SPELL;
+  const onLeave = new Array(T).fill(false);
+  const isSick = new Array(T).fill(false);
+  let rota = 0;
+  // Work is kept as daily cohorts, first in first out, so we can record how many
+  // working days after arrival each portion of work is finished.
+  const cohorts = [];
+  let head = 0;
+  return {
+    d: 0, backlog: 0, M,
+    next() {
+      const wd = this.d % 5;
+      const week = Math.floor(this.d / 5);
+      if (wd === 0) {                            // leave is booked by the week
+        const draws = []; for (let i = 0; i <= T; i++) draws.push(rnd());
+        if (o.roster) {                          // spread evenly, taking turns
+          const x = o.leave * T, k = Math.floor(x) + (draws[T] < x - Math.floor(x) ? 1 : 0);
+          onLeave.fill(false);
+          for (let j = 0; j < k; j++) onLeave[(rota + j) % T] = true;
+          rota = (rota + k) % T;
+        } else {                                 // taken when requested: clusters in holidays
+          const f = HOLIDAY_WEEKS.includes(week % 13) ? HOLIDAY_FACTOR : OTHER_FACTOR;
+          const pw = Math.min(0.95, o.leave * f);
+          for (let i = 0; i < T; i++) onLeave[i] = draws[i] < pw;
+        }
+      }
+      for (let i = 0; i < T; i++) {             // sickness spells
+        const r = rnd();
+        isSick[i] = isSick[i] ? r >= sickEnd : r < sickStart;
+      }
+      const dem = M * W[wd] * Math.max(0.3, 1 + cv * gauss());
+      const leaveN = onLeave.filter(Boolean).length;
+      let sickN = isSick.filter((v, i) => v && !onLeave[i]).length;
+      if (o.cover) sickN = Math.min(sickN, 1);   // bank cover for all but one sick
+      const absent = Math.min(leaveN + sickN, T);       // if everyone is away, nothing is done
+      const present = T - absent;
+      let cap = unit * present;
+      const flexed = o.flex && this.backlog > 0;  // decided in the morning, from yesterday's held-over work
+      if (flexed) cap += unit;
+      const carriedIn = this.backlog;            // yesterday's unfinished work
+      const util = dem / cap;                    // demand: new work only, against staff present
+      const work = carriedIn + dem;
+      const load = work / cap;                   // load: carried-in plus new work
+      const done = Math.min(work, cap);
+      this.backlog = work - done;
+      // FIFO: finish the oldest work first; record delay (days late) for each portion finished
+      cohorts.push({ day: this.d, amt: dem });
+      let left = done;
+      const finished = [];                       // [delayDays, amount]
+      while (left > 1e-12 && head < cohorts.length) {
+        const c0 = cohorts[head];
+        const take = Math.min(left, c0.amt);
+        finished.push([this.d - c0.day, take]);
+        c0.amt -= take; left -= take;
+        if (c0.amt <= 1e-12) head++;
+      }
+      if (head > 5000) { cohorts.splice(0, head); head = 0; }
+      this.d++;
+      return { n: this.d, wd, dem, cap, util, load, carriedIn, held: this.backlog, carry: this.backlog / M,
+               present, leaveN: Math.min(leaveN, T), sickN: Math.min(sickN, T - Math.min(leaveN, T)), flexed, finished };
+    }
+  };
+}
+function summariseDays(days) {
+  if (!days.length) return null;
+  let D = 0, C = 0, H = 0, over = 0, overDem = 0, flex = 0, lo = Infinity, hi = 0, worst = 0, P = 0, full = 0, twoOff = 0;
+  days.forEach(r => {
+    D += r.dem; C += r.cap; H += r.held; P += r.present;
+    const off = r.leaveN + r.sickN;
+    if (off === 0) full++;
+    if (off >= 2) twoOff++;
+    if (r.load > 1) over++;
+    if (r.util > 1) overDem++;
+    if (r.flexed) flex++;
+    lo = Math.min(lo, r.load); hi = Math.max(hi, r.load); worst = Math.max(worst, r.carry);
+  });
+  const n = days.length;
+  return { util: D / C, ratio: D / C, over: over / n, overN: over, overDem: overDem / n, held: H / D, lo, hi, worst, flex: flex / n,
+           endCarry: days[n - 1].carry, present: P / n, full: full / n, twoOff: twoOff / n };
+}
+function dailyLongRun(o) {
+  // Streams 100,000 working days without storing them, so the summary is stable to within a few per cent.
+  const m = createDailyModel(42, o);
+  const n = DAILY_LONGRUN, half = Math.floor(n / 2);
+  let D = 0, C = 0, Done = 0, H = 0, over = 0, overDem = 0, flex = 0, P = 0, full = 0, twoOff = 0, nobody = 0, carryHalf = 0, last = null;
+  const hist = [];                               // amount of work finished k days after arrival
+  for (let i = 0; i < n; i++) {
+    const r = m.next();
+    D += r.dem; C += r.cap; H += r.held; P += r.present;
+    if (r.load > 1) over++;
+    if (r.util > 1) overDem++;
+    if (r.flexed) flex++;
+    const off = r.leaveN + r.sickN;
+    if (off === 0) full++;
+    if (off >= 2) twoOff++;
+    if (r.present === 0) nobody++;
+    r.finished.forEach(([k, a]) => { hist[k] = (hist[k] || 0) + a; Done += a; });
+    if (i === half) carryHalf = r.carry;
+    last = r;
+  }
+  let cum = 0, p95 = 0, twoPlus = 0;
+  for (let k = 0; k < hist.length; k++) {
+    const a = hist[k] || 0;
+    if (k >= 2) twoPlus += a;
+    if (cum / Done < 0.95) { cum += a; p95 = k; }
+  }
+  return { ratio: D / C, used: Done / C, over: over / n, overDem: overDem / n, held: H / D, flex: flex / n,
+           present: P / n, full: full / n, twoOff: twoOff / n, nobody: nobody / n,
+           p95, twoPlus: twoPlus / Done, flexShare: (flex / n) / o.team,
+           growthPerQuarter: (last.carry - carryHalf) / (n - 1 - half) * DAILY_WINDOW };
+}
+function dailyReset() {
+  daily.model = createDailyModel(daily.seed, daily.opts);
+  daily.days = []; daily.acc = 0;
+}
+
+/* ============================================================
+   5. LOCALSTORAGE AND AUTO-SAVE (tracker only)
+   ============================================================ */
+function loadTat() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) { return null; }
+}
+function saveTat() {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify({
+      text: document.getElementById('tat-text').value,
+      target: document.getElementById('tat-target').value,
+      updatedAt: new Date().toISOString()
+    }));
+  } catch (e) { /* storage unavailable: page still works */ }
+}
+function scheduleAutoSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveTat, 1500);
+}
+
+/* ============================================================
+   6. RENDER FUNCTIONS - canvas helpers
+   ============================================================ */
+function fitCanvas(cv, cssH) {
+  const dpr = window.devicePixelRatio || 1;
+  const w = cv.clientWidth;
+  if (cv._w !== w || cv._h !== cssH || cv._dpr !== dpr) {
+    cv.style.height = cssH + 'px';
+    cv.width = Math.round(w * dpr);
+    cv.height = Math.round(cssH * dpr);
+    cv._w = w; cv._h = cssH; cv._dpr = dpr;
+  }
+  const ctx = cv.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, cssH);
+  return { ctx, w, h: cssH };
+}
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  if (ctx.roundRect) ctx.roundRect(x, y, w, h, r);
+  else ctx.rect(x, y, w, h);
+}
+function drawStation(ctx, st, x, y, w, label, c) {
+  ctx.fillStyle = c.g600;
+  ctx.font = '600 12px Inter, system-ui, sans-serif';
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillText(label, x, y + 12);
+
+  const rowY = y + 20, sw = 54, sh = 28, gap = 6, r = 6, dotGap = 4;
+  const n = st.servers.length;
+  const serversX = x + w - n * (sw + gap);
+  st.servers.forEach((s, i) => {
+    const sx = serversX + i * (sw + gap);
+    ctx.fillStyle = s ? c.navy : c.g200;
+    roundRect(ctx, sx, rowY, sw, sh, 6); ctx.fill();
+    ctx.fillStyle = s ? c.white : c.g600;
+    ctx.font = '600 11px Inter, system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(s ? 'reporting' : 'idle', sx + sw / 2, rowY + 18);
+    ctx.textAlign = 'left';
+  });
+
+  const q = st.queue.length;
+  const maxDots = Math.max(0, Math.floor((serversX - x - 44) / (2 * r + dotGap)));
+  const show = Math.min(q, maxDots);
+  ctx.fillStyle = c.amber;
+  for (let i = 0; i < show; i++) {
+    const cx = serversX - 10 - r - i * (2 * r + dotGap);
+    ctx.beginPath(); ctx.arc(cx, rowY + sh / 2, r, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.font = '600 12px Inter, system-ui, sans-serif';
+  if (q === 0) {
+    ctx.fillStyle = c.g500;
+    ctx.textAlign = 'right';
+    ctx.fillText('no queue', serversX - 10, rowY + 18);
+    ctx.textAlign = 'left';
+  } else if (q > show) {
+    ctx.fillStyle = c.amber;
+    ctx.fillText('+' + (q - show), x, rowY + 18);
+  }
+  ctx.fillStyle = c.g500;
+  ctx.font = '500 11px Inter, system-ui, sans-serif';
+  ctx.textAlign = 'right';
+  ctx.fillText(q + ' waiting', x + w, y + 12);
+  ctx.textAlign = 'left';
+}
+function drawAxes(ctx, pad, w, h, yMax, c, yTicks) {
+  ctx.strokeStyle = c.g200; ctx.lineWidth = 1;
+  ctx.fillStyle = c.g500; ctx.font = '500 11px Inter, system-ui, sans-serif';
+  ctx.textAlign = 'right';
+  for (let i = 0; i <= yTicks; i++) {
+    const v = yMax * i / yTicks;
+    const y = h - pad.b - (h - pad.t - pad.b) * i / yTicks;
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(w - pad.r, y); ctx.stroke();
+    ctx.fillText(fmt(v, v < 10 ? 1 : 0), pad.l - 6, y + 4);
+  }
+  ctx.textAlign = 'left';
+}
+function niceMax(v) {
+  if (v <= 1) return 1;
+  const p = Math.pow(10, Math.floor(Math.log10(v)));
+  const m = v / p;
+  return (m <= 2 ? 2 : m <= 5 ? 5 : 10) * p;
+}
+function drawRunningChart(cv, L, seriesColours) {
+  const { ctx, w, h } = fitCanvas(cv, 170);
+  const c = colours();
+  const pad = { l: 40, r: 12, t: 12, b: 24 };
+  const theory = L.theory();
+  let yMax = Math.max(1, ...theory.map(t => t * 1.6));
+  L.hist.forEach(p => p.v.forEach(v => { if (v > yMax) yMax = v; }));
+  yMax = niceMax(yMax);
+  drawAxes(ctx, pad, w, h, yMax, c, 4);
+  const tMax = Math.max(20, L.simT);
+  const X = t => pad.l + (w - pad.l - pad.r) * t / tMax;
+  const Y = v => h - pad.b - (h - pad.t - pad.b) * Math.min(v, yMax) / yMax;
+
+  theory.forEach((t, i) => {
+    ctx.strokeStyle = seriesColours[i] || c.g500;
+    ctx.globalAlpha = 0.55;
+    ctx.setLineDash([5, 4]); ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(pad.l, Y(t)); ctx.lineTo(w - pad.r, Y(t)); ctx.stroke();
+    ctx.setLineDash([]); ctx.globalAlpha = 1;
+  });
+  seriesColours.forEach((col, si) => {
+    if (!L.hist.length) return;
+    ctx.strokeStyle = col; ctx.lineWidth = 2;
+    ctx.beginPath();
+    L.hist.forEach((p, i) => { const x = X(p.t), y = Y(p.v[si]); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
+    ctx.stroke();
+  });
+  ctx.fillStyle = c.g500; ctx.font = '500 11px Inter, system-ui, sans-serif';
+  ctx.fillText('time →', w - pad.r - 40, h - 6);
+}
+function drawUtilCurve(cv, L) {
+  const { ctx, w, h } = fitCanvas(cv, 190);
+  const c = colours();
+  const pad = { l: 40, r: 12, t: 12, b: 28 };
+  const yMax = 40;
+  drawAxes(ctx, pad, w, h, yMax, c, 4);
+  const X = rho => pad.l + (w - pad.l - pad.r) * (rho - 0.5) / 0.47;
+  const Y = v => h - pad.b - (h - pad.t - pad.b) * Math.min(v, yMax) / yMax;
+  ctx.fillStyle = c.g500; ctx.font = '500 11px Inter, system-ui, sans-serif'; ctx.textAlign = 'center';
+  [0.5, 0.6, 0.7, 0.8, 0.9, 0.97].forEach(r => ctx.fillText(Math.round(r * 100) + '%', X(r), h - 8));
+  ctx.textAlign = 'left';
+  ctx.strokeStyle = c.navy; ctx.lineWidth = 2.5; ctx.beginPath();
+  for (let r = 0.5; r <= 0.9701; r += 0.005) {
+    const x = X(r), y = Y(kingman(r, 1, 1));
+    r === 0.5 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+  const rho = L.rho, th = kingman(rho, 1, 1);
+  ctx.strokeStyle = c.g300; ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
+  ctx.beginPath(); ctx.moveTo(X(rho), pad.t); ctx.lineTo(X(rho), h - pad.b); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = c.navy; ctx.beginPath(); ctx.arc(X(rho), Y(th), 5, 0, Math.PI * 2); ctx.fill();
+  const sim = avgWait(L.stations[0]);
+  if (L.stations[0].started > 0) {
+    ctx.strokeStyle = c.amber; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(X(rho), Y(sim), 7, 0, Math.PI * 2); ctx.stroke();
+  }
+}
+
+/* ============================================================
+   6b. RENDER FUNCTIONS - per-lesson frame and stats
+   ============================================================ */
+function drawLesson(L) {
+  const cv = document.getElementById('cv-' + L.id);
+  const rowH = 58;
+  const h = L.stations.length * rowH + 14 + (L.id === 'pooling' ? 12 : 0);
+  const { ctx, w } = fitCanvas(cv, h);
+  const c = colours();
+  L.stations.forEach((st, i) => {
+    const extra = (L.id === 'pooling' && i === 2) ? 12 : 0;
+    if (extra) {
+      ctx.strokeStyle = c.g300; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(12, i * rowH + 13); ctx.lineTo(w - 12, i * rowH + 13); ctx.stroke();
+    }
+    drawStation(ctx, st, 12, 8 + i * rowH + extra, w - 24, L.labels[i], c);
+  });
+  const c2 = colours();
+  if (L.id === 'variation') drawRunningChart(document.getElementById('ch-variation'), L, [c2.navy]);
+  if (L.id === 'utilisation') drawUtilCurve(document.getElementById('ch-utilisation'), L);
+  if (L.id === 'pooling') drawRunningChart(document.getElementById('ch-pooling'), L, [c2.red, c2.navy]);
+}
+function setText(id, v) { const el = document.getElementById(id); if (el && el.textContent !== v) el.textContent = v; }
+function renderStats(L) {
+  if (L.id === 'variation') {
+    const st = L.stations[0];
+    setText('variation-done', String(st.done));
+    setText('variation-wait', fmt(avgWait(st)));
+    setText('variation-theory', fmt(L.theory()[0]));
+    setText('variation-theory-k', L.theoryExact() ? 'theory predicts' : 'theory predicts (approx.)');
+    setText('variation-util', Math.round(utilisation(st) * 100) + '%');
+  }
+  if (L.id === 'utilisation') {
+    const st = L.stations[0];
+    setText('utilisation-done', String(st.done));
+    setText('utilisation-wait', fmt(avgWait(st)));
+    setText('utilisation-theory', fmt(L.theory()[0]));
+  }
+  if (L.id === 'pooling') {
+    const [a, b, p] = L.stations;
+    const th = L.theory();
+    setText('pooling-sep', fmt(avgWait(a, b)));
+    setText('pooling-pool', fmt(avgWait(p)));
+    setText('pooling-theory', fmt(th[0]) + ' / ' + fmt(th[1]));
+  }
+}
+function renderDynamicLines() {
+  const u = lessons.utilisation;
+  const r = Math.round(u.rho * 100);
+  const w = kingman(u.rho, 1, 1), w80 = kingman(0.8, 1, 1);
+  setText('utilisation-line', r === 80
+    ? 'At 80%, theory says a case waits about 4 case-times before reporting starts.'
+    : `At ${r}%, theory says a case waits about ${fmt(w)} case-times, ${fmt(w / w80)} times as long as at 80%.`);
+  const p = lessons.pooling;
+  const th = p.theory();
+  setText('pooling-line', `At ${Math.round(p.rho * 100)}%, theory says the shared queue waits ${Math.round(th[1] / th[0] * 100)}% as long as the separate queues, with no extra staff.`);
+}
+
+/* ============================================================
+   6b2. RENDER FUNCTIONS - lesson 4
+   ============================================================ */
+function drawDaily() {
+  const cv = document.getElementById('cv-daily');
+  if (!cv) return;
+  const { ctx, w, h } = fitCanvas(cv, 300);
+  const c = colours();
+  const blue = cssVar('--color-blue');
+  const pad = { l: 44, r: 12, t: 14, b: 22 };
+  const topH = 150, gap = 46;
+  const topY0 = pad.t, topY1 = pad.t + topH;           // utilisation panel
+  const botY0 = topY1 + gap, botY1 = h - pad.b;        // held-over panel
+  const shown = daily.days.slice(-DAILY_WINDOW);
+  const peak = Math.max(1.5, ...shown.map(r => r.load));
+  const uMax = Math.min(4, Math.ceil(peak * 2) / 2);
+  const uStep = uMax > 2 ? 1 : 0.5;
+  const slotW = (w - pad.l - pad.r) / DAILY_WINDOW;
+  const bw = Math.max(2, slotW * 0.72);
+  const Yu = u => topY1 - (topY1 - topY0) * Math.min(u, uMax) / uMax;
+  const worst = Math.max(0.5, ...shown.map(r => r.carry));
+  const cMax = niceMax(worst);
+  const Yc = v => botY1 - (botY1 - botY0) * Math.min(v, cMax) / cMax;
+
+  ctx.font = '500 11px Inter, system-ui, sans-serif';
+  ctx.textAlign = 'right'; ctx.fillStyle = c.g500; ctx.strokeStyle = c.g200; ctx.lineWidth = 1;
+  const uTicks = []; for (let u = 0; u <= uMax + 1e-9; u += uStep) uTicks.push(u);
+  uTicks.forEach(u => {
+    ctx.beginPath(); ctx.moveTo(pad.l, Yu(u)); ctx.lineTo(w - pad.r, Yu(u)); ctx.stroke();
+    ctx.fillText(Math.round(u * 100) + '%', pad.l - 6, Yu(u) + 4);
+  });
+  [0, cMax / 2, cMax].forEach(v => {
+    ctx.beginPath(); ctx.moveTo(pad.l, Yc(v)); ctx.lineTo(w - pad.r, Yc(v)); ctx.stroke();
+    ctx.fillText(fmt(v, v < 1 ? 2 : 1), pad.l - 6, Yc(v) + 4);
+  });
+  ctx.textAlign = 'left'; ctx.fillStyle = c.g600; ctx.font = '600 11px Inter, system-ui, sans-serif';
+  ctx.fillText(w < 600 ? 'Daily load vs staff present' : 'Daily load: carried-over work plus new work, against staff present', pad.l, topY0 - 3);
+  ctx.fillText('Work held over at close, in days of work', pad.l, botY0 - 4);
+
+  shown.forEach((r, i) => {
+    const x = pad.l + i * slotW + (slotW - bw) / 2;
+    if (r.wd === 0 && i > 0) {
+      ctx.strokeStyle = c.g200; ctx.beginPath(); ctx.moveTo(x - (slotW - bw) / 2, topY0); ctx.lineTo(x - (slotW - bw) / 2, botY1); ctx.stroke();
+    }
+    ctx.fillStyle = c.navy;
+    ctx.fillRect(x, Yu(r.util), bw, topY1 - Yu(r.util));
+    if (r.load > r.util) { ctx.fillStyle = c.red; ctx.fillRect(x, Yu(r.load), bw, Yu(r.util) - Yu(r.load)); }
+    if (r.load > uMax) { ctx.fillStyle = c.red; ctx.fillRect(x, topY0 - 2, bw, 3); }
+    // who is away: one square per person (leave, then sickness), flex person in blue
+    let py = topY1 + 3;
+    const pip = (col) => { ctx.fillStyle = col; ctx.fillRect(x, py, bw, 3); py += 4; };
+    for (let k = 0; k < Math.min(r.leaveN, 4); k++) pip(c.amber);
+    for (let k = 0; k < Math.min(r.sickN, 4 - Math.min(r.leaveN, 4)); k++) pip(c.g600);
+    if (r.flexed) pip(blue);
+    if (r.carry > 0) { ctx.fillStyle = c.red; ctx.fillRect(x, Yc(r.carry), bw, botY1 - Yc(r.carry)); }
+  });
+
+  ctx.strokeStyle = c.red; ctx.lineWidth = 1.5; ctx.setLineDash([6, 4]);
+  ctx.beginPath(); ctx.moveTo(pad.l, Yu(1)); ctx.lineTo(w - pad.r, Yu(1)); ctx.stroke(); ctx.setLineDash([]);
+  ctx.font = '600 11px Inter, system-ui, sans-serif'; ctx.textAlign = 'right';
+  const capLabel = 'Capacity of staff present';
+  const lw = ctx.measureText(capLabel).width + 8;
+  ctx.fillStyle = c.white; roundRect(ctx, w - pad.r - lw, Yu(1) - 17, lw, 15, 3); ctx.fill();
+  ctx.fillStyle = c.red; ctx.fillText(capLabel, w - pad.r - 4, Yu(1) - 6);
+  ctx.fillStyle = c.navy; ctx.textAlign = 'left';
+  if (!shown.length) ctx.fillText('Press play', pad.l + 6, Yu(0.5));
+
+  ctx.fillStyle = c.g500; ctx.font = '500 11px Inter, system-ui, sans-serif'; ctx.textAlign = 'center';
+  shown.forEach((r, i) => {
+    const lx = pad.l + (i + 2.5) * slotW;
+    const wk = Math.floor((r.n - 1) / 5) + 1;
+    const every = Math.ceil(44 / (5 * slotW));          // thin labels on narrow screens
+    if (r.wd === 0 && wk % every === 0 && lx < w - pad.r - 14) ctx.fillText('Wk ' + wk, lx, h - 6);
+  });
+  ctx.textAlign = 'left';
+}
+function renderDailyStats() {
+  const s = summariseDays(daily.days);
+  setText('daily-days', String(daily.days.length));
+  if (!s) { ['daily-present', 'daily-util', 'daily-over', 'daily-held'].forEach(id => setText(id, '-')); return; }
+  setText('daily-present', fmt(s.present) + ' of ' + daily.opts.team);
+  setText('daily-util', Math.round(s.util * 100) + '%');
+  setText('daily-over', s.overN + ' (' + Math.round(s.over * 100) + '%)');
+  setText('daily-held', fmt(s.held, 2));
+}
+function renderDailyLine() {
+  const o = daily.opts;
+  const s = dailyLongRun(o);
+  const anyCm = o.level || o.flex || o.roster || o.cover;
+  const base = anyCm ? dailyLongRun(Object.assign({}, o, { level: false, flex: false, roster: false, cover: false })) : null;
+  const pct = x => Math.round(x * 100) + '%';
+  let staff = `With everyone in, the workload is ${o.U}% of capacity. With leave, training and sickness, an average day has ` +
+    `${fmt(s.present)} of ${o.team} staff present; everyone is in on ${pct(s.full)} of days and two or more are away on ${pct(s.twoOff)}`;
+  if (s.nobody >= 0.0005) staff += `, and nobody at all is in on ${fmt(s.nobody * 100)}%`;
+  staff += `. So the workload on the staff actually present is ${pct(s.ratio)} of what they can do.`;
+  if (s.ratio >= 1) {
+    setText('daily-line', `Long run: ${staff} On average more work arrives than the staff present can do, so the backlog grows over time. ` +
+      `Extra effort on the busy days cannot fix this; only more capacity, or less demand, can.`);
+    return;
+  }
+  let t = `Long run: ${staff} New work alone exceeds the staff present on ${pct(s.overDem)} of days; with carried-over work added, ` +
+          `the load exceeds 100% on ${pct(s.over)}. Average carry-over delay is ${fmt(s.held, 2)} working days; ` +
+          `${pct(s.twoPlus)} of work is finished two or more working days after it arrives, and 95% within ${s.p95} working day${s.p95 === 1 ? '' : 's'}.`;
+  if (s.growthPerQuarter > 0.05) t += ` There is little spare capacity: the backlog was still rising during this simulation.`;
+  if (base) t += ` Without the countermeasures the average delay would be ${fmt(base.held, 2)} days.`;
+  if (o.flex) t += ` The flex person was needed on ${pct(s.flex)} of days, which adds ${fmt(s.flexShare * 100)}% to the team's capacity averaged over all days.`;
+  setText('daily-line', t);
+}
+let dailyLineTimer = null;
+function refreshDaily(resetRun) {
+  if (resetRun) dailyReset();
+  drawDaily(); renderDailyStats();
+  clearTimeout(dailyLineTimer);                  // long run takes ~0.5 s: wait until the controls settle
+  setText('daily-line', 'Calculating the long run for these settings…');
+  dailyLineTimer = setTimeout(renderDailyLine, 250);
+}
+
+/* ============================================================
+   6c. RENDER FUNCTIONS - specimen journey and tracker
+   ============================================================ */
+function renderJourney() {
+  const kinds = { process: 'Work step', batch: 'Batch', queue: 'Queue' };
+  document.getElementById('journey-body').innerHTML = JOURNEY.map((s, i) =>
+    `<tr><td>${i + 1}</td><td><strong>${escHtml(s.step)}</strong></td>` +
+    `<td><span class="kind kind-${escHtml(s.kind)}">${escHtml(kinds[s.kind])}</span></td>` +
+    `<td>${escHtml(s.wait)}</td></tr>`).join('');
+}
+
+// IG guard: an allowlist. A label must be a week number or a date; anything else is refused.
+// This is a limited input check, not a guarantee: it stops lab numbers and names being typed
+// in by mistake, but cannot judge what a user chooses to put in a date.
+const LABEL_PATTERNS = [
+  /^(wk|week|w)\s?\d{1,2}$/i,                                   // Wk 3, Week 12, W14
+  /^\d{4}-?w\d{1,2}$/i,                                          // 2026-W14
+  /^\d{4}-\d{2}-\d{2}$/,                                         // 2026-10-14
+  /^20\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])$/,                 // 20261014
+  /^\d{1,2}\/\d{1,2}(\/\d{2}|\/\d{4})?$/,                         // 14/10, 14/10/26, 14/10/2026
+  /^\d{1,2}[\s-](jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*([\s-]\d{2,4})?$/i   // 14 Oct, 14-Oct-26
+];
+function labelAllowed(s) { return LABEL_PATTERNS.some(re => re.test(s.trim())); }
+
+function parseTat(text) {
+  const rows = [], errors = [];
+  text.split(/\r?\n/).forEach((line, i) => {
+    const raw = line.trim();
+    if (!raw) return;
+    const parts = raw.split(/\s*[,\t;]\s*/);
+    if (parts.length > 2) {
+      errors.push(`Line ${i + 1} has been ignored: use one label and one percentage per line.`);
+      return;
+    }
+    const valStr = parts[parts.length - 1].replace('%', '');
+    const value = Number(valStr);
+    if (parts.length === 2 && !labelAllowed(parts[0])) {
+      errors.push(`Line ${i + 1} has been ignored: labels must be a week number or a date (Wk 3, 2026-W14, 14/10/2026).`);
+      return;
+    }
+    const label = parts.length === 2 ? parts[0] : 'Wk ' + (rows.length + 1);
+    if (!Number.isFinite(value) || value < 0 || value > 100) {
+      errors.push(`Line ${i + 1}: "${raw}" is not a percentage between 0 and 100.`);
+      return;
+    }
+    rows.push({ label: label.slice(0, 24), value });
+  });
+  return { rows, errors };
+}
+function xmr(values) {
+  const n = values.length;
+  const mean = values.reduce((a, b) => a + b, 0) / n;
+  const mrs = values.slice(1).map((v, i) => Math.abs(v - values[i]));
+  const mrBar = mrs.length ? mrs.reduce((a, b) => a + b, 0) / mrs.length : 0;
+  const ucl = mean + 2.66 * mrBar, lcl = mean - 2.66 * mrBar;
+  const signal = new Array(n).fill(false);
+  values.forEach((v, i) => { if (v > ucl || v < lcl) signal[i] = true; });
+  // Run of 8 or more on one side of the mean
+  let runStart = 0;
+  for (let i = 1; i <= n; i++) {
+    const side = v => (v > mean ? 1 : v < mean ? -1 : 0);
+    if (i === n || side(values[i]) !== side(values[runStart]) || side(values[i]) === 0) {
+      if (i - runStart >= 8 && side(values[runStart]) !== 0) for (let k = runStart; k < i; k++) signal[k] = true;
+      runStart = i;
+    }
+  }
+  return { mean, mrBar, ucl, lcl, signal };
+}
+function renderTat() {
+  const text = document.getElementById('tat-text').value;
+  const target = Number(document.getElementById('tat-target').value);
+  const { rows, errors } = parseTat(text);
+  const msgEl = document.getElementById('tat-messages');
+  const chartEl = document.getElementById('tat-chart');
+  const verdictEl = document.getElementById('tat-verdict');
+  let msgs = errors.map(e => `<div class="msg msg-error">${escHtml(e)}</div>`).join('');
+
+  if (rows.length < 2) {
+    chartEl.innerHTML = '';
+    verdictEl.innerHTML = '';
+    msgEl.innerHTML = msgs + '<div class="msg msg-info">Enter at least two weeks to draw a chart, or load the illustrative data to see how it works.</div>';
+    return;
+  }
+  if (rows.length < 12) msgs += '<div class="msg msg-warn">Fewer than 12 weeks: limits will be rough. Twenty or more is better.</div>';
+  msgEl.innerHTML = msgs;
+
+  const vals = rows.map(r => r.value);
+  const s = xmr(vals);
+  const ucl = Math.min(100, s.ucl), lcl = Math.max(0, s.lcl);
+  const W = 640, H = 280, pad = { l: 44, r: 92, t: 16, b: 34 };
+  const hasTarget = Number.isFinite(target) && target > 0 && target <= 100;
+  const yLo = Math.max(0, Math.floor(Math.min(lcl, ...vals, hasTarget ? target : 100) - 3));
+  const yHi = 100;
+  const X = i => pad.l + (W - pad.l - pad.r) * (rows.length === 1 ? 0.5 : i / (rows.length - 1));
+  const Y = v => H - pad.b - (H - pad.t - pad.b) * (v - yLo) / (yHi - yLo);
+  const c = colours();
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="XmR chart of weekly turnaround">`;
+  for (let v = Math.ceil(yLo / 5) * 5; v <= yHi; v += 5) {
+    svg += `<line x1="${pad.l}" x2="${W - pad.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="${c.g200}"/>`;
+    svg += `<text x="${pad.l - 6}" y="${Y(v) + 4}" text-anchor="end" font-size="11" fill="${c.g500}" font-family="Inter, sans-serif">${v}%</text>`;
+  }
+  const usedLabelY = [];
+  const hline = (v, col, dash, label) => {
+    svg += `<line x1="${pad.l}" x2="${W - pad.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="${col}" stroke-width="1.5" ${dash ? 'stroke-dasharray="6 4"' : ''}/>`;
+    let ly = Y(v) + 4;
+    while (usedLabelY.some(u => Math.abs(u - ly) < 13)) ly += 13;   // keep labels from colliding
+    usedLabelY.push(ly);
+    svg += `<text x="${W - pad.r + 6}" y="${ly}" font-size="11" fill="${col}" font-family="Inter, sans-serif" font-weight="600">${escHtml(label)}</text>`;
+  };
+  hline(ucl, c.g500, true, 'Upper ' + fmt(ucl));
+  if (lcl > yLo) hline(lcl, c.g500, true, 'Lower ' + fmt(lcl));
+  hline(s.mean, c.navy, false, 'Mean ' + fmt(s.mean));
+  if (hasTarget) hline(target, c.amber, false, 'Target ' + target + '%');
+  svg += `<polyline fill="none" stroke="${c.navy}" stroke-width="2" points="${rows.map((r, i) => X(i) + ',' + Y(r.value)).join(' ')}"/>`;
+  rows.forEach((r, i) => {
+    svg += `<circle cx="${X(i)}" cy="${Y(r.value)}" r="${s.signal[i] ? 5 : 3.5}" fill="${s.signal[i] ? c.red : c.navy}"><title>${escHtml(r.label)}: ${r.value}%</title></circle>`;
+  });
+  const every = Math.ceil(rows.length / 8);
+  rows.forEach((r, i) => {
+    if (i % every === 0 || (i === rows.length - 1 && i % every >= every / 2))
+      svg += `<text x="${X(i)}" y="${H - 12}" text-anchor="middle" font-size="10" fill="${c.g500}" font-family="Inter, sans-serif">${escHtml(r.label)}</text>`;
+  });
+  svg += '</svg>';
+  chartEl.innerHTML = svg;
+
+  const nSignals = s.signal.filter(Boolean).length;
+  const nSignalsPre = nSignals;
+  let v = `<p style="margin-top:var(--space-md)">Your system currently produces between <strong>${fmt(lcl)}%</strong> and <strong>${fmt(ucl)}%</strong> of cases within 10 days in a typical week, averaging <strong>${fmt(s.mean)}%</strong>.</p>`;
+  if (hasTarget) {
+    const met = vals.filter(x => x >= target).length;
+    const metLine = `It was met in <strong>${met} of ${vals.length}</strong> weeks shown.`;
+    const cond = nSignalsPre ? ' Because there are signals (red points), the limits describe the process only loosely; deal with those first.' : '';
+    if (target > ucl) v += `<p>The ${target}% target sits <strong>above the upper limit</strong>. ${metLine} If the process continues as it is, it is not expected to meet the target reliably; a week that does is likely to be chance. Effort, exhortation and weekly chasing will not move it; changing how the work flows will. Start with the specimen journey above.${cond}</p>`;
+    else if (target < lcl) v += `<p>The ${target}% target sits <strong>below the lower limit</strong>. ${metLine} If the process continues as it is, it should meet the target almost every week. The question becomes whether the target is the right one.${cond}</p>`;
+    else v += `<p>The ${target}% target sits <strong>inside the limits</strong>. ${metLine} Ordinary week-to-week variation alone will take the process either side of the target. Reacting to individual weeks will add noise, not improvement: reduce the variation or shift the whole process.${cond}</p>`;
+  }
+  v += `<p class="hint">If your weekly case numbers are small or vary a lot, a percentage can swing on a handful of cases. Keep the numerator and denominator where you can; a p-chart, which allows for the number of cases each week, is the stricter choice.</p>`;
+  if (nSignals) v += `<p>Red points are <strong>signals</strong> (outside the limits, or a run of eight or more on one side of the mean). These suggest something specific changed. They are worth investigating; the other points are not.</p>`;
+  else v += `<p class="hint">No signals: the variation you see is the system's normal week-to-week noise.</p>`;
+  verdictEl.innerHTML = v;
+}
+
+/* ============================================================
+   7. EVENT HANDLERS
+   ============================================================ */
+function doPlay(id, btn) {
+  const L = lessons[id];
+  L.playing = !L.playing;
+  btn.textContent = L.playing ? 'Pause' : 'Play';
+}
+function doReset(id) {
+  lessons[id].reset(true);
+  drawLesson(lessons[id]); renderStats(lessons[id]);
+}
+function doSpeed(id, btn) {
+  const L = lessons[id];
+  L.speed = L.speed === 'normal' ? 'fast' : 'normal';
+  btn.textContent = 'Speed: ' + L.speed;
+}
+function doToggle(id, key, val) {
+  const L = lessons[id];
+  L.state[key] = val;
+  L.reset(false);
+  drawLesson(L); renderStats(L);
+}
+function doSlider(id, rho) {
+  const L = lessons[id];
+  L.rho = rho;
+  L.reset(false);
+  renderDynamicLines();
+  drawLesson(L); renderStats(L);
+}
+function wireEvents() {
+  document.addEventListener('click', e => {
+    const segBtn = e.target.closest('.seg[data-lesson] button');   // lessons 1 to 3 only
+    if (segBtn) {
+      const seg = segBtn.parentElement;
+      seg.querySelectorAll('button').forEach(b => b.classList.toggle('active', b === segBtn));
+      doToggle(seg.dataset.lesson, seg.dataset.key, Number(segBtn.dataset.val));
+      return;
+    }
+    const act = e.target.closest('[data-action]');
+    if (!act) return;
+    const id = act.dataset.lesson;
+    if (act.dataset.action === 'play') doPlay(id, act);
+    if (act.dataset.action === 'reset') doReset(id);
+    if (act.dataset.action === 'speed') doSpeed(id, act);
+  });
+  document.getElementById('util-slider')?.addEventListener('input', e => {
+    setText('util-val', e.target.value + '%');
+    doSlider('utilisation', Number(e.target.value) / 100);
+  });
+  document.getElementById('pool-slider')?.addEventListener('input', e => {
+    setText('pool-val', e.target.value + '%');
+    doSlider('pooling', Number(e.target.value) / 100);
+  });
+  const tatText = document.getElementById('tat-text');
+  const tatTarget = document.getElementById('tat-target');
+  tatText?.addEventListener('input', () => { renderTat(); scheduleAutoSave(); });
+  tatTarget?.addEventListener('input', () => { renderTat(); scheduleAutoSave(); });
+  document.getElementById('btn-example')?.addEventListener('click', () => {
+    tatText.value = EXAMPLE_TAT.map((v, i) => `Wk ${i + 1}, ${v}`).join('\n');
+    renderTat(); scheduleAutoSave();
+  });
+  document.getElementById('btn-clear')?.addEventListener('click', () => {
+    tatText.value = ''; renderTat(); scheduleAutoSave();
+  });
+  document.getElementById('btn-export')?.addEventListener('click', () => {
+    const { rows } = parseTat(tatText.value);
+    downloadJson({
+      format: 'gemba-histo-tat', version: '0.1', exportedAt: new Date().toISOString(),
+      measure: 'Percentage of cases reported within 10 days, weekly',
+      target: Number(tatTarget.value), rows
+    }, 'gemba-histo-turnaround.json');
+  });
+  document.getElementById('btn-import')?.addEventListener('click', () => document.getElementById('file-import').click());
+  document.getElementById('file-import')?.addEventListener('change', e => {
+    const f = e.target.files[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const d = JSON.parse(reader.result);
+        if (d.format !== 'gemba-histo-tat' || !Array.isArray(d.rows)) throw new Error('format');
+        tatText.value = d.rows.map(r => `${String(r.label)}, ${Number(r.value)}`).join('\n');
+        if (Number.isFinite(Number(d.target))) tatTarget.value = d.target;
+        renderTat(); scheduleAutoSave();
+      } catch (err) {
+        document.getElementById('tat-messages').innerHTML = '<div class="msg msg-error">That file is not a Gemba-Histo turnaround export.</div>';
+      }
+      e.target.value = '';
+    };
+    reader.readAsText(f);
+  });
+  document.getElementById('btn-pack')?.addEventListener('click', () => {
+    downloadJson({
+      format: 'gemba-pack', packVersion: '0.1', domain: 'histopathology',
+      pack: 'd1-flow-turnaround', title: 'Histopathology specimen journey',
+      targetTool: 'gemba-vsm', licence: 'CC BY-NC-SA 4.0', source: 'gembasuite.org/histopathology/',
+      note: 'Work and wait times are deliberately blank. Fill them from direct observation. Do not add patient or case identifiers.',
+      stages: JOURNEY.map((s, i) => ({ order: i + 1, name: s.step, type: s.kind, waitNotes: s.wait, workTimeMinutes: null, waitTimeHours: null, batchSize: null, staff: null })),
+      measures: [{ name: 'Percentage of cases reported within 10 days', period: 'week', target: 98, chart: 'XmR' }]
+    }, 'gemba-pack-histo-d1-journey.json');
+  });
+  // Lesson 4 controls
+  document.getElementById('daily-u')?.addEventListener('input', e => {
+    setText('daily-u-val', e.target.value + '%');
+    daily.opts.U = Number(e.target.value); refreshDaily(true);
+  });
+  document.getElementById('daily-leave')?.addEventListener('input', e => {
+    setText('daily-leave-val', e.target.value + '%');
+    daily.opts.leave = Number(e.target.value) / 100; refreshDaily(true);
+  });
+  document.getElementById('daily-sick')?.addEventListener('input', e => {
+    setText('daily-sick-val', e.target.value + '%');
+    daily.opts.sick = Number(e.target.value) / 100; refreshDaily(true);
+  });
+  document.getElementById('daily-team')?.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    b.parentElement.querySelectorAll('button').forEach(x => x.classList.toggle('active', x === b));
+    daily.opts.team = Number(b.dataset.val); refreshDaily(true);
+  });
+  document.getElementById('daily-var')?.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    b.parentElement.querySelectorAll('button').forEach(x => x.classList.toggle('active', x === b));
+    daily.opts.demVar = Number(b.dataset.val); refreshDaily(true);
+  });
+  document.querySelectorAll('[data-daily-toggle]').forEach(b => b.addEventListener('click', () => {
+    const k = b.dataset.dailyToggle;
+    daily.opts[k] = !daily.opts[k];
+    b.setAttribute('aria-pressed', String(daily.opts[k]));
+    refreshDaily(true);
+  }));
+  document.getElementById('daily-play')?.addEventListener('click', e => {
+    daily.playing = !daily.playing; e.target.textContent = daily.playing ? 'Pause' : 'Play';
+  });
+  document.getElementById('daily-reset')?.addEventListener('click', () => { daily.seed = randomSeed(); refreshDaily(true); });
+  document.getElementById('daily-speed')?.addEventListener('click', e => {
+    daily.speed = daily.speed === 'normal' ? 'fast' : 'normal'; e.target.textContent = 'Speed: ' + daily.speed;
+  });
+
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => { Object.values(lessons).forEach(drawLesson); drawDaily(); }, 120);
+  });
+}
+
+/* ============================================================
+   7b. EDIT MODE
+   Text that the page generates itself (results, charts, verdicts,
+   the journey table) is not editable, because it is rebuilt on load.
+   ============================================================ */
+const EDITABLE_SELECTOR = [
+  '.hero h1', '.hero p', '.privacy-note span:last-child',
+  'main h2', 'main h3', 'main p', 'main li', 'main summary', 'main .label',
+  'main .stat .k', 'main .try', 'main .journey th', '.site-footer p'
+].join(',');
+const DYNAMIC_IDS = ['utilisation-line', 'pooling-line', 'daily-line', 'variation-theory-k'];
+const DYNAMIC_ZONES = '#tat-verdict, #tat-messages, #journey-body, .try *';
+let editing = false;
+
+function editableIn(root) {
+  const all = Array.from(root.querySelectorAll(EDITABLE_SELECTOR));
+  return all.filter(el =>
+    !DYNAMIC_IDS.includes(el.id) &&
+    !el.closest(DYNAMIC_ZONES) &&
+    !all.some(other => other !== el && other.contains(el))   // outermost only
+  );
+}
+function setEditing(on) {
+  editing = on;
+  document.body.classList.toggle('editing', on);
+  editableIn(document).forEach((el, i) => {
+    if (on) { el.setAttribute('contenteditable', 'true'); el.setAttribute('data-editable', String(i)); el.spellcheck = true; }
+    else { el.removeAttribute('contenteditable'); el.removeAttribute('data-editable'); }
+  });
+  let bar = document.getElementById('edit-bar');
+  if (on && !bar) {
+    bar = document.createElement('div');
+    bar.id = 'edit-bar'; bar.className = 'edit-bar';
+    bar.innerHTML = '<span>Editing text: click any outlined text to change it.</span>' +
+      '<button type="button" class="btn btn-primary" id="edit-save">Download edited page</button>' +
+      '<button type="button" class="btn" id="edit-done">Stop editing</button>' +
+      '<span class="edit-status" id="edit-status" aria-live="polite"></span>';
+    document.body.appendChild(bar);
+    document.getElementById('edit-save')?.addEventListener('click', saveEditedPage);
+    document.getElementById('edit-done')?.addEventListener('click', () => setEditing(false));
+  }
+  if (!on && bar) bar.remove();
+}
+function saveEditedPage() {
+  const doc = new DOMParser().parseFromString(PRISTINE_HTML, 'text/html');
+  const live = editableIn(document);
+  const target = editableIn(doc);
+  if (live.length !== target.length) {
+    setText('edit-status', 'Could not match the text blocks; nothing saved.');
+    return;
+  }
+  live.forEach((el, i) => { target[i].innerHTML = el.innerHTML; });
+  doc.querySelectorAll('[contenteditable],[data-editable]').forEach(el => { el.removeAttribute('contenteditable'); el.removeAttribute('data-editable'); });
+  const headerMatch = PRISTINE_HTML.match(/^<!DOCTYPE html>\n(<!--[\s\S]*?-->\n)?/);
+  const html = (headerMatch ? headerMatch[0] : '<!DOCTYPE html>\n') + doc.documentElement.outerHTML;
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const name = (location.pathname.split('/').pop() || 'index.html').replace(/\.html?$/i, '');
+  a.href = url; a.download = (name || 'gemba-histo') + '-edited.html';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  setText('edit-status', 'Saved a copy to your downloads.');
+}
+function wireEditMode() {
+  document.addEventListener('paste', e => {          // paste as plain text only
+    if (!editing || !e.target.closest('[data-editable]')) return;
+    e.preventDefault();
+    const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+    document.execCommand('insertText', false, text);
+  });
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'E' || e.key === 'e')) { e.preventDefault(); setEditing(!editing); }
+    if (editing && e.key === 'Enter' && e.target.closest && e.target.closest('[data-editable]')) {
+      e.preventDefault(); document.execCommand('insertLineBreak');   // keep one block per paragraph
+    }
+  });
+  if (location.hash === '#edit') setEditing(true);
+}
+
+/* ============================================================
+   8. ANIMATION LOOP
+   ============================================================ */
+function frame(ts) {
+  const dt = lastFrame === null ? 0 : Math.min(0.1, (ts - lastFrame) / 1000);
+  lastFrame = ts;
+  const doStats = ts - lastStats > STATS_INTERVAL_MS;
+  Object.values(lessons).forEach(L => {
+    if (!L.playing) return;
+    L.simT += dt * SPEEDS[L.speed];
+    L.stations.forEach(st => advance(st, L.simT));
+    while (L.nextSample <= L.simT) {
+      L.hist.push({ t: L.nextSample, v: L.sample() });
+      L.nextSample += L.step;
+      if (L.hist.length > MAX_HIST) { L.hist = L.hist.filter((_, i) => i % 2 === 0); L.step *= 2; }
+    }
+    drawLesson(L);
+    if (doStats) renderStats(L);
+  });
+  if (daily.playing) {
+    daily.acc += dt * DAILY_SPEEDS[daily.speed];
+    let added = false;
+    while (daily.acc >= 1) {
+      daily.acc -= 1; daily.days.push(daily.model.next()); added = true;
+      if (daily.days.length > 5000) daily.days = daily.days.slice(-2500);
+    }
+    if (added) { drawDaily(); renderDailyStats(); }
+  }
+  if (doStats) lastStats = ts;
+  requestAnimationFrame(frame);
+}
+
+/* ============================================================
+   9. INIT
+   ============================================================ */
+function init() {
+  // Each page in the histopathology channel contains only some sections; run what is present.
+  const has = id => !!document.getElementById(id);
+  if (has('lesson-variation')) initLessons();
+  if (has('journey-body')) renderJourney();
+  if (has('tat-text')) {
+    const saved = loadTat();
+    if (saved) {
+      document.getElementById('tat-text').value = saved.text || '';
+      if (saved.target) document.getElementById('tat-target').value = saved.target;
+    }
+  }
+  wireEvents();
+  if (has('lesson-utilisation')) renderDynamicLines();
+  Object.values(lessons).forEach(L => { drawLesson(L); renderStats(L); });
+  if (has('tat-text')) renderTat();
+  if (has('lesson-daily')) refreshDaily(true);
+  wireEditMode();
+  requestAnimationFrame(frame);
+}
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

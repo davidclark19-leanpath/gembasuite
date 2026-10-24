@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<!--
+  Gemba-Histo Index v0.3 (preview)
+  Landing page for the Gemba Suite histopathology improvement channel.
+  Links: 1 Why histology queues grow (/histopathology/queues/), 2 Demand and capacity (/histopathology/capacity/),
+  3 Flow and turnaround (/histopathology/flow/).
+  gembasuite.org | Licence: CC BY-NC-SA 4.0
+  Deploy path: /histopathology/index.html
+-->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Gemba-Histo</title>
+<meta name="description" content="Free teaching packs for histopathology services: why work waits, and where the time goes in your own specimen journey.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Public+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   CSS CUSTOM PROPERTIES - Gemba Suite Design System
+   ============================================================ */
+:root {
+  --color-navy: #006172;
+  --color-navy-lt: #e8f0f2;
+  --color-white: #ffffff;
+  --color-grey-100: #f6f8f9;
+  --color-grey-200: #e3e8eb;
+  --color-grey-600: #5c666d;
+  --color-grey-700: #434b51;
+  --color-grey-800: #1f2629;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --touch-min: 44px;
+}
+/* ============================================================
+   BASE AND LAYOUT
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: 'Inter', system-ui, sans-serif; font-size: 16px; line-height: 1.55; color: var(--color-grey-800); background: var(--color-grey-100); }
+h1, h2 { font-family: 'Public Sans', 'Inter', system-ui, sans-serif; line-height: 1.2; margin: 0; }
+.site-header { background: var(--color-navy); color: var(--color-white); }
+.site-header .inner { max-width: 880px; margin: 0 auto; padding: var(--space-md); }
+.brand { font-family: 'Public Sans', sans-serif; font-weight: 800; color: var(--color-white); text-decoration: none; }
+.brand span { font-weight: 600; opacity: 0.85; }
+main { max-width: 880px; margin: 0 auto; padding: var(--space-lg) var(--space-md) var(--space-2xl); }
+.hero h1 { font-size: 30px; font-weight: 800; color: var(--color-navy); margin-bottom: var(--space-sm); }
+.hero p { font-size: 17px; color: var(--color-grey-700); max-width: 680px; margin: 0 0 var(--space-xl); }
+/* ============================================================
+   PACK CARDS
+   ============================================================ */
+.packs { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--space-lg); }
+.pack { display: flex; flex-direction: column; background: var(--color-white); border: 1px solid var(--color-grey-200); border-radius: var(--radius-lg); padding: var(--space-lg); color: inherit; text-decoration: none; }
+.pack:hover, .pack:focus-visible { border-color: var(--color-navy); outline: none; }
+.pack .label { font-family: 'Public Sans', sans-serif; font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-grey-600); }
+.pack h2 { font-size: 21px; font-weight: 700; color: var(--color-navy); margin: var(--space-sm) 0; }
+.pack p { margin: 0 0 var(--space-md); color: var(--color-grey-700); flex: 1; }
+.pack .go { display: inline-flex; align-items: center; min-height: var(--touch-min); padding: 0 var(--space-md); border-radius: var(--radius-md); background: var(--color-navy); color: var(--color-white); font-weight: 600; align-self: flex-start; }
+.order { margin-top: var(--space-xl); font-size: 15px; color: var(--color-grey-700); }
+.site-footer { max-width: 880px; margin: 0 auto; padding: 0 var(--space-md) var(--space-2xl); font-size: 13px; color: var(--color-grey-600); }
+.site-footer a { color: var(--color-navy); }
+
+/* ============================================================
+   REVIEW BANNER (draft review copy only)
+   ============================================================ */
+.review-banner { background: #fdf3e3; border-bottom: 1px solid #f0d9b5; color: #1f2629; font-family: 'Inter', system-ui, sans-serif; font-size: 14px; }
+.review-banner .rb-inner { max-width: 880px; margin: 0 auto; padding: 8px 16px; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; }
+.review-banner strong { color: #b25e09; }
+.review-banner .rb-toggle { min-height: 44px; padding: 0 16px; border-radius: 6px; border: 1px solid #b25e09; background: #ffffff; color: #b25e09; font: inherit; font-weight: 600; cursor: pointer; }
+.review-banner .rb-panel { max-width: 880px; margin: 0 auto; padding: 0 16px 12px; display: none; }
+.review-banner.open .rb-panel { display: block; }
+.review-banner textarea { width: 100%; min-height: 110px; padding: 8px; border: 1px solid #cfd6da; border-radius: 6px; font: inherit; resize: vertical; box-sizing: border-box; }
+.review-banner input[type=text] { width: 100%; max-width: 360px; min-height: 44px; padding: 0 8px; border: 1px solid #cfd6da; border-radius: 6px; font: inherit; box-sizing: border-box; }
+.review-banner .rb-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
+.review-banner .rb-send { min-height: 44px; padding: 0 16px; border-radius: 6px; border: 0; background: #006172; color: #ffffff; font: inherit; font-weight: 600; cursor: pointer; }
+.review-banner .rb-note { font-size: 13px; color: #5c666d; margin: 8px 0 0; }
+.review-banner .rb-status { font-weight: 600; }
+@media print { .review-banner { display: none; } }
+</style>
+</head>
+<body>
+<div class="review-banner" id="review-banner">
+  <div class="rb-inner">
+    <span><strong>Draft for colleague review.</strong> Please don't circulate yet. Any comments welcome, however brief.</span>
+    <button type="button" class="rb-toggle" id="rb-toggle" aria-expanded="false" aria-controls="rb-panel">Add a comment</button>
+  </div>
+  <div class="rb-panel" id="rb-panel">
+    <label for="rb-text" style="position:absolute;left:-9999px">Your comment on this page</label>
+    <textarea id="rb-text" placeholder="What works, what doesn't, what's wrong or missing? Anything at all."></textarea>
+    <div class="rb-row">
+      <label for="rb-name" style="position:absolute;left:-9999px">Your name (optional)</label>
+      <input type="text" id="rb-name" placeholder="Your name (optional)">
+      <button type="button" class="rb-send" id="rb-send">Send comment</button>
+      <span class="rb-status" id="rb-status" aria-live="polite"></span>
+    </div>
+    <p class="rb-note">This comment box is the only part of the page that sends anything, and comments go to David Clark only. Please don't include patient details. Want to reword the text itself? Press Ctrl+Shift+E (Cmd+Shift+E on a Mac), edit any outlined text, download the edited page and email it back to whoever sent you this link.</p>
+  </div>
+</div>
+<script>
+(function () {
+  var PAGE = 'Landing page';
+  var URL_ = 'https://script.google.com/macros/s/AKfycbxr7o-fxL4MIQX-1KO9WfFRlp6aQrAfewCKU9G1Ittnoh3wpNQMZuoEUB4G3p3Javnh/exec';
+  var box = document.getElementById('review-banner');
+  var tog = document.getElementById('rb-toggle');
+  tog.addEventListener('click', function () {
+    var open = box.classList.toggle('open');
+    tog.setAttribute('aria-expanded', String(open));
+    if (open) document.getElementById('rb-text').focus();
+  });
+  document.getElementById('rb-send').addEventListener('click', function () {
+    var text = document.getElementById('rb-text').value.trim();
+    var name = document.getElementById('rb-name').value.trim();
+    var status = document.getElementById('rb-status');
+    if (!text) { status.textContent = 'Please write a comment first.'; return; }
+    var btn = this; btn.disabled = true; status.textContent = 'Sending...';
+    var detail = (name ? 'From: ' + name + '\n' : '') + 'Page: ' + PAGE + '\n\n' + text;
+    var payload = {
+      timestamp: new Date().toISOString(), feedback_category: 'guide',
+      setting: '', role: '', experience_level: '', discovery: 'Colleague recommendation',
+      app_name: '', app_feedback_type: '', app_device: '', app_severity: '', app_detail: '',
+      guide_name: 'Gemba-Histo draft review: ' + PAGE, guide_feedback_type: 'Draft review comment', guide_detail: detail,
+      site_feedback_type: '', site_detail: '', method_feedback_type: '', method_detail: '', general_detail: '',
+      satisfaction: '', recommend: '', contact_ok: 'No', email: ''
+    };
+    fetch(URL_, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+      .then(function () { status.textContent = 'Thank you, sent.'; document.getElementById('rb-text').value = ''; btn.disabled = false; })
+      .catch(function () { status.textContent = 'Could not send. Please check your connection and try again.'; btn.disabled = false; });
+  });
+})();
+</script>
+
+<header class="site-header">
+  <div class="inner"><a class="brand" href="/">Gemba Suite <span>· Histopathology</span></a></div>
+</header>
+<main>
+  <section class="hero">
+    <h1>Histopathology improvement packs</h1>
+    <p>Free, browser-only teaching packs for histopathology services. Each one runs as a short group session or on your own, and nothing you enter leaves your computer.</p>
+  </section>
+  <div class="packs">
+    <a class="pack" href="queues/">
+      <span class="label">1 · Understand</span>
+      <h2>Why histology queues develop and turnaround time increases</h2>
+      <p>Three animated lessons: why variation creates queues of work, why running close to full capacity makes waits explode, and why sharing the queue across a network helps.</p>
+      <span class="go">Open pack 1</span>
+    </a>
+    <a class="pack" href="capacity/">
+      <span class="label">2 · Understand</span>
+      <h2>Demand and capacity</h2>
+      <p>What leave, training and sickness do to a team's real capacity, why small teams feel it most, and which countermeasures help.</p>
+      <span class="go">Open pack 2</span>
+    </a>
+    <a class="pack" href="flow/">
+      <span class="label">3 · Apply</span>
+      <h2>Flow and turnaround</h2>
+      <p>Map where work waits along your own specimen journey, and test whether your current system can meet its turnaround target.</p>
+      <span class="go">Open pack 3</span>
+    </a>
+  </div>
+  <p class="order">Each pack stands on its own and takes 10 to 15 minutes. If you are new to these ideas, work through them in order.</p>
+</main>
+<footer class="site-footer">
+  <p>Gemba-Histo preview · Part of the <a href="/">Gemba Suite</a> · <a href="/licence/">CC BY-NC-SA 4.0</a></p>
+</footer>
+</body>
+</html>
