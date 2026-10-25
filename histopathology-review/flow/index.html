@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  Gemba-Histo Flow v0.11 (preview)
+  Gemba-Histo Flow v0.12 (preview)
   Histopathology improvement channel for the Gemba Suite: Pack 1, flow and turnaround.
   Specimen journey map with downloadable template, and XmR turnaround tracker.
   Pack 3 of 3. Previous: Gemba-Histo Queues and Gemba-Histo Capacity.
@@ -15,11 +15,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Gemba-Histo Flow v0.11</title>
+<title>Gemba-Histo Flow v0.12</title>
 <meta name="description" content="Why histology queues grow: animated lessons and a turnaround tracker for histopathology services. Runs entirely in your browser.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Public+Sans:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
    CSS CUSTOM PROPERTIES - Gemba Suite Design System
@@ -324,7 +321,7 @@ body.editing { padding-bottom: 96px; }
 </div>
 <script>
 (function () {
-  var PAGE = 'Pack 3, Flow and turnaround';
+  var PAGE = 'Pack 3 Flow and turnaround';
   var URL_ = 'https://script.google.com/macros/s/AKfycbxr7o-fxL4MIQX-1KO9WfFRlp6aQrAfewCKU9G1Ittnoh3wpNQMZuoEUB4G3p3Javnh/exec';
   var box = document.getElementById('review-banner');
   var tog = document.getElementById('rb-toggle');
@@ -359,7 +356,7 @@ body.editing { padding-bottom: 96px; }
 <header class="site-header">
   <div class="inner">
     <a class="brand" href="../">Gemba Suite <span>· Histopathology</span></a>
-    <span class="tag-preview">Preview v0.11</span>
+    <span class="tag-preview">Preview v0.12</span>
   </div>
 </header>
 
@@ -371,7 +368,7 @@ body.editing { padding-bottom: 96px; }
 
   <div class="privacy-note" role="note">
     <span aria-hidden="true">✓</span>
-    <span>Everything runs in your browser. No patient data is used or stored, and nothing is sent anywhere.</span>
+    <span>Everything runs in your browser and nothing is sent anywhere. The percentages you enter are saved only in this browser, so they are still here next time.</span>
   </div>
 
   <section class="card next-card">
@@ -383,7 +380,7 @@ body.editing { padding-bottom: 96px; }
 
   <section class="card" id="journey" aria-labelledby="journey-title">
     <h3 id="journey-title" class="label" style="margin-bottom:var(--space-sm)">The specimen journey, and where waits hide</h3>
-    <p>Turnaround is almost all waiting, not work. A specimen typically spends a few hours being worked on across a journey of several days. Use this map as a starting point for a value stream walk: record the actual work time and wait time at each step in your own lab.</p>
+    <p>In many laboratories most of the turnaround time is waiting rather than work, though some of it, such as fixation and processing, is necessary. Treat the notes below as things to check, not findings about your laboratory: use the map as a starting point for a value stream walk and record the actual work time and wait time at each step in your own lab.</p>
     <div class="table-scroll">
       <table class="journey">
         <thead><tr><th>#</th><th>Step</th><th>Type</th><th>Where waits commonly hide</th></tr></thead>
@@ -403,7 +400,7 @@ body.editing { padding-bottom: 96px; }
     <div class="tat-grid">
       <div class="tat-input">
         <label class="label" for="tat-text">Weekly data</label>
-        <p class="hint" style="margin:var(--space-xs) 0">One percentage per line, oldest week first. Weeks are numbered automatically, so nothing else can be typed in. Aggregated figures only.</p>
+        <p class="hint" style="margin:var(--space-xs) 0">One percentage per line, oldest week first. Weeks are numbered automatically. Anything other than a percentage is refused and not saved. Aggregated figures only.</p>
         <textarea id="tat-text" spellcheck="false" placeholder="86&#10;89&#10;84"></textarea>
         <div class="target-row">
           <label class="label" for="tat-target">Target %</label>
@@ -434,7 +431,7 @@ body.editing { padding-bottom: 96px; }
       <ol>
         <li><strong>0 to 3 minutes.</strong> Frame the question: "A specimen is worked on for a few hours across a journey of several days. Where does the rest of the time go?"</li>
         <li><strong>3 to 7 minutes.</strong> Walk the specimen journey table. Ask which steps are batches and which are queues in the room's own labs, and where they think the longest wait is.</li>
-        <li><strong>7 to 11 minutes.</strong> Load the illustrative data in the tracker. Read the limits and the verdict together: a target above the upper limit is a design problem, not an effort problem.</li>
+        <li><strong>7 to 11 minutes.</strong> Load the illustrative data in the tracker. Read the limits and the verdict together: a target above the upper limit points to how the work is designed rather than how hard people are working.</li>
         <li><strong>11 to 13 minutes.</strong> If someone has brought real weekly figures, paste them in and discuss which points are signals and which are ordinary noise.</li>
         <li><strong>13 to 15 minutes.</strong> The ask: before the next meeting, record actual work and wait times at three steps of your own journey using the template, and plot your last 20 or more weeks of turnaround.</li>
       </ol>
@@ -444,7 +441,7 @@ body.editing { padding-bottom: 96px; }
 </main>
 
 <footer class="site-footer">
-  <p>Gemba-Histo Flow v0.11 preview · Part of the <a href="/">Gemba Suite</a> · <a href="/licence/">CC BY-NC-SA 4.0</a></p>
+  <p>Gemba-Histo Flow v0.12 preview · Part of the <a href="/">Gemba Suite</a> · <a href="/licence/">CC BY-NC-SA 4.0</a></p>
   <p>The tracker shows how your current process behaves; it does not explain why. Use it alongside the specimen journey and the people who do the work.</p>
 </footer>
 
@@ -483,12 +480,12 @@ const JOURNEY = [
   { step: 'Cut-up (grossing)', kind: 'process', wait: 'Afternoon arrivals that miss cut-up wait until the next day.' },
   { step: 'Tissue processing', kind: 'batch', wait: 'Usually an overnight batch. Everything waits for the run, whatever time it arrived.' },
   { step: 'Embedding', kind: 'process', wait: 'Morning surge as the overnight batch lands all at once.' },
-  { step: 'Microtomy', kind: 'process', wait: 'Often the lab bottleneck; queues build behind it when staffing dips.' },
+  { step: 'Microtomy', kind: 'process', wait: 'Can be the lab bottleneck; queues build behind it when staffing dips.' },
   { step: 'Staining and coverslipping', kind: 'batch', wait: 'Racks wait to be filled before a run starts.' },
   { step: 'Scanning', kind: 'batch', wait: 'Slides batched by tray or trolley round; scanner queues in digital labs.' },
   { step: 'Slide QC', kind: 'process', wait: 'Slides wait for a quality check before release to the pathologist; a failed slide loops back to microtomy.' },
   { step: 'Case allocation', kind: 'queue', wait: 'The most invisible wait: cases sit unallocated, or allocated to someone on leave.' },
-  { step: 'Reporting', kind: 'process', wait: 'Usually the system constraint. Why histology queues grow, lessons 2 and 3, show why.' },
+  { step: 'Reporting', kind: 'process', wait: 'Often the system constraint. Why histology queues grow, lessons 2 and 3, show why.' },
   { step: 'Further work (levels, special stains, IHC)', kind: 'queue', wait: 'A loop back into the lab that restarts the queueing cycle for the case.' },
   { step: 'Authorisation and report release', kind: 'process', wait: 'Cases waiting for sign-off, typing or MDT timing.' }
 ];
@@ -847,10 +844,14 @@ function loadTat() {
   } catch (e) { return null; }
 }
 function saveTat() {
+  // Only accepted percentages and the target are saved; refused text is never stored.
   try {
+    const { rows } = parseTat(document.getElementById('tat-text').value);
+    const tRaw = document.getElementById('tat-target').value.trim();
+    const t = Number(tRaw);
     localStorage.setItem(LS_KEY, JSON.stringify({
-      text: document.getElementById('tat-text').value,
-      target: document.getElementById('tat-target').value,
+      values: rows.map(r => r.value),
+      target: tRaw !== '' && Number.isFinite(t) && t >= 0 && t <= 100 ? t : null,
       updatedAt: new Date().toISOString()
     }));
   } catch (e) { /* storage unavailable: page still works */ }
@@ -1240,6 +1241,12 @@ function renderTat() {
   const verdictEl = document.getElementById('tat-verdict');
   let msgs = errors.map(e => `<div class="msg msg-error">${escHtml(e)}</div>`).join('');
 
+  if (errors.length) {
+    chartEl.innerHTML = '';
+    verdictEl.innerHTML = '';
+    msgEl.innerHTML = msgs + '<div class="msg msg-info">Correct or remove the lines above to draw the chart. Weeks are numbered in order, so a skipped line would shift every later week.</div>';
+    return;
+  }
   if (rows.length < 2) {
     chartEl.innerHTML = '';
     verdictEl.innerHTML = '';
@@ -1253,7 +1260,8 @@ function renderTat() {
   const s = xmr(vals);
   const ucl = Math.min(100, s.ucl), lcl = Math.max(0, s.lcl);
   const W = 640, H = 280, pad = { l: 44, r: 92, t: 16, b: 34 };
-  const hasTarget = Number.isFinite(target) && target > 0 && target <= 100;
+  const targetRaw = document.getElementById('tat-target').value.trim();
+  const hasTarget = targetRaw !== '' && Number.isFinite(target) && target >= 0 && target <= 100;
   const yLo = Math.max(0, Math.floor(Math.min(lcl, ...vals, hasTarget ? target : 100) - 3));
   const yHi = 100;
   const X = i => pad.l + (W - pad.l - pad.r) * (rows.length === 1 ? 0.5 : i / (rows.length - 1));
@@ -1295,12 +1303,12 @@ function renderTat() {
     const met = vals.filter(x => x >= target).length;
     const metLine = `It was met (at or above target) in <strong>${met} of ${vals.length}</strong> weeks shown.`;
     const cond = nSignalsPre ? ' Because there are signals (red points), the process may have changed during this period: find out what changed, and recalculate the limits from a stable run of weeks before relying on this verdict.' : '';
-    if (target > ucl) v += `<p>The ${target}% target sits <strong>above the upper limit</strong>. ${metLine} If the process continues as it is, it is not expected to meet the target reliably; a week that does is likely to be chance. Effort, exhortation and weekly chasing will not move it; changing how the work flows will. Start with the specimen journey above.${cond}</p>`;
+    if (target > ucl) v += `<p>The ${target}% target sits <strong>above the upper limit</strong>. ${metLine} If the process continues as it is, it is not expected to meet the target reliably, and an isolated week that does would not show sustained improvement. Effort, exhortation and weekly chasing are unlikely to move it; changing how the work flows is more likely to. The specimen journey above is a place to start.${cond}</p>`;
     else if (target < lcl) v += `<p>The ${target}% target sits <strong>below the lower limit</strong>. ${metLine} If the process stays as it is, it would be expected to meet the target almost every week, though that is not a guarantee. The question becomes whether the target is the right one.${cond}</p>`;
     else v += `<p>The ${target}% target lies <strong>within the range of routine variation</strong>. ${metLine} Meeting it consistently is not shown. Reacting to individual weeks will add noise, not improvement: reduce the variation or shift the whole process.${cond}</p>`;
   }
   v += `<p class="hint">If your weekly case numbers are small or vary a lot, a percentage can swing on a handful of cases. Keep the numerator and denominator where you can: a p-chart allows for the number of cases each week, though it has assumptions of its own.</p>`;
-  if (nSignals) v += `<p>Red points are <strong>signals</strong> (outside the limits, or a run of eight or more on one side of the mean). These suggest something specific changed. Investigate them before acting on the limits; the other points are routine variation.</p>`;
+  if (nSignals) v += `<p>Red points are <strong>signals</strong> (outside the limits, or a run of eight or more on one side of the mean). These suggest something specific changed. Investigate them, and the weeks around them, before acting on the limits.</p>`;
   else v += `<p class="hint">No signals by these two rules. That does not prove the process is stable, but there is no sign of a specific change.</p>`;
   verdictEl.innerHTML = v;
 }
@@ -1387,11 +1395,13 @@ function wireEvents() {
       try {
         const d = JSON.parse(reader.result);
         if (d.format !== 'gemba-histo-tat' || !Array.isArray(d.rows)) throw new Error('format');
-        tatText.value = d.rows.map(r => String(Number(r.value))).join('\n');
-        if (Number.isFinite(Number(d.target))) tatTarget.value = d.target;
+        const ok = d.rows.every(r => r && typeof r.value === 'number' && Number.isFinite(r.value) && r.value >= 0 && r.value <= 100);
+        if (!ok) throw new Error('values');
+        tatText.value = d.rows.map(r => String(r.value)).join('\n');
+        if (typeof d.target === 'number' && Number.isFinite(d.target) && d.target >= 0 && d.target <= 100) tatTarget.value = d.target;
         renderTat(); scheduleAutoSave();
       } catch (err) {
-        document.getElementById('tat-messages').innerHTML = '<div class="msg msg-error">That file is not a Gemba-Histo turnaround export.</div>';
+        document.getElementById('tat-messages').innerHTML = '<div class="msg msg-error">That file is not a valid Gemba-Histo turnaround export (every value must be a percentage between 0 and 100). Nothing was loaded.</div>';
       }
       e.target.value = '';
     };
@@ -1574,8 +1584,14 @@ function init() {
   if (has('tat-text')) {
     const saved = loadTat();
     if (saved) {
-      document.getElementById('tat-text').value = saved.text || '';
-      if (saved.target) document.getElementById('tat-target').value = saved.target;
+      // Current format stores numbers only; an older save may hold raw text, so keep only valid percentages.
+      const values = Array.isArray(saved.values)
+        ? saved.values.filter(v => typeof v === 'number' && Number.isFinite(v) && v >= 0 && v <= 100)
+        : parseTat(String(saved.text || '')).rows.map(r => r.value);
+      document.getElementById('tat-text').value = values.join('\n');
+      const t = Number(saved.target);
+      if (saved.target !== null && saved.target !== undefined && saved.target !== '' && Number.isFinite(t) && t >= 0 && t <= 100) document.getElementById('tat-target').value = t;
+      saveTat();                                 // rewrites any older save in the numbers-only format
     }
   }
   wireEvents();

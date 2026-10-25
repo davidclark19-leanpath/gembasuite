@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  Gemba-Histo Queues v0.12 (preview)
+  Gemba-Histo Queues v0.13 (preview)
   Histopathology improvement channel for the Gemba Suite: "Why histology queues grow".
   Three animated lessons on why work waits (variation, utilisation, pooling), modelled as
   two-hour reporting sessions (25 cases = 100%) with cases left over shown on run charts.
@@ -16,11 +16,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Gemba-Histo Queues v0.12</title>
+<title>Gemba-Histo Queues v0.13</title>
 <meta name="description" content="Why histology queues grow: animated lessons and a turnaround tracker for histopathology services. Runs entirely in your browser.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Public+Sans:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
    CSS CUSTOM PROPERTIES - Gemba Suite Design System
@@ -330,7 +327,7 @@ body.editing { padding-bottom: 96px; }
 </div>
 <script>
 (function () {
-  var PAGE = 'Pack 1, Why histology queues grow';
+  var PAGE = 'Pack 1 Why histology queues grow';
   var URL_ = 'https://script.google.com/macros/s/AKfycbxr7o-fxL4MIQX-1KO9WfFRlp6aQrAfewCKU9G1Ittnoh3wpNQMZuoEUB4G3p3Javnh/exec';
   var box = document.getElementById('review-banner');
   var tog = document.getElementById('rb-toggle');
@@ -365,7 +362,7 @@ body.editing { padding-bottom: 96px; }
 <header class="site-header">
   <div class="inner">
     <a class="brand" href="../">Gemba Suite <span>· Histopathology</span></a>
-    <span class="tag-preview">Preview v0.12</span>
+    <span class="tag-preview">Preview v0.13</span>
   </div>
 </header>
 
@@ -434,7 +431,7 @@ body.editing { padding-bottom: 96px; }
       <p>With no variation the pathologist finishes every session with time to spare, and nothing is ever left over. Real sessions are not like that. Some sessions bring more cases, or harder ones; interruptions, IT problems and urgent calls cut into reporting time. Batching inside the laboratory creates more variation in workflow downstream.</p>
       <p>Switch on some variation in either and cases start to be left over, even though the average workload has not changed. With some variation in both, cases are left over after about a third of sessions. With a lot in both, cases are left over after about two sessions in three, and over many sessions the average is about 14 cases left over, more than half a session's worth of cases, at the same 90% average.</p>
       <p>Now set bad days to coincide, so that the busiest sessions are also the ones hit by interruptions. In real services they often do go together. With some variation in both, the average left over more than doubles, from about 1.4 cases to about 3.6; with a lot, from about 14 to about 31.</p>
-      <p>Here the leftover cases are not caused by too little capacity on average. They are caused by variation meeting a system with too little slack to absorb it. That is how "we have enough pathologists on paper" and "the backlog keeps growing" can both be true. And the cases left over are rarely a random selection: complex cases are the ones most likely to wait, so the work carried over is usually more than the count suggests.</p>
+      <p>Here the leftover cases are not caused by too little capacity on average. They are caused by variation meeting a system with too little slack to absorb it. That is how a service can have enough pathologists on paper and still carry a persistent backlog. And the cases left over are rarely a random selection: complex cases are the ones most likely to wait, so the work carried over is usually more than the count suggests.</p>
       <p class="hint">The run chart shows the cases still on the list at the end of each session, with the average so far as a dashed line. It has no control limits on purpose: ordinary XmR limits applied directly to this kind of backlog signal very often even when nothing has changed, because each session's leftovers carry into the next. So it is shown descriptively.</p>
     </div>
     <div class="try"><strong>Try this:</strong> before switching variation on, ask the room how many cases will be left over at 90%. Most people say none, and are right. Then switch on a lot of both and ask again.</div>
@@ -546,13 +543,13 @@ body.editing { padding-bottom: 96px; }
         <li><strong>10 to 13 minutes.</strong> Lesson 3. Connect the shared queue to network reporting and ask what stops it happening locally.</li>
         <li><strong>13 to 15 minutes.</strong> The ask: before the next session, notice where work waits in your own lab, and how often the full team is actually in.</li>
       </ol>
-      <p class="hint">Show the maths: the lessons simulate one session at a time. Cases arriving and cases the pathologist can report each vary evenly by up to the chosen amount either side of average, independently unless bad days are set to coincide (then capacity moves by the same amount in the opposite direction to demand). Unfinished cases carry into the next session. Counts are rounded to whole cases, so at 90% with no variation 23 cases arrive each session. Three checks hold: with no variation nothing is ever left over at or below 100%; a shared worklist never leaves more cases over than two separate ones; and at 100% there is no stable level. The figures quoted come from 200,000 simulated sessions. Those for independent variation were reproduced by independent rebuilds in two other AI systems; ChatGPT's rebuild also found leftovers roughly doubling when busy and disrupted sessions coincide. Run charts show no control limits because each session's leftovers carry into the next.</p>
+      <p class="hint">Show the maths: the lessons simulate one session at a time. Cases arriving and cases the pathologist can report each vary evenly by up to the chosen amount either side of average, independently unless bad days are set to coincide (then capacity moves in the opposite direction to demand, scaled by its own variation setting). Unfinished cases carry into the next session. Counts are rounded to whole cases, so at 90% with no variation 23 cases arrive each session. Three checks hold: with no variation nothing is ever left over at or below 100%; a shared worklist never leaves more cases over than two separate ones; and at 100% there is no stable level. The figures quoted come from 200,000 simulated sessions. For independent variation, reconstructions in two other AI systems agreed with them within stated tolerances, and a later check that ran this page's own code reproduced them; ChatGPT's reconstruction also found leftovers roughly doubling when busy and disrupted sessions coincide. The curve and summary lines use precomputed figures from the same 200,000-session runs. Run charts show no control limits because each session's leftovers carry into the next.</p>
     </details>
   </section>
 </main>
 
 <footer class="site-footer">
-  <p>Gemba-Histo Queues v0.12 preview · Part of the <a href="/">Gemba Suite</a> · <a href="/licence/">CC BY-NC-SA 4.0</a></p>
+  <p>Gemba-Histo Queues v0.13 preview · Part of the <a href="/">Gemba Suite</a> · <a href="/licence/">CC BY-NC-SA 4.0</a></p>
   <p>Teaching models, not forecasts. The lessons simplify real services (oldest cases first, one session at a time, no urgent cases) to make the underlying behaviour visible.</p>
 </footer>
 
@@ -591,12 +588,12 @@ const JOURNEY = [
   { step: 'Cut-up (grossing)', kind: 'process', wait: 'Afternoon arrivals that miss cut-up wait until the next day.' },
   { step: 'Tissue processing', kind: 'batch', wait: 'Usually an overnight batch. Everything waits for the run, whatever time it arrived.' },
   { step: 'Embedding', kind: 'process', wait: 'Morning surge as the overnight batch lands all at once.' },
-  { step: 'Microtomy', kind: 'process', wait: 'Often the lab bottleneck; queues build behind it when staffing dips.' },
+  { step: 'Microtomy', kind: 'process', wait: 'Can be the lab bottleneck; queues build behind it when staffing dips.' },
   { step: 'Staining and coverslipping', kind: 'batch', wait: 'Racks wait to be filled before a run starts.' },
   { step: 'Scanning', kind: 'batch', wait: 'Slides batched by tray or trolley round; scanner queues in digital labs.' },
   { step: 'Slide QC', kind: 'process', wait: 'Slides wait for a quality check before release to the pathologist; a failed slide loops back to microtomy.' },
   { step: 'Case allocation', kind: 'queue', wait: 'The most invisible wait: cases sit unallocated, or allocated to someone on leave.' },
-  { step: 'Reporting', kind: 'process', wait: 'Usually the system constraint. Why histology queues grow, lessons 2 and 3, show why.' },
+  { step: 'Reporting', kind: 'process', wait: 'Often the system constraint. Why histology queues grow, lessons 2 and 3, show why.' },
   { step: 'Further work (levels, special stains, IHC)', kind: 'queue', wait: 'A loop back into the lab that restarts the queueing cycle for the case.' },
   { step: 'Authorisation and report release', kind: 'process', wait: 'Cases waiting for sign-off, typing or MDT timing.' }
 ];
@@ -1670,6 +1667,12 @@ const SESS_SPEEDS = { normal: 2, fast: 12 };           // sessions per second
 const SESS_WINDOW = 40;                                 // sessions shown on the run chart
 const sess = {};
 let sessLast = null;
+// Long-run figures, precomputed from createSessionModel (below) with 200,000 sessions, seed 11,
+// so that the curve, the summary lines and the explainer text all quote the same runs.
+// curve[v][u] = [mean left over, share of sessions with leftovers] for one pathologist, vd = vc = SESS_VARS[v];
+// pool[u] = [separate total, shared] for two pathologists with some variation.
+// Regenerate with sessLongRun(u / 100, ..., 200000) if the model changes.
+const SESS_TABLES = {"curve":{"1":{"60":[0,0],"61":[0,0],"62":[0,0],"63":[0,0],"64":[0,0],"65":[0,0],"66":[0,0],"67":[0,0],"68":[0,0],"69":[0.001,0.001],"70":[0.003,0.003],"71":[0.006,0.006],"72":[0.01,0.009],"73":[0.018,0.015],"74":[0.027,0.021],"75":[0.035,0.028],"76":[0.055,0.038],"77":[0.076,0.049],"78":[0.096,0.059],"79":[0.128,0.073],"80":[0.168,0.088],"81":[0.209,0.104],"82":[0.258,0.12],"83":[0.327,0.142],"84":[0.402,0.162],"85":[0.481,0.184],"86":[0.603,0.213],"87":[0.741,0.242],"88":[0.894,0.273],"89":[1.101,0.309],"90":[1.362,0.348],"91":[1.668,0.39],"92":[2.071,0.435],"93":[2.64,0.487],"94":[3.365,0.541],"95":[4.338,0.598],"96":[6.018,0.668],"97":[8.85,0.742],"98":[14.183,0.818],"99":[29.982,0.903]},"2":{"60":[0.574,0.139],"61":[0.648,0.15],"62":[0.723,0.16],"63":[0.804,0.171],"64":[0.897,0.182],"65":[0.992,0.194],"66":[1.101,0.206],"67":[1.222,0.219],"68":[1.343,0.232],"69":[1.488,0.247],"70":[1.643,0.261],"71":[1.81,0.276],"72":[1.996,0.291],"73":[2.197,0.307],"74":[2.426,0.324],"75":[2.672,0.341],"76":[2.932,0.358],"77":[3.247,0.376],"78":[3.577,0.395],"79":[3.943,0.414],"80":[4.368,0.435],"81":[4.815,0.455],"82":[5.349,0.477],"83":[5.945,0.499],"84":[6.598,0.521],"85":[7.413,0.546],"86":[8.298,0.57],"87":[9.334,0.595],"88":[10.584,0.622],"89":[12.022,0.648],"90":[13.802,0.675],"91":[15.998,0.704],"92":[18.703,0.733],"93":[22.372,0.764],"94":[27.112,0.794],"95":[33.686,0.826],"96":[43.685,0.859],"97":[60.264,0.892],"98":[92.431,0.926],"99":[179.67,0.961]}},"pool":{"75":[0.073,0.005],"76":[0.112,0.009],"77":[0.153,0.015],"78":[0.195,0.021],"79":[0.26,0.033],"80":[0.339,0.05],"81":[0.419,0.068],"82":[0.52,0.093],"83":[0.661,0.131],"84":[0.808,0.176],"85":[0.964,0.227],"86":[1.215,0.311],"87":[1.486,0.411],"88":[1.784,0.526],"89":[2.202,0.692],"90":[2.729,0.912],"91":[3.341,1.177],"92":[4.14,1.532],"93":[5.294,2.059],"94":[6.77,2.748],"95":[8.728,3.683],"96":[12.205,5.338],"97":[18.122,8.147]}};
 
 function createSessionModel(seed, o) {
   const rnd = mulberry32(seed);
@@ -1709,7 +1712,7 @@ function sessLongRun(util, vd, vc, P, n) {
 
 function makeSessLesson(id, cfg) {
   const L = Object.assign({ id, playing: false, speed: 'normal', seed: 2026, acc: 0, rows: [] }, cfg);
-  L.reset = function () { L.model = createSessionModel(L.seed, L.opts()); L.rows = []; L.acc = 0; };
+  L.reset = function () { L.model = createSessionModel(L.seed, L.opts()); L.rows = []; L.acc = 0; L.tot = { n: 0, sum: 0, any: 0, max: 0, pooled: 0 }; };
   L.reset();
   sess[id] = L;
   return L;
@@ -1766,8 +1769,9 @@ function drawSessRunChart(L) {
     ctx.beginPath(); ctx.moveTo(pad.l, Y(v)); ctx.lineTo(w - pad.r, Y(v)); ctx.stroke(); ctx.setLineDash([]);
   };
   if (L.rows.length) {
-    if (two) { avgLine(avg(L.rows.map(r => r.leftTotal)), c.red); avgLine(avg(L.rows.map(r => r.pooled)), c.navy); line(seriesA, c.red); line(seriesB, c.navy); }
-    else { avgLine(avg(L.rows.map(r => r.leftTotal)), c.g500); line(seriesA, c.navy); }
+    const t = L.tot;
+    if (two) { avgLine(t.sum / t.n, c.red); avgLine(t.pooled / t.n, c.navy); line(seriesA, c.red); line(seriesB, c.navy); }
+    else { avgLine(t.sum / t.n, c.g500); line(seriesA, c.navy); }
   } else {
     ctx.fillStyle = c.g500; ctx.font = '500 12px Inter, system-ui, sans-serif';
     ctx.fillText('Press play', pad.l + 8, Y(yMax / 2));
@@ -1782,7 +1786,7 @@ const sessCurveCache = {};
 function sessCurve(v) {
   if (!sessCurveCache[v]) {
     const pts = [];
-    for (let u = 60; u <= 99; u++) pts.push([u, sessLongRun(u / 100, SESS_VARS[v], SESS_VARS[v], 1, 20000).mean]);
+    for (let u = 60; u <= 99; u++) pts.push([u, SESS_TABLES.curve[v][u][0]]);
     sessCurveCache[v] = pts;
   }
   return sessCurveCache[v];
@@ -1841,17 +1845,16 @@ function sessNowText(L, r) {
          `Time for ${r.cap[0]} cases today. ${r.done[0]} reported, ${r.left[0]} left over.`;
 }
 function renderSess(L) {
-  const rows = L.rows, n = rows.length;
-  setText(L.id + '-now', sessNowText(L, rows[n - 1]));
+  const rows = L.rows, t = L.tot, n = t.n;
+  setText(L.id + '-now', sessNowText(L, rows[rows.length - 1]));
   setText(L.id + '-n', String(n));
-  const avg = k => n ? rows.reduce((a, r) => a + r[k], 0) / n : 0;
   if (L.id === 's3') {
-    setText('s3-sep', fmt(avg('leftTotal')));
-    setText('s3-pool', fmt(avg('pooled')));
+    setText('s3-sep', fmt(n ? t.sum / n : 0));
+    setText('s3-pool', fmt(n ? t.pooled / n : 0));
   } else {
-    setText(L.id + '-mean', fmt(avg('leftTotal')));
-    setText(L.id + '-share', (n ? Math.round(rows.filter(r => r.leftTotal > 0).length / n * 100) : 0) + '%');
-    if (L.id === 's1') setText('s1-max', String(n ? Math.max(...rows.map(r => r.leftTotal)) : 0));
+    setText(L.id + '-mean', fmt(n ? t.sum / n : 0));
+    setText(L.id + '-share', (n ? Math.round(t.any / n * 100) : 0) + '%');
+    if (L.id === 's1') setText('s1-max', String(t.max));
   }
   drawSessRunChart(L);
 }
@@ -1861,15 +1864,16 @@ function renderSessLines() {
     const u = Math.round(L2.state.u * 100), vn = SESS_VAR_NAMES[L2.state.v];
     if (u >= 100) setText('s2-line', `At 100% with ${vn} variation there is no stable level: the list can clear for a while, but over longer runs it reaches ever bigger peaks.`);
     else {
-      const r = sessLongRun(L2.state.u, SESS_VARS[L2.state.v], SESS_VARS[L2.state.v], 1, 40000);
-      setText('s2-line', `Over many sessions at ${u}% with ${vn} variation, about ${fmt(r.mean)} cases are left over per session on average, and cases are left over after ${Math.round(r.share * 100)}% of sessions.`);
+      const [mean, share] = SESS_TABLES.curve[L2.state.v][u];
+      setText('s2-line', `Over many sessions at ${u}% with ${vn} variation, about ${fmt(mean)} cases are left over per session on average, and cases are left over after ${Math.round(share * 100)}% of sessions.`);
     }
     drawSessCurve();
   }
   const L3 = sess.s3;
   if (L3) {
-    const r = sessLongRun(L3.state.u, SESS_VARS[1], SESS_VARS[1], 2, 40000);
-    setText('s3-line', `Over many sessions at ${Math.round(L3.state.u * 100)}%, separate worklists leave about ${fmt(r.mean)} cases over per session between them; one shared worklist leaves about ${fmt(r.pooledMean)}.`);
+    const u3 = Math.round(L3.state.u * 100);
+    const [sepMean, poolMean] = SESS_TABLES.pool[u3];
+    setText('s3-line', `Over many sessions at ${u3}%, separate worklists leave about ${fmt(sepMean)} cases over per session between them; one shared worklist leaves about ${fmt(poolMean)}.`);
   }
 }
 function refreshSess(L, resetRun) {
@@ -1914,8 +1918,11 @@ function sessFrame(ts) {
     L.acc += dt * SESS_SPEEDS[L.speed];
     let added = false;
     while (L.acc >= 1) {
-      L.acc -= 1; L.rows.push(L.model.next()); added = true;
-      if (L.rows.length > 5000) L.rows = L.rows.slice(-2500);
+      L.acc -= 1;
+      const r = L.model.next();
+      L.rows.push(r); added = true;
+      const t = L.tot; t.n++; t.sum += r.leftTotal; t.pooled += r.pooled; if (r.leftTotal > 0) t.any++; if (r.leftTotal > t.max) t.max = r.leftTotal;
+      if (L.rows.length > 5000) L.rows = L.rows.slice(-2500);    // chart history only; totals above are kept in full
     }
     if (added) renderSess(L);
   });

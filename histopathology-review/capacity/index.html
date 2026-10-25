@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  Gemba-Histo Capacity v0.12 (preview)
+  Gemba-Histo Capacity v0.13 (preview)
   Histopathology improvement channel for the Gemba Suite: "Demand and capacity".
   Day-by-day demand, load and capacity model with planned leave, sickness spells,
   team size and four countermeasures.
@@ -16,11 +16,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Gemba-Histo Capacity v0.12</title>
+<title>Gemba-Histo Capacity v0.13</title>
 <meta name="description" content="Why histology queues grow: animated lessons and a turnaround tracker for histopathology services. Runs entirely in your browser.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Public+Sans:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
    CSS CUSTOM PROPERTIES - Gemba Suite Design System
@@ -325,7 +322,7 @@ body.editing { padding-bottom: 96px; }
 </div>
 <script>
 (function () {
-  var PAGE = 'Pack 2, Demand and capacity';
+  var PAGE = 'Pack 2 Demand and capacity';
   var URL_ = 'https://script.google.com/macros/s/AKfycbxr7o-fxL4MIQX-1KO9WfFRlp6aQrAfewCKU9G1Ittnoh3wpNQMZuoEUB4G3p3Javnh/exec';
   var box = document.getElementById('review-banner');
   var tog = document.getElementById('rb-toggle');
@@ -360,7 +357,7 @@ body.editing { padding-bottom: 96px; }
 <header class="site-header">
   <div class="inner">
     <a class="brand" href="../">Gemba Suite <span>· Histopathology</span></a>
-    <span class="tag-preview">Preview v0.12</span>
+    <span class="tag-preview">Preview v0.13</span>
   </div>
 </header>
 
@@ -459,14 +456,14 @@ body.editing { padding-bottom: 96px; }
     <p class="longrun" id="daily-line"></p>
 
     <div class="explainer">
-      <p>Each bar shows the day's load against the staff actually present: the new work arriving (navy) plus anything carried over from previous days (red). The small squares under each bar show who is away.</p>
-      <p>Start by setting leave and sickness to zero. That is the lab a staffing model or establishment plan sees: loaded to 80%, with a fifth of capacity to spare. It has the odd bad Monday, but it usually finishes the day's work that day, and occasional carry-over is cleared on later working days.</p>
+      <p>Each bar shows the day's load against the staff actually present: the new work arriving (navy) plus anything carried over from previous days (red). The small squares under each bar show who is away (up to four are shown).</p>
+      <p>Start by setting leave and sickness to zero. That is the lab a plan that ignores absence would see: loaded to 80%, with a fifth of capacity to spare. It has the odd bad Monday, but it usually finishes the day's work that day, and occasional carry-over is cleared on later working days.</p>
       <p>Now put leave and sickness back. Each person is away about one day in six, so with these absence rates, on average 4.2 of the five are in. Everyone is in on fewer than half of days, and two or more are away on nearly one day in five. The workload on the staff actually present is 95% of what they can do, not 80%. Absence compounds: leave comes in whole weeks, so one person away removes a fifth of capacity for five days running with no quiet day to recover in. Without a rota, leave also bunches in the school holidays.</p>
-      <p>The average carry-over delay is now about one and a half working days, but the average hides the tail. Around 38% of the work is finished two or more working days after it arrives, and only 95% of it is finished within six working days. For a 10-day turnaround target it is that tail, not the average, that causes breaches.</p>
-      <p>The gap between 80% and 100% is not idle time. Most of it is already spent covering leave, training and sickness. In a cost-improvement review it can look like spare staff; remove it, by raising the workload to 85%, and more work arrives than the staff present can do, so the backlog grows over time. Capacity has to be planned against the staff who will actually be present, day by day. The model illustrates the difference between new demand, carried-over work, capacity and completed activity.</p>
+      <p>The average carry-over delay is now about one and a half working days, but the average hides the tail. Around 38% of the work is finished two or more working days after it arrives, and only 95% of it is finished within six working days. For a 10-day turnaround target it is the tail, not the average, that drives breaches; this single-stage model illustrates one way such a tail can arise.</p>
+      <p>The gap between 80% and 100% is not idle time. Most of it is already spent covering leave, training and sickness. In a cost-improvement review it can look like spare staff. Remove that headroom (the slider does it by raising demand to 85%) and more work arrives than the staff present can do, so the backlog grows over time. Capacity has to be planned against the staff who will actually be present, day by day. The model illustrates the difference between new demand, carried-over work, capacity and completed activity.</p>
       <p>Now try the countermeasures one at a time. Rostering leave evenly, so people take turns rather than bunching, roughly halves the average delay, halves the share of work finished two or more days late, and brings the point by which 95% of work is finished down from about six working days to three. Bank cover for every sick person beyond the first helps a little and costs little, because two people are rarely off sick at once: about one bank day in every hundred working days. In this scenario, flexing a cross-trained person in on mornings when work has carried over helps most, because it adds capacity exactly when absence and demand have combined. But it is not free: that person is needed on about a third of days, adding about 7% to the capacity offered on average, and they have to come from somewhere (another bench, a network partner or a locum). Borrowing them can move the problem rather than solve it. Levelling arrivals on its own does little here, because absence, not demand, is now the bigger source of variation. With all four, the carry-over almost disappears.</p>
       <p>Finally, change the team size. With the same workload and absence rates, a team of three averages nearly three days of carry-over delay, with 95% of the work finished only within about nine working days; a team of twelve averages under one day. In the model the larger team (with proportionately larger demand) does better simply because each absence removes a smaller share of capacity; in real life that depends on staff being genuinely interchangeable. Small sections (a sub-specialty bench, a single-handed cut-up room, a three-pathologist department) live with this every week, which is one more argument for cross-training and for networks that pool small teams into larger ones.</p>
-      <p class="hint">Capacity is expressed as a percentage of what the full team can do in a day. Leave is taken in whole weeks; sickness comes in spells of about three days. Each person's absence is independent of everyone else's, which understates real clustering (winter illness, summer leave, leave around bank holidays). If everyone is away, nothing is done that day. With bank cover on, staff present includes bank staff. Delays are accrued carry-over on work volume, a long-run estimate for a stable setting, not patient waiting time. Work is finished oldest first, and delays are measured on work volume in whole working days, not on individual cases: there are no case sizes, processing cut-offs or further-work loops. The model works a day at a time and leaves out the queueing within each day, so real delays are larger than these figures suggest. It is a teaching illustration of how capacity variation behaves, not a forecast of any laboratory's turnaround.</p>
+      <p class="hint">Capacity is expressed as a percentage of what the full team can do in a day. Leave is taken in whole weeks; sickness comes in spells of about three days. Apart from the shared school-holiday weeks, each person's absence is independent of everyone else's, which understates real clustering (winter illness, outbreaks, leave around bank holidays). If everyone in the core team is away, nothing is done that day unless bank or flex staff are in. With bank cover on, staff present includes bank staff. Delays are accrued carry-over on work volume, a long-run estimate for a stable setting, not patient waiting time. Work is finished oldest first, and delays are measured on work volume in whole working days, not on individual cases: there are no case sizes, processing cut-offs or further-work loops. The model works a day at a time and leaves out the queueing within each day; that and other omitted mechanisms can add further delay. It is a teaching illustration of how capacity variation behaves, not a forecast of any laboratory's turnaround.</p>
     </div>
     <div class="try"><strong>Try this:</strong> ask the room for their own figures: team size, how much leave and training each person takes, and recent sickness. Set the sliders to match, then compare the workload on the staff actually present with the figure their staffing model or finance team uses.</div>
   </section>
@@ -488,13 +485,13 @@ body.editing { padding-bottom: 96px; }
         <li><strong>6 to 8 minutes.</strong> Raise the workload to 85% to show what removing the "spare" capacity does. Then switch the countermeasures on one at a time, and discuss the cost of flex.</li>
         <li><strong>8 to 10 minutes.</strong> Change the team size. The ask: bring your own team size, leave and sickness figures to the next session and set the sliders to match.</li>
       </ol>
-      <p class="hint">This is a day-by-day carry-over model with no closed-form answer; its long-run figures come from 100,000 simulated working days. It was checked by independent rebuilds in two other AI systems, which reproduced every figure.</p>
+      <p class="hint">This is a day-by-day carry-over model with no closed-form answer; its long-run figures come from 100,000 simulated working days. Independent reconstructions in two other AI systems, and a later check that ran this page's own code, agreed with its figures within stated tolerances.</p>
     </details>
   </section>
 </main>
 
 <footer class="site-footer">
-  <p>Gemba-Histo Capacity v0.12 preview · Part of the <a href="/">Gemba Suite</a> · <a href="/licence/">CC BY-NC-SA 4.0</a></p>
+  <p>Gemba-Histo Capacity v0.13 preview · Part of the <a href="/">Gemba Suite</a> · <a href="/licence/">CC BY-NC-SA 4.0</a></p>
   <p>A teaching model, not a forecast. It simplifies real services (work finished oldest first, one type of work, no processing cut-offs) to make the underlying behaviour visible.</p>
 </footer>
 
@@ -533,12 +530,12 @@ const JOURNEY = [
   { step: 'Cut-up (grossing)', kind: 'process', wait: 'Afternoon arrivals that miss cut-up wait until the next day.' },
   { step: 'Tissue processing', kind: 'batch', wait: 'Usually an overnight batch. Everything waits for the run, whatever time it arrived.' },
   { step: 'Embedding', kind: 'process', wait: 'Morning surge as the overnight batch lands all at once.' },
-  { step: 'Microtomy', kind: 'process', wait: 'Often the lab bottleneck; queues build behind it when staffing dips.' },
+  { step: 'Microtomy', kind: 'process', wait: 'Can be the lab bottleneck; queues build behind it when staffing dips.' },
   { step: 'Staining and coverslipping', kind: 'batch', wait: 'Racks wait to be filled before a run starts.' },
   { step: 'Scanning', kind: 'batch', wait: 'Slides batched by tray or trolley round; scanner queues in digital labs.' },
   { step: 'Slide QC', kind: 'process', wait: 'Slides wait for a quality check before release to the pathologist; a failed slide loops back to microtomy.' },
   { step: 'Case allocation', kind: 'queue', wait: 'The most invisible wait: cases sit unallocated, or allocated to someone on leave.' },
-  { step: 'Reporting', kind: 'process', wait: 'Usually the system constraint. Why histology queues grow, lessons 2 and 3, show why.' },
+  { step: 'Reporting', kind: 'process', wait: 'Often the system constraint. Why histology queues grow, lessons 2 and 3, show why.' },
   { step: 'Further work (levels, special stains, IHC)', kind: 'queue', wait: 'A loop back into the lab that restarts the queueing cycle for the case.' },
   { step: 'Authorisation and report release', kind: 'process', wait: 'Cases waiting for sign-off, typing or MDT timing.' }
 ];
@@ -888,6 +885,7 @@ function dailyLongRun(o) {
 function dailyReset() {
   daily.model = createDailyModel(daily.seed, daily.opts);
   daily.days = []; daily.acc = 0;
+  daily.tot = { n: 0, D: 0, C: 0, H: 0, P: 0, over: 0 };
 }
 
 /* ============================================================
@@ -1190,13 +1188,13 @@ function drawDaily() {
   ctx.textAlign = 'left';
 }
 function renderDailyStats() {
-  const s = summariseDays(daily.days);
-  setText('daily-days', String(daily.days.length));
-  if (!s) { ['daily-present', 'daily-util', 'daily-over', 'daily-held'].forEach(id => setText(id, '-')); return; }
-  setText('daily-present', fmt(s.present) + ' of ' + daily.opts.team);
-  setText('daily-util', Math.round(s.util * 100) + '%');
-  setText('daily-over', s.overN + ' (' + Math.round(s.over * 100) + '%)');
-  setText('daily-held', fmt(s.held, 2));
+  const t = daily.tot;
+  setText('daily-days', String(t.n));
+  if (!t.n) { ['daily-present', 'daily-util', 'daily-over', 'daily-held'].forEach(id => setText(id, '-')); return; }
+  setText('daily-present', fmt(t.P / t.n) + ' of ' + daily.opts.team);
+  setText('daily-util', Math.round(t.D / t.C * 100) + '%');
+  setText('daily-over', t.over + ' (' + Math.round(t.over / t.n * 100) + '%)');
+  setText('daily-held', fmt(t.H / t.D, 2));
 }
 function renderDailyLine() {
   const o = daily.opts;
@@ -1209,18 +1207,22 @@ function renderDailyLine() {
   if (s.nobody >= 0.0005) staff += `, and nobody at all is in on ${fmt(s.nobody * 100)}%`;
   if (o.cover) staff += ` (counting bank staff as present)`;
   staff += `. So the workload on the staff actually present is ${pct(s.ratio)} of what they can do.`;
+  let costs = '';
+  if (o.flex) costs += ` The flex person was needed on ${pct(s.flex)} of days, which adds ${fmt(s.flexShare * 100)}% to the capacity offered, averaged over all days.`;
+  if (o.cover) costs += ` Bank cover was used for ${fmt(s.coverDays * 100)} person-days per 100 working days, adding ${fmt(s.coverShare * 100)}% to the capacity offered.`;
   if (s.ratio >= 1) {
     setText('daily-line', `Long run: ${staff} On average at least as much work arrives as the staff present can do, so the backlog has no stable level: it can clear for a while, but over time it builds up. ` +
-      `Extra effort on the busy days cannot fix this; only more capacity, or less demand, can.`);
+      `Extra effort on the busy days cannot fix this; only more capacity, or less demand, can.` + costs);
     return;
   }
   let t = `Long run: ${staff} New work alone exceeds the staff present on ${pct(s.overDem)} of days; with carried-over work added, ` +
           `the load exceeds 100% on ${pct(s.over)}. Average carry-over delay is ${fmt(s.held, 2)} working days; ` +
           `${pct(s.twoPlus)} of work is finished two or more working days after it arrives, and 95% of it within ${s.p95} working day${s.p95 === 1 ? '' : 's'}.`;
   if (s.growthPerQuarter > 0.05) t += ` There is little spare capacity: the backlog was still rising during this simulation.`;
-  if (base) t += ` Without the countermeasures the average delay would be ${fmt(base.held, 2)} days.`;
-  if (o.flex) t += ` The flex person was needed on ${pct(s.flex)} of days, which adds ${fmt(s.flexShare * 100)}% to the capacity offered, averaged over all days.`;
-  if (o.cover) t += ` Bank cover was used for ${fmt(s.coverDays * 100)} person-days per 100 working days, adding ${fmt(s.coverShare * 100)}% to the capacity offered.`;
+  if (base) t += base.growthPerQuarter > 0.05
+    ? ` Without the countermeasures the backlog would keep growing, so there would be no stable average delay.`
+    : ` Without the countermeasures the average delay would be ${fmt(base.held, 2)} days.`;
+  t += costs;
   setText('daily-line', t);
 }
 let dailyLineTimer = null;
@@ -1623,8 +1625,11 @@ function frame(ts) {
     daily.acc += dt * DAILY_SPEEDS[daily.speed];
     let added = false;
     while (daily.acc >= 1) {
-      daily.acc -= 1; daily.days.push(daily.model.next()); added = true;
-      if (daily.days.length > 5000) daily.days = daily.days.slice(-2500);
+      daily.acc -= 1;
+      const r = daily.model.next();
+      daily.days.push(r); added = true;
+      const t = daily.tot; t.n++; t.D += r.dem; t.C += r.cap; t.H += r.held; t.P += r.present; if (r.load > 1) t.over++;
+      if (daily.days.length > 5000) daily.days = daily.days.slice(-2500);    // chart history only; totals kept in full
     }
     if (added) { drawDaily(); renderDailyStats(); }
   }
