@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  Gemba-Histo Flow v0.10 (preview)
+  Gemba-Histo Flow v0.11 (preview)
   Histopathology improvement channel for the Gemba Suite: Pack 1, flow and turnaround.
   Specimen journey map with downloadable template, and XmR turnaround tracker.
   Pack 3 of 3. Previous: Gemba-Histo Queues and Gemba-Histo Capacity.
@@ -15,7 +15,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Gemba-Histo Flow v0.10</title>
+<title>Gemba-Histo Flow v0.11</title>
 <meta name="description" content="Why histology queues grow: animated lessons and a turnaround tracker for histopathology services. Runs entirely in your browser.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -359,7 +359,7 @@ body.editing { padding-bottom: 96px; }
 <header class="site-header">
   <div class="inner">
     <a class="brand" href="../">Gemba Suite <span>· Histopathology</span></a>
-    <span class="tag-preview">Preview v0.10</span>
+    <span class="tag-preview">Preview v0.11</span>
   </div>
 </header>
 
@@ -398,13 +398,13 @@ body.editing { padding-bottom: 96px; }
 
   <section class="card" id="tat" aria-labelledby="tat-title">
     <h3 id="tat-title" class="label" style="margin-bottom:var(--space-sm)">Turnaround against your target</h3>
-    <p>Paste your weekly percentage of cases reported within 10 days, oldest first. Twenty or more weeks gives a useful picture. The chart shows the natural process limits: the range your current system will produce week to week without any change to how it works.</p>
+    <p>Paste your weekly percentage of cases reported within 10 days, oldest first. Twenty or more weeks gives a useful picture. The chart shows the natural process limits: the range of routine week-to-week variation your current system produces, if nothing changes in how it works.</p>
 
     <div class="tat-grid">
       <div class="tat-input">
         <label class="label" for="tat-text">Weekly data</label>
-        <p class="hint" style="margin:var(--space-xs) 0">One week per line, as <code>label, percent</code> or just <code>percent</code>. Labels must be a week number or a date (Wk 3, 2026-W14, 14/10/2026); anything else is refused. Aggregated figures only.</p>
-        <textarea id="tat-text" spellcheck="false" placeholder="Wk 1, 86&#10;Wk 2, 89&#10;Wk 3, 84"></textarea>
+        <p class="hint" style="margin:var(--space-xs) 0">One percentage per line, oldest week first. Weeks are numbered automatically, so nothing else can be typed in. Aggregated figures only.</p>
+        <textarea id="tat-text" spellcheck="false" placeholder="86&#10;89&#10;84"></textarea>
         <div class="target-row">
           <label class="label" for="tat-target">Target %</label>
           <input type="number" id="tat-target" min="0" max="100" step="0.5" value="98">
@@ -438,13 +438,13 @@ body.editing { padding-bottom: 96px; }
         <li><strong>11 to 13 minutes.</strong> If someone has brought real weekly figures, paste them in and discuss which points are signals and which are ordinary noise.</li>
         <li><strong>13 to 15 minutes.</strong> The ask: before the next meeting, record actual work and wait times at three steps of your own journey using the template, and plot your last 20 or more weeks of turnaround.</li>
       </ol>
-      <p class="hint">The tracker uses an XmR chart (natural process limits at the mean plus or minus 2.66 times the average moving range). It is a pragmatic choice for weekly percentages; where weekly case numbers are small or vary a lot, a p-chart is stricter.</p>
+      <p class="hint">The tracker uses an XmR chart (natural process limits at the mean plus or minus 2.66 times the average moving range). It is a pragmatic choice for weekly percentages. Where weekly case numbers are small or vary a lot, a p-chart, which allows for the number of cases each week, is usually better, though it has assumptions of its own. Twenty weeks is a small baseline; treat the limits as estimates.</p>
     </details>
   </section>
 </main>
 
 <footer class="site-footer">
-  <p>Gemba-Histo Flow v0.10 preview · Part of the <a href="/">Gemba Suite</a> · <a href="/licence/">CC BY-NC-SA 4.0</a></p>
+  <p>Gemba-Histo Flow v0.11 preview · Part of the <a href="/">Gemba Suite</a> · <a href="/licence/">CC BY-NC-SA 4.0</a></p>
   <p>The tracker shows how your current process behaves; it does not explain why. Use it alongside the specimen journey and the people who do the work.</p>
 </footer>
 
@@ -1188,41 +1188,27 @@ function renderJourney() {
     `<td>${escHtml(s.wait)}</td></tr>`).join('');
 }
 
-// IG guard: an allowlist. A label must be a week number or a date; anything else is refused.
-// This is a limited input check, not a guarantee: it stops lab numbers and names being typed
-// in by mistake, but cannot judge what a user chooses to put in a date.
-const LABEL_PATTERNS = [
-  /^(wk|week|w)\s?\d{1,2}$/i,                                   // Wk 3, Week 12, W14
-  /^\d{4}-?w\d{1,2}$/i,                                          // 2026-W14
-  /^\d{4}-\d{2}-\d{2}$/,                                         // 2026-10-14
-  /^20\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])$/,                 // 20261014
-  /^\d{1,2}\/\d{1,2}(\/\d{2}|\/\d{4})?$/,                         // 14/10, 14/10/26, 14/10/2026
-  /^\d{1,2}[\s-](jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*([\s-]\d{2,4})?$/i   // 14 Oct, 14-Oct-26
-];
-function labelAllowed(s) { return LABEL_PATTERNS.some(re => re.test(s.trim())); }
+// IG guard: no free-text labels at all; see parseTat.
+
 
 function parseTat(text) {
+  // One percentage per line, oldest first. Weeks are numbered automatically, so no free-text
+  // label can be entered. A leading "Wk 3," from earlier versions is accepted and discarded.
   const rows = [], errors = [];
   text.split(/\r?\n/).forEach((line, i) => {
-    const raw = line.trim();
+    let raw = line.trim();
     if (!raw) return;
-    const parts = raw.split(/\s*[,\t;]\s*/);
-    if (parts.length > 2) {
-      errors.push(`Line ${i + 1} has been ignored: use one label and one percentage per line.`);
+    raw = raw.replace(/^(wk|week|w)\s?\d{1,3}\s*[,;\t]\s*/i, '');
+    if (!/^\d{1,3}(\.\d+)?\s*%?$/.test(raw)) {
+      errors.push(`Line ${i + 1} has been ignored: enter a percentage only. Weeks are numbered automatically.`);
       return;
     }
-    const valStr = parts[parts.length - 1].replace('%', '');
-    const value = Number(valStr);
-    if (parts.length === 2 && !labelAllowed(parts[0])) {
-      errors.push(`Line ${i + 1} has been ignored: labels must be a week number or a date (Wk 3, 2026-W14, 14/10/2026).`);
-      return;
-    }
-    const label = parts.length === 2 ? parts[0] : 'Wk ' + (rows.length + 1);
+    const value = Number(raw.replace('%', '').trim());
     if (!Number.isFinite(value) || value < 0 || value > 100) {
       errors.push(`Line ${i + 1}: "${raw}" is not a percentage between 0 and 100.`);
       return;
     }
-    rows.push({ label: label.slice(0, 24), value });
+    rows.push({ label: 'Wk ' + (rows.length + 1), value });
   });
   return { rows, errors };
 }
@@ -1307,15 +1293,15 @@ function renderTat() {
   let v = `<p style="margin-top:var(--space-md)">Your system currently produces between <strong>${fmt(lcl)}%</strong> and <strong>${fmt(ucl)}%</strong> of cases within 10 days in a typical week, averaging <strong>${fmt(s.mean)}%</strong>.</p>`;
   if (hasTarget) {
     const met = vals.filter(x => x >= target).length;
-    const metLine = `It was met in <strong>${met} of ${vals.length}</strong> weeks shown.`;
-    const cond = nSignalsPre ? ' Because there are signals (red points), the limits describe the process only loosely; deal with those first.' : '';
+    const metLine = `It was met (at or above target) in <strong>${met} of ${vals.length}</strong> weeks shown.`;
+    const cond = nSignalsPre ? ' Because there are signals (red points), the process may have changed during this period: find out what changed, and recalculate the limits from a stable run of weeks before relying on this verdict.' : '';
     if (target > ucl) v += `<p>The ${target}% target sits <strong>above the upper limit</strong>. ${metLine} If the process continues as it is, it is not expected to meet the target reliably; a week that does is likely to be chance. Effort, exhortation and weekly chasing will not move it; changing how the work flows will. Start with the specimen journey above.${cond}</p>`;
-    else if (target < lcl) v += `<p>The ${target}% target sits <strong>below the lower limit</strong>. ${metLine} If the process continues as it is, it should meet the target almost every week. The question becomes whether the target is the right one.${cond}</p>`;
-    else v += `<p>The ${target}% target sits <strong>inside the limits</strong>. ${metLine} Ordinary week-to-week variation alone will take the process either side of the target. Reacting to individual weeks will add noise, not improvement: reduce the variation or shift the whole process.${cond}</p>`;
+    else if (target < lcl) v += `<p>The ${target}% target sits <strong>below the lower limit</strong>. ${metLine} If the process stays as it is, it would be expected to meet the target almost every week, though that is not a guarantee. The question becomes whether the target is the right one.${cond}</p>`;
+    else v += `<p>The ${target}% target lies <strong>within the range of routine variation</strong>. ${metLine} Meeting it consistently is not shown. Reacting to individual weeks will add noise, not improvement: reduce the variation or shift the whole process.${cond}</p>`;
   }
-  v += `<p class="hint">If your weekly case numbers are small or vary a lot, a percentage can swing on a handful of cases. Keep the numerator and denominator where you can; a p-chart, which allows for the number of cases each week, is the stricter choice.</p>`;
-  if (nSignals) v += `<p>Red points are <strong>signals</strong> (outside the limits, or a run of eight or more on one side of the mean). These suggest something specific changed. They are worth investigating; the other points are not.</p>`;
-  else v += `<p class="hint">No signals: the variation you see is the system's normal week-to-week noise.</p>`;
+  v += `<p class="hint">If your weekly case numbers are small or vary a lot, a percentage can swing on a handful of cases. Keep the numerator and denominator where you can: a p-chart allows for the number of cases each week, though it has assumptions of its own.</p>`;
+  if (nSignals) v += `<p>Red points are <strong>signals</strong> (outside the limits, or a run of eight or more on one side of the mean). These suggest something specific changed. Investigate them before acting on the limits; the other points are routine variation.</p>`;
+  else v += `<p class="hint">No signals by these two rules. That does not prove the process is stable, but there is no sign of a specific change.</p>`;
   verdictEl.innerHTML = v;
 }
 
@@ -1378,7 +1364,7 @@ function wireEvents() {
   tatText?.addEventListener('input', () => { renderTat(); scheduleAutoSave(); });
   tatTarget?.addEventListener('input', () => { renderTat(); scheduleAutoSave(); });
   document.getElementById('btn-example')?.addEventListener('click', () => {
-    tatText.value = EXAMPLE_TAT.map((v, i) => `Wk ${i + 1}, ${v}`).join('\n');
+    tatText.value = EXAMPLE_TAT.join('\n');
     renderTat(); scheduleAutoSave();
   });
   document.getElementById('btn-clear')?.addEventListener('click', () => {
@@ -1401,7 +1387,7 @@ function wireEvents() {
       try {
         const d = JSON.parse(reader.result);
         if (d.format !== 'gemba-histo-tat' || !Array.isArray(d.rows)) throw new Error('format');
-        tatText.value = d.rows.map(r => `${String(r.label)}, ${Number(r.value)}`).join('\n');
+        tatText.value = d.rows.map(r => String(Number(r.value))).join('\n');
         if (Number.isFinite(Number(d.target))) tatTarget.value = d.target;
         renderTat(); scheduleAutoSave();
       } catch (err) {

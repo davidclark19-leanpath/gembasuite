@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  Gemba-Histo Queues v0.11 (preview)
+  Gemba-Histo Queues v0.12 (preview)
   Histopathology improvement channel for the Gemba Suite: "Why histology queues grow".
   Three animated lessons on why work waits (variation, utilisation, pooling), modelled as
   two-hour reporting sessions (25 cases = 100%) with cases left over shown on run charts.
@@ -16,7 +16,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Gemba-Histo Queues v0.11</title>
+<title>Gemba-Histo Queues v0.12</title>
 <meta name="description" content="Why histology queues grow: animated lessons and a turnaround tracker for histopathology services. Runs entirely in your browser.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -365,7 +365,7 @@ body.editing { padding-bottom: 96px; }
 <header class="site-header">
   <div class="inner">
     <a class="brand" href="../">Gemba Suite <span>· Histopathology</span></a>
-    <span class="tag-preview">Preview v0.11</span>
+    <span class="tag-preview">Preview v0.12</span>
   </div>
 </header>
 
@@ -384,7 +384,7 @@ body.editing { padding-bottom: 96px; }
   <!-- ======================= LESSON 1 ======================= -->
   <section class="card lesson" id="lesson-s1" aria-labelledby="s1-title">
     <div class="lesson-head"><span class="step-num">1</span><h2 id="s1-title">Same average, different leftovers</h2></div>
-    <p class="lesson-setup">One pathologist, one two-hour reporting session. On a perfect day they can report 25 cases in a session. Here about 22 or 23 cases arrive for each session on average, so they are 90% busy and should finish every time. Start with no variation, press play, then switch on the variation you see in real life.</p>
+    <p class="lesson-setup">One pathologist, one two-hour reporting session. On average they can report 25 cases in a session; some sessions more, some fewer. Here about 22 or 23 cases arrive for each session on average, so on average they are 90% busy and have time to spare. Start with no variation, press play, then switch on the variation you see in real life.</p>
 
     <div class="controls">
       <div class="control-group">
@@ -404,6 +404,13 @@ body.editing { padding-bottom: 96px; }
         </div>
       </div>
       <div class="control-group">
+        <span class="label">Bad days coincide</span>
+        <div class="seg" data-sess="s1" data-key="co">
+          <button type="button" data-val="0" class="active">No</button>
+          <button type="button" data-val="1">Yes</button>
+        </div>
+      </div>
+      <div class="control-group">
         <span class="label">Run</span>
         <div class="btn-row" style="margin-top:0">
           <button type="button" class="btn btn-primary" data-sess-action="play" data-sess="s1">Play</button>
@@ -418,16 +425,17 @@ body.editing { padding-bottom: 96px; }
     <div class="legend"><span style="color:var(--color-navy)"><i style="background:var(--color-navy)"></i>Cases left over after each session</span><span style="color:var(--color-grey-500)"><i class="dash"></i>Average so far</span></div>
     <div class="stats">
       <div class="stat"><div class="v" id="s1-n">0</div><div class="k">sessions run</div></div>
-      <div class="stat hl"><div class="v" id="s1-mean">0.0</div><div class="k">cases left over per session, average</div></div>
+      <div class="stat hl"><div class="v" id="s1-mean">0.0</div><div class="k">cases on the list at session end, average</div></div>
       <div class="stat"><div class="v" id="s1-share">0%</div><div class="k">sessions with cases left over</div></div>
       <div class="stat"><div class="v" id="s1-max">0</div><div class="k">most cases left over</div></div>
     </div>
 
     <div class="explainer">
       <p>With no variation the pathologist finishes every session with time to spare, and nothing is ever left over. Real sessions are not like that. Some sessions bring more cases, or harder ones; interruptions, IT problems and urgent calls cut into reporting time. Batching inside the laboratory creates more variation in workflow downstream.</p>
-      <p>Switch on some variation in either and cases start to be left over, even though the average workload has not changed. With some variation in both, cases are left over after about a third of sessions. With a lot in both, cases are left over after about two sessions in three, and over many sessions the average is about 14 cases left over, more than half a session's work, at the same 90% average.</p>
-      <p>Leftover cases are not caused by too little capacity on average. They are caused by variation meeting a system with too little slack to absorb it. That is how "we have enough pathologists on paper" and "the backlog keeps growing" can both be true.</p>
-      <p class="hint">The run chart shows the cases left over at the end of each session, with the average so far as a dashed line. It has no control limits on purpose: each session's leftovers carry into the next, so the points are not independent and control limits would flag false alarms.</p>
+      <p>Switch on some variation in either and cases start to be left over, even though the average workload has not changed. With some variation in both, cases are left over after about a third of sessions. With a lot in both, cases are left over after about two sessions in three, and over many sessions the average is about 14 cases left over, more than half a session's worth of cases, at the same 90% average.</p>
+      <p>Now set bad days to coincide, so that the busiest sessions are also the ones hit by interruptions. In real services they often do go together. With some variation in both, the average left over more than doubles, from about 1.4 cases to about 3.6; with a lot, from about 14 to about 31.</p>
+      <p>Here the leftover cases are not caused by too little capacity on average. They are caused by variation meeting a system with too little slack to absorb it. That is how "we have enough pathologists on paper" and "the backlog keeps growing" can both be true. And the cases left over are rarely a random selection: complex cases are the ones most likely to wait, so the work carried over is usually more than the count suggests.</p>
+      <p class="hint">The run chart shows the cases still on the list at the end of each session, with the average so far as a dashed line. It has no control limits on purpose: ordinary XmR limits applied directly to this kind of backlog signal very often even when nothing has changed, because each session's leftovers carry into the next. So it is shown descriptively.</p>
     </div>
     <div class="try"><strong>Try this:</strong> before switching variation on, ask the room how many cases will be left over at 90%. Most people say none, and are right. Then switch on a lot of both and ask again.</div>
   </section>
@@ -435,7 +443,7 @@ body.editing { padding-bottom: 96px; }
   <!-- ======================= LESSON 2 ======================= -->
   <section class="card lesson" id="lesson-s2" aria-labelledby="s2-title">
     <div class="lesson-head"><span class="step-num">2</span><h2 id="s2-title">Running hot</h2></div>
-    <p class="lesson-setup">The same pathologist, now with variation in both the cases arriving and the time available. Move the slider to change how busy the sessions are: at 100%, on average exactly 25 cases arrive for 25 reporting slots.</p>
+    <p class="lesson-setup">The same pathologist, now with variation in both the cases arriving and the time available. Move the slider to change how busy the sessions are: at 100%, on average exactly as many cases arrive as can be reported (25).</p>
 
     <div class="controls">
       <div class="control-group">
@@ -467,14 +475,14 @@ body.editing { padding-bottom: 96px; }
     <div class="legend"><span style="color:var(--color-navy)"><i style="background:var(--color-navy)"></i>Cases left over after each session</span><span style="color:var(--color-grey-500)"><i class="dash"></i>Average so far</span></div>
     <div class="stats">
       <div class="stat"><div class="v" id="s2-n">0</div><div class="k">sessions run</div></div>
-      <div class="stat hl"><div class="v" id="s2-mean">0.0</div><div class="k">cases left over per session, average</div></div>
+      <div class="stat hl"><div class="v" id="s2-mean">0.0</div><div class="k">cases on the list at session end, average</div></div>
       <div class="stat"><div class="v" id="s2-share">0%</div><div class="k">sessions with cases left over</div></div>
     </div>
     <canvas class="chart-canvas" id="s2-curve" aria-label="Average cases left over per session at each workload"></canvas>
     <div class="legend"><span style="color:var(--color-navy)"><i style="background:var(--color-navy)"></i>Average cases left over per session, over many sessions</span><span style="color:var(--color-amber)"><i style="background:var(--color-amber)"></i>This setting</span></div>
 
     <div class="explainer">
-      <p>Leftovers do not rise in a straight line with workload. With some variation, a session at 80% leaves cases over only about one time in eleven. At 90% the average is about one and a half cases per session; at 95%, over four; at 97%, nearly nine. At 100% the leftovers never settle: every bad session adds to the pile, and there are no quiet sessions to clear it.</p>
+      <p>Leftovers do not rise in a straight line with workload. With some variation, a session at 80% leaves cases over only about one time in eleven. At 90% the average is about 1.4 cases per session; at 95%, over four; at 97%, nearly nine. At 100% there is no stable level: the list can clear for a while, but every bad session adds to it, and over longer runs it reaches ever bigger peaks.</p>
       <p>The last few percentage points of "efficiency" are bought with a growing pile of unreported cases. That is why pushing reporting towards 100% lengthens turnaround rapidly and leaves no room to absorb a bad week. Notice too how much the run chart jumps about at high workload: a hot system is not just slower, it is unpredictable.</p>
       <p class="dynamic-line" id="s2-line"></p>
     </div>
@@ -509,12 +517,12 @@ body.editing { padding-bottom: 96px; }
     <div class="legend"><span style="color:var(--color-red)"><i style="background:var(--color-red)"></i>Separate worklists, both pathologists' leftovers</span><span style="color:var(--color-navy)"><i style="background:var(--color-navy)"></i>Shared worklist</span></div>
     <div class="stats">
       <div class="stat"><div class="v" id="s3-n">0</div><div class="k">sessions run</div></div>
-      <div class="stat"><div class="v" id="s3-sep">0.0</div><div class="k">separate worklists: cases left over per session</div></div>
-      <div class="stat hl"><div class="v" id="s3-pool">0.0</div><div class="k">shared worklist: cases left over per session</div></div>
+      <div class="stat"><div class="v" id="s3-sep">0.0</div><div class="k">separate worklists: cases on the lists at session end, average</div></div>
+      <div class="stat hl"><div class="v" id="s3-pool">0.0</div><div class="k">shared worklist: cases on the list at session end, average</div></div>
     </div>
 
     <div class="explainer">
-      <p>Pooling does not add capacity. It stops one pathologist finishing early while the other leaves cases over. At 90%, the two separate worklists leave about 2.7 cases over per session between them; the shared worklist leaves about 0.9, a third as many. The shared worklist can never do worse. In proportion its advantage is greatest at moderate workloads; in numbers of cases it saves most when the service is busiest.</p>
+      <p>Pooling does not add capacity. It stops one pathologist finishing early while the other leaves cases over. At 90%, the two separate worklists leave about 2.7 cases over per session between them; the shared worklist leaves about 0.9, a third as many. Within a sub-specialty, where either pathologist can report any of the cases, a shared worklist can never do worse. In proportion its advantage is greatest at lower workloads; in numbers of cases it saves most when the service is busiest.</p>
       <p>This is the operational case for networked digital pathology: when slides can be reported anywhere in the network, reporting capacity behaves like one pool rather than several isolated ones. The gain comes from work flowing to whoever is free, not from the scanner. Pulling cases from a shared worklist is the simplest way to achieve that; active cross-cover or routing between separate worklists can achieve some of it; sharing images while keeping work strictly local achieves little. In practice pooling works within a sub-specialty (eg GI biopsies shared among GI pathologists across the network), not as one undifferentiated queue for everyone, which is why network workflow design matters as much as the technology.</p>
       <p class="dynamic-line" id="s3-line"></p>
     </div>
@@ -538,13 +546,13 @@ body.editing { padding-bottom: 96px; }
         <li><strong>10 to 13 minutes.</strong> Lesson 3. Connect the shared queue to network reporting and ask what stops it happening locally.</li>
         <li><strong>13 to 15 minutes.</strong> The ask: before the next session, notice where work waits in your own lab, and how often the full team is actually in.</li>
       </ol>
-      <p class="hint">Show the maths: the lessons simulate one session at a time. Cases arriving and cases the pathologist can report each vary evenly by up to the chosen amount either side of average, and unfinished cases carry into the next session. Three checks hold: with no variation nothing is ever left over below 100%; a shared worklist never leaves more cases over than two separate ones; and at 100% the leftovers never settle. The figures quoted come from 200,000 simulated sessions. Run charts show no control limits because each session's leftovers carry into the next.</p>
+      <p class="hint">Show the maths: the lessons simulate one session at a time. Cases arriving and cases the pathologist can report each vary evenly by up to the chosen amount either side of average, independently unless bad days are set to coincide (then capacity moves by the same amount in the opposite direction to demand). Unfinished cases carry into the next session. Counts are rounded to whole cases, so at 90% with no variation 23 cases arrive each session. Three checks hold: with no variation nothing is ever left over at or below 100%; a shared worklist never leaves more cases over than two separate ones; and at 100% there is no stable level. The figures quoted come from 200,000 simulated sessions. Those for independent variation were reproduced by independent rebuilds in two other AI systems; ChatGPT's rebuild also found leftovers roughly doubling when busy and disrupted sessions coincide. Run charts show no control limits because each session's leftovers carry into the next.</p>
     </details>
   </section>
 </main>
 
 <footer class="site-footer">
-  <p>Gemba-Histo Queues v0.11 preview · Part of the <a href="/">Gemba Suite</a> · <a href="/licence/">CC BY-NC-SA 4.0</a></p>
+  <p>Gemba-Histo Queues v0.12 preview · Part of the <a href="/">Gemba Suite</a> · <a href="/licence/">CC BY-NC-SA 4.0</a></p>
   <p>Teaching models, not forecasts. The lessons simplify real services (oldest cases first, one session at a time, no urgent cases) to make the underlying behaviour visible.</p>
 </footer>
 
@@ -1673,8 +1681,10 @@ function createSessionModel(seed, o) {
     next() {
       const dem = [], cap = [];
       for (let p = 0; p < P; p++) {
-        dem.push(Math.max(0, Math.round(SESS_FULL * o.util * (1 + o.vd * (2 * rnd() - 1)))));
-        cap.push(Math.max(0, Math.round(SESS_FULL * (1 + o.vc * (2 * rnd() - 1)))));
+        const uD = 2 * rnd() - 1;
+        dem.push(Math.max(0, Math.round(SESS_FULL * o.util * (1 + o.vd * uD))));
+        const uC = 2 * rnd() - 1;                     // always drawn, so switching coincidence keeps the same sessions
+        cap.push(Math.max(0, Math.round(SESS_FULL * (1 + o.vc * (o.coincide ? -uD : uC)))));
       }
       const carried = sep.slice(), done = [];
       for (let p = 0; p < P; p++) {
@@ -1706,8 +1716,8 @@ function makeSessLesson(id, cfg) {
 }
 function initSessLessons() {
   if (document.getElementById('lesson-s1')) makeSessLesson('s1', {
-    state: { vd: 0, vc: 0 },
-    opts() { return { util: 0.9, vd: SESS_VARS[this.state.vd], vc: SESS_VARS[this.state.vc], pathologists: 1 }; }
+    state: { vd: 0, vc: 0, co: 0 },
+    opts() { return { util: 0.9, vd: SESS_VARS[this.state.vd], vc: SESS_VARS[this.state.vc], pathologists: 1, coincide: this.state.co === 1 }; }
   });
   if (document.getElementById('lesson-s2')) makeSessLesson('s2', {
     state: { u: 0.9, v: 1 },
@@ -1811,7 +1821,7 @@ function drawSessCurve() {
   ctx.fillStyle = c.g600; ctx.font = '600 11px Inter, system-ui, sans-serif';
   ctx.fillText('Average cases left over per session', pad.l, 10);
   ctx.fillStyle = c.navy;
-  ctx.fillText('Keeps rising: at 100% the leftovers never settle', X(61), pad.t + 16);
+  ctx.fillText('Keeps rising: at 100% there is no stable level', X(61), pad.t + 16);
   const u = Math.round(L.state.u * 100);
   const val = u >= 100 ? yMax : (pts.find(p => p[0] === u) || [u, 0])[1];
   ctx.strokeStyle = c.g300; ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
@@ -1849,7 +1859,7 @@ function renderSessLines() {
   const L2 = sess.s2;
   if (L2) {
     const u = Math.round(L2.state.u * 100), vn = SESS_VAR_NAMES[L2.state.v];
-    if (u >= 100) setText('s2-line', `At 100% with ${vn} variation, the leftovers never settle: the pile keeps growing for as long as the sessions run.`);
+    if (u >= 100) setText('s2-line', `At 100% with ${vn} variation there is no stable level: the list can clear for a while, but over longer runs it reaches ever bigger peaks.`);
     else {
       const r = sessLongRun(L2.state.u, SESS_VARS[L2.state.v], SESS_VARS[L2.state.v], 1, 40000);
       setText('s2-line', `Over many sessions at ${u}% with ${vn} variation, about ${fmt(r.mean)} cases are left over per session on average, and cases are left over after ${Math.round(r.share * 100)}% of sessions.`);

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  Gemba-Histo Capacity v0.11 (preview)
+  Gemba-Histo Capacity v0.12 (preview)
   Histopathology improvement channel for the Gemba Suite: "Demand and capacity".
   Day-by-day demand, load and capacity model with planned leave, sickness spells,
   team size and four countermeasures.
@@ -16,7 +16,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Gemba-Histo Capacity v0.11</title>
+<title>Gemba-Histo Capacity v0.12</title>
 <meta name="description" content="Why histology queues grow: animated lessons and a turnaround tracker for histopathology services. Runs entirely in your browser.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -360,7 +360,7 @@ body.editing { padding-bottom: 96px; }
 <header class="site-header">
   <div class="inner">
     <a class="brand" href="../">Gemba Suite <span>· Histopathology</span></a>
-    <span class="tag-preview">Preview v0.11</span>
+    <span class="tag-preview">Preview v0.12</span>
   </div>
 </header>
 
@@ -434,7 +434,7 @@ body.editing { padding-bottom: 96px; }
           <button type="button" class="toggle-btn" data-daily-toggle="level" aria-pressed="false">Level the arrivals</button>
           <button type="button" class="toggle-btn" data-daily-toggle="flex" aria-pressed="false">Flex one person in</button>
           <button type="button" class="toggle-btn" data-daily-toggle="roster" aria-pressed="false">Roster leave evenly</button>
-          <button type="button" class="toggle-btn" data-daily-toggle="cover" aria-pressed="false">Bank cover for sickness</button>
+          <button type="button" class="toggle-btn" data-daily-toggle="cover" aria-pressed="false">Bank cover beyond the first sick person</button>
         </div>
       </div>
       <div class="control-group">
@@ -460,13 +460,13 @@ body.editing { padding-bottom: 96px; }
 
     <div class="explainer">
       <p>Each bar shows the day's load against the staff actually present: the new work arriving (navy) plus anything carried over from previous days (red). The small squares under each bar show who is away.</p>
-      <p>Start by setting leave and sickness to zero. That is the lab a staffing model or establishment plan sees: loaded to 80%, with a fifth of capacity to spare. It has the odd bad Monday, but it recovers overnight and almost nothing is carried over.</p>
-      <p>Now put leave and sickness back. Each person is away about one day in six, so on an average day only 4.2 of the five are in. Everyone is in on fewer than half of days, and two or more are away on nearly one day in five. The workload on the staff actually present is 95% of what they can do, not 80%. Absence compounds: leave comes in whole weeks, so one person away removes a fifth of capacity for five days running with no quiet day to recover in. Without a rota, leave also bunches in the school holidays.</p>
-      <p>The average carry-over delay is now about one and a half working days, but the average hides the tail. Around 38% of the work is finished two or more working days after it arrives, and one portion in twenty waits six working days or more. For a 10-day turnaround target it is that tail, not the average, that causes breaches.</p>
-      <p>The gap between 80% and 100% is not idle time. Most of it is already spent covering leave, training and sickness. In a cost-improvement review it can look like spare staff; remove it, by raising the workload to 85%, and more work arrives than the staff present can do, so the backlog grows over time. Capacity has to be planned against the staff who will actually be present, day by day. That is the logic behind Demand-Load-Capacity-Activity analysis.</p>
-      <p>Now try the countermeasures one at a time. Rostering leave evenly, so people take turns rather than bunching, roughly halves the average delay and halves the tail. Bank cover for sickness helps a little. In this scenario, flexing a cross-trained person in on mornings when work has carried over helps most, because it adds capacity exactly when absence and demand have combined. But it is not free: that person is needed on about a third of days, adding about 7% to the team's capacity on average, and they have to come from somewhere (another bench, a network partner or a locum). Borrowing them can move the problem rather than solve it. Levelling arrivals on its own does little here, because absence, not demand, is now the bigger source of variation. With all four, the carry-over almost disappears.</p>
-      <p>Finally, change the team size. With the same workload and absence rates, a team of three averages nearly three days of carry-over delay, with one portion in twenty waiting nine days or more; a team of twelve averages under one day. In the model the larger team does better simply because each absence removes a smaller share of capacity; in real life that depends on staff being genuinely interchangeable. Small sections (a sub-specialty bench, a single-handed cut-up room, a three-pathologist department) live with this every week, which is one more argument for cross-training and for networks that pool small teams into larger ones.</p>
-      <p class="hint">Capacity is expressed as a percentage of what the full team can do in a day. Leave is taken in whole weeks; sickness comes in spells of about three days. Each person's absence is independent of everyone else's, which understates real clustering (winter illness, summer leave, leave around bank holidays). If everyone is away, nothing is done that day. Work is finished oldest first, and delays are measured on work volume in whole working days, not on individual cases: there are no case sizes, processing cut-offs or further-work loops. The model works a day at a time and leaves out the queueing within each day, so real delays are larger than these figures suggest. It is a teaching illustration of how capacity variation behaves, not a forecast of any laboratory's turnaround.</p>
+      <p>Start by setting leave and sickness to zero. That is the lab a staffing model or establishment plan sees: loaded to 80%, with a fifth of capacity to spare. It has the odd bad Monday, but it usually finishes the day's work that day, and occasional carry-over is cleared on later working days.</p>
+      <p>Now put leave and sickness back. Each person is away about one day in six, so with these absence rates, on average 4.2 of the five are in. Everyone is in on fewer than half of days, and two or more are away on nearly one day in five. The workload on the staff actually present is 95% of what they can do, not 80%. Absence compounds: leave comes in whole weeks, so one person away removes a fifth of capacity for five days running with no quiet day to recover in. Without a rota, leave also bunches in the school holidays.</p>
+      <p>The average carry-over delay is now about one and a half working days, but the average hides the tail. Around 38% of the work is finished two or more working days after it arrives, and only 95% of it is finished within six working days. For a 10-day turnaround target it is that tail, not the average, that causes breaches.</p>
+      <p>The gap between 80% and 100% is not idle time. Most of it is already spent covering leave, training and sickness. In a cost-improvement review it can look like spare staff; remove it, by raising the workload to 85%, and more work arrives than the staff present can do, so the backlog grows over time. Capacity has to be planned against the staff who will actually be present, day by day. The model illustrates the difference between new demand, carried-over work, capacity and completed activity.</p>
+      <p>Now try the countermeasures one at a time. Rostering leave evenly, so people take turns rather than bunching, roughly halves the average delay, halves the share of work finished two or more days late, and brings the point by which 95% of work is finished down from about six working days to three. Bank cover for every sick person beyond the first helps a little and costs little, because two people are rarely off sick at once: about one bank day in every hundred working days. In this scenario, flexing a cross-trained person in on mornings when work has carried over helps most, because it adds capacity exactly when absence and demand have combined. But it is not free: that person is needed on about a third of days, adding about 7% to the capacity offered on average, and they have to come from somewhere (another bench, a network partner or a locum). Borrowing them can move the problem rather than solve it. Levelling arrivals on its own does little here, because absence, not demand, is now the bigger source of variation. With all four, the carry-over almost disappears.</p>
+      <p>Finally, change the team size. With the same workload and absence rates, a team of three averages nearly three days of carry-over delay, with 95% of the work finished only within about nine working days; a team of twelve averages under one day. In the model the larger team (with proportionately larger demand) does better simply because each absence removes a smaller share of capacity; in real life that depends on staff being genuinely interchangeable. Small sections (a sub-specialty bench, a single-handed cut-up room, a three-pathologist department) live with this every week, which is one more argument for cross-training and for networks that pool small teams into larger ones.</p>
+      <p class="hint">Capacity is expressed as a percentage of what the full team can do in a day. Leave is taken in whole weeks; sickness comes in spells of about three days. Each person's absence is independent of everyone else's, which understates real clustering (winter illness, summer leave, leave around bank holidays). If everyone is away, nothing is done that day. With bank cover on, staff present includes bank staff. Delays are accrued carry-over on work volume, a long-run estimate for a stable setting, not patient waiting time. Work is finished oldest first, and delays are measured on work volume in whole working days, not on individual cases: there are no case sizes, processing cut-offs or further-work loops. The model works a day at a time and leaves out the queueing within each day, so real delays are larger than these figures suggest. It is a teaching illustration of how capacity variation behaves, not a forecast of any laboratory's turnaround.</p>
     </div>
     <div class="try"><strong>Try this:</strong> ask the room for their own figures: team size, how much leave and training each person takes, and recent sickness. Set the sliders to match, then compare the workload on the staff actually present with the figure their staffing model or finance team uses.</div>
   </section>
@@ -494,7 +494,7 @@ body.editing { padding-bottom: 96px; }
 </main>
 
 <footer class="site-footer">
-  <p>Gemba-Histo Capacity v0.11 preview · Part of the <a href="/">Gemba Suite</a> · <a href="/licence/">CC BY-NC-SA 4.0</a></p>
+  <p>Gemba-Histo Capacity v0.12 preview · Part of the <a href="/">Gemba Suite</a> · <a href="/licence/">CC BY-NC-SA 4.0</a></p>
   <p>A teaching model, not a forecast. It simplifies real services (work finished oldest first, one type of work, no processing cut-offs) to make the underlying behaviour visible.</p>
 </footer>
 
@@ -804,7 +804,9 @@ function createDailyModel(seed, o) {
       const dem = M * W[wd] * Math.max(0.3, 1 + cv * gauss());
       const leaveN = onLeave.filter(Boolean).length;
       let sickN = isSick.filter((v, i) => v && !onLeave[i]).length;
-      if (o.cover) sickN = Math.min(sickN, 1);   // bank cover for all but one sick
+      const sickRaw = sickN;
+      if (o.cover) sickN = Math.min(sickN, 1);   // bank staff cover every sick person beyond the first
+      const covered = sickRaw - sickN;
       const absent = Math.min(leaveN + sickN, T);       // if everyone is away, nothing is done
       const present = T - absent;
       let cap = unit * present;
@@ -830,7 +832,7 @@ function createDailyModel(seed, o) {
       if (head > 5000) { cohorts.splice(0, head); head = 0; }
       this.d++;
       return { n: this.d, wd, dem, cap, util, load, carriedIn, held: this.backlog, carry: this.backlog / M,
-               present, leaveN: Math.min(leaveN, T), sickN: Math.min(sickN, T - Math.min(leaveN, T)), flexed, finished };
+               present, leaveN: Math.min(leaveN, T), sickN: Math.min(sickN, T - Math.min(leaveN, T)), flexed, finished, covered };
     }
   };
 }
@@ -855,7 +857,7 @@ function dailyLongRun(o) {
   // Streams 100,000 working days without storing them, so the summary is stable to within a few per cent.
   const m = createDailyModel(42, o);
   const n = DAILY_LONGRUN, half = Math.floor(n / 2);
-  let D = 0, C = 0, Done = 0, H = 0, over = 0, overDem = 0, flex = 0, P = 0, full = 0, twoOff = 0, nobody = 0, carryHalf = 0, last = null;
+  let D = 0, C = 0, Done = 0, H = 0, over = 0, overDem = 0, flex = 0, P = 0, full = 0, twoOff = 0, nobody = 0, carryHalf = 0, last = null, Cov = 0;
   const hist = [];                               // amount of work finished k days after arrival
   for (let i = 0; i < n; i++) {
     const r = m.next();
@@ -863,6 +865,7 @@ function dailyLongRun(o) {
     if (r.load > 1) over++;
     if (r.util > 1) overDem++;
     if (r.flexed) flex++;
+    Cov += r.covered;
     const off = r.leaveN + r.sickN;
     if (off === 0) full++;
     if (off >= 2) twoOff++;
@@ -879,7 +882,7 @@ function dailyLongRun(o) {
   }
   return { ratio: D / C, used: Done / C, over: over / n, overDem: overDem / n, held: H / D, flex: flex / n,
            present: P / n, full: full / n, twoOff: twoOff / n, nobody: nobody / n,
-           p95, twoPlus: twoPlus / Done, flexShare: (flex / n) / o.team,
+           p95, twoPlus: twoPlus / Done, flexShare: (flex / n) / o.team, coverDays: Cov / n, coverShare: (Cov / n) / o.team,
            growthPerQuarter: (last.carry - carryHalf) / (n - 1 - half) * DAILY_WINDOW };
 }
 function dailyReset() {
@@ -1204,18 +1207,20 @@ function renderDailyLine() {
   let staff = `With everyone in, the workload is ${o.U}% of capacity. With leave, training and sickness, an average day has ` +
     `${fmt(s.present)} of ${o.team} staff present; everyone is in on ${pct(s.full)} of days and two or more are away on ${pct(s.twoOff)}`;
   if (s.nobody >= 0.0005) staff += `, and nobody at all is in on ${fmt(s.nobody * 100)}%`;
+  if (o.cover) staff += ` (counting bank staff as present)`;
   staff += `. So the workload on the staff actually present is ${pct(s.ratio)} of what they can do.`;
   if (s.ratio >= 1) {
-    setText('daily-line', `Long run: ${staff} On average more work arrives than the staff present can do, so the backlog grows over time. ` +
+    setText('daily-line', `Long run: ${staff} On average at least as much work arrives as the staff present can do, so the backlog has no stable level: it can clear for a while, but over time it builds up. ` +
       `Extra effort on the busy days cannot fix this; only more capacity, or less demand, can.`);
     return;
   }
   let t = `Long run: ${staff} New work alone exceeds the staff present on ${pct(s.overDem)} of days; with carried-over work added, ` +
           `the load exceeds 100% on ${pct(s.over)}. Average carry-over delay is ${fmt(s.held, 2)} working days; ` +
-          `${pct(s.twoPlus)} of work is finished two or more working days after it arrives, and 95% within ${s.p95} working day${s.p95 === 1 ? '' : 's'}.`;
+          `${pct(s.twoPlus)} of work is finished two or more working days after it arrives, and 95% of it within ${s.p95} working day${s.p95 === 1 ? '' : 's'}.`;
   if (s.growthPerQuarter > 0.05) t += ` There is little spare capacity: the backlog was still rising during this simulation.`;
   if (base) t += ` Without the countermeasures the average delay would be ${fmt(base.held, 2)} days.`;
-  if (o.flex) t += ` The flex person was needed on ${pct(s.flex)} of days, which adds ${fmt(s.flexShare * 100)}% to the team's capacity averaged over all days.`;
+  if (o.flex) t += ` The flex person was needed on ${pct(s.flex)} of days, which adds ${fmt(s.flexShare * 100)}% to the capacity offered, averaged over all days.`;
+  if (o.cover) t += ` Bank cover was used for ${fmt(s.coverDays * 100)} person-days per 100 working days, adding ${fmt(s.coverShare * 100)}% to the capacity offered.`;
   setText('daily-line', t);
 }
 let dailyLineTimer = null;
