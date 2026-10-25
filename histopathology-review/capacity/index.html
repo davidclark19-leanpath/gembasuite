@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  Gemba-Histo Capacity v0.10 (preview)
+  Gemba-Histo Capacity v0.11 (preview)
   Histopathology improvement channel for the Gemba Suite: "Demand and capacity".
   Day-by-day demand, load and capacity model with planned leave, sickness spells,
   team size and four countermeasures.
@@ -16,7 +16,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Gemba-Histo Capacity v0.10</title>
+<title>Gemba-Histo Capacity v0.11</title>
 <meta name="description" content="Why histology queues grow: animated lessons and a turnaround tracker for histopathology services. Runs entirely in your browser.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -360,7 +360,7 @@ body.editing { padding-bottom: 96px; }
 <header class="site-header">
   <div class="inner">
     <a class="brand" href="../">Gemba Suite <span>· Histopathology</span></a>
-    <span class="tag-preview">Preview v0.10</span>
+    <span class="tag-preview">Preview v0.11</span>
   </div>
 </header>
 
@@ -466,7 +466,7 @@ body.editing { padding-bottom: 96px; }
       <p>The gap between 80% and 100% is not idle time. Most of it is already spent covering leave, training and sickness. In a cost-improvement review it can look like spare staff; remove it, by raising the workload to 85%, and more work arrives than the staff present can do, so the backlog grows over time. Capacity has to be planned against the staff who will actually be present, day by day. That is the logic behind Demand-Load-Capacity-Activity analysis.</p>
       <p>Now try the countermeasures one at a time. Rostering leave evenly, so people take turns rather than bunching, roughly halves the average delay and halves the tail. Bank cover for sickness helps a little. In this scenario, flexing a cross-trained person in on mornings when work has carried over helps most, because it adds capacity exactly when absence and demand have combined. But it is not free: that person is needed on about a third of days, adding about 7% to the team's capacity on average, and they have to come from somewhere (another bench, a network partner or a locum). Borrowing them can move the problem rather than solve it. Levelling arrivals on its own does little here, because absence, not demand, is now the bigger source of variation. With all four, the carry-over almost disappears.</p>
       <p>Finally, change the team size. With the same workload and absence rates, a team of three averages nearly three days of carry-over delay, with one portion in twenty waiting nine days or more; a team of twelve averages under one day. In the model the larger team does better simply because each absence removes a smaller share of capacity; in real life that depends on staff being genuinely interchangeable. Small sections (a sub-specialty bench, a single-handed cut-up room, a three-pathologist department) live with this every week, which is one more argument for cross-training and for networks that pool small teams into larger ones.</p>
-      <p class="hint">Capacity is expressed as a percentage of what the full team can do in a day. Leave is taken in whole weeks; sickness comes in spells of about three days. Each person's absence is independent of everyone else's, which understates real clustering (winter illness, summer leave, leave around bank holidays). If everyone is away, nothing is done that day. Work is finished oldest first, and delays are measured on work volume in whole working days, not on individual cases: there are no case sizes, processing cut-offs or further-work loops. The model works a day at a time and leaves out the queueing within each day shown in Why histology queues grow. It is a teaching illustration of how capacity variation behaves, not a forecast of any laboratory's turnaround.</p>
+      <p class="hint">Capacity is expressed as a percentage of what the full team can do in a day. Leave is taken in whole weeks; sickness comes in spells of about three days. Each person's absence is independent of everyone else's, which understates real clustering (winter illness, summer leave, leave around bank holidays). If everyone is away, nothing is done that day. Work is finished oldest first, and delays are measured on work volume in whole working days, not on individual cases: there are no case sizes, processing cut-offs or further-work loops. The model works a day at a time and leaves out the queueing within each day, so real delays are larger than these figures suggest. It is a teaching illustration of how capacity variation behaves, not a forecast of any laboratory's turnaround.</p>
     </div>
     <div class="try"><strong>Try this:</strong> ask the room for their own figures: team size, how much leave and training each person takes, and recent sickness. Set the sliders to match, then compare the workload on the staff actually present with the figure their staffing model or finance team uses.</div>
   </section>
@@ -494,7 +494,7 @@ body.editing { padding-bottom: 96px; }
 </main>
 
 <footer class="site-footer">
-  <p>Gemba-Histo Capacity v0.10 preview · Part of the <a href="/">Gemba Suite</a> · <a href="/licence/">CC BY-NC-SA 4.0</a></p>
+  <p>Gemba-Histo Capacity v0.11 preview · Part of the <a href="/">Gemba Suite</a> · <a href="/licence/">CC BY-NC-SA 4.0</a></p>
   <p>A teaching model, not a forecast. It simplifies real services (work finished oldest first, one type of work, no processing cut-offs) to make the underlying behaviour visible.</p>
 </footer>
 

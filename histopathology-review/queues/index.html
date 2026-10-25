@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <!--
-  Gemba-Histo Queues v0.10 (preview)
+  Gemba-Histo Queues v0.11 (preview)
   Histopathology improvement channel for the Gemba Suite: "Why histology queues grow".
-  Three animated lessons on why work waits (variation, utilisation, pooling).
+  Three animated lessons on why work waits (variation, utilisation, pooling), modelled as
+  two-hour reporting sessions (25 cases = 100%) with cases left over shown on run charts.
   Pack 1 of 3. Next: Gemba-Histo Capacity; then Gemba-Histo Flow.
   Split from Gemba-Histo v0.7.
   gembasuite.org | Licence: CC BY-NC-SA 4.0
@@ -15,7 +16,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Gemba-Histo Queues v0.10</title>
+<title>Gemba-Histo Queues v0.11</title>
 <meta name="description" content="Why histology queues grow: animated lessons and a turnaround tracker for histopathology services. Runs entirely in your browser.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -245,6 +246,11 @@ main { max-width: 880px; margin: 0 auto; padding: var(--space-lg) var(--space-md
 .hint { font-size: 13px; color: var(--color-grey-600); }
 
 /* ============================================================
+   SESSION LESSONS
+   ============================================================ */
+.session-now { background: var(--color-grey-100); border-radius: var(--radius-md); padding: var(--space-sm) var(--space-md); font-size: 15px; min-height: 44px; margin: 0 0 var(--space-md); }
+
+/* ============================================================
    CROSS-LINK CARDS
    ============================================================ */
 .next-card { display: flex; flex-wrap: wrap; gap: var(--space-md); align-items: center; justify-content: space-between; border-left: 4px solid var(--color-navy); }
@@ -359,7 +365,7 @@ body.editing { padding-bottom: 96px; }
 <header class="site-header">
   <div class="inner">
     <a class="brand" href="../">Gemba Suite <span>· Histopathology</span></a>
-    <span class="tag-preview">Preview v0.10</span>
+    <span class="tag-preview">Preview v0.11</span>
   </div>
 </header>
 
@@ -376,129 +382,141 @@ body.editing { padding-bottom: 96px; }
   </div>
 
   <!-- ======================= LESSON 1 ======================= -->
-  <section class="card lesson" id="lesson-variation" aria-labelledby="l1-title">
-    <div class="lesson-head"><span class="step-num">1</span><h2 id="l1-title">Same average, different queue</h2></div>
-    <p class="lesson-setup">One reporting bench. Cases arrive at 90% of the rate the pathologist can report them, so on average there is spare capacity. Start with everything steady, press play, then switch on real-world variation.</p>
+  <section class="card lesson" id="lesson-s1" aria-labelledby="s1-title">
+    <div class="lesson-head"><span class="step-num">1</span><h2 id="s1-title">Same average, different leftovers</h2></div>
+    <p class="lesson-setup">One pathologist, one two-hour reporting session. On a perfect day they can report 25 cases in a session. Here about 22 or 23 cases arrive for each session on average, so they are 90% busy and should finish every time. Start with no variation, press play, then switch on the variation you see in real life.</p>
 
     <div class="controls">
       <div class="control-group">
-        <span class="label">Case arrivals</span>
-        <div class="seg" data-lesson="variation" data-key="arrVar">
-          <button type="button" data-val="0" class="active">Steady</button>
-          <button type="button" data-val="1">Variable</button>
+        <span class="label">Cases arriving each session</span>
+        <div class="seg" data-sess="s1" data-key="vd">
+          <button type="button" data-val="0" class="active">None</button>
+          <button type="button" data-val="1">Some (±20%)</button>
+          <button type="button" data-val="2">A lot (±50%)</button>
         </div>
       </div>
       <div class="control-group">
-        <span class="label">Time per case</span>
-        <div class="seg" data-lesson="variation" data-key="svcVar">
-          <button type="button" data-val="0" class="active">Steady</button>
-          <button type="button" data-val="1">Variable</button>
+        <span class="label">Cases the pathologist can report</span>
+        <div class="seg" data-sess="s1" data-key="vc">
+          <button type="button" data-val="0" class="active">None</button>
+          <button type="button" data-val="1">Some (±20%)</button>
+          <button type="button" data-val="2">A lot (±50%)</button>
         </div>
       </div>
       <div class="control-group">
         <span class="label">Run</span>
         <div class="btn-row" style="margin-top:0">
-          <button type="button" class="btn btn-primary" data-action="play" data-lesson="variation">Play</button>
-          <button type="button" class="btn" data-action="reset" data-lesson="variation">Reset</button>
-          <button type="button" class="btn" data-action="speed" data-lesson="variation">Speed: normal</button>
+          <button type="button" class="btn btn-primary" data-sess-action="play" data-sess="s1">Play</button>
+          <button type="button" class="btn" data-sess-action="reset" data-sess="s1">Reset</button>
+          <button type="button" class="btn" data-sess-action="speed" data-sess="s1">Speed: normal</button>
         </div>
       </div>
     </div>
 
-    <canvas class="sim-canvas" id="cv-variation" aria-label="Animation of a single reporting bench and its queue"></canvas>
+    <p class="session-now" id="s1-now">Press play to run sessions one at a time.</p>
+    <canvas class="chart-canvas" id="s1-chart" aria-label="Run chart of cases left over after each session"></canvas>
+    <div class="legend"><span style="color:var(--color-navy)"><i style="background:var(--color-navy)"></i>Cases left over after each session</span><span style="color:var(--color-grey-500)"><i class="dash"></i>Average so far</span></div>
     <div class="stats">
-      <div class="stat"><div class="v" id="variation-done">0</div><div class="k">cases reported</div></div>
-      <div class="stat hl"><div class="v" id="variation-wait">0.0</div><div class="k">average wait, in case-times</div></div>
-      <div class="stat"><div class="v" id="variation-theory">0.0</div><div class="k" id="variation-theory-k">theory predicts</div></div>
-      <div class="stat"><div class="v" id="variation-util">0%</div><div class="k">pathologist busy</div></div>
+      <div class="stat"><div class="v" id="s1-n">0</div><div class="k">sessions run</div></div>
+      <div class="stat hl"><div class="v" id="s1-mean">0.0</div><div class="k">cases left over per session, average</div></div>
+      <div class="stat"><div class="v" id="s1-share">0%</div><div class="k">sessions with cases left over</div></div>
+      <div class="stat"><div class="v" id="s1-max">0</div><div class="k">most cases left over</div></div>
     </div>
-    <canvas class="chart-canvas" id="ch-variation" aria-label="Running average wait over time"></canvas>
-    <div class="legend"><span style="color:var(--color-navy)"><i style="background:var(--color-navy)"></i>Running average wait</span><span style="color:var(--color-grey-500)"><i class="dash"></i>Theory</span></div>
 
     <div class="explainer">
-      <p>When cases arrive like clockwork and every case takes the same time, a bench running at 90% utilisation never builds a queue. Real-world histology is not like that. Specimens arrive in clumps after clinics and theatre lists, and some cases take minutes while others take an hour. Batching inside the laboratory creates more variation in workflow downstream.</p>
-      <p>Switch either source of variation on and a queue appears, even though the average workload has not changed. Switch both on and the average wait roughly doubles again. The queue is not caused by a shortage of capacity on average. It is caused by variation meeting a system with too little slack to absorb it. That is how "we have enough capacity on paper" and "our backlog keeps growing" can both be true.</p>
-      <p class="hint">A "case-time" is the average time it takes to report one case. A wait of 9 case-times means a case typically sits in the queue for as long as it takes to report nine cases.</p>
+      <p>With no variation the pathologist finishes every session with time to spare, and nothing is ever left over. Real sessions are not like that. Some sessions bring more cases, or harder ones; interruptions, IT problems and urgent calls cut into reporting time. Batching inside the laboratory creates more variation in workflow downstream.</p>
+      <p>Switch on some variation in either and cases start to be left over, even though the average workload has not changed. With some variation in both, cases are left over after about a third of sessions. With a lot in both, cases are left over after about two sessions in three, and over many sessions the average is about 14 cases left over, more than half a session's work, at the same 90% average.</p>
+      <p>Leftover cases are not caused by too little capacity on average. They are caused by variation meeting a system with too little slack to absorb it. That is how "we have enough pathologists on paper" and "the backlog keeps growing" can both be true.</p>
+      <p class="hint">The run chart shows the cases left over at the end of each session, with the average so far as a dashed line. It has no control limits on purpose: each session's leftovers carry into the next, so the points are not independent and control limits would flag false alarms.</p>
     </div>
-    <div class="try"><strong>Try this:</strong> before switching variation on, ask the room to guess the average wait. Most people say zero or close to it, and are right. Then ask again with both switches on.</div>
+    <div class="try"><strong>Try this:</strong> before switching variation on, ask the room how many cases will be left over at 90%. Most people say none, and are right. Then switch on a lot of both and ask again.</div>
   </section>
 
   <!-- ======================= LESSON 2 ======================= -->
-  <section class="card lesson" id="lesson-utilisation" aria-labelledby="l2-title">
-    <div class="lesson-head"><span class="step-num">2</span><h2 id="l2-title">Running hot</h2></div>
-    <p class="lesson-setup">The same bench, now with realistic variation in both arrivals and case complexity. Move the slider to change how busy the pathologist is.</p>
+  <section class="card lesson" id="lesson-s2" aria-labelledby="s2-title">
+    <div class="lesson-head"><span class="step-num">2</span><h2 id="s2-title">Running hot</h2></div>
+    <p class="lesson-setup">The same pathologist, now with variation in both the cases arriving and the time available. Move the slider to change how busy the sessions are: at 100%, on average exactly 25 cases arrive for 25 reporting slots.</p>
 
     <div class="controls">
       <div class="control-group">
-        <span class="label">Pathologist utilisation</span>
+        <span class="label">Average workload (25 cases = 100%)</span>
         <div class="slider-wrap">
-          <input type="range" id="util-slider" min="50" max="97" step="1" value="80" aria-label="Pathologist utilisation percentage">
-          <span class="slider-val" id="util-val">80%</span>
+          <input type="range" id="s2-slider" min="60" max="100" step="1" value="90" aria-label="Average workload as a percentage of a full session">
+          <span class="slider-val" id="s2-val">90%</span>
+        </div>
+      </div>
+      <div class="control-group">
+        <span class="label">Variation</span>
+        <div class="seg" data-sess="s2" data-key="v">
+          <button type="button" data-val="1" class="active">Some (±20%)</button>
+          <button type="button" data-val="2">A lot (±50%)</button>
         </div>
       </div>
       <div class="control-group">
         <span class="label">Run</span>
         <div class="btn-row" style="margin-top:0">
-          <button type="button" class="btn btn-primary" data-action="play" data-lesson="utilisation">Play</button>
-          <button type="button" class="btn" data-action="reset" data-lesson="utilisation">Reset</button>
-          <button type="button" class="btn" data-action="speed" data-lesson="utilisation">Speed: normal</button>
+          <button type="button" class="btn btn-primary" data-sess-action="play" data-sess="s2">Play</button>
+          <button type="button" class="btn" data-sess-action="reset" data-sess="s2">Reset</button>
+          <button type="button" class="btn" data-sess-action="speed" data-sess="s2">Speed: normal</button>
         </div>
       </div>
     </div>
 
-    <canvas class="sim-canvas" id="cv-utilisation" aria-label="Animation of a single reporting bench at the chosen utilisation"></canvas>
+    <p class="session-now" id="s2-now">Press play to run sessions one at a time.</p>
+    <canvas class="chart-canvas" id="s2-chart" aria-label="Run chart of cases left over after each session"></canvas>
+    <div class="legend"><span style="color:var(--color-navy)"><i style="background:var(--color-navy)"></i>Cases left over after each session</span><span style="color:var(--color-grey-500)"><i class="dash"></i>Average so far</span></div>
     <div class="stats">
-      <div class="stat"><div class="v" id="utilisation-done">0</div><div class="k">cases reported</div></div>
-      <div class="stat hl"><div class="v" id="utilisation-wait">0.0</div><div class="k">average wait so far, in case-times</div></div>
-      <div class="stat"><div class="v" id="utilisation-theory">0.0</div><div class="k">theory predicts</div></div>
+      <div class="stat"><div class="v" id="s2-n">0</div><div class="k">sessions run</div></div>
+      <div class="stat hl"><div class="v" id="s2-mean">0.0</div><div class="k">cases left over per session, average</div></div>
+      <div class="stat"><div class="v" id="s2-share">0%</div><div class="k">sessions with cases left over</div></div>
     </div>
-    <canvas class="chart-canvas" id="ch-utilisation" aria-label="Curve of waiting time against utilisation"></canvas>
-    <div class="legend"><span style="color:var(--color-navy)"><i style="background:var(--color-navy)"></i>Theoretical wait at each utilisation</span><span style="color:var(--color-amber)"><i style="background:var(--color-amber)"></i>This simulation so far</span></div>
+    <canvas class="chart-canvas" id="s2-curve" aria-label="Average cases left over per session at each workload"></canvas>
+    <div class="legend"><span style="color:var(--color-navy)"><i style="background:var(--color-navy)"></i>Average cases left over per session, over many sessions</span><span style="color:var(--color-amber)"><i style="background:var(--color-amber)"></i>This setting</span></div>
 
     <div class="explainer">
-      <p>Waiting time does not rise in a straight line with workload. At 50% utilisation a case waits, on average, about as long as it takes to report one. At 80% it waits four times as long; at 90%, nine times; at 95%, nineteen times. The last few percentage points of "efficiency" are bought with very long queues.</p>
-      <p>This is why pushing reporting capacity towards 100% utilisation tends to lengthen turnaround rapidly, and why a service with no slack cannot absorb a bad week. Notice too that at high utilisation the live simulation jumps about and takes a long time to settle. That instability is part of the lesson: a hot system is not just slow, it is unpredictable.</p>
-      <p class="dynamic-line" id="utilisation-line"></p>
+      <p>Leftovers do not rise in a straight line with workload. With some variation, a session at 80% leaves cases over only about one time in eleven. At 90% the average is about one and a half cases per session; at 95%, over four; at 97%, nearly nine. At 100% the leftovers never settle: every bad session adds to the pile, and there are no quiet sessions to clear it.</p>
+      <p>The last few percentage points of "efficiency" are bought with a growing pile of unreported cases. That is why pushing reporting towards 100% lengthens turnaround rapidly and leaves no room to absorb a bad week. Notice too how much the run chart jumps about at high workload: a hot system is not just slower, it is unpredictable.</p>
+      <p class="dynamic-line" id="s2-line"></p>
     </div>
-    <div class="try"><strong>Try this:</strong> before moving the slider to 95%, ask the room to guess how much longer cases will wait than at 80%. Then ask what utilisation their own reporting pathologists actually run at, and set the slider there.</div>
+    <div class="try"><strong>Try this:</strong> before moving the slider to 95%, ask the room to guess how many cases will be left over. Then ask how busy their own reporting sessions really are, and set the slider there.</div>
   </section>
 
   <!-- ======================= LESSON 3 ======================= -->
-  <section class="card lesson" id="lesson-pooling" aria-labelledby="l3-title">
-    <div class="lesson-head"><span class="step-num">3</span><h2 id="l3-title">Sharing the queue</h2></div>
-    <p class="lesson-setup">Two trusts, each with one pathologist reporting only its own cases, compared with the same two pathologists working from a single shared queue. Same demand, same people, same case mix. The two set-ups receive exactly the same cases at exactly the same times.</p>
+  <section class="card lesson" id="lesson-s3" aria-labelledby="s3-title">
+    <div class="lesson-head"><span class="step-num">3</span><h2 id="s3-title">Sharing the queue</h2></div>
+    <p class="lesson-setup">Two pathologists in two trusts, each reporting only their own cases, compared with the same two working from one shared worklist. Same cases, same sessions, and some variation in both cases and time available. Both set-ups receive exactly the same cases.</p>
 
     <div class="controls">
       <div class="control-group">
-        <span class="label">Utilisation (both set-ups)</span>
+        <span class="label">Average workload (both set-ups)</span>
         <div class="slider-wrap">
-          <input type="range" id="pool-slider" min="70" max="95" step="1" value="85" aria-label="Utilisation percentage for both set-ups">
-          <span class="slider-val" id="pool-val">85%</span>
+          <input type="range" id="s3-slider" min="75" max="97" step="1" value="90" aria-label="Average workload for both set-ups">
+          <span class="slider-val" id="s3-val">90%</span>
         </div>
       </div>
       <div class="control-group">
         <span class="label">Run</span>
         <div class="btn-row" style="margin-top:0">
-          <button type="button" class="btn btn-primary" data-action="play" data-lesson="pooling">Play</button>
-          <button type="button" class="btn" data-action="reset" data-lesson="pooling">Reset</button>
-          <button type="button" class="btn" data-action="speed" data-lesson="pooling">Speed: normal</button>
+          <button type="button" class="btn btn-primary" data-sess-action="play" data-sess="s3">Play</button>
+          <button type="button" class="btn" data-sess-action="reset" data-sess="s3">Reset</button>
+          <button type="button" class="btn" data-sess-action="speed" data-sess="s3">Speed: normal</button>
         </div>
       </div>
     </div>
 
-    <canvas class="sim-canvas" id="cv-pooling" aria-label="Animation comparing two separate queues with one shared queue"></canvas>
+    <p class="session-now" id="s3-now">Press play to run sessions one at a time.</p>
+    <canvas class="chart-canvas" id="s3-chart" aria-label="Run chart of cases left over: separate worklists and one shared worklist"></canvas>
+    <div class="legend"><span style="color:var(--color-red)"><i style="background:var(--color-red)"></i>Separate worklists, both pathologists' leftovers</span><span style="color:var(--color-navy)"><i style="background:var(--color-navy)"></i>Shared worklist</span></div>
     <div class="stats">
-      <div class="stat"><div class="v" id="pooling-sep">0.0</div><div class="k">separate queues: average wait</div></div>
-      <div class="stat hl"><div class="v" id="pooling-pool">0.0</div><div class="k">shared queue: average wait</div></div>
-      <div class="stat"><div class="v" id="pooling-theory">-</div><div class="k">theory: separate / shared</div></div>
+      <div class="stat"><div class="v" id="s3-n">0</div><div class="k">sessions run</div></div>
+      <div class="stat"><div class="v" id="s3-sep">0.0</div><div class="k">separate worklists: cases left over per session</div></div>
+      <div class="stat hl"><div class="v" id="s3-pool">0.0</div><div class="k">shared worklist: cases left over per session</div></div>
     </div>
-    <canvas class="chart-canvas" id="ch-pooling" aria-label="Running average wait for separate and shared queues"></canvas>
-    <div class="legend"><span style="color:var(--color-red)"><i style="background:var(--color-red)"></i>Separate queues</span><span style="color:var(--color-navy)"><i style="background:var(--color-navy)"></i>Shared queue</span><span style="color:var(--color-grey-500)"><i class="dash"></i>Theory</span></div>
 
     <div class="explainer">
-      <p>Pooling does not add capacity. It stops one pathologist sitting idle while the other has a pile. At these utilisations the shared queue waits less than half as long as the separate ones (about 43% at 75%, rising towards half as the system gets busier), and the absolute gap in days widens.</p>
+      <p>Pooling does not add capacity. It stops one pathologist finishing early while the other leaves cases over. At 90%, the two separate worklists leave about 2.7 cases over per session between them; the shared worklist leaves about 0.9, a third as many. The shared worklist can never do worse. In proportion its advantage is greatest at moderate workloads; in numbers of cases it saves most when the service is busiest.</p>
       <p>This is the operational case for networked digital pathology: when slides can be reported anywhere in the network, reporting capacity behaves like one pool rather than several isolated ones. The gain comes from work flowing to whoever is free, not from the scanner. Pulling cases from a shared worklist is the simplest way to achieve that; active cross-cover or routing between separate worklists can achieve some of it; sharing images while keeping work strictly local achieves little. In practice pooling works within a sub-specialty (eg GI biopsies shared among GI pathologists across the network), not as one undifferentiated queue for everyone, which is why network workflow design matters as much as the technology.</p>
-      <p class="dynamic-line" id="pooling-line"></p>
+      <p class="dynamic-line" id="s3-line"></p>
     </div>
     <div class="try"><strong>Try this:</strong> ask the room what stops their network working from one queue. Write the answers down. That list is the improvement backlog.</div>
   </section>
@@ -515,19 +533,19 @@ body.editing { padding-bottom: 96px; }
       <summary>For facilitators: a 15-minute running order</summary>
       <ol>
         <li><strong>0 to 2 minutes.</strong> Frame the question: "Why does our backlog grow when, on paper, we have enough reporting capacity?"</li>
-        <li><strong>2 to 6 minutes.</strong> Lesson 1. Run it steady first, take guesses, then switch on variation. Let the queue build before explaining.</li>
-        <li><strong>6 to 10 minutes.</strong> Lesson 2. Take guesses for 95% before moving the slider. Ask what utilisation the room's pathologists run at.</li>
+        <li><strong>2 to 6 minutes.</strong> Lesson 1. Run it with no variation first, take guesses, then switch on variation. Let the leftovers build before explaining.</li>
+        <li><strong>6 to 10 minutes.</strong> Lesson 2. Take guesses for 95% before moving the slider. Ask how busy the room's own reporting sessions really are.</li>
         <li><strong>10 to 13 minutes.</strong> Lesson 3. Connect the shared queue to network reporting and ask what stops it happening locally.</li>
         <li><strong>13 to 15 minutes.</strong> The ask: before the next session, notice where work waits in your own lab, and how often the full team is actually in.</li>
       </ol>
-      <p class="hint">Lessons 1 to 3 use exact queueing results: the Pollaczek-Khinchine formula for random arrivals, the D/M/1 formula for steady arrivals with variable case times, and the Erlang C formula for a shared queue. The simulations converge on these values given enough cases; at high utilisation that takes a long time, which is itself worth pointing out.</p>
+      <p class="hint">Show the maths: the lessons simulate one session at a time. Cases arriving and cases the pathologist can report each vary evenly by up to the chosen amount either side of average, and unfinished cases carry into the next session. Three checks hold: with no variation nothing is ever left over below 100%; a shared worklist never leaves more cases over than two separate ones; and at 100% the leftovers never settle. The figures quoted come from 200,000 simulated sessions. Run charts show no control limits because each session's leftovers carry into the next.</p>
     </details>
   </section>
 </main>
 
 <footer class="site-footer">
-  <p>Gemba-Histo Queues v0.10 preview · Part of the <a href="/">Gemba Suite</a> · <a href="/licence/">CC BY-NC-SA 4.0</a></p>
-  <p>Teaching models, not forecasts. The lessons simplify real services (first come, first served, one case type, no priority cases) to make the underlying behaviour visible.</p>
+  <p>Gemba-Histo Queues v0.11 preview · Part of the <a href="/">Gemba Suite</a> · <a href="/licence/">CC BY-NC-SA 4.0</a></p>
+  <p>Teaching models, not forecasts. The lessons simplify real services (oldest cases first, one session at a time, no urgent cases) to make the underlying behaviour visible.</p>
 </footer>
 
 <script>
@@ -1557,7 +1575,7 @@ const EDITABLE_SELECTOR = [
   'main h2', 'main h3', 'main p', 'main li', 'main summary', 'main .label',
   'main .stat .k', 'main .try', 'main .journey th', '.site-footer p'
 ].join(',');
-const DYNAMIC_IDS = ['utilisation-line', 'pooling-line', 'daily-line', 'variation-theory-k'];
+const DYNAMIC_IDS = ['utilisation-line', 'pooling-line', 'daily-line', 'variation-theory-k', 's1-now', 's2-now', 's3-now', 's2-line', 's3-line'];
 const DYNAMIC_ZONES = '#tat-verdict, #tat-messages, #journey-body, .try *';
 let editing = false;
 
@@ -1628,6 +1646,281 @@ function wireEditMode() {
 }
 
 /* ============================================================
+   7c. SESSION LESSONS (pack 1)
+   One reporting session = 2 hours; SESS_FULL = 25 cases at 100%.
+   Demand per session = round(25 x workload x (1 + vd x U)),
+   capacity = round(25 x (1 + vc x U)), U uniform on [-1, 1].
+   Unfinished cases carry into the next session. Lesson 3 runs two
+   pathologists on separate worklists and, from the same draws, one
+   shared worklist. Changing a setting keeps the random draws, so the
+   comparison is of the same sessions.
+   ============================================================ */
+const SESS_FULL = 25;
+const SESS_VARS = [0, 0.2, 0.5];                       // none, some, a lot
+const SESS_VAR_NAMES = ['no', 'some', 'a lot of'];
+const SESS_SPEEDS = { normal: 2, fast: 12 };           // sessions per second
+const SESS_WINDOW = 40;                                 // sessions shown on the run chart
+const sess = {};
+let sessLast = null;
+
+function createSessionModel(seed, o) {
+  const rnd = mulberry32(seed);
+  const P = o.pathologists || 1;
+  const sep = new Array(P).fill(0);
+  let pooled = 0;
+  return {
+    n: 0,
+    next() {
+      const dem = [], cap = [];
+      for (let p = 0; p < P; p++) {
+        dem.push(Math.max(0, Math.round(SESS_FULL * o.util * (1 + o.vd * (2 * rnd() - 1)))));
+        cap.push(Math.max(0, Math.round(SESS_FULL * (1 + o.vc * (2 * rnd() - 1)))));
+      }
+      const carried = sep.slice(), done = [];
+      for (let p = 0; p < P; p++) {
+        const work = sep[p] + dem[p];
+        done.push(Math.min(work, cap[p]));
+        sep[p] = work - done[p];
+      }
+      const pooledCarried = pooled;
+      const D = dem.reduce((a, b) => a + b, 0), C = cap.reduce((a, b) => a + b, 0);
+      pooled = Math.max(0, pooled + D - C);
+      this.n++;
+      return { n: this.n, dem, cap, carried, done, left: sep.slice(), leftTotal: sep.reduce((a, b) => a + b, 0), pooledCarried, pooled };
+    }
+  };
+}
+function sessLongRun(util, vd, vc, P, n) {
+  const m = createSessionModel(11, { util, vd, vc, pathologists: P || 1 });
+  let s = 0, sp = 0, any = 0;
+  for (let i = 0; i < n; i++) { const r = m.next(); s += r.leftTotal; sp += r.pooled; if (r.leftTotal > 0) any++; }
+  return { mean: s / n, pooledMean: sp / n, share: any / n };
+}
+
+function makeSessLesson(id, cfg) {
+  const L = Object.assign({ id, playing: false, speed: 'normal', seed: 2026, acc: 0, rows: [] }, cfg);
+  L.reset = function () { L.model = createSessionModel(L.seed, L.opts()); L.rows = []; L.acc = 0; };
+  L.reset();
+  sess[id] = L;
+  return L;
+}
+function initSessLessons() {
+  if (document.getElementById('lesson-s1')) makeSessLesson('s1', {
+    state: { vd: 0, vc: 0 },
+    opts() { return { util: 0.9, vd: SESS_VARS[this.state.vd], vc: SESS_VARS[this.state.vc], pathologists: 1 }; }
+  });
+  if (document.getElementById('lesson-s2')) makeSessLesson('s2', {
+    state: { u: 0.9, v: 1 },
+    opts() { return { util: this.state.u, vd: SESS_VARS[this.state.v], vc: SESS_VARS[this.state.v], pathologists: 1 }; }
+  });
+  if (document.getElementById('lesson-s3')) makeSessLesson('s3', {
+    state: { u: 0.9 },
+    opts() { return { util: this.state.u, vd: SESS_VARS[1], vc: SESS_VARS[1], pathologists: 2 }; }
+  });
+}
+
+/* ---------- drawing ---------- */
+function drawSessRunChart(L) {
+  const cv = document.getElementById(L.id + '-chart');
+  if (!cv) return;
+  const { ctx, w, h } = fitCanvas(cv, 190);
+  const c = colours();
+  const pad = { l: 40, r: 12, t: 22, b: 26 };
+  const shown = L.rows.slice(-SESS_WINDOW);
+  const two = L.id === 's3';
+  const seriesA = shown.map(r => r.leftTotal);
+  const seriesB = two ? shown.map(r => r.pooled) : null;
+  const peak = Math.max(4, ...seriesA, ...(seriesB || [0]));
+  const step = [1, 2, 5, 10, 20, 50, 100, 200, 500].find(s => peak / s <= 5) || 1000;   // whole-case ticks
+  const yMax = Math.ceil(peak / step) * step;
+  ctx.font = '500 11px Inter, system-ui, sans-serif'; ctx.textAlign = 'right'; ctx.strokeStyle = c.g200; ctx.lineWidth = 1; ctx.fillStyle = c.g500;
+  for (let v = 0; v <= yMax; v += step) {
+    const y = h - pad.b - (h - pad.t - pad.b) * v / yMax;
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(w - pad.r, y); ctx.stroke();
+    ctx.fillText(String(v), pad.l - 6, y + 4);
+  }
+  ctx.textAlign = 'left';
+  const X = i => pad.l + (w - pad.l - pad.r) * (SESS_WINDOW === 1 ? 0 : i / (SESS_WINDOW - 1));
+  const Y = v => h - pad.b - (h - pad.t - pad.b) * Math.min(v, yMax) / yMax;
+  const avg = arr => arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0;
+  const line = (vals, col) => {
+    if (!vals.length) return;
+    ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.beginPath();
+    vals.forEach((v, i) => { i ? ctx.lineTo(X(i), Y(v)) : ctx.moveTo(X(i), Y(v)); });
+    ctx.stroke();
+    ctx.fillStyle = col;
+    vals.forEach((v, i) => { ctx.beginPath(); ctx.arc(X(i), Y(v), 2.6, 0, Math.PI * 2); ctx.fill(); });
+  };
+  const avgLine = (v, col) => {
+    ctx.strokeStyle = col; ctx.lineWidth = 1.5; ctx.setLineDash([5, 4]);
+    ctx.beginPath(); ctx.moveTo(pad.l, Y(v)); ctx.lineTo(w - pad.r, Y(v)); ctx.stroke(); ctx.setLineDash([]);
+  };
+  if (L.rows.length) {
+    if (two) { avgLine(avg(L.rows.map(r => r.leftTotal)), c.red); avgLine(avg(L.rows.map(r => r.pooled)), c.navy); line(seriesA, c.red); line(seriesB, c.navy); }
+    else { avgLine(avg(L.rows.map(r => r.leftTotal)), c.g500); line(seriesA, c.navy); }
+  } else {
+    ctx.fillStyle = c.g500; ctx.font = '500 12px Inter, system-ui, sans-serif';
+    ctx.fillText('Press play', pad.l + 8, Y(yMax / 2));
+  }
+  ctx.fillStyle = c.g500; ctx.font = '500 11px Inter, system-ui, sans-serif'; ctx.textAlign = 'center';
+  const first = shown.length ? shown[0].n : 1;
+  for (let i = 0; i < SESS_WINDOW; i += 10) ctx.fillText('S' + (first + i), X(i), h - 8);
+  ctx.textAlign = 'left';
+  ctx.fillText('Cases left over', pad.l, 12);
+}
+const sessCurveCache = {};
+function sessCurve(v) {
+  if (!sessCurveCache[v]) {
+    const pts = [];
+    for (let u = 60; u <= 99; u++) pts.push([u, sessLongRun(u / 100, SESS_VARS[v], SESS_VARS[v], 1, 20000).mean]);
+    sessCurveCache[v] = pts;
+  }
+  return sessCurveCache[v];
+}
+function drawSessCurve() {
+  const L = sess.s2; const cv = document.getElementById('s2-curve');
+  if (!L || !cv) return;
+  const { ctx, w, h } = fitCanvas(cv, 190);
+  const c = colours();
+  const pad = { l: 40, r: 12, t: 22, b: 28 };
+  const pts = sessCurve(L.state.v);
+  const yMax = niceMax(pts.find(p => p[0] === 97)[1] * 1.15);
+  drawAxes(ctx, pad, w, h, yMax, c, 4);
+  const X = u => pad.l + (w - pad.l - pad.r) * (u - 60) / 40;
+  const Y = v => h - pad.b - (h - pad.t - pad.b) * Math.min(v, yMax) / yMax;
+  ctx.fillStyle = c.g500; ctx.font = '500 11px Inter, system-ui, sans-serif'; ctx.textAlign = 'center';
+  [60, 70, 80, 90, 100].forEach(u => ctx.fillText(u + '%', X(u), h - 9));
+  ctx.textAlign = 'left';
+  // draw the curve until it leaves the top of the chart, then an arrow: it does not level off
+  ctx.strokeStyle = c.navy; ctx.lineWidth = 2.5; ctx.beginPath();
+  let exitX = null;
+  for (let i = 0; i < pts.length; i++) {
+    const [u, v] = pts[i];
+    if (v > yMax) {
+      const [u0, v0] = pts[i - 1];
+      const ux = u0 + (yMax - v0) / (v - v0) * (u - u0);
+      ctx.lineTo(X(ux), Y(yMax)); exitX = X(ux); break;
+    }
+    i ? ctx.lineTo(X(u), Y(v)) : ctx.moveTo(X(u), Y(v));
+  }
+  ctx.stroke();
+  if (exitX !== null) {
+    ctx.fillStyle = c.navy; ctx.beginPath();
+    ctx.moveTo(exitX, pad.t - 8); ctx.lineTo(exitX - 5, pad.t + 1); ctx.lineTo(exitX + 5, pad.t + 1); ctx.closePath(); ctx.fill();
+  }
+  ctx.fillStyle = c.g600; ctx.font = '600 11px Inter, system-ui, sans-serif';
+  ctx.fillText('Average cases left over per session', pad.l, 10);
+  ctx.fillStyle = c.navy;
+  ctx.fillText('Keeps rising: at 100% the leftovers never settle', X(61), pad.t + 16);
+  const u = Math.round(L.state.u * 100);
+  const val = u >= 100 ? yMax : (pts.find(p => p[0] === u) || [u, 0])[1];
+  ctx.strokeStyle = c.g300; ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
+  ctx.beginPath(); ctx.moveTo(X(u), pad.t); ctx.lineTo(X(u), h - pad.b); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = c.amber; ctx.beginPath(); ctx.arc(X(u), Y(val), 6, 0, Math.PI * 2); ctx.fill();
+}
+
+/* ---------- text and stats ---------- */
+function sessNowText(L, r) {
+  if (!r) return 'Press play to run sessions one at a time.';
+  if (L.id === 's3') {
+    return `Session ${r.n}. Separate worklists: ${r.dem[0]} and ${r.dem[1]} new cases arrived, ${r.done[0]} and ${r.done[1]} reported, ` +
+           `${r.left[0]} and ${r.left[1]} left over (${r.leftTotal} in total). Shared worklist: ${r.pooled} left over.`;
+  }
+  const work = r.carried[0] + r.dem[0];
+  return `Session ${r.n}: ${r.carried[0]} left from last time + ${r.dem[0]} new = ${work} to report. ` +
+         `Time for ${r.cap[0]} cases today. ${r.done[0]} reported, ${r.left[0]} left over.`;
+}
+function renderSess(L) {
+  const rows = L.rows, n = rows.length;
+  setText(L.id + '-now', sessNowText(L, rows[n - 1]));
+  setText(L.id + '-n', String(n));
+  const avg = k => n ? rows.reduce((a, r) => a + r[k], 0) / n : 0;
+  if (L.id === 's3') {
+    setText('s3-sep', fmt(avg('leftTotal')));
+    setText('s3-pool', fmt(avg('pooled')));
+  } else {
+    setText(L.id + '-mean', fmt(avg('leftTotal')));
+    setText(L.id + '-share', (n ? Math.round(rows.filter(r => r.leftTotal > 0).length / n * 100) : 0) + '%');
+    if (L.id === 's1') setText('s1-max', String(n ? Math.max(...rows.map(r => r.leftTotal)) : 0));
+  }
+  drawSessRunChart(L);
+}
+function renderSessLines() {
+  const L2 = sess.s2;
+  if (L2) {
+    const u = Math.round(L2.state.u * 100), vn = SESS_VAR_NAMES[L2.state.v];
+    if (u >= 100) setText('s2-line', `At 100% with ${vn} variation, the leftovers never settle: the pile keeps growing for as long as the sessions run.`);
+    else {
+      const r = sessLongRun(L2.state.u, SESS_VARS[L2.state.v], SESS_VARS[L2.state.v], 1, 40000);
+      setText('s2-line', `Over many sessions at ${u}% with ${vn} variation, about ${fmt(r.mean)} cases are left over per session on average, and cases are left over after ${Math.round(r.share * 100)}% of sessions.`);
+    }
+    drawSessCurve();
+  }
+  const L3 = sess.s3;
+  if (L3) {
+    const r = sessLongRun(L3.state.u, SESS_VARS[1], SESS_VARS[1], 2, 40000);
+    setText('s3-line', `Over many sessions at ${Math.round(L3.state.u * 100)}%, separate worklists leave about ${fmt(r.mean)} cases over per session between them; one shared worklist leaves about ${fmt(r.pooledMean)}.`);
+  }
+}
+function refreshSess(L, resetRun) {
+  if (resetRun) L.reset();
+  renderSess(L);
+}
+
+/* ---------- events and animation ---------- */
+function wireSessEvents() {
+  document.addEventListener('click', e => {
+    const seg = e.target.closest('.seg[data-sess] button');
+    if (seg) {
+      const box = seg.parentElement, L = sess[box.dataset.sess];
+      box.querySelectorAll('button').forEach(b => b.classList.toggle('active', b === seg));
+      L.state[box.dataset.key] = Number(seg.dataset.val);
+      refreshSess(L, true); renderSessLines();
+      return;
+    }
+    const act = e.target.closest('[data-sess-action]');
+    if (!act) return;
+    const L = sess[act.dataset.sess];
+    if (act.dataset.sessAction === 'play') { L.playing = !L.playing; act.textContent = L.playing ? 'Pause' : 'Play'; }
+    if (act.dataset.sessAction === 'reset') { L.seed = randomSeed(); refreshSess(L, true); }
+    if (act.dataset.sessAction === 'speed') { L.speed = L.speed === 'normal' ? 'fast' : 'normal'; act.textContent = 'Speed: ' + L.speed; }
+  });
+  [['s2-slider', 's2', 's2-val'], ['s3-slider', 's3', 's3-val']].forEach(([sid, lid, vid]) => {
+    const el = document.getElementById(sid);
+    if (!el) return;
+    el.addEventListener('input', e => {
+      setText(vid, e.target.value + '%');
+      sess[lid].state.u = Number(e.target.value) / 100;
+      refreshSess(sess[lid], true); renderSessLines();
+    });
+  });
+  window.addEventListener('resize', () => { Object.values(sess).forEach(renderSess); drawSessCurve(); });
+}
+function sessFrame(ts) {
+  const dt = sessLast === null ? 0 : Math.min(0.25, (ts - sessLast) / 1000);
+  sessLast = ts;
+  Object.values(sess).forEach(L => {
+    if (!L.playing) return;
+    L.acc += dt * SESS_SPEEDS[L.speed];
+    let added = false;
+    while (L.acc >= 1) {
+      L.acc -= 1; L.rows.push(L.model.next()); added = true;
+      if (L.rows.length > 5000) L.rows = L.rows.slice(-2500);
+    }
+    if (added) renderSess(L);
+  });
+  requestAnimationFrame(sessFrame);
+}
+function initSessions() {
+  initSessLessons();
+  if (!Object.keys(sess).length) return;
+  wireSessEvents();
+  Object.values(sess).forEach(L => renderSess(L));
+  renderSessLines();
+  requestAnimationFrame(sessFrame);
+}
+
+/* ============================================================
    8. ANIMATION LOOP
    ============================================================ */
 function frame(ts) {
@@ -1666,6 +1959,7 @@ function init() {
   // Each page in the histopathology channel contains only some sections; run what is present.
   const has = id => !!document.getElementById(id);
   if (has('lesson-variation')) initLessons();
+  if (has('lesson-s1') || has('lesson-s2') || has('lesson-s3')) initSessions();
   if (has('journey-body')) renderJourney();
   if (has('tat-text')) {
     const saved = loadTat();
